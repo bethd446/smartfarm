@@ -1,0 +1,66 @@
+# Smart Farm — Deploy (main + manuel)
+#
+# Secrets requis (à configurer dans Settings > Secrets and variables > Actions) :
+#   - VPS_HOST    : hôte du VPS (ex: 187.127.225.24)
+#   - VPS_SSH_KEY : clé privée SSH (PEM) ayant accès root@VPS_HOST
+#
+# Pour l'instant ce workflow vérifie uniquement build + typecheck.
+# Le déploiement SSH est commenté tant qu'on n'a ni pm2 ni service systemd.
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & typecheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Next build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+
+      # TODO: activer ce step une fois pm2 OU un service systemd `smartfarm` en place sur le VPS.
+      # Prérequis côté VPS :
+      #   - clone du repo dans /root/projects/smartfarm
+      #   - .env.local renseigné
+      #   - pm2 install -g + `pm2 start npm --name smartfarm -- start` (depuis app/)
+      #     OU service systemd `smartfarm.service`
+      #
+      # - name: Deploy to VPS
+      #   uses: appleboy/ssh-action@v1.2.0
+      #   with:
+      #     host: ${{ secrets.VPS_HOST }}
+      #     username: root
+      #     key: ${{ secrets.VPS_SSH_KEY }}
+      #     script: |
+      #       cd /root/projects/smartfarm \
+      #         && git pull \
+      #         && cd app \
+      #         && npm ci --no-audit --no-fund \
+      #         && npm run build \
+      #         && (pm2 restart smartfarm || systemctl restart smartfarm)

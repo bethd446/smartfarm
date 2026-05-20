@@ -1,0 +1,26 @@
+# Smart Farm — orchestration locale (app Next.js uniquement)
+# NB : Supabase tourne via son propre docker-compose géré par le CLI Supabase.
+# Nginx tourne sur l'hôte (pas containerisé).
+#
+# Usage :
+#   docker compose --profile dev up --build
+#   docker compose --profile dev down
+
+services:
+  app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: smartfarm-app:local
+    container_name: smartfarm-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./app/.env.local
+    # Supabase local écoute sur 127.0.0.1:54321 côté hôte ;
+    # depuis le conteneur on passe par host.docker.internal.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles:
+      - dev
