@@ -1,4 +1,4 @@
-<!-- Deploy: 2026-05-22-prod-mode -->
+<!-- Deploy: 2026-05-22-prod-mode-fix -->
 # 🐖 Smart Farm
 
 > **Application de gestion d'élevage porcin multi-fermes — ancrage Côte d'Ivoire.**
