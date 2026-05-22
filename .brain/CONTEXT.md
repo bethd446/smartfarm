@@ -5,6 +5,9 @@
 ## STACK
 - Next.js 16 / React 19 / Tailwind v4 / Radix / shadcn — `/root/projects/smartfarm/app/`
 - Standalone :3000 — `next/standalone/projects/smartfarm/app/server.js`
+- **DEPLOY** : `bash /root/projects/smartfarm/app/deploy.sh` (build + sync static/public + restart)
+  - PIÈGE : `next build` ne copie PAS `.next/static/` et `public/` dans `.next/standalone/`
+  - Sans ces dossiers → 404 sur tous chunks JS/CSS → page navigateur cassée (HTML servi mais blanc)
 - Node 22 : `export PATH=/root/.hermes/node/bin:$PATH`
 - DB : `PGPASSWORD=postgres psql -h 127.0.0.1 -p 54322 -U postgres -d postgres`
 - Vocab FR pro (Cochette, Reproduction, Mises bas, Sanitaire, Stock). PAS folklo CI.
