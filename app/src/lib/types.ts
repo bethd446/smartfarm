@@ -24,6 +24,25 @@ export type Animal = {
   statut: 'actif' | 'vendu' | 'abattu' | 'mort' | 'reforme'
 }
 
+/**
+ * Sortie d'un animal (vente, abattage, réforme, transfert, etc.).
+ * La colonne SQL réelle s'appelle `acheteur` (et non `destination`).
+ */
+export type Departure = {
+  id: string
+  animal_id: string | null
+  bande_id: string | null
+  ferme_id: string
+  date_depart: string
+  motif: 'vente' | 'abattage' | 'reforme' | 'transfert' | 'autre'
+  nb_animaux: number | null
+  poids_total_kg: number | null
+  prix_kg: number | null
+  montant_total: number | null
+  acheteur: string | null
+  observations: string | null
+}
+
 export type Bande = {
   id: string
   ferme_id: string

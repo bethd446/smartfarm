@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Cachet Ivoire — Smart Farm — Cachet C v2.2 Truie au pied">
+  <!-- Cachet C v2-2 "Truie au pied" : silhouette truie latérale ~22px haut entre filet gold et bord bas, côtoie EST·2026 -->
+
+  <!-- Fond crème -->
+  <rect width="240" height="240" fill="#FFFBEB"/>
+
+  <!-- Octogone extérieur -->
+  <polygon
+    points="75.61,12.83 164.39,12.83 227.17,75.61 227.17,164.39 164.39,227.17 75.61,227.17 12.83,164.39 12.83,75.61"
+    fill="none" stroke="#2D4A1F" stroke-width="4" stroke-linejoin="miter"/>
+
+  <!-- Octogone intérieur -->
+  <polygon
+    points="83.27,20.49 156.73,20.49 219.51,83.27 219.51,156.73 156.73,219.51 83.27,219.51 20.49,156.73 20.49,83.27"
+    fill="none" stroke="#2D4A1F" stroke-width="1.5"/>
+
+  <!-- Monogramme SF central -->
+  <text x="120" y="142" text-anchor="middle"
+        font-family="'Big Shoulders Display', Impact, sans-serif"
+        font-weight="900" font-size="96" fill="#2D4A1F"
+        letter-spacing="4">SF</text>
+
+  <!-- Filets gold -->
+  <line x1="80" y1="62" x2="160" y2="62" stroke="#A16207" stroke-width="2"/>
+  <line x1="80" y1="178" x2="160" y2="178" stroke="#A16207" stroke-width="2"/>
+
+  <!-- Date à gauche -->
+  <text x="98" y="196" text-anchor="middle"
+        font-family="'Big Shoulders Display', Impact, sans-serif"
+        font-weight="700" font-size="11" fill="#2D4A1F"
+        letter-spacing="3">EST · 2026</text>
+
+  <!-- Truie au pied (à droite de la date), ~22px haut, pleine couleur vert sahel -->
+  <g fill="#2D4A1F" transform="translate(132,182) scale(0.30)">
+    <!-- Corps -->
+    <path d="M12,30
+             C10,18 20,10 36,9
+             C52,8 70,9 82,12
+             C92,14 96,18 96,24
+             L97,28
+             C99,28 101,30 101,32
+             C101,34 99,35 97,35
+             L96,38
+             C93,46 84,50 72,51
+             L70,58 L66,58 L66,52
+             C58,52 50,52 42,52
+             L42,58 L38,58 L36,52
+             C24,51 14,46 12,38 Z"/>
+    <!-- Oreille -->
+    <path d="M88,12 L96,6 L98,16 Z"/>
+    <!-- Museau -->
+    <circle cx="100" cy="30" r="3.5"/>
+    <!-- Œil -->
+    <circle cx="90" cy="22" r="1.6" fill="#FFFBEB"/>
+    <!-- Queue tire-bouchon -->
+    <path d="M12,28 C6,26 4,30 7,33 C10,36 6,38 4,36" fill="none" stroke="#2D4A1F" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- Point séparateur gold entre date et truie -->
+  <circle cx="120" cy="193" r="1.4" fill="#A16207"/>
+</svg>

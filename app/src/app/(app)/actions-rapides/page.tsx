@@ -13,14 +13,14 @@ type Action = {
 const ACTIONS: Action[] = [
   {
     href: '/mises-bas?quick=true',
-    label: 'Mise-bas',
+    label: 'Nouvelle mise bas',
     icon: Baby,
     classes: 'bg-violet-600 hover:bg-violet-700 focus-visible:ring-violet-400',
     hint: 'Enregistrer une portée',
   },
   {
     href: '/pesees?quick=true',
-    label: 'Pesée',
+    label: 'Peser',
     icon: Scale,
     classes: 'bg-indigo-600 hover:bg-indigo-700 focus-visible:ring-indigo-400',
     hint: 'Saisir un poids',
@@ -34,7 +34,7 @@ const ACTIONS: Action[] = [
   },
   {
     href: '/cheptel?quick=true',
-    label: 'Mouvement',
+    label: 'Déplacer',
     icon: ArrowRightLeft,
     classes: 'bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-emerald-400',
     hint: 'Transfert · Sortie',
@@ -48,7 +48,7 @@ export default function ActionsRapidesPage() {
         <Zap className="h-8 w-8 text-amber-500" />
         <div>
           <h1 className="text-3xl font-bold">Actions rapides</h1>
-          <p className="text-sm text-slate-500 mt-1">Saisie terrain en un geste — optimisé tactile gants.</p>
+          <p className="text-sm text-slate-500 mt-1">Saisie terrain en un geste — pensé pour les gants.</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default function ActionsRapidesPage() {
       </div>
 
       <p className="text-xs text-slate-500 text-center pt-4">
-        Astuce : ces 4 boutons sont conçus pour être actionnés avec des gants. Chaque action ouvre le formulaire pré-rempli en mode rapide.
+        Ces 4 boutons s'actionnent avec des gants. Chaque action ouvre le formulaire pré-rempli en mode rapide.
       </p>
     </div>
   )

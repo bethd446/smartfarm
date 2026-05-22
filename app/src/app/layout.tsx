@@ -1,19 +1,24 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
 import "./globals.css"
-
-const inter = Inter({ subsets: ["latin"] })
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
-  title: "Smart Farm — Gestion d'élevage porcin",
-  description: "Application de gestion complète d'élevage porcin : cheptel, reproduction, alimentation, sanitaire, stock.",
+  title: "Smart Farm — Gestion d'élevage · Côte d'Ivoire",
+  description: "Application de gestion technique de troupeau porcin pour éleveurs ivoiriens. Multi-fermes, offline-first, mobile.",
+  icons: {
+    icon: "/logo-smartfarm.svg",
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fr">
-      <body className={`${inter.className} antialiased bg-slate-50`}>
+      <head>
+        <link rel="icon" href="/logo-smartfarm.svg" type="image/svg+xml" />
+      </head>
+      <body className="antialiased bg-[var(--sf-surface-0)] text-[var(--sf-ink)]">
         {children}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   )

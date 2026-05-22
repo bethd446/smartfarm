@@ -1,9 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ExportButton } from '@/components/export-button'
 import { Package, Plus, AlertTriangle, ArrowDown, ArrowUp } from 'lucide-react'
+import {
+  DialogEntreeStock,
+  DialogSortieStock,
+  DialogNouvelleMatiere,
+} from './_dialogs-stock'
 
 export default async function StockPage() {
   const sb = await createClient()
@@ -12,6 +17,8 @@ export default async function StockPage() {
     sb.from('fournisseurs').select('*').order('nom'),
   ])
 
+  // NB : emoji conservés en exception DS pour ce contexte "stock matériel"
+  // (le brief permet cette dérogation au vocabulaire icônes Lucide).
   const typeIcons: any = {
     matiere_premiere: '🌾',
     aliment_fini: '🥄',
@@ -21,77 +28,219 @@ export default async function StockPage() {
     consommable: '📦',
   }
 
-  const totalValeur = (stocks ?? []).reduce((acc, s: any) => acc + (s.stock_actuel * (s.cout_moyen_unite ?? 0)), 0)
+  const totalValeur = (stocks ?? []).reduce(
+    (acc, s: any) => acc + (s.stock_actuel * (s.cout_moyen_unite ?? 0)),
+    0,
+  )
 
   return (
     <div className="space-y-6">
+      {/* === Header de page === */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><Package className="h-7 w-7 text-orange-600" />Stock & Intrants</h1>
-          <p className="text-sm text-slate-500 mt-1">Matières premières · Vaccins · Médicaments · Consommables</p>
+          <h1
+            className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
+            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          >
+            <Package className="h-8 w-8 text-[var(--sf-accent)]" />
+            Stock matériel
+          </h1>
+          <p
+            className="text-sm text-[var(--sf-muted)] mt-1"
+            style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+          >
+            Matières premières · Vaccins · Médicaments · Consommables
+          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <ExportButton table="matieres_premieres" />
-          <ExportButton table="mouvements_stock" label="Export mouvements" />
-          <Button variant="outline"><ArrowUp className="h-4 w-4 mr-2" />Entrée</Button>
-          <Button variant="outline"><ArrowDown className="h-4 w-4 mr-2" />Sortie</Button>
-          <Button className="bg-orange-600 hover:bg-orange-700"><Plus className="h-4 w-4 mr-2" />Article</Button>
+          <DialogEntreeStock
+            trigger={
+              <Button variant="outline" size="lg">
+                <ArrowUp className="h-5 w-5 mr-2" />
+                Entrée
+              </Button>
+            }
+            matieres={(stocks ?? []) as any}
+            fournisseurs={(fournisseurs ?? []) as any}
+          />
+          <DialogSortieStock
+            trigger={
+              <Button variant="outline" size="lg">
+                <ArrowDown className="h-5 w-5 mr-2" />
+                Sortie
+              </Button>
+            }
+            matieres={(stocks ?? []) as any}
+          />
+          <DialogNouvelleMatiere
+            trigger={
+              <Button variant="accent" size="lg">
+                <Plus className="h-5 w-5 mr-2" />
+                Nouveau matériel
+              </Button>
+            }
+          />
         </div>
       </div>
 
+      {/* === KPI Cards : Card patché (double-trait automatique) === */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card><CardContent className="p-5">
-          <div className="text-xs text-slate-500 uppercase">Articles en stock</div>
-          <div className="text-3xl font-bold mt-1">{stocks?.length ?? 0}</div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-xs text-slate-500 uppercase">Valeur stock</div>
-          <div className="text-3xl font-bold mt-1">{totalValeur.toLocaleString('fr-FR')} <span className="text-sm text-slate-500">FCFA</span></div>
-        </CardContent></Card>
-        <Card><CardContent className="p-5">
-          <div className="text-xs text-slate-500 uppercase">Fournisseurs</div>
-          <div className="text-3xl font-bold mt-1">{fournisseurs?.length ?? 0}</div>
-        </CardContent></Card>
+        <Card>
+          <CardContent>
+            <div
+              className="eyebrow text-[var(--sf-muted)]"
+              style={{
+                fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+              }}
+            >
+              Articles en stock
+            </div>
+            <div className="text-3xl font-bold mt-1 tabular-nums text-[var(--sf-ink)]">
+              {stocks?.length ?? 0}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <div
+              className="eyebrow text-[var(--sf-muted)]"
+              style={{
+                fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+              }}
+            >
+              Valeur stock
+            </div>
+            <div className="text-3xl font-bold mt-1 tabular-nums text-[var(--sf-ink)]">
+              {totalValeur.toLocaleString('fr-FR')}{' '}
+              <span className="text-sm text-[var(--sf-muted)] font-normal">FCFA</span>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <div
+              className="eyebrow text-[var(--sf-muted)]"
+              style={{
+                fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+              }}
+            >
+              Fournisseurs
+            </div>
+            <div className="text-3xl font-bold mt-1 tabular-nums text-[var(--sf-ink)]">
+              {fournisseurs?.length ?? 0}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Inventaire</CardTitle></CardHeader>
-        <CardContent>
+      {/* === Tableau inventaire : pattern carnet (eyebrow + wrapper double-trait) === */}
+      <div>
+        <div
+          className="eyebrow text-[var(--sf-muted)] mb-2"
+          style={{
+            fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+            fontSize: '11px',
+            textTransform: 'uppercase',
+            letterSpacing: '0.1em',
+          }}
+        >
+          Inventaire
+        </div>
+        <div
+          className="overflow-x-auto"
+          style={{
+            borderTop: 'var(--sf-rule-top, 4px solid var(--sf-primary, #2D4A1F))',
+            borderBottom: 'var(--sf-rule-bottom, 1px solid var(--sf-border, rgba(0,0,0,0.18)))',
+            borderLeft: 'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
+            borderRight: 'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
+            background: 'var(--sf-surface-1, #FFFFFF)',
+          }}
+        >
           <table className="w-full text-sm">
-            <thead className="border-b text-left text-xs uppercase text-slate-500">
+            <thead
+              className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
+              style={{
+                fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.1em',
+              }}
+            >
               <tr>
-                <th className="pb-3 pr-4">Article</th>
-                <th className="pb-3 pr-4">Type</th>
-                <th className="pb-3 pr-4">Stock</th>
-                <th className="pb-3 pr-4">Seuil alerte</th>
-                <th className="pb-3 pr-4">Coût unitaire</th>
-                <th className="pb-3 pr-4">Valeur</th>
+                <th className="py-3 px-4 font-semibold">Article</th>
+                <th className="py-3 px-4 font-semibold">Type</th>
+                <th className="py-3 px-4 font-semibold">Stock</th>
+                <th className="py-3 px-4 font-semibold">Seuil alerte</th>
+                <th className="py-3 px-4 font-semibold">Coût unitaire</th>
+                <th className="py-3 px-4 font-semibold">Valeur</th>
               </tr>
             </thead>
             <tbody>
               {(stocks ?? []).map((s: any) => {
                 const alerte = s.seuil_alerte && s.stock_actuel < s.seuil_alerte
                 return (
-                  <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50">
-                    <td className="py-3 pr-4">
+                  <tr
+                    key={s.id}
+                    className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
+                  >
+                    <td className="py-3 px-4">
                       <div className="flex items-center gap-2">
-                        <span>{typeIcons[s.type] ?? '📦'}</span>
-                        <span className="font-medium">{s.nom}</span>
-                        {alerte && <AlertTriangle className="h-3.5 w-3.5 text-red-500" />}
+                        <span aria-hidden>{typeIcons[s.type] ?? '📦'}</span>
+                        <span className="font-medium text-[var(--sf-ink)]">{s.nom}</span>
+                        {alerte && (
+                          <AlertTriangle className="h-3.5 w-3.5 text-[var(--sf-danger-ink,#7A2A1F)]" />
+                        )}
                       </div>
                     </td>
-                    <td className="py-3 pr-4"><Badge variant="outline" className="capitalize text-xs">{s.type.replace('_',' ')}</Badge></td>
-                    <td className={`py-3 pr-4 font-mono font-bold ${alerte ? 'text-red-600' : 'text-slate-900'}`}>{s.stock_actuel} {s.unite}</td>
-                    <td className="py-3 pr-4 font-mono text-slate-500">{s.seuil_alerte ?? '—'} {s.unite}</td>
-                    <td className="py-3 pr-4 font-mono">{s.cout_moyen_unite?.toLocaleString('fr-FR') ?? '—'} FCFA</td>
-                    <td className="py-3 pr-4 font-mono font-bold">{(s.stock_actuel * (s.cout_moyen_unite ?? 0)).toLocaleString('fr-FR')} FCFA</td>
+                    <td className="py-3 px-4">
+                      <Badge variant="outline" className="capitalize">
+                        {s.type.replace('_', ' ')}
+                      </Badge>
+                    </td>
+                    <td className="py-3 px-4">
+                      {alerte ? (
+                        <Badge variant="danger">
+                          {s.stock_actuel} {s.unite}
+                        </Badge>
+                      ) : (
+                        <span className="font-mono font-bold tabular-nums text-[var(--sf-ink)]">
+                          {s.stock_actuel} {s.unite}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3 px-4 font-mono tabular-nums text-[var(--sf-muted)]">
+                      {s.seuil_alerte ?? '—'} {s.unite}
+                    </td>
+                    <td className="py-3 px-4 font-mono tabular-nums text-[var(--sf-ink)]">
+                      {s.cout_moyen_unite?.toLocaleString('fr-FR') ?? '—'} FCFA
+                    </td>
+                    <td className="py-3 px-4 font-mono font-bold tabular-nums text-[var(--sf-ink)]">
+                      {(s.stock_actuel * (s.cout_moyen_unite ?? 0)).toLocaleString('fr-FR')} FCFA
+                    </td>
                   </tr>
                 )
               })}
+              {(!stocks || stocks.length === 0) && (
+                <tr>
+                  <td colSpan={6} className="py-6 text-center text-[var(--sf-muted)]">
+                    Aucun article en stock.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

@@ -26,7 +26,7 @@ export default async function BandesPage() {
         </div>
         <div className="flex gap-2">
           <ExportButton table="bandes" />
-          <Button className="bg-amber-600 hover:bg-amber-700"><Plus className="h-4 w-4 mr-2" />Nouvelle bande</Button>
+          <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700"><Plus className="h-5 w-5 mr-2" />Nouvelle bande</Button>
         </div>
       </div>
 

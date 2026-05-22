@@ -2,12 +2,30 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Smart Farm — Textarea (atome « field underline multi-ligne » v3.2)
+ * -------------------------------------------------------------------------
+ * - pas de border (sauf bas), pas de border-radius
+ * - border-bottom 2 px solid ink, focus → primary
+ * - background transparent
+ * - field-sizing-content : la zone grandit avec le contenu
+ * - font-size 16 px (évite zoom iOS)
+ */
 function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
   return (
     <textarea
       data-slot="textarea"
       className={cn(
-        "flex field-sizing-content min-h-16 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        "flex field-sizing-content w-full bg-transparent outline-none transition-colors",
+        "rounded-none border-0",
+        "border-b-2 border-[var(--sf-ink,#1a1a1a)]",
+        // taille minimum confortable (3 lignes ~ 5rem)
+        "min-h-20 px-0 py-2 text-base text-[var(--sf-ink,#1a1a1a)]",
+        "placeholder:text-[var(--sf-muted,#5C5346)]",
+        "focus:border-b-[var(--sf-primary,#2D4A1F)]",
+        "focus-visible:border-b-[var(--sf-primary,#2D4A1F)]",
+        "aria-invalid:border-b-[var(--sf-danger-ink,#7A2A1F)]",
+        "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}

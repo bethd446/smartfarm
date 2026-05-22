@@ -10,7 +10,9 @@ interface ExportButtonProps {
 
 export function ExportButton({ table, label = 'Exporter CSV' }: ExportButtonProps) {
   const handleClick = () => {
-    window.open(`/api/export/${table}`, '_blank', 'noopener,noreferrer')
+    const token = process.env.NEXT_PUBLIC_DEMO_API_TOKEN ?? ''
+    const qs = token ? `?token=${encodeURIComponent(token)}` : ''
+    window.open(`/api/export/${table}${qs}`, '_blank', 'noopener,noreferrer')
   }
   return (
     <Button variant="outline" onClick={handleClick}>

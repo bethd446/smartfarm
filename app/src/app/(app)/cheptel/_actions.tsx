@@ -6,8 +6,13 @@ import { Plus, ScanLine } from 'lucide-react'
 import { BarcodeScanner } from '@/components/barcode-scanner'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { DialogNouvelAnimal } from './_dialog-nouvel-animal'
 
-export function CheptelActions() {
+export function CheptelActions({
+  races = [],
+}: {
+  races?: { id: string; nom: string }[]
+}) {
   const [open, setOpen] = useState(false)
 
   async function handleScan(code: string) {
@@ -42,10 +47,15 @@ export function CheptelActions() {
         <ScanLine className="h-5 w-5 mr-2" />
         Scanner
       </Button>
-      <Button size="lg" className="h-12 text-base bg-emerald-600 hover:bg-emerald-700">
-        <Plus className="h-5 w-5 mr-2" />
-        Nouvel animal
-      </Button>
+      <DialogNouvelAnimal
+        races={races}
+        trigger={
+          <Button size="lg" className="h-12 text-base">
+            <Plus className="h-5 w-5 mr-2" />
+            Nouvel animal
+          </Button>
+        }
+      />
       <BarcodeScanner open={open} onOpenChange={setOpen} onScan={handleScan} />
     </div>
   )

@@ -1,75 +1,144 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
 import { PiggyBank } from 'lucide-react'
 import { CheptelActions } from './_actions'
-import { SEM_COLORS, toneTruie } from '@/lib/colors'
+import { CheptelRow, CheptelRowActions } from './_row-actions'
+import { toneTruie } from '@/lib/colors'
+import { categorieLabel } from '@/lib/terrain-labels'
+
+export const metadata: Metadata = {
+  title: 'Cheptel — Smart Farm',
+}
+
+/** Mapping ton sémantique → variante Badge atome carnet. */
+const TONE_TO_VARIANT = {
+  nominal: 'success',
+  attendu: 'warning',
+  urgence: 'danger',
+  neutre: 'secondary',
+} as const
 
 export default async function CheptelPage() {
   const sb = await createClient()
-  const { data: animaux } = await sb
-    .from('animaux')
-    .select('*, races(nom)')
-    .order('tag')
+  const [{ data: animaux }, { data: races }] = await Promise.all([
+    sb.from('animaux').select('*, races(nom)').order('tag'),
+    sb.from('races').select('id, nom').order('nom'),
+  ])
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* === Header de page : H1 Big Shoulders 36px + sous-titre Instrument Sans 14px === */}
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><PiggyBank className="h-7 w-7 text-emerald-600" />Cheptel</h1>
-          <p className="text-sm text-slate-500 mt-1">{animaux?.length ?? 0} animaux enregistrés</p>
+          <h1
+            className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
+            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          >
+            <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
+            Cheptel
+          </h1>
+          <p
+            className="text-sm text-[var(--sf-muted)] mt-1"
+            style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+          >
+            {animaux?.length ?? 0} animaux sur la ferme
+          </p>
         </div>
-        <CheptelActions />
+        <CheptelActions races={races ?? []} />
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Liste des animaux</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b text-left text-xs uppercase tracking-wider text-slate-500">
-                <tr>
-                  <th className="pb-3 pr-4">Tag</th>
-                  <th className="pb-3 pr-4">Nom</th>
-                  <th className="pb-3 pr-4">Sexe</th>
-                  <th className="pb-3 pr-4">Catégorie</th>
-                  <th className="pb-3 pr-4">Race</th>
-                  <th className="pb-3 pr-4">Naissance</th>
-                  <th className="pb-3 pr-4">Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(animaux ?? []).map((a: any) => {
-                  const tone = toneTruie(a.rang_porte, a.statut)
-                  const sem = SEM_COLORS[tone]
-                  return (
-                    <tr key={a.id} className="border-b border-slate-100 hover:bg-slate-50">
-                      <td className="py-3 pr-4 font-mono font-bold text-slate-900">{a.tag}</td>
-                      <td className="py-3 pr-4">{a.nom ?? '—'}</td>
-                      <td className="py-3 pr-4">
-                        <Badge variant={a.sexe === 'M' ? 'default' : 'secondary'} className={a.sexe === 'M' ? 'bg-blue-100 text-blue-700 hover:bg-blue-100' : 'bg-pink-100 text-pink-700 hover:bg-pink-100'}>
-                          {a.sexe === 'M' ? '♂ Mâle' : '♀ Femelle'}
-                        </Badge>
-                      </td>
-                      <td className="py-3 pr-4 capitalize">{a.categorie}</td>
-                      <td className="py-3 pr-4">{a.races?.nom ?? '—'}</td>
-                      <td className="py-3 pr-4 text-slate-600">{a.date_naissance ? new Date(a.date_naissance).toLocaleDateString('fr-FR') : '—'}</td>
-                      <td className="py-3 pr-4">
-                        <Badge variant="outline" className={sem.badge}>
-                          {a.statut}
-                          {tone === 'attendu' && a.statut === 'actif' ? ' · à réformer' : ''}
-                        </Badge>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+      {/* === Tableau carnet : pas de Card englobante (cf. brief Vague 3) === */}
+      {(animaux ?? []).length === 0 ? (
+        <EmptyState
+          icon={PiggyBank}
+          title="Le cheptel est vide"
+          description="Aucun animal n'est encore enregistré sur la ferme. Ajoute ta première truie, ton premier verrat ou ta première cochette pour commencer."
+        />
+      ) : (
+      <section aria-labelledby="cheptel-liste-titre">
+        <h2
+          id="cheptel-liste-titre"
+          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-3"
+        >
+          Liste des animaux
+        </h2>
+        <h3
+          className="font-[family-name:var(--sf-font-display)] text-sm uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-2"
+        >
+          Truies, verrats et cochettes enregistrés
+        </h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
+          <thead
+            className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
+            style={{
+              fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}
+          >
+            <tr>
+              <th className="py-3 pr-4 font-semibold">Tag</th>
+              <th className="py-3 pr-4 font-semibold">Nom</th>
+              <th className="py-3 pr-4 font-semibold">Sexe</th>
+              <th className="py-3 pr-4 font-semibold">Catégorie</th>
+              <th className="py-3 pr-4 font-semibold">Race</th>
+              <th className="py-3 pr-4 font-semibold">Naissance</th>
+              <th className="py-3 pr-4 font-semibold">Statut</th>
+              <th className="py-3 pr-4 font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(animaux ?? []).map((a: any) => {
+              const tone = toneTruie(a.rang_porte, a.statut)
+              const aSortir = tone === 'attendu' && a.statut === 'actif'
+              const statutVariant = aSortir ? 'warning' : TONE_TO_VARIANT[tone]
+              return (
+                <CheptelRow
+                  key={a.id}
+                  animalId={a.id}
+                  className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
+                >
+                  <td className="py-3 pr-4 font-mono font-bold text-[var(--sf-ink)] tabular-nums">
+                    {a.tag}
+                  </td>
+                  <td className="py-3 pr-4 text-[var(--sf-ink)]">{a.nom ?? '—'}</td>
+                  <td className="py-3 pr-4">
+                    <Badge variant={a.sexe === 'M' ? 'outline' : 'secondary'}>
+                      {a.sexe === 'M' ? '♂ Mâle' : '♀ Femelle'}
+                    </Badge>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <Badge variant="outline" className="capitalize">
+                      {a.categorie}
+                    </Badge>
+                  </td>
+                  <td className="py-3 pr-4 text-[var(--sf-ink-soft)]">{a.races?.nom ?? '—'}</td>
+                  <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
+                    {a.date_naissance
+                      ? new Date(a.date_naissance).toLocaleDateString('fr-FR')
+                      : '—'}
+                  </td>
+                  <td className="py-3 pr-4">
+                    <Badge variant={statutVariant}>
+                      {a.statut}
+                      {aSortir ? ' · à sortir' : ''}
+                    </Badge>
+                  </td>
+                  <td className="py-3 pr-4">
+                    <CheptelRowActions animalId={a.id} animalTag={a.tag} />
+                  </td>
+                </CheptelRow>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      </section>
+      )}
     </div>
   )
 }

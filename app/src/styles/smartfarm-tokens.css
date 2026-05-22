@@ -1,0 +1,464 @@
+/* =====================================================================
+   Smart Farm — Terrain Vivant — Tokens V3 (a11y + 3 themes)
+   ---------------------------------------------------------------------
+   THEMES :
+     :root                 → light (defaut)
+     :root[data-theme="dark"]    → dark (toggle manuel)
+     :root[data-theme="outdoor"] → contraste pousse plein soleil
+   Auto-dark via prefers-color-scheme: dark, sans data-theme.
+   ===================================================================== */
+
+/* ----- Fonts (self-hosted from /fonts) ----- */
+@font-face {
+  font-family: "Big Shoulders Display";
+  src: url("/fonts/BigShoulders-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  src: url("/fonts/BigShoulders-Bold.woff2") format("woff2");
+  font-weight: 700 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Regular.woff2") format("woff2");
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Bold.woff2") format("woff2");
+  font-weight: 600 700; font-style: normal; font-display: swap;
+}
+
+/* =====================================================================
+   LIGHT THEME (default)
+   ===================================================================== */
+:root {
+  /* === BRAND === */
+  --sf-primary:        #2D4A1F;
+  --sf-primary-deep:   #1f3414;
+  --sf-primary-light:  #4a7a2f;
+  --sf-on-primary:     #FFFFFF;
+
+  --sf-accent:         #B8703D;
+  --sf-accent-light:   #D89968;
+  --sf-accent-deep:    #8B5028;
+  --sf-on-accent:      #FFFFFF;
+
+  --sf-warm:           #F5E9D8;
+  --sf-warm-deep:      #E8D5B5;
+
+  /* === SURFACES (4 niveaux d'elevation) === */
+  --sf-surface-0:      #FAF7F0;  /* app background  · z0 */
+  --sf-surface-1:      #FFFFFF;  /* card surface    · z1 */
+  --sf-surface-2:      #F1ECE0;  /* elevated warm   · z2 */
+  --sf-surface-3:      #FFFFFF;  /* modal / sheet   · z3 — same fill + shadow */
+
+  /* Tokens nommés (back-compat) */
+  --sf-bg:             var(--sf-surface-1);
+  --sf-bg-app:         var(--sf-surface-0);
+  --sf-bg-warm:        var(--sf-surface-0);
+  --sf-bg-warm-deep:   var(--sf-surface-2);
+
+  /* === INK === */
+  --sf-ink:            #1a1a1a;  /* primary text — contrast 14.8:1 on #FAF7F0 */
+  --sf-ink-soft:       #3A3A3A;
+  --sf-muted:          #5C5346;  /* secondary text — contrast 7.1:1 on #FAF7F0 (bumped from #6b6357) */
+  --sf-subtle:         #8A7E6E;  /* tertiary / disabled — contrast 4.6:1 on #FAF7F0 (bumped from #a39888) */
+
+  /* === BORDER === */
+  --sf-border-subtle:  rgba(26,26,26,0.10);   /* card hairline */
+  --sf-border:         rgba(26,26,26,0.18);   /* input border */
+  --sf-border-strong:  rgba(26,26,26,0.32);   /* divider, secondary button */
+  --sf-line:           var(--sf-border-subtle);
+  --sf-line-strong:    var(--sf-border);
+
+  /* === SEMANTIC (text-on-bg & bg-pale variants) === */
+  --sf-success:        #3A6324;
+  --sf-success-bg:     #DCE9CB;
+  --sf-success-ink:    #1F3414;
+
+  --sf-warning:        #9B6B22;
+  --sf-warning-bg:     #FBE7C4;
+  --sf-warning-ink:    #5C3E11;
+
+  --sf-danger:         #8C3A33;
+  --sf-danger-bg:      #F4CCC8;
+  --sf-danger-ink:     #5A1F19;
+  --sf-danger-hover:   #7A2F29;
+
+  --sf-info:           #3E5E78;
+  --sf-info-bg:        #CDD9E3;
+  --sf-info-ink:       #1F3344;
+
+  /* === ENTITY AVATARS (4 species — bg + fg pairs, AA) === */
+  --sf-truie-bg:       #F0CBCB;  --sf-truie-fg:       #6E2D2A;
+  --sf-verrat-bg:      #BFD0E0;  --sf-verrat-fg:      #213A50;
+  --sf-porcelet-bg:    #F0E0C4;  --sf-porcelet-fg:    #6D5226;
+  --sf-bande-bg:       #CDDABF;  --sf-bande-fg:       #2A4519;
+
+  /* === ROLES TEAM === */
+  --sf-role-owner-bg:  #cce0bf;  --sf-role-owner-fg:  #1f3414;
+  --sf-role-admin-bg:  #f4dcb6;  --sf-role-admin-fg:  #5C3E11;
+  --sf-role-porcher-bg: rgba(184,112,61,0.18); --sf-role-porcher-fg: #5C3E11;
+
+  /* === FOCUS RING (a11y AA) === */
+  --sf-focus-ring:     0 0 0 3px rgba(45,74,31,0.45);
+  --sf-focus-color:    var(--sf-primary);
+
+  /* === TYPOGRAPHY === */
+  --sf-font-display: "Big Shoulders Display", "Big Shoulders", "Arial Narrow", sans-serif;
+  --sf-font-body:    "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sf-font-mono:    "Instrument Sans", system-ui, sans-serif;
+
+  /* Type scale — 8 steps, no invention allowed */
+  --sf-font-size-display: 40px;  /* page hero, KPI giant */
+  --sf-font-size-h2:      24px;  /* section headline */
+  --sf-font-size-h3:      20px;  /* card title */
+  --sf-font-size-body:    16px;  /* RUNNING TEXT — a11y minimum mobile */
+  --sf-font-size-body-dense: 14px; /* DENSE views only — DataTable, list dense variant. NEVER for paragraphs. */
+  --sf-font-size-caption: 14px;  /* sub-info, helper */
+  --sf-font-size-label:   11px;  /* eyebrow, badge — v3.2 push 12→11 for atelier feel */
+  --sf-font-size-nav:     11px;  /* bottom nav UPPERCASE */
+  --sf-font-size-tiny:    10px;  /* count badge — non-essential only */
+
+  /* === SPACING (4-step, no magic numbers) === */
+  --sf-space-xxs:  2px;
+  --sf-space-xs:   4px;
+  --sf-space-sm:   8px;
+  --sf-space-md:  12px;
+  --sf-space-lg:  16px;
+  --sf-space-xl:  24px;
+  --sf-space-2xl: 32px;
+  --sf-space-3xl: 48px;
+
+  /* === RADIUS — v3.2 bordereau =================================
+     sm 4 px  → tampons / btn / FAB / card-hero corner cut
+     md 8 px  → media tiles / images / chips contextuelles
+     lg 0     → cards canoniques (en-tete cahier, pas de coin)
+     xl 12 px → modal / sheet (douce)
+     full     → pills SEULEMENT — signature badge
+     ============================================================= */
+  --sf-radius-sm:    4px;
+  --sf-radius-md:    8px;
+  --sf-radius-lg:    0px;   /* cards = carnet d'élevage, pas de coin */
+  --sf-radius-xl:   12px;
+  --sf-radius-full: 999px;
+
+  /* === ELEVATION (4 levels max) — v3.2 flatter, line-strong instead of soft shadow ===
+     0  : aucun                       — cards canoniques, pas de lévitation
+     1  : 0 2px 0 line-strong         — hairline dégradé, pas de blur SaaS
+     2  : 0 4px 12px ink/8 %           — pour FAB / cards détachées
+     3  : 0 12px 32px ink/16 %         — modales
+     ============================================================ */
+  --sf-elevation-0: none;
+  --sf-elevation-1: 0 2px 0 rgba(26,26,26,0.18);
+  --sf-elevation-2: 0 4px 12px rgba(17,24,39,0.10), 0 1px 0 rgba(26,26,26,0.16);
+  --sf-elevation-3: 0 12px 32px rgba(17,24,39,0.16), 0 4px 12px rgba(17,24,39,0.08);
+  /* Aliases */
+  --sf-shadow-subtle: var(--sf-elevation-1);
+  --sf-shadow-card:   var(--sf-elevation-2);
+  --sf-shadow-modal:  var(--sf-elevation-3);
+
+  /* === MOTION === */
+  --sf-ease:        cubic-bezier(.2,.7,.2,1);
+  --sf-dur-fast:    160ms;
+  --sf-dur:         200ms;
+  --sf-dur-slow:    280ms;
+
+  /* === TOUCH (gants → 48 px minimum, Android terrain) === */
+  --sf-touch-min:   48px;
+
+  /* === Z-INDEX === */
+  --sf-z-nav:       100;
+  --sf-z-fab:       200;
+  --sf-z-toast:     300;
+  --sf-z-modal:     400;
+  --sf-z-sheet:     500;
+
+  /* === v3.2 BORDEREAU TOKENS ================================
+     Atomes signature « carnet d'élevage ». À utiliser depuis le
+     CSS produit — ne pas inventer de nouveaux border-* ailleurs. */
+  --sf-rule-top:     4px solid var(--sf-primary);    /* en-tête cahier */
+  --sf-rule-bottom:  1px solid var(--sf-border);     /* bas de bordereau */
+  --sf-rule-side:    1px solid var(--sf-line);       /* flancs sobres */
+  --sf-stamp-ring:   inset 0 0 0 3px var(--sf-primary), inset 0 0 0 4px rgba(255,255,255,0.88);
+  --sf-stamp-ring-accent: inset 0 0 0 3px var(--sf-accent), inset 0 0 0 4px rgba(255,255,255,0.88);
+  --sf-stamp-press:  inset 0 2px 6px rgba(0,0,0,0.32);
+}
+
+/* =====================================================================
+   DARK THEME — manual toggle OR system pref
+   ===================================================================== */
+:root[data-theme="dark"],
+:root:not([data-theme]) {
+  /* No-op block — selectors below define dark only when data-theme=dark
+     OR when (no data-theme AND prefers-color-scheme: dark). The
+     auto-dark rule is in the media query below. */
+}
+
+:root[data-theme="dark"] {
+  --sf-primary:        #7BA853;
+  --sf-primary-deep:   #5E8D3D;
+  --sf-primary-light:  #98C56F;
+  --sf-on-primary:     #0d0c09;
+
+  --sf-accent:         #E2A572;
+  --sf-accent-light:   #F0BD8E;
+  --sf-accent-deep:    #C58450;
+  --sf-on-accent:      #0d0c09;
+
+  --sf-warm:           #2a241c;
+  --sf-warm-deep:      #3a3225;
+
+  --sf-surface-0:      #0d0c09;
+  --sf-surface-1:      #1b1812;
+  --sf-surface-2:      #25201a;
+  --sf-surface-3:      #2e2820;
+
+  --sf-bg:             var(--sf-surface-1);
+  --sf-bg-app:         var(--sf-surface-0);
+  --sf-bg-warm:        var(--sf-surface-0);
+  --sf-bg-warm-deep:   var(--sf-surface-2);
+
+  --sf-ink:            #F6F1E5;   /* 14.6:1 on surface-0 */
+  --sf-ink-soft:       #DDD6C6;
+  --sf-muted:          #B5A992;   /* 7.6:1 on surface-0 */
+  --sf-subtle:         #847866;   /* 4.7:1 on surface-0 */
+
+  --sf-border-subtle:  rgba(246,241,229,0.10);
+  --sf-border:         rgba(246,241,229,0.20);
+  --sf-border-strong:  rgba(246,241,229,0.35);
+  --sf-line:           var(--sf-border-subtle);
+  --sf-line-strong:    var(--sf-border);
+
+  --sf-success:        #98C56F;
+  --sf-success-bg:     rgba(123,168,83,0.22);
+  --sf-success-ink:    #B7DA8E;
+
+  --sf-warning:        #E0AA5A;
+  --sf-warning-bg:     rgba(224,170,90,0.20);
+  --sf-warning-ink:    #F0C281;
+
+  --sf-danger:         #D87262;
+  --sf-danger-bg:      rgba(216,114,98,0.22);
+  --sf-danger-ink:     #ED9789;
+  --sf-danger-hover:   #C45A4A;
+
+  --sf-info:           #82A1BE;
+  --sf-info-bg:        rgba(130,161,190,0.22);
+  --sf-info-ink:       #A5BDD3;
+
+  /* Entity avatars: darker bg + brighter fg for dark mode */
+  --sf-truie-bg:       #4E2725;  --sf-truie-fg:       #F0CBCB;
+  --sf-verrat-bg:      #213A50;  --sf-verrat-fg:      #BFD0E0;
+  --sf-porcelet-bg:    #4A381E;  --sf-porcelet-fg:    #F0E0C4;
+  --sf-bande-bg:       #2A4519;  --sf-bande-fg:       #CDDABF;
+
+  --sf-role-owner-bg:  rgba(123,168,83,0.22);  --sf-role-owner-fg:  #B7DA8E;
+  --sf-role-admin-bg:  rgba(224,170,90,0.22);  --sf-role-admin-fg:  #F0C281;
+  --sf-role-porcher-bg: rgba(226,165,114,0.22); --sf-role-porcher-fg: #F0BD8E;
+
+  --sf-focus-ring:     0 0 0 3px rgba(123,168,83,0.55);
+  --sf-focus-color:    var(--sf-primary);
+
+  --sf-elevation-1: 0 2px 0 rgba(246,241,229,0.18);
+  --sf-elevation-2: 0 4px 12px rgba(0,0,0,0.40), 0 1px 0 rgba(246,241,229,0.20);
+  --sf-elevation-3: 0 12px 32px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.35);
+}
+
+/* Auto-dark when no data-theme attr is set AND user prefers dark */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --sf-primary:        #7BA853;
+    --sf-primary-deep:   #5E8D3D;
+    --sf-primary-light:  #98C56F;
+    --sf-on-primary:     #0d0c09;
+    --sf-accent:         #E2A572;
+    --sf-accent-light:   #F0BD8E;
+    --sf-accent-deep:    #C58450;
+    --sf-on-accent:      #0d0c09;
+    --sf-warm:           #2a241c;
+    --sf-warm-deep:      #3a3225;
+    --sf-surface-0:      #0d0c09;
+    --sf-surface-1:      #1b1812;
+    --sf-surface-2:      #25201a;
+    --sf-surface-3:      #2e2820;
+    --sf-bg:             var(--sf-surface-1);
+    --sf-bg-app:         var(--sf-surface-0);
+    --sf-bg-warm:        var(--sf-surface-0);
+    --sf-bg-warm-deep:   var(--sf-surface-2);
+    --sf-ink:            #F6F1E5;
+    --sf-ink-soft:       #DDD6C6;
+    --sf-muted:          #B5A992;
+    --sf-subtle:         #847866;
+    --sf-border-subtle:  rgba(246,241,229,0.10);
+    --sf-border:         rgba(246,241,229,0.20);
+    --sf-border-strong:  rgba(246,241,229,0.35);
+    --sf-line:           var(--sf-border-subtle);
+    --sf-line-strong:    var(--sf-border);
+    --sf-success:        #98C56F;
+    --sf-success-bg:     rgba(123,168,83,0.22);
+    --sf-success-ink:    #B7DA8E;
+    --sf-warning:        #E0AA5A;
+    --sf-warning-bg:     rgba(224,170,90,0.20);
+    --sf-warning-ink:    #F0C281;
+    --sf-danger:         #D87262;
+    --sf-danger-bg:      rgba(216,114,98,0.22);
+    --sf-danger-ink:     #ED9789;
+    --sf-danger-hover:   #C45A4A;
+    --sf-info:           #82A1BE;
+    --sf-info-bg:        rgba(130,161,190,0.22);
+    --sf-info-ink:       #A5BDD3;
+    --sf-truie-bg:       #4E2725;  --sf-truie-fg:       #F0CBCB;
+    --sf-verrat-bg:      #213A50;  --sf-verrat-fg:      #BFD0E0;
+    --sf-porcelet-bg:    #4A381E;  --sf-porcelet-fg:    #F0E0C4;
+    --sf-bande-bg:       #2A4519;  --sf-bande-fg:       #CDDABF;
+    --sf-role-owner-bg:  rgba(123,168,83,0.22);  --sf-role-owner-fg:  #B7DA8E;
+    --sf-role-admin-bg:  rgba(224,170,90,0.22);  --sf-role-admin-fg:  #F0C281;
+    --sf-role-porcher-bg: rgba(226,165,114,0.22); --sf-role-porcher-fg: #F0BD8E;
+    --sf-focus-ring:     0 0 0 3px rgba(123,168,83,0.55);
+    --sf-elevation-1: 0 2px 0 rgba(246,241,229,0.18);
+    --sf-elevation-2: 0 4px 12px rgba(0,0,0,0.40), 0 1px 0 rgba(246,241,229,0.20);
+    --sf-elevation-3: 0 12px 32px rgba(0,0,0,0.50), 0 4px 12px rgba(0,0,0,0.35);
+  }
+}
+
+/* =====================================================================
+   OUTDOOR THEME — palette poussée plein soleil
+   Identique au light mais contraste 7:1+ partout, primary plus sombre,
+   borders renforcés. Activable via data-theme="outdoor".
+   ===================================================================== */
+:root[data-theme="outdoor"] {
+  --sf-primary:        #1F3414;
+  --sf-primary-deep:   #142109;
+  --sf-primary-light:  #2D4A1F;
+
+  --sf-accent:         #8B5028;
+  --sf-accent-deep:    #5E351A;
+
+  --sf-ink:            #0A0A0A;
+  --sf-muted:          #3A3325;
+  --sf-subtle:         #6B6357;
+
+  --sf-border-subtle:  rgba(10,10,10,0.18);
+  --sf-border:         rgba(10,10,10,0.32);
+  --sf-border-strong:  rgba(10,10,10,0.50);
+  --sf-line:           var(--sf-border-subtle);
+  --sf-line-strong:    var(--sf-border);
+
+  --sf-success:        #1F3414;
+  --sf-warning:        #6B4910;
+  --sf-danger:         #6B1D18;
+  --sf-info:           #1F3344;
+
+  --sf-focus-ring:     0 0 0 4px rgba(31,52,20,0.65);
+}
+
+/* =====================================================================
+   BASE — element styles using tokens (no magic numbers anywhere)
+   ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-body);
+  line-height: 1.5;
+  color: var(--sf-ink);
+  background: var(--sf-surface-0);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display — page hero */
+.pt-display, h1.pt-h1 {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-font-size-display);
+  font-weight: 900; line-height: 1; letter-spacing: -0.02em;
+  text-transform: uppercase; color: var(--sf-ink); margin: 0;
+}
+/* Headline — section title */
+.pt-headline, h2.pt-h2 {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-font-size-h2);
+  font-weight: 700; line-height: 1.05; letter-spacing: -0.01em;
+  color: var(--sf-ink); margin: 0;
+}
+/* Title — card title */
+.pt-title, h3.pt-h3 {
+  font-family: var(--sf-font-display);
+  font-size: var(--sf-font-size-h3);
+  font-weight: 700; line-height: 1.1;
+  color: var(--sf-ink); margin: 0;
+}
+/* Body — RUNNING TEXT at 16px */
+.pt-text, p.pt-p {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-body);
+  font-weight: 400; line-height: 1.5;
+  color: var(--sf-ink); margin: 0;
+}
+/* Caption */
+.pt-caption {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-caption);
+  font-weight: 500; line-height: 1.4;
+  color: var(--sf-muted);
+}
+/* Label / eyebrow / badge — v3.2 tracking ouvert 0.08em pour rythme imprimerie */
+.pt-label {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-label);
+  font-weight: 700; line-height: 1.2;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--sf-muted);
+}
+/* Nav UPPERCASE */
+.pt-nav-label {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-nav);
+  font-weight: 600; line-height: 1.2;
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+/* Tiny */
+.pt-tiny {
+  font-family: var(--sf-font-body);
+  font-size: var(--sf-font-size-tiny);
+  font-weight: 600;
+}
+
+/* Tabular numbers everywhere */
+.pt-values, .pt-code, .ft-values, .ft-code {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* A11y — focus ring on every interactive element */
+:focus { outline: none; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible, [role="button"]:focus-visible {
+  outline: none;
+  box-shadow: var(--sf-focus-ring);
+  border-radius: var(--sf-radius-sm);
+}
+
+/* A11y — respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* === v3.2 — Atomes carnet d'élevage === */
+:root {
+  --sf-rule-top:       4px solid var(--sf-primary);
+  --sf-rule-bottom:    1px solid var(--sf-border);
+  --sf-rule-side:      1px solid var(--sf-line);
+  --sf-stamp-ring:     inset 0 0 0 3px var(--sf-primary), inset 0 0 0 4px rgba(255,255,255,0.88);
+  --sf-stamp-ring-accent: inset 0 0 0 3px var(--sf-accent), inset 0 0 0 4px rgba(255,255,255,0.88);
+  --sf-stamp-press:    inset 0 2px 6px rgba(0,0,0,0.32);
+}

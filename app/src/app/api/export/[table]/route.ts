@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { requireApiToken } from '@/lib/api-auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,9 +42,12 @@ function toCSV(rows: Record<string, unknown>[]): string {
 }
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ table: string }> },
 ) {
+  const guard = requireApiToken(req)
+  if (guard) return guard
+
   const { table } = await params
 
   if (!ALLOWED_TABLES.has(table)) {

@@ -1,8 +1,22 @@
+@import '../styles/smartfarm-tokens.css';
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* === Smart Farm — Terrain Vivant : @theme DS-aligned === */
+@theme {
+  --font-family: 'Instrument Sans', system-ui, sans-serif;
+  --font-family-display: 'Big Shoulders Display', system-ui, sans-serif;
+  --color-primary: #2D4A1F;
+  --color-accent: #B8703D;
+  --color-surface: #FAF7F0;
+  --color-ink: #1a1a1a;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 0;
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -81,6 +95,60 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* === Smart Farm "Terre & Mil" — Tokens B1 (mai 2026) ===
+   * Source : /tmp/b1-palette/tokens.css · WCAG 10/10 paires AA+ validées
+   * Stratégie : tokens additifs, préservent --sf-primary/--sf-ink existants. */
+
+  /* Primitives Sahel (vert) */
+  --sahel-900: #14532D;
+  --sahel-700: #2D4A1F;
+  --sahel-500: #4A7C23;
+  /* Primitives Or (mil mûr — NOUVEAU accent chaud) */
+  --gold-600: #A16207;
+  --gold-400: #CA8A04;
+  /* Primitives Latérite (brique CI — NOUVEAU accent terroir) */
+  --laterite-700: #9A3412;
+  --laterite-500: #DC2626;
+  /* Primitives Mil (crème chaude) */
+  --mil-50: #FFFBEB;
+  --mil-100: #FEF3C7;
+  /* Primitives Terre (encre/neutres) */
+  --terre-900: #1C1917;
+  --terre-700: #44403C;
+  --terre-200: #E7E5E4;
+
+  /* Semantics override / extensions Smart Farm */
+  --sf-primary: #2D4A1F;                /* sahel-700 (existant) */
+  --sf-primary-deep: #14532D;
+  --sf-primary-soft: #4A7C23;
+  --sf-accent-warm: #A16207;            /* NOUVEAU — CTA secondaire, badges urgents */
+  --sf-terre: #9A3412;                  /* NOUVEAU — accent terroir, badges lots/bandes */
+  --sf-ink: #1C1917;                    /* override : tiré vers brun (existant beige était plat) */
+  --sf-ink-secondary: #44403C;
+  --sf-line: #E7E5E4;
+  --sf-surface-0: #FFFFFF;
+  --sf-surface-1: #FFFBEB;              /* mil-50 — crème chaude */
+  --sf-surface-2: #FEF3C7;              /* mil-100 — cards élevées */
+  --sf-danger: #DC2626;
+  --sf-warning: #A16207;
+  --sf-success: #2D4A1F;
+  --sf-focus: #A16207;
+
+  /* Alertes — 3 niveaux distincts par forme (P0V-5 audit R4-D) */
+  --sf-alert-critical-bg: #DC2626;
+  --sf-alert-critical-ink: #FFFFFF;
+  --sf-alert-high-bg: #FFFBEB;
+  --sf-alert-high-border: #DC2626;
+  --sf-alert-high-ink: #DC2626;
+  --sf-alert-medium-bg: #FFFBEB;
+  --sf-alert-medium-border: #A16207;
+  --sf-alert-medium-ink: #A16207;
+}
+
+/* === FIX-D2 P0-5 — text-xs base size augmentée pour lisibilité terrain Sahel === */
+@media screen {
+  .text-xs { font-size: 13px; line-height: 1.4; }
 }
 
 .dark {
@@ -115,6 +183,31 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* === Smart Farm "Terre & Mil" — Tokens DARK B1 === */
+  --sf-surface-0: #14110F;
+  --sf-surface-1: #1C1917;
+  --sf-surface-2: #2A2522;
+  --sf-ink: #FFFBEB;
+  --sf-ink-secondary: #D6D3D1;
+  --sf-line: #292524;
+  --sf-primary: #4A7C23;                /* sahel-500 plus visible dark */
+  --sf-primary-deep: #2D4A1F;
+  --sf-primary-soft: #65A02E;
+  --sf-accent-warm: #CA8A04;            /* gold-400 plus visible dark */
+  --sf-terre: #C2410C;
+  --sf-danger: #EF4444;
+  --sf-warning: #CA8A04;
+  --sf-success: #4A7C23;
+  --sf-focus: #CA8A04;
+  --sf-alert-critical-bg: #B91C1C;
+  --sf-alert-critical-ink: #FFFBEB;
+  --sf-alert-high-bg: #2A2522;
+  --sf-alert-high-border: #EF4444;
+  --sf-alert-high-ink: #FCA5A5;
+  --sf-alert-medium-bg: #2A2522;
+  --sf-alert-medium-border: #CA8A04;
+  --sf-alert-medium-ink: #CA8A04;
 }
 
 @layer base {
@@ -126,6 +219,55 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* === Smart Farm — Terrain Vivant : base typo === */
+body {
+  font-family: var(--sf-font-body, 'Instrument Sans', sans-serif);
+  font-size: 16px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--sf-font-display, 'Big Shoulders Display', sans-serif); }
+
+/* === FIX-B #4 — Hiérarchie typographique H2/H3 (audit V2 R2) ===
+ * H1 = 30px (text-3xl) / H2 affiché jusqu'ici 11px (eyebrow par défaut Tailwind) → cassé.
+ * On rétablit une échelle saine : H1 30px → H2 20px → H3 ~17px → body 14px.
+ * Les composants qui veulent un eyebrow explicite utilisent la classe `.eyebrow`. */
+h2 {
+  font-size: 1.25rem;        /* 20px — entre H1 30px et body 14px */
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--sf-ink, #1a1a1a);
+}
+
+h3 {
+  font-size: 1.05rem;        /* ~16.8px */
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--sf-ink, #1a1a1a);
+}
+
+.eyebrow { font-family: var(--sf-font-display); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* === FIX-B #4 — Cibles tactiles WCAG 2.5.5 (≥ 44×44 px sur mobile/tactile) ===
+ * Règle ciblée pointer:coarse pour ne pas alourdir le desktop. */
+@media (pointer: coarse) {
+  button,
+  a[role="button"],
+  [role="button"],
+  .clickable,
+  .nav-link {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-width: 24px;
+    min-height: 24px;
   }
 }
 

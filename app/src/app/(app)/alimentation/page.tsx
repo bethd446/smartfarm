@@ -1,70 +1,122 @@
-import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { ExportButton } from '@/components/export-button'
-import { Wheat, Plus } from 'lucide-react'
+import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Wheat,
+  Sprout,
+  Factory,
+  Calculator,
+  Calendar,
+  Activity,
+  ChevronRight,
+} from 'lucide-react'
+
+import { NutritionStats } from './_components/nutrition-stats'
+
+/* -------------------------------------------------------------------------- */
+/*  Hub Alimentation — refonte C6                                              */
+/*  - 4 KPI cards (Conso 30j / Coût 30j / IC / Stock j restants)              */
+/*  - 5 cards de navigation                                                    */
+/* -------------------------------------------------------------------------- */
+
+type NavCard = {
+  href: string
+  title: string
+  description: string
+  icon: typeof Sprout
+}
+
+const NAV_CARDS: NavCard[] = [
+  {
+    href: '/alimentation/matieres',
+    title: 'Matières premières',
+    description:
+      'Catalogue céréales, tourteaux, sous-produits, minéraux et additifs (valeurs FAO / INRAE).',
+    icon: Sprout,
+  },
+  {
+    href: '/alimentation/concentres',
+    title: 'Concentrés industriels',
+    description:
+      'Concentrés IVOGRAIN, De Heus, Koudijs, Vitalac — fiches par stade et prix CI.',
+    icon: Factory,
+  },
+  {
+    href: '/alimentation/formulation',
+    title: 'Formulation',
+    description:
+      'Calculateur de formules — équilibrer MAT, EM, lysine et coût FCFA/kg.',
+    icon: Calculator,
+  },
+  {
+    href: '/alimentation/plans',
+    title: 'Plans d’alimentation',
+    description:
+      'Planification des rations par bande : aliment, dates, kg/jour.',
+    icon: Calendar,
+  },
+  {
+    href: '/alimentation/consommations',
+    title: 'Consommations',
+    description:
+      'Saisie quotidienne / hebdomadaire — suivi des distributions et du coût.',
+    icon: Activity,
+  },
+]
 
 export default async function AlimentationPage() {
-  const sb = await createClient()
-  const [{ data: types }, { data: conso }] = await Promise.all([
-    sb.from('types_aliment').select('*').order('nom'),
-    sb.from('consommations_aliment').select('*, bande:bande_id(nom), type_aliment:type_aliment_id(nom)').order('date', { ascending: false }).limit(20),
-  ])
-
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><Wheat className="h-7 w-7 text-amber-600" />Alimentation</h1>
-          <p className="text-sm text-slate-500 mt-1">Types d'aliment · Consommations · IC</p>
-        </div>
-        <div className="flex gap-2">
-          <ExportButton table="matieres_premieres" />
-          <Button className="bg-amber-600 hover:bg-amber-700"><Plus className="h-4 w-4 mr-2" />Nouvelle distribution</Button>
-        </div>
+      {/* En-tête ------------------------------------------------------------ */}
+      <div>
+        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
+          <Wheat className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          Alimentation
+        </h1>
+        <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+          Nutrition porcine — matières premières, formulation, plans et suivi
+          des consommations.
+        </p>
       </div>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Types d'aliment</CardTitle></CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {(types ?? []).map((t: any) => (
-              <div key={t.id} className="border border-slate-200 rounded-lg p-4 hover:shadow-sm">
-                <div className="font-semibold text-sm mb-2">{t.nom}</div>
-                <div className="flex flex-wrap gap-2 text-xs">
-                  <Badge variant="outline" className="capitalize">{t.categorie_cible}</Badge>
-                  <Badge variant="outline">{t.proteine_pct}% protéines</Badge>
-                  <Badge variant="outline">{t.energie_kcal_kg} kcal/kg</Badge>
-                </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* KPI ---------------------------------------------------------------- */}
+      <NutritionStats />
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Consommations récentes</CardTitle></CardHeader>
-        <CardContent>
-          {(!conso || conso.length === 0)
-            ? <div className="text-sm text-slate-500 py-6 text-center">Aucune consommation enregistrée — démarrez le suivi</div>
-            : <table className="w-full text-sm">
-                <thead className="border-b text-left text-xs uppercase text-slate-500">
-                  <tr><th className="pb-3 pr-4">Date</th><th className="pb-3 pr-4">Bande</th><th className="pb-3 pr-4">Aliment</th><th className="pb-3 pr-4">Quantité</th></tr>
-                </thead>
-                <tbody>
-                  {conso.map((c: any) => (
-                    <tr key={c.id} className="border-b border-slate-100">
-                      <td className="py-3 pr-4 font-mono">{new Date(c.date).toLocaleDateString('fr-FR')}</td>
-                      <td className="py-3 pr-4">{c.bande?.nom}</td>
-                      <td className="py-3 pr-4">{c.type_aliment?.nom}</td>
-                      <td className="py-3 pr-4 font-mono font-bold">{c.quantite_kg} kg</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>}
-        </CardContent>
-      </Card>
+      {/* Cards de navigation ----------------------------------------------- */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {NAV_CARDS.map((c) => {
+          const Icon = c.icon
+          return (
+            <Link key={c.href} href={c.href} className="group">
+              <Card className="h-full transition-shadow hover:shadow-md cursor-pointer">
+                <CardContent className="p-5">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="rounded-lg p-2.5 shrink-0"
+                      style={{
+                        background: 'var(--sf-bg, #F5F1E8)',
+                        color: 'var(--sf-primary, #2D4A1F)',
+                      }}
+                    >
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-semibold text-base text-[var(--sf-ink,#1a1a1a)]">
+                          {c.title}
+                        </h3>
+                        <ChevronRight className="h-4 w-4 text-[var(--sf-muted,#5C5346)] group-hover:text-[var(--sf-primary,#2D4A1F)] transition-colors" />
+                      </div>
+                      <p className="text-xs text-[var(--sf-muted,#5C5346)] mt-1 leading-relaxed">
+                        {c.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }

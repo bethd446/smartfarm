@@ -1,63 +1,323 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Baby, Plus } from 'lucide-react'
+import { Baby, Plus, Scissors } from 'lucide-react'
+import { toneTauxPortee } from '@/lib/colors'
+import { TERRAIN } from '@/lib/terrain-labels'
+import { DialogElleAFait } from './_dialog-elle-a-fait'
+import { DialogEnleverPetits } from './_dialog-enlever-petits'
+
+export const metadata: Metadata = {
+  title: 'Mises bas & Sevrages — Smart Farm',
+}
+
+/** Mapping ton sémantique → variante Badge atome carnet. */
+const TONE_TO_VARIANT = {
+  nominal: 'success',
+  attendu: 'warning',
+  urgence: 'danger',
+  neutre: 'secondary',
+} as const
 
 export default async function MisesBasPage() {
   const sb = await createClient()
+
   const { data: mb } = await sb
     .from('mises_bas')
-    .select(`*, truie:truie_id(tag,nom), sevrages(date_sevrage,nb_sevres,poids_total_kg)`)
+    .select(
+      `*, truie:truie_id(tag,nom), sevrages(date_sevrage,nb_sevres,poids_total_kg)`
+    )
     .order('date_mise_bas', { ascending: false })
+
+  // Saillies avec diagnostic POSITIF + sans mise-bas, pour le formulaire "Nouvelle mise bas"
+  const { data: saillies } = await sb
+    .from('saillies')
+    .select(
+      `id, date_saillie,
+       truie:truie_id(tag,nom),
+       diagnostics_gestation(resultat),
+       mises_bas(id)`
+    )
+    .order('date_saillie', { ascending: false })
+
+  const saillesPourMb = ((saillies ?? []) as any[])
+    .filter(
+      (s) =>
+        s.diagnostics_gestation?.some((d: any) => d.resultat === 'positif') &&
+        (!s.mises_bas || s.mises_bas.length === 0)
+    )
+    .map((s) => ({
+      id: s.id as string,
+      truie_tag: (s.truie?.tag ?? '') as string,
+      truie_nom: (s.truie?.nom ?? null) as string | null,
+      date_saillie: s.date_saillie as string,
+    }))
+
+  // Mises-bas sans sevrage, pour le formulaire "Sevrage"
+  const misesBasSansSevrage = ((mb ?? []) as any[])
+    .filter((m) => !m.sevrages || m.sevrages.length === 0)
+    .map((m) => ({
+      id: m.id as string,
+      truie_tag: (m.truie?.tag ?? '') as string,
+      truie_nom: (m.truie?.nom ?? null) as string | null,
+      date_mise_bas: m.date_mise_bas as string,
+      nes_vivants: Number(m.nes_vivants ?? 0),
+    }))
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* === Header de page : H1 Big Shoulders 36px + sous-titre Instrument Sans 14px === */}
+      <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><Baby className="h-7 w-7 text-violet-600" />Mises-bas & Sevrages</h1>
-          <p className="text-sm text-slate-500 mt-1">{mb?.length ?? 0} portées enregistrées</p>
+          <h1
+            className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
+            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          >
+            <Baby className="h-8 w-8 text-[var(--sf-primary)]" />
+            {TERRAIN.mise_bas.titre} &amp; {TERRAIN.sevrage.titre}
+          </h1>
+          <p
+            className="text-sm text-[var(--sf-muted)] mt-1"
+            style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+          >
+            {mb?.length ?? 0} portées enregistrées
+          </p>
         </div>
         <div className="flex gap-2">
           <ExportButton table="mises_bas" />
-          <Button className="bg-violet-600 hover:bg-violet-700"><Plus className="h-4 w-4 mr-2" />Nouvelle mise-bas</Button>
+          <DialogEnleverPetits
+            mises_bas_sans_sevrage={misesBasSansSevrage}
+            trigger={
+              <Button variant="outline" size="lg" className="h-12 text-base">
+                <Scissors className="h-5 w-5 mr-2" />
+                Sevrage
+              </Button>
+            }
+          />
+          <DialogElleAFait
+            saillies={saillesPourMb}
+            trigger={
+              <Button size="lg" className="h-12 text-base">
+                <Plus className="h-5 w-5 mr-2" />
+                Nouvelle mise bas
+              </Button>
+            }
+          />
         </div>
       </div>
 
+      {/* === Historique des mises-bas : table compacte (V2-FIX FIX-B #1) === */}
+      {(mb ?? []).length === 0 ? (
+        <EmptyState
+          icon={Baby}
+          title="Aucune mise-bas enregistrée"
+          description="Les mises-bas apparaîtront ici après saisie. Cliquez sur 'Nouvelle mise bas' pour démarrer."
+        />
+      ) : (
+      <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Historique des mises-bas ({mb!.length})</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/40 border-b">
+                <tr>
+                  <th className="text-left p-3 font-medium">Truie</th>
+                  <th className="text-left p-3 font-medium">Date MB</th>
+                  <th className="text-right p-3 font-medium">Total nés</th>
+                  <th className="text-right p-3 font-medium">Vivants</th>
+                  <th className="text-right p-3 font-medium">Mort-nés</th>
+                  <th className="text-right p-3 font-medium">Momifiés</th>
+                  <th className="text-right p-3 font-medium">Écrasés</th>
+                  <th className="text-right p-3 font-medium">Sevrage</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(mb ?? []).map((m: any) => (
+                  <tr key={m.id} className="border-b last:border-0 hover:bg-muted/20">
+                    <td className="p-3 font-mono">
+                      {m.truie?.tag ?? '—'}{' '}
+                      {m.truie?.nom && (
+                        <span className="text-muted-foreground">({m.truie.nom})</span>
+                      )}
+                    </td>
+                    <td className="p-3">{new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}</td>
+                    <td className="p-3 text-right tabular-nums">{m.nes_totaux}</td>
+                    <td className="p-3 text-right font-medium tabular-nums">{m.nes_vivants}</td>
+                    <td className="p-3 text-right text-red-700 tabular-nums">{m.nes_morts ?? 0}</td>
+                    <td className="p-3 text-right text-red-700 tabular-nums">{m.momifies ?? 0}</td>
+                    <td className="p-3 text-right text-red-700 tabular-nums">{m.ecrases ?? 0}</td>
+                    <td className="p-3 text-right">
+                      {m.sevrages?.[0] ? (
+                        <Badge variant="success">{m.sevrages[0].nb_sevres} sevrés</Badge>
+                      ) : (
+                        <Badge variant="secondary">En cours</Badge>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* === Détails par portée : cards riches conservées en vue secondaire === */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {(mb ?? []).map((m: any) => {
           const sev = m.sevrages?.[0]
+          const ratio = m.nes_totaux > 0 ? m.nes_vivants / m.nes_totaux : 0
+          const tone = toneTauxPortee(ratio)
+          const tauxVariant = TONE_TO_VARIANT[tone]
           return (
-            <Card key={m.id} className="hover:shadow-md transition-shadow">
+            <Card key={m.id}>
               <CardHeader className="pb-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-start gap-2">
                   <div>
-                    <CardTitle className="text-base">{m.truie?.nom ?? m.truie?.tag}</CardTitle>
-                    <div className="text-xs text-slate-500 font-mono">{m.truie?.tag} · {new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}</div>
+                    <CardTitle className="text-base">
+                      {m.truie?.nom ?? m.truie?.tag}
+                    </CardTitle>
+                    <div className="text-xs text-[var(--sf-muted)] font-mono tabular-nums mt-1">
+                      {m.truie?.tag} ·{' '}
+                      {new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}
+                    </div>
                   </div>
+                  <Badge variant={tauxVariant}>
+                    {Math.round(ratio * 100)}% vivants
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent className="text-sm space-y-2">
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  <div className="bg-emerald-50 rounded-md p-2 text-center">
-                    <div className="text-xl font-bold text-emerald-700">{m.nes_vivants}</div>
-                    <div className="text-[10px] text-slate-500 uppercase">Vivants</div>
+                {/* === Totaux : 2 cards (Vivants / Totaux) === */}
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div
+                    className="p-2 text-center border border-[var(--sf-line)]"
+                    style={{ background: 'var(--sf-success-bg, #DCE9CB)' }}
+                  >
+                    <div className="text-xl font-bold text-[var(--sf-success-ink,#1F3414)] tabular-nums">
+                      {m.nes_vivants}
+                    </div>
+                    <div
+                      className="text-[10px] text-[var(--sf-success-ink,#1F3414)] opacity-80 uppercase tracking-[0.1em]"
+                      style={{
+                        fontFamily:
+                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      }}
+                    >
+                      Vivants
+                    </div>
                   </div>
-                  <div className="bg-slate-50 rounded-md p-2 text-center">
-                    <div className="text-xl font-bold text-slate-700">{m.nes_totaux}</div>
-                    <div className="text-[10px] text-slate-500 uppercase">Totaux</div>
-                  </div>
-                  <div className="bg-red-50 rounded-md p-2 text-center">
-                    <div className="text-xl font-bold text-red-700">{m.nes_morts + m.momifies}</div>
-                    <div className="text-[10px] text-slate-500 uppercase">M+M</div>
+                  <div
+                    className="p-2 text-center border border-[var(--sf-line)]"
+                    style={{ background: 'var(--sf-surface-2, #F1ECE0)' }}
+                  >
+                    <div className="text-xl font-bold text-[var(--sf-ink)] tabular-nums">
+                      {m.nes_totaux}
+                    </div>
+                    <div
+                      className="text-[10px] text-[var(--sf-muted)] uppercase tracking-[0.1em]"
+                      style={{
+                        fontFamily:
+                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      }}
+                    >
+                      Totaux
+                    </div>
                   </div>
                 </div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Poids portée</span><span className="font-mono">{m.poids_portee_kg ?? '—'} kg</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Durée</span><span className="font-mono">{m.duree_minutes ?? '—'} min</span></div>
+
+                {/* === Décomposition mortalité : Mort-nés / Momifiés / Écrasés === */}
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  <div
+                    className="p-2 text-center border border-[var(--sf-line)]"
+                    style={{ background: 'var(--sf-danger-bg, #F1D4CE)' }}
+                  >
+                    <div className="text-lg font-bold text-[var(--sf-danger-ink,#7A2A1F)] tabular-nums">
+                      {m.nes_morts ?? 0}
+                    </div>
+                    <div
+                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
+                      style={{
+                        fontFamily:
+                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      }}
+                    >
+                      Mort-nés
+                    </div>
+                  </div>
+                  <div
+                    className="p-2 text-center border border-[var(--sf-line)]"
+                    style={{ background: 'var(--sf-warning-bg, #F5E6C5)' }}
+                  >
+                    <div className="text-lg font-bold text-[var(--sf-warning-ink,#5C4416)] tabular-nums">
+                      {m.momifies ?? 0}
+                    </div>
+                    <div
+                      className="text-[10px] text-[var(--sf-warning-ink,#5C4416)] opacity-80 uppercase tracking-[0.1em]"
+                      style={{
+                        fontFamily:
+                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      }}
+                    >
+                      Momifiés
+                    </div>
+                  </div>
+                  <div
+                    className="p-2 text-center border border-[var(--sf-line)]"
+                    style={{ background: 'var(--sf-danger-bg, #F1D4CE)' }}
+                  >
+                    <div className="text-lg font-bold text-[var(--sf-danger-ink,#7A2A1F)] tabular-nums">
+                      {m.ecrases ?? 0}
+                    </div>
+                    <div
+                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
+                      style={{
+                        fontFamily:
+                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      }}
+                    >
+                      Écrasés
+                    </div>
+                  </div>
+                </div>
+                {m.bcs_truie != null && (
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[var(--sf-muted)]">BCS truie</span>
+                    <span className="font-mono tabular-nums text-[var(--sf-ink)]">
+                      {Number(m.bcs_truie).toFixed(1)} / 5
+                    </span>
+                  </div>
+                )}
+                <div className="flex justify-between text-xs">
+                  <span className="text-[var(--sf-muted)]">Poids portée</span>
+                  <span className="font-mono tabular-nums text-[var(--sf-ink)]">
+                    {m.poids_portee_kg ?? '—'} kg
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-[var(--sf-muted)]">Durée</span>
+                  <span className="font-mono tabular-nums text-[var(--sf-ink)]">
+                    {m.duree_minutes ?? '—'} min
+                  </span>
+                </div>
                 {sev && (
-                  <div className="mt-2 pt-2 border-t border-slate-100 text-xs">
-                    <div className="font-semibold text-emerald-700 mb-1">✓ Sevrage {new Date(sev.date_sevrage).toLocaleDateString('fr-FR')}</div>
-                    <div className="flex justify-between"><span>Sevrés</span><span className="font-mono font-bold">{sev.nb_sevres}</span></div>
+                  <div className="mt-2 pt-2 border-t border-[var(--sf-line)] text-xs">
+                    <div className="font-semibold text-[var(--sf-success-ink,#1F3414)] mb-1">
+                      ✓ Petits enlevés le{' '}
+                      {new Date(sev.date_sevrage).toLocaleDateString('fr-FR')}
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[var(--sf-muted)]">Sevrés</span>
+                      <span className="font-mono font-bold tabular-nums text-[var(--sf-ink)]">
+                        {sev.nb_sevres}
+                      </span>
+                    </div>
                   </div>
                 )}
               </CardContent>
@@ -65,6 +325,8 @@ export default async function MisesBasPage() {
           )
         })}
       </div>
+      </>
+      )}
     </div>
   )
 }
