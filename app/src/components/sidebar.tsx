@@ -4,10 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ContrastToggle } from '@/components/contrast-toggle'
+import { deconnexionAction } from '@/app/(auth)/_actions'
 import {
   LayoutDashboard, PiggyBank, Layers, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle,
+  Sparkles, AlertTriangle, LogOut,
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -253,6 +254,25 @@ export function Sidebar({ user, ferme }: SidebarProps) {
             </div>
           </div>
         </div>
+
+        {/* Bouton Déconnexion — Server Action via <form> (L1/B1) */}
+        <form action={deconnexionAction}>
+          <button
+            type="submit"
+            aria-label="Déconnexion"
+            title="Déconnexion"
+            className={cn(
+              'flex items-center w-full rounded-md transition-colors',
+              'h-10 justify-center lg:justify-start lg:gap-2 lg:px-3',
+              'text-[11px] uppercase tracking-[0.08em] font-semibold',
+              'text-white/70 hover:bg-white/5 hover:text-white',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+            )}
+          >
+            <LogOut className="h-4 w-4 shrink-0" />
+            <span className="hidden lg:inline">Déconnexion</span>
+          </button>
+        </form>
       </div>
     </aside>
   )
