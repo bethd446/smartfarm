@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { Sidebar } from '@/components/sidebar'
+import { Sidebar, type SidebarUser, type SidebarFerme } from '@/components/sidebar'
 import { BottomNav } from '@/components/bottom-nav'
 import { MobileDrawer } from '@/components/mobile-drawer'
 import { Menu } from 'lucide-react'
@@ -15,19 +15,31 @@ import { cn } from '@/lib/utils'
  * ou depuis le slot "Plus" de la bottom-nav).
  *
  * Le layout serveur Next.js délègue ici toute la chrome qui a besoin de state.
+ *
+ * L2 Sprint 1 : reçoit `user` et `ferme` en props (fetchés SSR par le layout)
+ * et les propage à la Sidebar + MobileDrawer pour rendre l'identité réelle.
  */
 export interface AppShellProps {
   children: React.ReactNode
   /** Nombre d'alertes actives (V2-G — passé en SSR par le layout). */
   alertesCount?: number
+  /** User connecté (SSR — null si non connecté ou pas de profil utilisateurs). */
+  user?: SidebarUser | null
+  /** Ferme principale du user (SSR — null si pas de liaison utilisateur_fermes). */
+  ferme?: SidebarFerme | null
 }
 
-export function AppShell({ children, alertesCount = 0 }: AppShellProps) {
+export function AppShell({
+  children,
+  alertesCount = 0,
+  user = null,
+  ferme = null,
+}: AppShellProps) {
   const [drawerOpen, setDrawerOpen] = React.useState(false)
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
+      <Sidebar user={user} ferme={ferme} />
 
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header mobile uniquement — sticky, avec hamburger + logo compact */}
@@ -55,7 +67,7 @@ export function AppShell({ children, alertesCount = 0 }: AppShellProps) {
               <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-7 w-7" />
             </div>
             <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-wide text-base text-[var(--sf-ink,#1a1a1a)] truncate">
-              Smart Farm
+              {ferme?.nom ?? 'Smart Farm'}
             </div>
           </div>
         </header>
@@ -68,7 +80,12 @@ export function AppShell({ children, alertesCount = 0 }: AppShellProps) {
       </div>
 
       <BottomNav onOpenMore={() => setDrawerOpen(true)} alertesCount={alertesCount} />
-      <MobileDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
+      <MobileDrawer
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        user={user}
+        ferme={ferme}
+      />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { cn } from '@/lib/utils'
+import type { SidebarUser, SidebarFerme } from '@/components/sidebar'
 import {
   LayoutDashboard, PiggyBank, Layers, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
@@ -46,6 +47,9 @@ const nav = [
 export interface MobileDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  /** L2 Sprint 1 — user/ferme injectés par AppShell (eux-mêmes fetchés SSR). */
+  user?: SidebarUser | null
+  ferme?: SidebarFerme | null
 }
 
 /**
@@ -53,8 +57,11 @@ export interface MobileDrawerProps {
  * Wrapper sur Radix Dialog — contrôlé via props (open / onOpenChange).
  * Contient l'intégralité du menu sidebar groupé.
  * Ferme automatiquement au clic sur un item de navigation.
+ *
+ * L2 Sprint 1 : header affiche le nom de la ferme réelle (ou "Smart Farm" si
+ * pas de ferme liée) + bannière "Aucune ferme" qui pointe vers /onboarding.
  */
-export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
+export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: MobileDrawerProps) {
   const pathname = usePathname()
   const groups = Array.from(new Set(nav.map(n => n.group)))
 
@@ -85,9 +92,13 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
               <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-bold text-base text-white">Smart Farm</div>
+              <div className="font-bold text-base text-white truncate">{ferme?.nom ?? 'Smart Farm'}</div>
               <div className="text-[10px] text-white/70 uppercase tracking-[0.15em] truncate">Élevage porcin · Côte d&apos;Ivoire</div>
-              <div className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5">Yamoussoukro <span aria-hidden>🇨🇮</span></div>
+              {ferme?.localisation && (
+                <div className="text-[10px] text-white/40 uppercase tracking-wider mt-0.5 truncate">
+                  {ferme.localisation} <span aria-hidden>🇨🇮</span>
+                </div>
+              )}
             </div>
             <DialogPrimitive.Close
               className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white/70 hover:bg-white/5 hover:text-white focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]"
@@ -96,6 +107,25 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
               <X className="h-5 w-5" />
             </DialogPrimitive.Close>
           </div>
+
+          {/* L2 Sprint 1 — bandeau "Aucune ferme" si user pas lié */}
+          {user && !ferme && (
+            <Link
+              href="/onboarding"
+              onClick={() => onOpenChange(false)}
+              className={cn(
+                'mx-3 mt-3 rounded-md border border-amber-500/40 bg-amber-500/10',
+                'text-amber-200 hover:bg-amber-500/20 transition-colors',
+                'flex items-center gap-2 p-3',
+              )}
+            >
+              <AlertTriangle className="h-4 w-4 shrink-0" />
+              <span className="text-[11px] leading-tight">
+                Aucune ferme.<br />
+                <span className="text-amber-100 underline">Configurer mon exploitation →</span>
+              </span>
+            </Link>
+          )}
 
           <nav className="flex-1 overflow-y-auto p-3 space-y-4">
             {groups.map(group => (
