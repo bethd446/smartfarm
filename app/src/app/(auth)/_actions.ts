@@ -91,7 +91,9 @@ export async function magicLinkAction(_prev: AuthResult | null, formData: FormDa
   }
 
   const sb = await createAuthClient()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  // ⚠️ Fallback PROD-safe : si NEXT_PUBLIC_APP_URL absent au build (peu probable),
+  // on tombe sur l'URL prod canonique — JAMAIS localhost qui casse les magic links.
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://smartfarm.group'
 
   const { error } = await sb.auth.signInWithOtp({
     email,
@@ -122,7 +124,8 @@ export async function inscriptionAction(_prev: AuthResult | null, formData: Form
   }
 
   const sb = await createAuthClient()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
+  // ⚠️ Fallback PROD-safe : voir commentaire dans magicLinkAction
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://smartfarm.group'
 
   const { data, error } = await sb.auth.signUp({
     email,

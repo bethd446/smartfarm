@@ -9,11 +9,36 @@ import { cookies } from 'next/headers'
  * Échange le `code` reçu en query contre une session (cookies set ici).
  * Redirige ensuite vers `/dashboard` (ou la page demandée via `?next=`).
  *
+ * ⚠️ Origin résolution :
+ *   - DERRIÈRE Hostinger LiteSpeed/LSNODE, `request.url` peut contenir
+ *     `host: 0.0.0.0:3000` (interne) au lieu du host externe.
+ *   - On résout donc l'origin dans l'ordre :
+ *     1. NEXT_PUBLIC_APP_URL (env, source de vérité)
+ *     2. x-forwarded-host + x-forwarded-proto (proxy headers)
+ *     3. request.url.origin (fallback dev local)
+ *
  * Note : tout est server-side ; les cookies de session HttpOnly Supabase
  * sont posés par le wrapper `createServerClient` via le cookieStore Next.
  */
+function resolveOrigin(request: NextRequest): string {
+  // 1) Source de vérité : variable d'env
+  const envUrl = process.env.NEXT_PUBLIC_APP_URL
+  if (envUrl) return envUrl.replace(/\/$/, '')
+
+  // 2) Proxy headers (LSNODE/Traefik/nginx)
+  const fwdHost = request.headers.get('x-forwarded-host')
+  const fwdProto = request.headers.get('x-forwarded-proto')
+  if (fwdHost) {
+    return `${fwdProto || 'https'}://${fwdHost}`
+  }
+
+  // 3) Fallback : URL de la requête (dev local uniquement, peut être 0.0.0.0:3000)
+  return new URL(request.url).origin
+}
+
 export async function GET(request: NextRequest) {
-  const { searchParams, origin } = new URL(request.url)
+  const { searchParams } = new URL(request.url)
+  const origin = resolveOrigin(request)
   const code = searchParams.get('code')
   const next = searchParams.get('next') ?? '/dashboard'
 
