@@ -6,6 +6,7 @@ import { inscriptionAction, type AuthResult } from '../_actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { PasswordInput } from '@/components/ui/password-input'
 
 /**
  * Page Inscription — email + mot de passe + nom complet.
@@ -87,10 +88,9 @@ export default function InscriptionPage() {
 
         <div className="space-y-1.5">
           <Label htmlFor="password">Mot de passe</Label>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="new-password"
             minLength={8}
             required

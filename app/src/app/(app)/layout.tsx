@@ -1,6 +1,15 @@
 import { AppShell } from '@/components/app-shell'
 import { createClient } from '@/lib/supabase/server'
 
+// L2 Sprint 1 — bug cache sidebar :
+// Après l'onboarding, le RSC du layout restait servi depuis le cache Next 16
+// (et potentiellement LSCache côté Hostinger) → ferme=null persistait et la
+// sidebar continuait d'afficher "Aucune ferme" malgré la création réussie.
+// On force le rendu dynamique pour que chaque navigation refasse le fetch
+// user/ferme depuis Supabase. Ceinture + bretelles avec revalidate=0.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 /**
  * Layout serveur du groupe (app).
  *

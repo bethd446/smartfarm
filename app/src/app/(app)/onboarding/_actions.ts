@@ -79,7 +79,12 @@ export async function completeOnboardingAction(formData: FormData): Promise<Onbo
   }
 
   // ---- 3. Invalide le cache pour rafraîchir layout (sidebar) + dashboard --
+  // Bug UI sidebar : Next 16 conservait le RSC du layout (app) après le
+  // redirect post-onboarding → la sidebar restait sur "Aucune ferme".
+  // On purge agressivement : layout racine + dashboard + onboarding lui-même.
   revalidatePath('/', 'layout')
+  revalidatePath('/dashboard')
+  revalidatePath('/onboarding')
 
   return { ok: true, fermeId }
 }

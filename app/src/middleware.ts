@@ -10,7 +10,13 @@ import { createServerClient } from '@supabase/ssr'
  *      vers leur emplacement canonique `/sanitaire/*` (308).
  *   2) (R8) Protéger les routes applicatives (groupe `(app)`) : si pas de
  *      session Supabase, redirect vers `/connexion`.
- *      ⚠️ BYPASS COMPLET si `SMARTFARM_DEMO_MODE=true` (mode démo Yamoussoukro).
+ *      ⚠️ BYPASS auth-gate si `SMARTFARM_DEMO_MODE != 'false'` ET pas de
+ *      session Supabase (mode démo Yamoussoukro : pages accessibles sans
+ *      compte). Mais si une session Supabase EST présente, on applique
+ *      quand même les gates (auth + onboarding) — sinon la gate F1 Sprint 1
+ *      `onboarded_at IS NULL → /onboarding` est court-circuitée en QA.
+ *   3) (F1 Sprint 1) Gate onboarding : tout user authentifié sans
+ *      `utilisateurs.onboarded_at` est redirigé vers `/onboarding`.
  *
  * Routes publiques (toujours accessibles sans session) :
  *   /                       (landing)
@@ -59,19 +65,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308)
   }
 
-  // 2) Bypass mode démo — lecture runtime explicite (pas bake-time edge)
-  //    Note : on lit process.env à chaque request, pas en module-scope
-  const demoMode = process.env['SMARTFARM_DEMO_MODE']
-  if (demoMode !== 'false') {
-    return NextResponse.next()
-  }
-
-  // 3) Mode prod : gate auth sur les routes applicatives
+  // 2) Routes publiques : toujours laissées passer
   if (isPublic(path)) {
     return NextResponse.next()
   }
 
-  // Vérifier la session Supabase via les cookies de la requête
+  // 3) On instancie un client Supabase SSR pour lire la session,
+  //    AVANT le bypass démo : on veut pouvoir gater l'onboarding même en
+  //    mode démo si une session Auth réelle est présente.
   const response = NextResponse.next({ request })
 
   const sb = createServerClient(
@@ -94,25 +95,49 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await sb.auth.getUser()
 
+  // 4) Bypass mode démo (lecture runtime explicite, pas bake-time edge)
+  //    Le bypass ne s'applique QUE si aucune session Supabase n'est présente :
+  //    en démo Yamoussoukro on veut que les pages soient visitables sans
+  //    auth, mais dès qu'un user s'est inscrit (= a une session), on doit
+  //    appliquer la gate onboarding F1 Sprint 1.
+  const demoMode = process.env['SMARTFARM_DEMO_MODE']
+  const demoBypass = demoMode !== 'false'
+
+  if (demoBypass && !user) {
+    console.log('[mw] demo-bypass (no session)', { path })
+    return NextResponse.next()
+  }
+
+  // 5) Mode prod (ou démo avec session) : exiger l'auth sur les routes app
   if (!user) {
+    console.log('[mw] no-user → /connexion', { path })
     const url = request.nextUrl.clone()
     url.pathname = '/connexion'
     url.searchParams.set('next', path)
     return NextResponse.redirect(url)
   }
 
-  // 4) F1 Sprint 1 — Gate onboarding : si user authentifié mais pas encore
+  // 6) F1 Sprint 1 — Gate onboarding : si user authentifié mais pas encore
   //    onboardé (onboarded_at IS NULL), on force le passage par /onboarding.
   //    Exception : la page /onboarding elle-même (sinon boucle infinie) +
   //    les server actions / api qui pourraient être appelées depuis le wizard.
   if (path !== '/onboarding' && !path.startsWith('/onboarding/')) {
-    const { data: profil } = await sb
+    const { data: profil, error: profilErr } = await sb
       .from('utilisateurs')
       .select('onboarded_at')
       .eq('auth_id', user.id)
       .maybeSingle()
 
+    console.log('[mw] onboarding-check', {
+      path,
+      userId: user.id,
+      profil,
+      profilErr: profilErr?.message,
+      demoBypass,
+    })
+
     if (profil && !profil.onboarded_at) {
+      console.log('[mw] → redirect /onboarding', { userId: user.id })
       const url = request.nextUrl.clone()
       url.pathname = '/onboarding'
       url.search = ''
