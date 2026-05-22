@@ -167,3 +167,26 @@ Output design SANS `skill_view(name='impeccable')` chargé = REJET.
 - Palette : tokens Terre and Mil existants (kaki/argile/sable, surtout pas orange/vert vif)
 - Typo : sobre, sérif possible pour H1, sans-serif body
 - Copy : phrases courtes, faits, pas de superlatifs marketing
+
+
+## ✅ Sprint 2026-05-22 (suite) — SMTP + Auth Magic Link
+- **SMTP Hostinger configuré et testé** : smtp.hostinger.com:465 SSL, user `contact@smartfarm.group`, password en `/root/.hermes-memory/credentials.md`
+- **Test swaks direct** : HTTP 250 OK queued — mail reçu confirmé par screenshot utilisateur
+- **Supabase Auth SMTP configuré** via Management API PATCH HTTP 200 :
+  - smtp_host = smtp.hostinger.com
+  - smtp_port = 465 (str obligatoire dans payload)
+  - smtp_user = contact@smartfarm.group
+  - smtp_sender_name = Smart Farm
+  - site_url = https://smartfarm.group
+  - uri_allow_list = smartfarm.group + www + /** wildcards
+  - mailer_autoconfirm = false (Magic Link requis)
+  - external_email_enabled = true
+- **POST /auth/v1/otp** déclenché vers `contact@smartfarm.group` → HTTP 200 (mail attendu via SMTP Hostinger)
+- **Landing publique pro austère** livrée commit `c53988b` : 7 sections, Server Component, statique, tokens --sf-*, build OK 50 routes
+
+## 🎯 Reste à faire
+- Confirmer réception mail Magic Link (test #2)
+- Créer templates HTML brandés Smart Farm (welcome, magic_link, recovery, confirmation)
+- Push templates via Supabase Management API
+- Switch SMARTFARM_DEMO_MODE=false sur Hostinger via API
+- Smoke test 17 pages prod + flow auth complet
