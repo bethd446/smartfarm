@@ -1,7 +1,28 @@
-@import '../styles/smartfarm-tokens.css';
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+/* === Smart Farm — fonts self-hosted === */
+@font-face {
+  font-family: "Big Shoulders Display";
+  src: url("/fonts/BigShoulders-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Big Shoulders Display";
+  src: url("/fonts/BigShoulders-Bold.woff2") format("woff2");
+  font-weight: 700 900; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Regular.woff2") format("woff2");
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Bold.woff2") format("woff2");
+  font-weight: 600 700; font-style: normal; font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -123,6 +144,7 @@
   --sf-primary-deep: #14532D;
   --sf-primary-soft: #4A7C23;
   --sf-accent-warm: #A16207;            /* NOUVEAU — CTA secondaire, badges urgents */
+  --sf-accent: #A16207;                 /* Alias R7-P3 : --sf-accent === --sf-accent-warm (unification) */
   --sf-terre: #9A3412;                  /* NOUVEAU — accent terroir, badges lots/bandes */
   --sf-ink: #1C1917;                    /* override : tiré vers brun (existant beige était plat) */
   --sf-ink-secondary: #44403C;
@@ -144,6 +166,36 @@
   --sf-alert-medium-bg: #FFFBEB;
   --sf-alert-medium-border: #A16207;
   --sf-alert-medium-ink: #A16207;
+
+  /* === SEMANTIC PAIRS (bg + ink + border) — R7-P3 unifié === */
+  --sf-success-bg:     #DCE9CB;
+  --sf-success-ink:    #1F3414;
+  --sf-success-border: #B9D29A;
+
+  --sf-warning-bg:     #FBE7C4;
+  --sf-warning-ink:    #5C3E11;
+  --sf-warning-border: #E8C77A;
+
+  --sf-danger-bg:      #F4CCC8;
+  --sf-danger-ink:     #5A1F19;
+  --sf-danger-border:  #E29A92;
+
+  --sf-info-bg:        #CDD9E3;
+  --sf-info-ink:       #1F3344;
+  --sf-info-border:    #9BB3C7;
+
+  --sf-neutral-bg:     #E7E5E4;
+  --sf-neutral-ink:    #1C1917;
+  --sf-neutral-border: #C8C4C1;
+
+  /* === MUTED / SURFACE aliases === */
+  --sf-muted:          #5C5346;
+  --sf-subtle:         #8A7E6E;
+  --sf-line:           #E7E5E4;
+
+  /* === TYPOGRAPHY tokens === */
+  --sf-font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --sf-font-body:    "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 /* === FIX-D2 P0-5 — text-xs base size augmentée pour lisibilité terrain Sahel === */
@@ -195,6 +247,7 @@
   --sf-primary-deep: #2D4A1F;
   --sf-primary-soft: #65A02E;
   --sf-accent-warm: #CA8A04;            /* gold-400 plus visible dark */
+  --sf-accent: #CA8A04;                 /* Alias R7-P3 dark */
   --sf-terre: #C2410C;
   --sf-danger: #EF4444;
   --sf-warning: #CA8A04;
@@ -208,6 +261,30 @@
   --sf-alert-medium-bg: #2A2522;
   --sf-alert-medium-border: #CA8A04;
   --sf-alert-medium-ink: #CA8A04;
+
+  /* === SEMANTIC PAIRS DARK — R7-P3 === */
+  --sf-success-bg:     rgba(123,168,83,0.22);
+  --sf-success-ink:    #B7DA8E;
+  --sf-success-border: rgba(123,168,83,0.45);
+
+  --sf-warning-bg:     rgba(224,170,90,0.20);
+  --sf-warning-ink:    #F0C281;
+  --sf-warning-border: rgba(224,170,90,0.45);
+
+  --sf-danger-bg:      rgba(216,114,98,0.22);
+  --sf-danger-ink:     #ED9789;
+  --sf-danger-border:  rgba(216,114,98,0.50);
+
+  --sf-info-bg:        rgba(130,161,190,0.22);
+  --sf-info-ink:       #A5BDD3;
+  --sf-info-border:    rgba(130,161,190,0.45);
+
+  --sf-neutral-bg:     #292524;
+  --sf-neutral-ink:    #FFFBEB;
+  --sf-neutral-border: rgba(255,251,235,0.18);
+
+  --sf-muted:          #B5A992;
+  --sf-subtle:         #847866;
 }
 
 @layer base {

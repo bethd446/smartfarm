@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardHeader, CardDescription } from '@/components/ui/card'
+import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import {
@@ -104,14 +105,14 @@ export default async function SanitairePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1
-          className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink,#1a1a1a)]"
-          style={{ fontFamily: 'var(--sf-font-display)' }}
+        <PageTitle
+          eyebrow="SANTÉ"
+          icon={<Stethoscope className="h-9 w-9 text-[var(--sf-primary)]" />}
+          className="mb-1"
         >
-          <Stethoscope className="h-8 w-8 text-[var(--sf-primary)]" />
           Sanitaire
-        </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+        </PageTitle>
+        <p className="text-sm text-[var(--sf-muted)]">
           Hub santé : {alertesSantePending ?? 0} alerte(s) sanitaire(s) active(s)
         </p>
       </div>

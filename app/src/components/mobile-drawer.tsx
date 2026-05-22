@@ -80,8 +80,8 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
           <DialogPrimitive.Title className="sr-only">Navigation principale</DialogPrimitive.Title>
 
           <div className="p-5 border-b border-slate-800 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-[var(--sf-primary)] flex items-center justify-center shadow overflow-hidden">
-              <img src="/logo-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
+            <div className="h-10 w-10 rounded-lg bg-[#FFFBEB] flex items-center justify-center shadow overflow-hidden">
+              <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-bold text-base text-white">Smart Farm</div>

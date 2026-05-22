@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { PageTitle } from '@/components/ui/page-title'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
@@ -116,18 +117,18 @@ export default async function ReproductionPage() {
 
   return (
     <div className="space-y-6">
-      {/* === Header de page : H1 Big Shoulders 36px + sous-titre Instrument Sans 14px === */}
+      {/* === Header de page : PageTitle unifié === */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1
-            className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
-            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          <PageTitle
+            eyebrow="ÉLEVAGE"
+            icon={<Heart className="h-9 w-9 text-[var(--sf-accent-warm)]" />}
+            className="mb-1"
           >
-            <Heart className="h-8 w-8 text-[var(--sf-accent)]" />
             Reproduction
-          </h1>
+          </PageTitle>
           <p
-            className="text-sm text-[var(--sf-muted)] mt-1"
+            className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
             {saillies?.length ?? 0} montées enregistrées

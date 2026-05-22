@@ -1,41 +1,59 @@
 /**
- * Sémantique colorimétrique stricte Smart Farm.
- * Doc senior : Rouge = urgence / action immédiate
- *              Orange = événement attendu / alerte modérée / réforme
- *              Vert = nominal / OK / objectif atteint
- *              Bleu / Violet / Indigo = neutre métier (info, type)
+ * Sémantique colorimétrique stricte Smart Farm — R7-P3.
  *
- * Tailwind class fragments only (text-, bg-, border-).
+ * Doc senior : Rouge / danger = urgence / action immédiate
+ *              Or / warning   = événement attendu / alerte modérée / réforme
+ *              Vert / success = nominal / OK / objectif atteint
+ *              Neutre         = info type, état stable
+ *
+ * STRATÉGIE : tous les retours utilisent les tokens CSS `--sf-{tone}-{bg|ink|border}`
+ * définis dans `globals.css` (light + dark). Plus aucune classe Tailwind palette par
+ * défaut (bg-red-100, text-emerald-700, etc.) — celles-ci ne suivent pas le mode dark.
+ *
+ * Mapping tones :
+ *   urgence  → danger   (rouge)
+ *   attendu  → warning  (or)
+ *   nominal  → success  (vert)
+ *   neutre   → neutral  (gris)
+ *   info     → info     (bleu)
  */
 
 export const SEM_COLORS = {
   urgence: {
-    text: 'text-red-700',
-    bg: 'bg-red-100',
-    border: 'border-red-200',
-    badge: 'bg-red-100 text-red-700 border-red-200',
-    badgeHC: 'bg-red-200 text-red-900 border-red-400 font-semibold',
+    text: 'text-[var(--sf-danger-ink)]',
+    bg: 'bg-[var(--sf-danger-bg)]',
+    border: 'border-[var(--sf-danger-border)]',
+    badge:
+      'bg-[var(--sf-danger-bg)] text-[var(--sf-danger-ink)] border-[var(--sf-danger-border)]',
+    badgeHC:
+      'bg-[var(--sf-danger-bg)] text-[var(--sf-danger-ink)] border-[var(--sf-danger-border)] font-semibold',
   },
   attendu: {
-    text: 'text-orange-700',
-    bg: 'bg-orange-100',
-    border: 'border-orange-200',
-    badge: 'bg-orange-100 text-orange-700 border-orange-200',
-    badgeHC: 'bg-orange-200 text-orange-900 border-orange-400 font-semibold',
+    text: 'text-[var(--sf-warning-ink)]',
+    bg: 'bg-[var(--sf-warning-bg)]',
+    border: 'border-[var(--sf-warning-border)]',
+    badge:
+      'bg-[var(--sf-warning-bg)] text-[var(--sf-warning-ink)] border-[var(--sf-warning-border)]',
+    badgeHC:
+      'bg-[var(--sf-warning-bg)] text-[var(--sf-warning-ink)] border-[var(--sf-warning-border)] font-semibold',
   },
   nominal: {
-    text: 'text-emerald-700',
-    bg: 'bg-emerald-100',
-    border: 'border-emerald-200',
-    badge: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    badgeHC: 'bg-emerald-200 text-emerald-900 border-emerald-400 font-semibold',
+    text: 'text-[var(--sf-success-ink)]',
+    bg: 'bg-[var(--sf-success-bg)]',
+    border: 'border-[var(--sf-success-border)]',
+    badge:
+      'bg-[var(--sf-success-bg)] text-[var(--sf-success-ink)] border-[var(--sf-success-border)]',
+    badgeHC:
+      'bg-[var(--sf-success-bg)] text-[var(--sf-success-ink)] border-[var(--sf-success-border)] font-semibold',
   },
   neutre: {
-    text: 'text-slate-700',
-    bg: 'bg-slate-100',
-    border: 'border-slate-200',
-    badge: 'bg-slate-100 text-slate-700 border-slate-200',
-    badgeHC: 'bg-slate-200 text-slate-900 border-slate-400 font-semibold',
+    text: 'text-[var(--sf-neutral-ink)]',
+    bg: 'bg-[var(--sf-neutral-bg)]',
+    border: 'border-[var(--sf-neutral-border)]',
+    badge:
+      'bg-[var(--sf-neutral-bg)] text-[var(--sf-neutral-ink)] border-[var(--sf-neutral-border)]',
+    badgeHC:
+      'bg-[var(--sf-neutral-bg)] text-[var(--sf-neutral-ink)] border-[var(--sf-neutral-border)] font-semibold',
   },
 } as const
 
@@ -72,26 +90,34 @@ export function toneTruie(rangPortee: number | null | undefined, statut: string)
   return 'nominal'
 }
 
-/** Couleurs sémantiques des actions rapides (mobile-first). */
+/**
+ * Couleurs sémantiques des actions rapides (mobile-first) — R7-P3 tokenisé.
+ * Avant : palette arc-en-ciel (violet/indigo/red/emerald) hors charte Terre & Mil.
+ * Après : 4 tons sémantiques mappés sur les tokens semantic.
+ *   miseBas  → primary (vert sahel, événement central élevage)
+ *   pesee    → accent-warm (or, action de mesure)
+ *   soin     → danger (rouge, action sanitaire prioritaire)
+ *   mouvement → primary-soft (vert clair, action neutre élevage)
+ */
 export const ACTION_COLORS = {
   miseBas: {
-    bg: 'bg-violet-600',
-    hover: 'hover:bg-violet-700',
-    ring: 'focus-visible:ring-violet-400',
+    bg: 'bg-[var(--sf-primary)]',
+    hover: 'hover:bg-[var(--sf-primary-deep)]',
+    ring: 'focus-visible:ring-[var(--sf-primary)]',
   },
   pesee: {
-    bg: 'bg-indigo-600',
-    hover: 'hover:bg-indigo-700',
-    ring: 'focus-visible:ring-indigo-400',
+    bg: 'bg-[var(--sf-accent-warm)]',
+    hover: 'hover:bg-[var(--sf-accent-warm)]/90',
+    ring: 'focus-visible:ring-[var(--sf-accent-warm)]',
   },
   soin: {
-    bg: 'bg-red-600',
-    hover: 'hover:bg-red-700',
-    ring: 'focus-visible:ring-red-400',
+    bg: 'bg-[var(--sf-danger)]',
+    hover: 'hover:bg-[var(--sf-danger)]/90',
+    ring: 'focus-visible:ring-[var(--sf-danger)]',
   },
   mouvement: {
-    bg: 'bg-emerald-600',
-    hover: 'hover:bg-emerald-700',
-    ring: 'focus-visible:ring-emerald-400',
+    bg: 'bg-[var(--sf-primary-soft)]',
+    hover: 'hover:bg-[var(--sf-primary)]',
+    ring: 'focus-visible:ring-[var(--sf-primary-soft)]',
   },
 } as const

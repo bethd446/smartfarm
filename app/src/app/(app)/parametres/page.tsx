@@ -146,12 +146,9 @@ export default async function ParametresPage() {
             sanitaires du 1<sup>er</sup> du mois en cours à aujourd'hui. Format A4 prêt à imprimer
             ou à archiver.
           </p>
+          {/* R7-P1 V1 : plus de token client-side ; route same-origin protégée par middleware en Phase 2 */}
           <a
-            href={`/api/registre${
-              process.env.NEXT_PUBLIC_DEMO_API_TOKEN
-                ? `?token=${encodeURIComponent(process.env.NEXT_PUBLIC_DEMO_API_TOKEN)}`
-                : ''
-            }`}
+            href="/api/registre"
             target="_blank"
             rel="noopener noreferrer"
           >

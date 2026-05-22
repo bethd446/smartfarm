@@ -71,8 +71,8 @@ export function Sidebar() {
           'p-3 justify-center lg:p-5 lg:justify-start lg:gap-3',
         )}
       >
-        <div className="h-10 w-10 rounded-lg bg-[var(--sf-primary)] flex items-center justify-center shadow shrink-0 overflow-hidden">
-          <img src="/logo-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
+        <div className="h-10 w-10 rounded-lg bg-[#FFFBEB] flex items-center justify-center shadow shrink-0 overflow-hidden">
+          <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
         </div>
         <div className="hidden lg:block min-w-0">
           <div className="font-bold text-base text-white">Smart Farm</div>

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
+import { PageTitle } from '@/components/ui/page-title'
 import {
   Wheat,
   Sprout,
@@ -68,11 +69,14 @@ export default async function AlimentationPage() {
     <div className="space-y-6">
       {/* En-tête ------------------------------------------------------------ */}
       <div>
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-          <Wheat className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+        <PageTitle
+          eyebrow="LOGISTIQUE"
+          icon={<Wheat className="h-9 w-9 text-[var(--sf-primary)]" />}
+          className="mb-1"
+        >
           Alimentation
-        </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+        </PageTitle>
+        <p className="text-sm text-[var(--sf-muted)]">
           Nutrition porcine — matières premières, formulation, plans et suivi
           des consommations.
         </p>

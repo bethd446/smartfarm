@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { PageTitle } from '@/components/ui/page-title'
 import { PiggyBank } from 'lucide-react'
 import { CheptelActions } from './_actions'
 import { CheptelRow, CheptelRowActions } from './_row-actions'
@@ -29,18 +30,18 @@ export default async function CheptelPage() {
 
   return (
     <div className="space-y-6">
-      {/* === Header de page : H1 Big Shoulders 36px + sous-titre Instrument Sans 14px === */}
+      {/* === Header de page : PageTitle unifié === */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1
-            className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
-            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          <PageTitle
+            eyebrow="ÉLEVAGE"
+            icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
+            className="mb-1"
           >
-            <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
             Cheptel
-          </h1>
+          </PageTitle>
           <p
-            className="text-sm text-[var(--sf-muted)] mt-1"
+            className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
             {animaux?.length ?? 0} animaux sur la ferme

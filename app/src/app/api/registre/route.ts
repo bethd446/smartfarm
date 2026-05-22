@@ -2,7 +2,10 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { Document, Page, Text, View, StyleSheet, Font, renderToBuffer } from '@react-pdf/renderer'
 import React from 'react'
-import { requireApiToken } from '@/lib/api-auth'
+
+// R7-P1 V1 : token guard supprimé. Le NEXT_PUBLIC_DEMO_API_TOKEN était exposé au browser
+// donc le check timingSafeEqual côté serveur ne protégeait rien. Phase 2 = auth middleware
+// applicatif protégera cette route via session cookie.
 
 export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
@@ -373,8 +376,7 @@ function nomAnimal(a: { tag?: string | null; nom?: string | null } | null | unde
 }
 
 export async function GET(req: Request) {
-  const guard = requireApiToken(req)
-  if (guard) return guard
+  void req // route same-origin ; auth Phase 2 via middleware
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY

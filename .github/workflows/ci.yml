@@ -1,5 +1,8 @@
-# Smart Farm — CI (pull requests)
-# Vérifie typecheck + build sur chaque PR, sans cache npm (test propre).
+# Smart Farm — CI (PR + push main/develop)
+#
+# Vérifie typecheck + lint + build sur chaque PR/push.
+# Le build se fait en mode démo (SMARTFARM_DEMO_MODE=true) avec stubs Supabase
+# pour ne pas requérir de secrets réels en CI.
 
 name: ci
 
@@ -7,12 +10,12 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches: [main, develop]
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Lint & build
+  lint-typecheck-build:
+    name: Lint · Typecheck · Build
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -26,14 +29,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
 
-      - name: Install deps (no cache)
+      - name: Install deps
         run: npm ci --no-audit --no-fund
 
       - name: TypeScript check
-        run: npx tsc --noEmit
+        run: npx tsc --noEmit -p tsconfig.json
 
-      - name: Next build
+      - name: Lint (if defined)
+        run: npm run lint --if-present
+
+      - name: Next build (demo mode)
         run: npm run build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+          # Stubs pour permettre le build sans Supabase live.
+          # Le wrapper supabase/server.ts bascule en demo mode via SMARTFARM_DEMO_MODE.
+          NEXT_PUBLIC_SUPABASE_URL: "http://localhost:54321"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy-anon-key"
+          SUPABASE_SERVICE_ROLE_KEY: "dummy-service-role-key"
+          SMARTFARM_DEMO_MODE: "true"

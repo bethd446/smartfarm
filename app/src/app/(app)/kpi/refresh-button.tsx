@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { RefreshCw } from 'lucide-react'
 import { toast } from 'sonner'
+import { refreshKpiViews } from '@/lib/exports/server-actions'
 
+/**
+ * R7-P1 V1 — RefreshKpiButton via Server Action (plus de token client-side).
+ */
 export function RefreshKpiButton() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -14,18 +18,13 @@ export function RefreshKpiButton() {
   async function handle() {
     setLoading(true)
     try {
-      const token = process.env.NEXT_PUBLIC_DEMO_API_TOKEN ?? ''
-      const res = await fetch('/api/kpi/refresh', {
-        method: 'POST',
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      })
-      const json = await res.json()
-      if (!res.ok || !json.ok) {
-        toast.error('Échec du rafraîchissement', { description: json.error ?? '—' })
+      const res = await refreshKpiViews()
+      if (!res.ok) {
+        toast.error('Échec du rafraîchissement', { description: res.error })
         return
       }
       toast.success('KPIs rafraîchis', {
-        description: new Date(json.refreshed_at).toLocaleString('fr-FR'),
+        description: new Date(res.refreshed_at).toLocaleString('fr-FR'),
       })
       startTransition(() => router.refresh())
     } catch (e) {

@@ -2,6 +2,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 /**
  * PROD-B — Saisie BCS rapide 1-tap depuis la fiche /cheptel/[id].
@@ -45,12 +46,24 @@ export async function saisirBcsRapide(formData: FormData) {
 /**
  * H1 — Upload photo animal vers Supabase Storage (bucket 'animaux_photos').
  *
- * 1. Reçoit FormData avec `animal_id` + `photo` (File)
- * 2. Upload dans `animaux_photos/<animal_id>/<timestamp>-<filename>`
- *    (upsert=false pour conserver l'historique)
- * 3. UPDATE animaux.photo_url = public URL
- * 4. revalidatePath
+ * R7-P1 V2+V7 — Sécurisé :
+ * - Path scopé : `<ferme_id>/<animal_id>/<uuid>.<ext>` (RLS policy storage.objects)
+ * - Validation MIME stricte côté server (whitelist) — plus de startsWith('image/')
+ * - Validation taille 5 Mo côté server
+ * - Bucket privé (public=false) → getSignedUrl au lieu de getPublicUrl
+ *
+ * Mode demo : service_role bypass RLS, mais path est correctement scopé via
+ * ferme_id (récupéré de la table animaux) → identique à comportement prod.
  */
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp'])
+const ALLOWED_EXT_BY_MIME: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png':  'png',
+  'image/webp': 'webp',
+}
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024  // 5 Mo
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365 // 1 an (durée longue, bucket privé)
+
 export async function uploadPhotoAnimal(formData: FormData) {
   const animal_id = String(formData.get('animal_id') ?? '')
   const file = formData.get('photo') as File | null
@@ -58,17 +71,17 @@ export async function uploadPhotoAnimal(formData: FormData) {
     return { ok: false, error: 'Aucune photo fournie' }
   }
 
-  // Validation taille (max 5 Mo) et type (image/*)
-  if (file.size > 5 * 1024 * 1024) {
-    return { ok: false, error: 'Photo trop volumineuse (max 5 Mo)' }
+  // R7-P1 V7 — Validation MIME stricte (whitelist) + taille
+  if (!ALLOWED_MIME.has(file.type)) {
+    return { ok: false, error: `Format non supporté (jpg, png, webp uniquement) — reçu ${file.type || 'inconnu'}` }
   }
-  if (!file.type.startsWith('image/')) {
-    return { ok: false, error: 'Format non supporté (image uniquement)' }
+  if (file.size > MAX_PHOTO_BYTES) {
+    return { ok: false, error: 'Photo trop volumineuse (max 5 Mo)' }
   }
 
   const supabase = sb()
 
-  // Vérifie que l'animal existe
+  // Vérifie que l'animal existe + récupère son ferme_id pour scoper le path
   const { data: animal } = await supabase
     .from('animaux')
     .select('id, ferme_id, photo_url')
@@ -76,9 +89,13 @@ export async function uploadPhotoAnimal(formData: FormData) {
     .maybeSingle()
   if (!animal) return { ok: false, error: 'Animal introuvable' }
 
-  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase()
-  const safeName = `${Date.now()}.${ext}`
-  const path = `${animal_id}/${safeName}`
+  // R7-P1 V2 — Path scopé ferme_id (RLS storage.objects ne valide que ce préfixe)
+  // En mode prod (auth), `getFermeId()` retournera la ferme du user authentifié,
+  // qui devrait correspondre à animal.ferme_id (sinon = tentative cross-tenant).
+  const ferme_id = animal.ferme_id ?? (await getFermeId())
+  const ext = ALLOWED_EXT_BY_MIME[file.type] ?? 'jpg'
+  const safeName = `${crypto.randomUUID()}.${ext}`
+  const path = `${ferme_id}/${animal_id}/${safeName}`
 
   const arrayBuffer = await file.arrayBuffer()
   const buffer = new Uint8Array(arrayBuffer)
@@ -94,17 +111,24 @@ export async function uploadPhotoAnimal(formData: FormData) {
     return { ok: false, error: `Échec upload : ${upErr.message}` }
   }
 
-  const { data: pub } = supabase.storage.from('animaux_photos').getPublicUrl(path)
-  const publicUrl = pub.publicUrl
+  // R7-P1 V2 — bucket privé → signed URL (1 an, à régénérer Phase 2 via Server Action)
+  const { data: signed, error: signErr } = await supabase
+    .storage
+    .from('animaux_photos')
+    .createSignedUrl(path, SIGNED_URL_TTL)
+  if (signErr || !signed?.signedUrl) {
+    return { ok: false, error: `Échec génération URL : ${signErr?.message ?? 'inconnue'}` }
+  }
+  const photoUrl = signed.signedUrl
 
   const { error: updErr } = await supabase
     .from('animaux')
-    .update({ photo_url: publicUrl })
+    .update({ photo_url: photoUrl })
     .eq('id', animal_id)
   if (updErr) {
     return { ok: false, error: `Échec UPDATE : ${updErr.message}` }
   }
 
   revalidatePath(`/cheptel/${animal_id}`)
-  return { ok: true, url: publicUrl }
+  return { ok: true, url: photoUrl }
 }

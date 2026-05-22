@@ -51,8 +51,8 @@ export function AppShell({ children, alertesCount = 0 }: AppShellProps) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2 min-w-0">
-            <div className="h-8 w-8 rounded-md bg-[var(--sf-primary)] flex items-center justify-center shrink-0 overflow-hidden">
-              <img src="/logo-smartfarm.svg" alt="Smart Farm" className="h-7 w-7" />
+            <div className="h-8 w-8 rounded-md bg-[#FFFBEB] flex items-center justify-center shrink-0 overflow-hidden">
+              <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-7 w-7" />
             </div>
             <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-wide text-base text-[var(--sf-ink,#1a1a1a)] truncate">
               Smart Farm

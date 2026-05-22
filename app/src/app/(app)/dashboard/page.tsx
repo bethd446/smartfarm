@@ -1,3 +1,4 @@
+import { PageTitle } from '@/components/ui/page-title'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
@@ -98,15 +99,13 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* === HEADER eyebrow + filet === */}
-      <header className="space-y-2">
-        <div className={eyebrowCls}>
-          Aujourd'hui · {today} · Yamoussoukro
-        </div>
-        <h1 className="font-[family-name:var(--sf-font-display)] text-3xl font-black tracking-tight text-[var(--sf-ink)] uppercase">
-          Aujourd&apos;hui
-        </h1>
-      </header>
+      {/* === HEADER PageTitle === */}
+      <PageTitle
+        eyebrow={`PILOTAGE · ${today} · YAMOUSSOUKRO`}
+        icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
+      >
+        Tableau de bord
+      </PageTitle>
 
       {/* === KPI GRID ASYMÉTRIQUE — hero géant + stack 3 === */}
       <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">

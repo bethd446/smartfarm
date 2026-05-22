@@ -22,12 +22,12 @@ export default function HomePage() {
 
         {/* Logo Smart Farm */}
         <Image
-          src="/images/logo-smartfarm.svg"
+          src="/logo-smartfarm.svg"
           alt="Smart Farm"
-          width={220}
-          height={80}
+          width={160}
+          height={160}
           priority
-          className="h-20 w-auto mb-8"
+          className="h-32 w-32 mb-8"
         />
 
         {/* Titre + sous-titre */}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Bell, AlertTriangle, AlertCircle, Siren, ShieldCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
+import { PageTitle } from '@/components/ui/page-title'
 import { EmptyState } from '@/components/ui/empty-state'
 import { getAlertesActives, compteParGravite } from '@/lib/alertes-engine'
 import { AlertesList } from './_components/alertes-list'
@@ -33,11 +34,14 @@ export default async function AlertesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-            <Bell className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <PageTitle
+            eyebrow="PILOTAGE"
+            icon={<Bell className="h-9 w-9 text-[var(--sf-primary)]" />}
+            className="mb-1"
+          >
             Alertes
-          </h1>
-          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+          </PageTitle>
+          <p className="text-sm text-[var(--sf-muted)]">
             Anomalies détectées automatiquement sur le cheptel, la reproduction,
             le sanitaire et le stock
           </p>
