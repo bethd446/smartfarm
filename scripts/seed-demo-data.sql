@@ -1,0 +1,3176 @@
+-- ============================================================
+-- Smart Farm — Seed de données de démo
+-- Généré : 2026-05-22T09:26:57Z
+-- Source : supabase_db_smartfarm (Postgres local Docker)
+-- Tables : 43
+--
+-- À appliquer sur une base VIDE seulement (RLS + FK respectées).
+-- Désactive temporairement les triggers user pour éviter les
+-- effets de bord (auto-événements, audit logs).
+-- ============================================================
+
+BEGIN;
+SET session_replication_role = 'replica';  -- désactive triggers user
+
+--
+-- PostgreSQL database dump
+--
+
+\restrict Ucoyb3ylTWaxBCoBRmgkpBr5X874QKabpZEVa0CnToraGh72hKD1TrA4ut6LLjz
+
+-- Dumped from database version 17.6
+-- Dumped by pg_dump version 17.6
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- Data for Name: fermes; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+SET SESSION AUTHORIZATION DEFAULT;
+
+ALTER TABLE public.fermes DISABLE TRIGGER ALL;
+
+INSERT INTO public.fermes (id, nom, code, localisation, pays, type, created_at, updated_at, deleted_at) VALUES ('00000000-0000-0000-0000-000000000001', 'Smart Farm Yamoussoukro', 'SFY-01', 'Yamoussoukro, Côte d''Ivoire', 'CI', 'porcine', '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL);
+
+
+ALTER TABLE public.fermes ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: batiments; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.batiments DISABLE TRIGGER ALL;
+
+INSERT INTO public.batiments (id, ferme_id, nom, type, capacite, surface_m2, created_at, deleted_at) VALUES ('22222222-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'Bâtiment Maternité A', 'maternité', 12, 120, '2026-05-20 22:22:09.127483+00', NULL);
+INSERT INTO public.batiments (id, ferme_id, nom, type, capacite, surface_m2, created_at, deleted_at) VALUES ('22222222-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'Bâtiment Gestation B', 'gestation', 30, 180, '2026-05-20 22:22:09.127483+00', NULL);
+INSERT INTO public.batiments (id, ferme_id, nom, type, capacite, surface_m2, created_at, deleted_at) VALUES ('22222222-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', 'Verraterie C', 'verraterie', 6, 80, '2026-05-20 22:22:09.127483+00', NULL);
+INSERT INTO public.batiments (id, ferme_id, nom, type, capacite, surface_m2, created_at, deleted_at) VALUES ('22222222-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'Post-Sevrage D', 'post-sevrage', 200, 250, '2026-05-20 22:22:09.127483+00', NULL);
+INSERT INTO public.batiments (id, ferme_id, nom, type, capacite, surface_m2, created_at, deleted_at) VALUES ('22222222-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 'Engraissement E', 'engraissement', 300, 400, '2026-05-20 22:22:09.127483+00', NULL);
+
+
+ALTER TABLE public.batiments ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: salles; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.salles DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.salles ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: cases; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.cases DISABLE TRIGGER ALL;
+
+INSERT INTO public.cases (id, batiment_id, numero, capacite, type, deleted_at, salle_id) VALUES ('792250b4-1e88-4918-81ba-b2bc0d9a6cf1', '22222222-0000-0000-0000-000000000001', 'M01', 1, NULL, NULL, NULL);
+INSERT INTO public.cases (id, batiment_id, numero, capacite, type, deleted_at, salle_id) VALUES ('2d91662c-8c10-41ff-bc21-148156ec571d', '22222222-0000-0000-0000-000000000001', 'M02', 1, NULL, NULL, NULL);
+INSERT INTO public.cases (id, batiment_id, numero, capacite, type, deleted_at, salle_id) VALUES ('7389ab19-c043-435d-a1d6-1d549187323f', '22222222-0000-0000-0000-000000000001', 'M03', 1, NULL, NULL, NULL);
+INSERT INTO public.cases (id, batiment_id, numero, capacite, type, deleted_at, salle_id) VALUES ('f12ac127-15c6-45bd-a515-b0a6df8edb91', '22222222-0000-0000-0000-000000000003', 'V01', 1, NULL, NULL, NULL);
+INSERT INTO public.cases (id, batiment_id, numero, capacite, type, deleted_at, salle_id) VALUES ('98a00ae6-38f3-4236-8eb2-397903f46e5d', '22222222-0000-0000-0000-000000000003', 'V02', 1, NULL, NULL, NULL);
+
+
+ALTER TABLE public.cases ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: races; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.races DISABLE TRIGGER ALL;
+
+INSERT INTO public.races (id, nom) VALUES ('11111111-0000-0000-0000-000000000001', 'Large White');
+INSERT INTO public.races (id, nom) VALUES ('11111111-0000-0000-0000-000000000002', 'Landrace');
+INSERT INTO public.races (id, nom) VALUES ('11111111-0000-0000-0000-000000000003', 'Duroc');
+INSERT INTO public.races (id, nom) VALUES ('11111111-0000-0000-0000-000000000004', 'Piétrain');
+INSERT INTO public.races (id, nom) VALUES ('11111111-0000-0000-0000-000000000005', 'Croisé F1');
+
+
+ALTER TABLE public.races ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: animaux; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.animaux DISABLE TRIGGER ALL;
+
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', NULL, 'T-001', 'Adjoa', 'F', 'truie', '11111111-0000-0000-0000-000000000001', '2024-03-15', '2024-09-01', NULL, NULL, NULL, 'actif', NULL, '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', NULL, 'T-002', 'Akissi', 'F', 'truie', '11111111-0000-0000-0000-000000000002', '2024-04-10', '2024-09-15', NULL, NULL, NULL, 'actif', NULL, '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', NULL, 'T-003', 'Aya', 'F', 'truie', '11111111-0000-0000-0000-000000000001', '2024-05-20', '2024-10-01', NULL, NULL, NULL, 'actif', NULL, '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-000000000010', '00000000-0000-0000-0000-000000000001', NULL, 'V-001', 'Koffi', 'M', 'verrat', '11111111-0000-0000-0000-000000000003', '2023-11-01', '2024-05-01', NULL, NULL, NULL, 'actif', NULL, '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-000000000011', '00000000-0000-0000-0000-000000000001', NULL, 'V-002', 'Yao', 'M', 'verrat', '11111111-0000-0000-0000-000000000004', '2023-12-15', '2024-06-01', NULL, NULL, NULL, 'actif', NULL, '2026-05-20 22:22:09.127483+00', '2026-05-20 22:22:09.127483+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000007', '00000000-0000-0000-0000-000000000001', NULL, 'P-007', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000001', '00000000-0000-0000-0000-000000000001', NULL, 'P-001', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000003', '00000000-0000-0000-0000-000000000001', NULL, 'P-003', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000004', '00000000-0000-0000-0000-000000000001', NULL, 'P-004', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000005', '00000000-0000-0000-0000-000000000001', NULL, 'P-005', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000006', '00000000-0000-0000-0000-000000000001', NULL, 'P-006', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000008', '00000000-0000-0000-0000-000000000001', NULL, 'P-008', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000009', '00000000-0000-0000-0000-000000000001', NULL, 'P-009', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000010', '00000000-0000-0000-0000-000000000001', NULL, 'P-010', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000011', '00000000-0000-0000-0000-000000000001', NULL, 'P-011', NULL, 'M', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000012', '00000000-0000-0000-0000-000000000001', NULL, 'P-012', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 01:02:14.630721+00', NULL, 0, NULL);
+INSERT INTO public.animaux (id, ferme_id, case_id, tag, nom, sexe, categorie, race_id, date_naissance, date_entree, mere_id, pere_id, poids_naissance_kg, statut, observations, created_at, updated_at, deleted_at, version, photo_url) VALUES ('33333333-0000-0000-0000-100000000002', '00000000-0000-0000-0000-000000000001', NULL, 'P-002', NULL, 'F', 'engraissement', NULL, '2025-12-01', '2025-12-01', NULL, NULL, 1.5, 'actif', 'Seed démo IFIP', '2026-05-22 01:02:14.630721+00', '2026-05-22 02:13:21.80335+00', NULL, 4, NULL);
+
+
+ALTER TABLE public.animaux ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: bandes; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.bandes DISABLE TRIGGER ALL;
+
+INSERT INTO public.bandes (id, ferme_id, nom, code, date_debut, date_fin_prevue, date_fin_reelle, statut, observations, created_at, deleted_at, phase_courante, sexee) VALUES ('44444444-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'Bande Janvier 2026', 'B2026-01', '2026-01-15', '2026-06-15', NULL, 'active', NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, false);
+
+
+ALTER TABLE public.bandes ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: bande_animaux; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.bande_animaux DISABLE TRIGGER ALL;
+
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000001', '2026-05-20', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000002', '2026-05-20', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000003', '2026-05-20', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000001', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000002', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000003', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000004', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000005', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000006', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000007', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000008', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000009', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000010', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000011', '2025-12-01', NULL, NULL);
+INSERT INTO public.bande_animaux (bande_id, animal_id, date_entree, date_sortie, sous_groupe) VALUES ('44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-100000000012', '2025-12-01', NULL, NULL);
+
+
+ALTER TABLE public.bande_animaux ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: biosecurite_checklist; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.biosecurite_checklist DISABLE TRIGGER ALL;
+
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('e94ca2f1-d956-417d-87ae-6adca4126f7f', 'maternite', 'Marche en avant strict (truies puis porcelets)', true, 1);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('a66de063-c5eb-456c-b8c5-5e17b4679377', 'entree_ferme', 'Sas avec douche obligatoire pour tout visiteur', true, 1);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('59a8cfa3-40fa-4e76-a0ee-0abca6af4ac4', 'maternite', 'Désinfection inter-bandes des cases', true, 2);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('7f888744-1b4d-4b26-8b05-b8b9bd1d9f78', 'engraissement', 'Toiles anti-moustiques sur ouvertures', true, 2);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('549cf8cd-e126-4dfc-b98a-4c3be72cfe58', 'entree_ferme', 'Registre des visiteurs à jour', true, 5);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('c7f0f774-2ab9-4448-b448-dc9b59874ce8', 'entree_ferme', 'Délai de carence de 48h pour visite venant d''une autre ferme porcine', true, 4);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('8227fc3d-1ae3-4ffa-afb9-c6eb0e917876', 'engraissement', 'Rongeurs : appâts vérifiés mensuellement', true, 1);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('7374f037-63fe-49e7-b6cd-0f3fde980a78', 'entree_ferme', 'Pédiluve fonctionnel à l''entrée du quai', true, 2);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('83ef3dce-1f76-4119-97a9-545b6c1b76a2', 'transport', 'Quai de chargement extérieur (pas d''accès intérieur du transporteur)', true, 1);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('867932e3-2110-488a-95e8-cada54c8a9d6', 'entree_ferme', 'Tenue propre exclusive à la ferme', true, 3);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('9c4c1338-6c20-48c1-bae5-35d65141a122', 'maternite', 'Vide sanitaire ≥ 5 jours', true, 3);
+INSERT INTO public.biosecurite_checklist (id, categorie, item, obligatoire, ordre) VALUES ('c068a9ab-26da-46af-a1bf-7bf6ae1381bf', 'transport', 'Lavage + désinfection avant chaque arrivée camion', true, 2);
+
+
+ALTER TABLE public.biosecurite_checklist ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: utilisateurs; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.utilisateurs DISABLE TRIGGER ALL;
+
+INSERT INTO public.utilisateurs (id, auth_id, email, nom, prenom, telephone, role, actif, created_at, deleted_at) VALUES ('aaaaaaaa-0000-0000-0000-000000000001', NULL, 'demo@smartfarm.local', 'Liegeois', 'Christophe', NULL, 'admin', true, '2026-05-20 22:22:09.127483+00', NULL);
+
+
+ALTER TABLE public.utilisateurs ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: biosecurite_audits; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.biosecurite_audits DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.biosecurite_audits ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: saillies; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.saillies DISABLE TRIGGER ALL;
+
+INSERT INTO public.saillies (id, ferme_id, bande_id, truie_id, verrat_id, date_saillie, methode, rang_porte, observations, created_at, deleted_at, bcs_truie, idempotency_key, version, updated_at) VALUES ('55555555-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000010', '2026-01-20', 'naturelle', 2, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.saillies (id, ferme_id, bande_id, truie_id, verrat_id, date_saillie, methode, rang_porte, observations, created_at, deleted_at, bcs_truie, idempotency_key, version, updated_at) VALUES ('55555555-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000010', '2026-01-22', 'IA', 1, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.saillies (id, ferme_id, bande_id, truie_id, verrat_id, date_saillie, methode, rang_porte, observations, created_at, deleted_at, bcs_truie, idempotency_key, version, updated_at) VALUES ('55555555-0000-0000-0000-000000000003', '00000000-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000003', '33333333-0000-0000-0000-000000000011', '2026-01-25', 'naturelle', 1, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.saillies (id, ferme_id, bande_id, truie_id, verrat_id, date_saillie, methode, rang_porte, observations, created_at, deleted_at, bcs_truie, idempotency_key, version, updated_at) VALUES ('235b5928-d3bd-46aa-bc6d-23f1c3884c9e', '00000000-0000-0000-0000-000000000001', NULL, '33333333-0000-0000-0000-000000000001', NULL, '2026-07-15', 'naturelle', NULL, NULL, '2026-05-22 01:50:43.269671+00', NULL, NULL, NULL, 0, '2026-05-22 01:50:43.269671+00');
+
+
+ALTER TABLE public.saillies ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: mises_bas; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.mises_bas DISABLE TRIGGER ALL;
+
+INSERT INTO public.mises_bas (id, saillie_id, truie_id, bande_id, date_mise_bas, nes_totaux, nes_vivants, nes_morts, momifies, poids_portee_kg, duree_minutes, assistance, observations, created_at, deleted_at, bcs_truie, ecrases, idempotency_key, version, updated_at) VALUES ('66666666-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '2026-05-13', 13, 12, 1, 0, 17.5, 180, false, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, 0, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.mises_bas (id, saillie_id, truie_id, bande_id, date_mise_bas, nes_totaux, nes_vivants, nes_morts, momifies, poids_portee_kg, duree_minutes, assistance, observations, created_at, deleted_at, bcs_truie, ecrases, idempotency_key, version, updated_at) VALUES ('66666666-0000-0000-0000-000000000002', '55555555-0000-0000-0000-000000000002', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '2026-05-15', 11, 11, 0, 0, 15.8, 210, false, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, 0, NULL, 0, '2026-05-22 01:42:59.760554+00');
+
+
+ALTER TABLE public.mises_bas ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: checks_post_mb; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.checks_post_mb DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.checks_post_mb ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: fournisseurs; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.fournisseurs DISABLE TRIGGER ALL;
+
+INSERT INTO public.fournisseurs (id, nom, contact, telephone, email, adresse, created_at, deleted_at) VALUES ('99999999-0000-0000-0000-000000000001', 'Provendes CI', 'M. Konaté', '+225 07 00 00 00', 'contact@provendesci.ci', NULL, '2026-05-20 22:22:09.127483+00', NULL);
+INSERT INTO public.fournisseurs (id, nom, contact, telephone, email, adresse, created_at, deleted_at) VALUES ('99999999-0000-0000-0000-000000000002', 'AgriVet Yamoussoukro', 'Dr. Bamba', '+225 05 00 00 00', 'agrivet@y.ci', NULL, '2026-05-20 22:22:09.127483+00', NULL);
+
+
+ALTER TABLE public.fournisseurs ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: commandes; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.commandes DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.commandes ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: types_aliment; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.types_aliment DISABLE TRIGGER ALL;
+
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000001', 'Pré-starter porcelet', 'porcelet', 22, 3400, NULL);
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000002', 'Starter post-sevrage', 'sevrage', 20, 3300, NULL);
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000003', 'Croissance', 'engraissement', 18, 3200, NULL);
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000004', 'Finition', 'engraissement', 16, 3100, NULL);
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000005', 'Gestation truie', 'truie', 14, 3000, NULL);
+INSERT INTO public.types_aliment (id, nom, categorie_cible, proteine_pct, energie_kcal_kg, observations) VALUES ('77777777-0000-0000-0000-000000000006', 'Lactation truie', 'truie', 17, 3300, NULL);
+
+
+ALTER TABLE public.types_aliment ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: consommations_aliment; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.consommations_aliment DISABLE TRIGGER ALL;
+
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('5f91585d-b98c-4b06-891b-b55f2d56c6da', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000001', '2025-12-01', 30.5360177273479, 12137.1874212812, 'Seed IFIP hebdo', '2025-12-01 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('08d91946-a9c8-4ee5-acab-1e81aa465b90', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000001', '2025-12-08', 26.3899554765778, 10073.4592394032, 'Seed IFIP hebdo', '2025-12-08 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('9da96a3f-a5d4-46e8-b03c-e249a1a3ef5f', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000001', '2025-12-15', 26.575690304874, 10214.3043952676, 'Seed IFIP hebdo', '2025-12-15 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('bd71f7d3-4e5b-46e6-801c-ec726311ed82', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000001', '2025-12-22', 31.1138761388249, 10717.7535401819, 'Seed IFIP hebdo', '2025-12-22 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('42c7c096-9a25-49e1-9811-dd0f819c53b9', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2025-12-29', 94.6864607048831, 26488.6773060525, 'Seed IFIP hebdo', '2025-12-29 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('136c5d0a-a64a-474c-8de9-d4a86f8f526b', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-01-05', 105.081256640077, 27187.8023630521, 'Seed IFIP hebdo', '2026-01-05 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('6768f4c6-2a15-4b6f-9206-a1db1dec97b0', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-01-12', 91.2656825941076, 30244.7397072353, 'Seed IFIP hebdo', '2026-01-12 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('a6bbb7e4-97aa-4074-a9d5-66ed6f35102a', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-01-19', 95.5441236727662, 30158.1165651081, 'Seed IFIP hebdo', '2026-01-19 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('536040e4-2cc6-4469-a515-9657cd2fb1c5', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-01-26', 107.903359892182, 30743.6903353738, 'Seed IFIP hebdo', '2026-01-26 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('2c447585-60cb-4583-af08-9d9ddd5c86e3', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-02-02', 94.1509988349443, 26904.2936485552, 'Seed IFIP hebdo', '2026-02-02 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('6c108022-b372-4f48-b890-e86f95a4b120', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000002', '2026-02-09', 102.387610998548, 27784.6723683935, 'Seed IFIP hebdo', '2026-02-09 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('b0837cac-1772-44fc-a303-23cd125419ee', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-02-16', 241.216886436787, 53194.0938989104, 'Seed IFIP hebdo', '2026-02-16 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('7111e501-5065-43c0-91c5-734633fd5dd6', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-02-23', 230.432604635689, 55881.2143250258, 'Seed IFIP hebdo', '2026-02-23 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('f3dbeaab-6962-4310-88b7-b6505bd9dca7', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-03-02', 227.81527802435, 59361.5795919941, 'Seed IFIP hebdo', '2026-03-02 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('0f658da6-0de0-4eca-8c15-265e0e3f3d3c', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-03-09', 247.075866606846, 59102.7475129557, 'Seed IFIP hebdo', '2026-03-09 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('2113be48-31af-4b09-b148-fef84cfe331b', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-03-16', 232.234296025338, 56415.4486252082, 'Seed IFIP hebdo', '2026-03-16 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('506758e8-9f59-48d7-9906-31b6e2bd2f41', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-03-23', 234.405312060262, 53364.1912921554, 'Seed IFIP hebdo', '2026-03-23 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('4becb081-8d47-403b-97c6-f3dbdc85d255', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-03-30', 222.481997780829, 52964.6373429883, 'Seed IFIP hebdo', '2026-03-30 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('cb499d44-879d-4bdf-b099-d81139fc05dc', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-04-06', 243.499613755387, 53304.7897984159, 'Seed IFIP hebdo', '2026-04-06 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('bf379b92-3261-4d61-b977-1bbc9992906e', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000003', '2026-04-13', 244.459767718066, 57384.586014508, 'Seed IFIP hebdo', '2026-04-13 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('994d744f-698f-4275-9b93-bc6296e0b2ba', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000004', '2026-04-20', 317.470244346109, 62858.279044004, 'Seed IFIP hebdo', '2026-04-20 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('c3a7a406-ac42-4228-81c2-e09e3476f507', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000004', '2026-04-27', 307.270823907465, 70177.545521737, 'Seed IFIP hebdo', '2026-04-27 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('a399c6d6-56d7-4cdb-b3b6-a95418b737e6', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000004', '2026-05-04', 299.449198230177, 68209.8855053482, 'Seed IFIP hebdo', '2026-05-04 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('57db63ce-3e07-4a5f-a5bc-f63c90531f7c', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000004', '2026-05-11', 280.864755899732, 68955.0116750398, 'Seed IFIP hebdo', '2026-05-11 00:00:00+00');
+INSERT INTO public.consommations_aliment (id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, created_at) VALUES ('371e28fd-1666-4dd6-99d6-83a218551dc2', '44444444-0000-0000-0000-000000000001', '77777777-0000-0000-0000-000000000004', '2026-05-18', 293.023085050231, 64978.2394228108, 'Seed IFIP hebdo', '2026-05-18 00:00:00+00');
+
+
+ALTER TABLE public.consommations_aliment ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: consommations_eau; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.consommations_eau DISABLE TRIGGER ALL;
+
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('446ea392-5c19-4a99-867d-500237c246a3', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-14', 1820.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('3f4c74ec-0ca9-4d7f-ac51-ab52846ec3e3', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-15', 1880.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('fdf162fa-57a7-40d0-9187-6722c11b32c1', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-16', 1790.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('efcc9a16-530c-47f7-b8c4-55a19702c89a', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-17', 1900.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('ef58d6ca-21fb-4c79-b850-0e0e7215c4ca', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-18', 1850.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('0d078dec-02c4-4509-9fdb-b887f68f79fc', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-19', 1830.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('c4a9f71b-036a-4e48-b480-3006fd6c5ed6', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-20', 1860.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+INSERT INTO public.consommations_eau (id, ferme_id, bande_id, batiment_id, date, litres, nb_animaux, source, observations, created_at, deleted_at) VALUES ('6389496a-10a8-43a2-a925-df67474357e4', '00000000-0000-0000-0000-000000000001', NULL, NULL, '2026-05-21', 1320.00, 320, 'compteur_global', NULL, '2026-05-21 20:18:54.068516+00', NULL);
+
+
+ALTER TABLE public.consommations_eau ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: departs; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.departs DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.departs ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: diagnostics_gestation; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.diagnostics_gestation DISABLE TRIGGER ALL;
+
+INSERT INTO public.diagnostics_gestation (id, saillie_id, date_diagnostic, resultat, methode, observations) VALUES ('2f4264ed-5108-46e4-b96b-44da76974539', '55555555-0000-0000-0000-000000000001', '2026-02-20', 'positif', 'échographie', NULL);
+INSERT INTO public.diagnostics_gestation (id, saillie_id, date_diagnostic, resultat, methode, observations) VALUES ('edddb964-d499-4a51-b9a4-ba919ec965cc', '55555555-0000-0000-0000-000000000002', '2026-02-22', 'positif', 'échographie', NULL);
+INSERT INTO public.diagnostics_gestation (id, saillie_id, date_diagnostic, resultat, methode, observations) VALUES ('563568c3-4cf4-4324-8db7-cad0a2d9f90a', '55555555-0000-0000-0000-000000000003', '2026-02-25', 'positif', 'échographie', NULL);
+
+
+ALTER TABLE public.diagnostics_gestation ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: evenements_prevus; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.evenements_prevus DISABLE TRIGGER ALL;
+
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('f4205d49-2808-4add-9fec-9b5a0c86aa22', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_15j', '2026-02-04', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', NULL, 'realise', '2026-02-04', 2, 'Backfill — diagnostic précoce', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('a3622c86-715f-4ba9-b610-049a54676b10', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_28j', '2026-02-17', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', NULL, 'realise', '2026-02-17', 2, 'Backfill — échographie confirmation', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('af60def7-b0b5-4771-a670-657ddcc5000c', '00000000-0000-0000-0000-000000000001', 'sevrage_prevu', '2026-06-11', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', NULL, 'planifie', NULL, 2, 'Backfill — sevrage à 28 jours post mise-bas', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('339cb73b-ff24-40b2-88d3-d65868a4b30d', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_15j', '2026-02-06', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', NULL, 'realise', '2026-02-06', 2, 'Backfill — diagnostic précoce', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('2eb3d3f4-bcd7-4fa9-a1c4-23209d8293fb', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_28j', '2026-02-19', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', NULL, 'realise', '2026-02-19', 2, 'Backfill — échographie confirmation', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('3568d49e-b43e-48ec-9e75-3d60ae404588', '00000000-0000-0000-0000-000000000001', 'sevrage_prevu', '2026-06-13', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', NULL, 'planifie', NULL, 2, 'Backfill — sevrage à 28 jours post mise-bas', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('c8a8a5a0-f09a-4074-97f2-b253f1ae7710', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_15j', '2026-02-09', '33333333-0000-0000-0000-000000000003', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000003', NULL, 'realise', '2026-02-09', 2, 'Backfill — diagnostic précoce', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('2663d9c3-d194-4321-bbcb-4ef5c20d1878', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_28j', '2026-02-22', '33333333-0000-0000-0000-000000000003', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000003', NULL, 'realise', '2026-02-22', 2, 'Backfill — échographie confirmation', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('7d14eaeb-b435-4b24-8cea-e4bf9b4943c8', '00000000-0000-0000-0000-000000000001', 'mise_bas_prevue', '2026-05-19', '33333333-0000-0000-0000-000000000003', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000003', NULL, 'planifie', NULL, 1, 'Backfill — mise-bas prévue J+114', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('a2308eb7-dcb2-4034-8097-663aca1a7b09', '00000000-0000-0000-0000-000000000001', 'sevrage_prevu', '2026-06-16', '33333333-0000-0000-0000-000000000003', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000003', NULL, 'planifie', NULL, 2, 'Backfill — sevrage à 28 jours post mise-bas', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:44:56.161198+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('081ae9e4-113b-41e6-aa53-aba7bd805c88', '00000000-0000-0000-0000-000000000001', 'transfert_maternite', '2026-05-07', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', NULL, 'retard', NULL, 3, 'Backfill — transfert maternité', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:45:22.686048+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('29acc5d7-b574-4905-a115-541c0c5326df', '00000000-0000-0000-0000-000000000001', 'transfert_maternite', '2026-05-09', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', NULL, 'retard', NULL, 3, 'Backfill — transfert maternité', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:45:22.686048+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('7a943cbf-7fd5-4242-b798-e40c115ec251', '00000000-0000-0000-0000-000000000001', 'transfert_maternite', '2026-05-12', '33333333-0000-0000-0000-000000000003', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000003', NULL, 'retard', NULL, 3, 'Backfill — transfert maternité', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:45:22.686048+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('71b1e0bf-a862-4fe2-9722-1549feee419e', '00000000-0000-0000-0000-000000000001', 'mise_bas_prevue', '2026-05-14', '33333333-0000-0000-0000-000000000001', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000001', NULL, 'retard', NULL, 1, 'Backfill — mise-bas prévue J+114', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:45:22.686048+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('42ac6755-4866-4692-b966-5676a5168aa3', '00000000-0000-0000-0000-000000000001', 'mise_bas_prevue', '2026-05-16', '33333333-0000-0000-0000-000000000002', '44444444-0000-0000-0000-000000000001', '55555555-0000-0000-0000-000000000002', NULL, 'retard', NULL, 1, 'Backfill — mise-bas prévue J+114', '2026-05-20 22:44:56.161198+00', '2026-05-20 22:45:22.686048+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('aaa999db-a39e-489b-b6ad-9647db92423c', '00000000-0000-0000-0000-000000000001', 'fer_dextran_porcelets_j1', '2026-05-14', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000001', 'planifie', NULL, 1, 'Backfill : Fer J1', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('d8427e87-55f1-45c2-8a78-02d3a26ecbfd', '00000000-0000-0000-0000-000000000001', 'castration_porcelets_j5', '2026-05-18', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000001', 'planifie', NULL, 2, 'Backfill : Castration J5', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('ea7dd7ef-ebb5-4056-8963-bfaf74c6e106', '00000000-0000-0000-0000-000000000001', 'vaccin_mycoplasma_primo_j14', '2026-05-27', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000001', 'planifie', NULL, 1, 'Backfill : Mycoplasma primo J14', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('c90d8f66-7cfd-4f47-9b9d-5d3692cefc29', '00000000-0000-0000-0000-000000000001', 'vaccin_mycoplasma_rappel_j28', '2026-06-10', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000001', 'planifie', NULL, 1, 'Backfill : Mycoplasma rappel J28', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('91940231-4bf8-46c0-9a8e-02a31a61060b', '00000000-0000-0000-0000-000000000001', 'sevrage_j28', '2026-06-10', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000001', 'planifie', NULL, 1, 'Backfill : Sevrage J28', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('2715db00-4a43-4df3-bf4c-fecc8d158e63', '00000000-0000-0000-0000-000000000001', 'fer_dextran_porcelets_j1', '2026-05-16', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000002', 'planifie', NULL, 1, 'Backfill : Fer J1', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('bc3e71ab-5b8f-4c0e-86cc-f18a7b25b94b', '00000000-0000-0000-0000-000000000001', 'castration_porcelets_j5', '2026-05-20', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000002', 'planifie', NULL, 2, 'Backfill : Castration J5', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('d6cc35dc-dd4a-4b38-8e4f-6e51d22e1c83', '00000000-0000-0000-0000-000000000001', 'vaccin_mycoplasma_primo_j14', '2026-05-29', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000002', 'planifie', NULL, 1, 'Backfill : Mycoplasma primo J14', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('9d95e88e-3adc-4c82-96ed-c285f6123989', '00000000-0000-0000-0000-000000000001', 'vaccin_mycoplasma_rappel_j28', '2026-06-12', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000002', 'planifie', NULL, 1, 'Backfill : Mycoplasma rappel J28', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('6c0718ce-3501-40b3-b9f4-05fb4e0f9bb0', '00000000-0000-0000-0000-000000000001', 'sevrage_j28', '2026-06-12', NULL, '44444444-0000-0000-0000-000000000001', NULL, '66666666-0000-0000-0000-000000000002', 'planifie', NULL, 1, 'Backfill : Sevrage J28', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('8621c20d-5d4b-49fa-9324-d8f974d682de', '00000000-0000-0000-0000-000000000001', 'vermifuge_truie_pre_mb', '2026-04-30', '33333333-0000-0000-0000-000000000001', NULL, '55555555-0000-0000-0000-000000000001', NULL, 'planifie', NULL, 1, 'Backfill : Vermifuge truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('8655c2d3-10a8-4c3e-a50f-5a4ee4ab6ba0', '00000000-0000-0000-0000-000000000001', 'vaccin_erysipele_parvo_truie_pre_mb', '2026-04-23', '33333333-0000-0000-0000-000000000001', NULL, '55555555-0000-0000-0000-000000000001', NULL, 'planifie', NULL, 1, 'Backfill : Erysipèle+Parvo truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('12cef2c5-2fb1-495f-8752-3659643e80fe', '00000000-0000-0000-0000-000000000001', 'vermifuge_truie_pre_mb', '2026-05-02', '33333333-0000-0000-0000-000000000002', NULL, '55555555-0000-0000-0000-000000000002', NULL, 'planifie', NULL, 1, 'Backfill : Vermifuge truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('2d85a5ff-df1d-4e9b-bd0d-536f3132e1cc', '00000000-0000-0000-0000-000000000001', 'vaccin_erysipele_parvo_truie_pre_mb', '2026-04-25', '33333333-0000-0000-0000-000000000002', NULL, '55555555-0000-0000-0000-000000000002', NULL, 'planifie', NULL, 1, 'Backfill : Erysipèle+Parvo truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('c4e0f667-1a5c-46a2-803c-7cf27a3c892e', '00000000-0000-0000-0000-000000000001', 'vermifuge_truie_pre_mb', '2026-05-05', '33333333-0000-0000-0000-000000000003', NULL, '55555555-0000-0000-0000-000000000003', NULL, 'planifie', NULL, 1, 'Backfill : Vermifuge truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('0f95b11b-7692-4f40-8f59-c6fefcc1e9bc', '00000000-0000-0000-0000-000000000001', 'vaccin_erysipele_parvo_truie_pre_mb', '2026-04-28', '33333333-0000-0000-0000-000000000003', NULL, '55555555-0000-0000-0000-000000000003', NULL, 'planifie', NULL, 1, 'Backfill : Erysipèle+Parvo truie pré-MB', '2026-05-21 22:55:36.627102+00', '2026-05-21 22:55:36.627102+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('265633ed-5311-4c60-bb4f-c9326b0a83d0', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_15j', '2026-07-30', '33333333-0000-0000-0000-000000000001', NULL, '235b5928-d3bd-46aa-bc6d-23f1c3884c9e', NULL, 'planifie', NULL, 2, 'Diagnostic gestation précoce (palpation/retour chaleur)', '2026-05-22 01:50:43.269671+00', '2026-05-22 01:50:43.269671+00', NULL);
+INSERT INTO public.evenements_prevus (id, ferme_id, type_evenement, date_prevue, animal_id, bande_id, saillie_id, mise_bas_id, statut, date_realisation, priorite, notes, created_at, updated_at, fait_idempotency_key) VALUES ('3cc3be1d-49d8-4126-abd3-b8930f2b90c0', '00000000-0000-0000-0000-000000000001', 'diagnostic_gestation_28j', '2026-08-12', '33333333-0000-0000-0000-000000000001', NULL, '235b5928-d3bd-46aa-bc6d-23f1c3884c9e', NULL, 'planifie', NULL, 2, 'Échographie de confirmation gestation', '2026-05-22 01:50:43.269671+00', '2026-05-22 01:50:43.269671+00', NULL);
+
+
+ALTER TABLE public.evenements_prevus ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: formulations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.formulations DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.formulations ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: formulation_ingredients; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.formulation_ingredients DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.formulation_ingredients ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: matieres_premieres; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.matieres_premieres DISABLE TRIGGER ALL;
+
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('88888888-0000-0000-0000-000000000004', '00000000-0000-0000-0000-000000000001', 'Prémix vitamines', 'matiere_premiere', 'kg', 20, 45, 3200, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('88888888-0000-0000-0000-000000000005', '00000000-0000-0000-0000-000000000001', 'Vaccin Mycoplasme', 'vaccin', 'dose', 50, 120, 850, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('88888888-0000-0000-0000-000000000006', '00000000-0000-0000-0000-000000000001', 'Iverin (antiparasitaire)', 'medicament', 'ml', 100, 500, 12, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('88888888-0000-0000-0000-000000000007', '00000000-0000-0000-0000-000000000001', 'Crésyl désinfectant', 'desinfectant', 'L', 5, 12, 4500, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('738bf777-21d8-4d2f-af72-a6a46a7d0f42', '00000000-0000-0000-0000-000000000001', 'Sel marin', 'matiere_premiere', 'kg', 50, 150, 150, '[STANDARD] Source NRC 2012. NaCl. Dosage 0,3-0,5% ration.', '2026-05-21 12:45:15.824158+00', NULL, 'minéral', 0.0, 0, 0.00, 0.00, 0.30, 0.00, 0.0, 99, 'locale_ci', NULL, 150, 'Salines CI disponibles. Sel iodé recommandé.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('88888888-0000-0000-0000-000000000002', '00000000-0000-0000-0000-000000000001', 'Tourteau soja', 'matiere_premiere', 'kg', 300, 1800, 450, NULL, '2026-05-20 22:22:09.127483+00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 88, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7, '2026-05-22 01:43:28.746866+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('2e766b30-1c5f-4464-8bc6-2e2c330a75c9', '00000000-0000-0000-0000-000000000001', 'Patate douce séchée', 'matiere_premiere', 'kg', 100, 300, 220, '[STANDARD] Source CIRAD. Énergie alternative locale.', '2026-05-21 12:45:15.824158+00', NULL, 'céréale', 4.0, 3100, 0.20, 0.08, 0.10, 0.10, 3.5, 88, 'locale_ci', NULL, 220, 'Disponibilité saisonnière. Bien sécher avant stockage.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('21d4d5fe-b9dc-49ee-8f05-fc8d6342451d', '00000000-0000-0000-0000-000000000001', 'Carbonate de calcium (coquilles)', 'matiere_premiere', 'kg', 50, 150, 80, '[STANDARD] Source INRA 2018. Calcaire broyé ou coquilles d''huîtres.', '2026-05-21 12:45:15.824158+00', NULL, 'minéral', 0.0, 0, 0.00, 0.00, 38.00, 0.00, 0.0, 99, 'locale_ci', NULL, 80, 'Disponible localement (carrières CI). Dosage 0,5-1,5% ration.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('794e3132-0919-4390-bc58-0fcf8f20088f', '00000000-0000-0000-0000-000000000001', 'Phosphate bicalcique', 'matiere_premiere', 'kg', 50, 150, 450, '[STANDARD] Source INRA 2018. Apport conjoint Ca + P assimilable.', '2026-05-21 12:45:15.824158+00', NULL, 'minéral', 0.0, 0, 0.00, 0.00, 24.00, 18.00, 0.0, 99, 'importee', NULL, 450, 'Importé. Dosage 0,8-1,2% ration. Qualité alimentaire (fluor < 0,1%).', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('fe1255cd-2ec6-42bb-9201-eefd5fa9a05b', '00000000-0000-0000-0000-000000000001', 'Huile de palme', 'matiere_premiere', 'kg', 50, 150, 850, '[STANDARD] Source INRA 2018. Source énergie concentrée.', '2026-05-21 12:45:15.824158+00', NULL, 'additif', 0.0, 8500, 0.00, 0.00, 0.00, 0.00, 0.0, 99, 'locale_ci', 'PALMCI / SIFCA', 850, 'Production CI (PALMCI/SIFCA). Dosage 2-5% pour densifier ration porcelet/truie.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('ac3f7274-9709-45d4-8107-d0422aa1f992', '00000000-0000-0000-0000-000000000001', 'Prémix vit-min truie gestante/allaitante', 'matiere_premiere', 'kg', 20, 60, 2000, '[STANDARD] Source IFIP. CMV reproduction renforcé Ca/P/oligo.', '2026-05-21 12:45:15.824158+00', NULL, 'additif', 0.0, 0, 0.00, 0.00, 15.00, 10.00, 0.0, 95, 'importee', NULL, 2000, 'Dosage 0,5% ration. Vitamine E + sélénium renforcés.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('cfec04bd-6d40-432c-b476-686b6e0a215c', '00000000-0000-0000-0000-000000000001', 'IVOGRAIN Truie Gestante', 'aliment_fini', 'kg', 50, 150, 420, '[STANDARD] Aliment truies gestantes.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 14.0, 2900, 0.65, 0.25, 0.95, 0.70, 7.0, 88, 'industrielle', 'IVOGRAIN', 420, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('1169bfc6-7bba-4e20-ba97-473a27b63718', '00000000-0000-0000-0000-000000000001', 'Manioc séché', 'matiere_premiere', 'kg', 100, 300, 200, '[STANDARD] Source FAO 2013 / CIRAD. Substitut maïs partiel (max 30%).', '2026-05-21 12:45:15.824158+00', NULL, 'céréale', 2.5, 3200, 0.10, 0.04, 0.15, 0.10, 4.0, 87, 'locale_ci', NULL, 200, 'Cossettes séchées indispensables (HCN). Très pauvre en protéine — équilibrer avec tourteau.', 0.050, 0.020, 0.030, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('28d3b65d-2279-41f3-a08d-801ffe531c3d', '00000000-0000-0000-0000-000000000001', 'Sorgho grain', 'matiere_premiere', 'kg', 100, 300, 260, '[STANDARD] Source INRA 2018. Alternative au maïs en saison sèche.', '2026-05-21 12:45:15.824158+00', NULL, 'céréale', 10.0, 3250, 0.22, 0.16, 0.04, 0.30, 2.6, 88, 'locale_ci', NULL, 260, 'Préférer variétés faibles tanins (< 1%). Disponible Nord-CI.', 0.270, 0.100, 0.160, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('b32ad0bc-e3df-4f3e-bfbc-23b7a3fa2e82', '00000000-0000-0000-0000-000000000001', 'Son de riz', 'matiere_premiere', 'kg', 100, 300, 150, '[STANDARD] Source INRA 2018. Riche en huile (rancissement rapide).', '2026-05-21 12:45:15.824158+00', NULL, 'sous_produit', 13.0, 2700, 0.55, 0.30, 0.07, 1.80, 10.0, 89, 'locale_ci', NULL, 150, 'Préférer son non déshuilé pour énergie. Stocker < 2 mois.', 0.280, 0.090, 0.180, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('c0db7bf7-2b99-4110-8c1c-961cc1ec22e9', '00000000-0000-0000-0000-000000000001', 'Son de blé', 'matiere_premiere', 'kg', 100, 300, 180, '[STANDARD] Source INRA 2018. Encombrant, bon pour truies gestantes.', '2026-05-21 12:45:15.824158+00', NULL, 'sous_produit', 16.0, 2200, 0.65, 0.25, 0.13, 1.20, 11.0, 88, 'locale_ci', NULL, 180, 'Sous-produit minoteries d''Abidjan. Limiter à 15-20% en finition (fibre).', 0.420, 0.260, 0.300, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('da1adc3e-417b-4c6d-98fd-6b5964a69f0e', '00000000-0000-0000-0000-000000000001', 'Drêches de brasserie sèches', 'matiere_premiere', 'kg', 100, 300, 200, '[STANDARD] Source INRA 2018. Bon complément protéique économique.', '2026-05-21 12:45:15.824158+00', NULL, 'sous_produit', 25.0, 2300, 0.85, 0.45, 0.30, 0.55, 16.0, 91, 'locale_ci', 'SOLIBRA', 200, 'Disponible auprès SOLIBRA Abidjan. Forme sèche obligatoire pour conservation.', 1.050, 0.210, 0.560, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('385622ab-9ef6-423c-9115-51e77b2e813c', '00000000-0000-0000-0000-000000000001', 'Tourteau de coton', 'matiere_premiere', 'kg', 100, 300, 220, '[STANDARD] Source INRA 2018. Sous-produit huileries CI.', '2026-05-21 12:45:15.824158+00', NULL, 'tourteau', 41.0, 2700, 1.65, 0.55, 0.20, 1.00, 14.0, 91, 'locale_ci', NULL, 220, 'LIMITE : 5% maxi de la ration (gossypol). Interdit aux truies gestantes.', 1.200, 0.450, 0.650, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('41baeeae-9c5f-43b6-9f4b-e19bb1502a74', '00000000-0000-0000-0000-000000000001', 'Tourteau d''arachide', 'matiere_premiere', 'kg', 100, 300, 350, '[STANDARD] Source INRA 2018 / CIRAD. Bonne dispo locale.', '2026-05-21 12:45:15.824158+00', NULL, 'tourteau', 45.0, 3100, 1.55, 0.50, 0.18, 0.60, 8.0, 92, 'locale_ci', NULL, 350, 'ATTENTION aflatoxines : contrôler avant usage. Limiter porcelets < 25kg.', 1.200, 0.500, 0.550, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('4f3315eb-f25c-48da-a441-2a14d05937c1', '00000000-0000-0000-0000-000000000001', 'Tourteau de palmiste', 'matiere_premiere', 'kg', 100, 300, 130, '[STANDARD] Source INRA 2018. Sous-produit huile de palme CI.', '2026-05-21 12:45:15.824158+00', NULL, 'tourteau', 16.0, 2400, 0.55, 0.30, 0.30, 0.55, 18.0, 92, 'locale_ci', NULL, 130, 'Très fibreux : max 10-15% ration. Plutôt truies gestantes / finition tardive.', 0.650, 0.200, 0.300, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('5819d8cc-d6e4-4c31-8203-7262ea710594', '00000000-0000-0000-0000-000000000001', 'IVOGRAIN Porcelet 1er âge', 'aliment_fini', 'kg', 50, 150, 650, '[STANDARD] Aliment complet porcelet 7-15 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 20.0, 3300, 1.30, 0.45, 0.90, 0.65, 3.5, 88, 'industrielle', 'IVOGRAIN', 650, 'Distribué Abidjan/Bouaké. Confirmer disponibilité saisonnière.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('f72b8e53-02fa-4928-a30a-187bbe5ec544', '00000000-0000-0000-0000-000000000001', 'IVOGRAIN Porc Croissance', 'aliment_fini', 'kg', 50, 150, 480, '[STANDARD] Aliment complet porc 25-60 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 17.0, 3150, 1.00, 0.32, 0.80, 0.60, 5.0, 88, 'industrielle', 'IVOGRAIN', 480, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('a7ef9126-e780-44b4-b3ff-d8fc4551337b', '00000000-0000-0000-0000-000000000001', 'IVOGRAIN Porc Finition', 'aliment_fini', 'kg', 50, 150, 440, '[STANDARD] Aliment complet porc 60-110 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 15.0, 3100, 0.85, 0.28, 0.75, 0.55, 5.5, 88, 'industrielle', 'IVOGRAIN', 440, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('e8374858-5c4d-4889-a9bd-121b9d7c4dd8', '00000000-0000-0000-0000-000000000001', 'L-Lysine HCl', 'matiere_premiere', 'kg', 20, 60, 2200, '[STANDARD] Source NRC 2012. AA cristallin pour équilibrage.', '2026-05-21 12:45:15.824158+00', NULL, 'additif', 0, 0, 78.00, 0.00, 0.00, 0.00, 0.0, 98, 'importee', NULL, 2200, 'Importé. Dosage 0,1-0,3% ration. Économise 3-5% tourteau soja.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('978b8563-c352-4046-ab10-9965133b89d6', '00000000-0000-0000-0000-000000000001', 'DL-Méthionine', 'matiere_premiere', 'kg', 20, 60, 3500, '[STANDARD] Source NRC 2012. 2e AA limitant en porc.', '2026-05-21 12:45:15.824158+00', NULL, 'additif', 0, 0, 0.00, 99, 0.00, 0.00, 0.0, 99, 'importee', NULL, 3500, 'Importé. Dosage 0,05-0,15% ration.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('9559d147-4b44-411b-b886-f0416a743b49', '00000000-0000-0000-0000-000000000001', 'IVOGRAIN Truie Allaitante', 'aliment_fini', 'kg', 50, 150, 510, '[STANDARD] Aliment truies allaitantes haute production.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 18.0, 3250, 1.10, 0.35, 0.95, 0.75, 4.5, 88, 'industrielle', 'IVOGRAIN', 510, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('c8b9c20b-7181-4f74-a9ae-6185e03e7dfb', '00000000-0000-0000-0000-000000000001', 'De Heus Pre-Starter', 'aliment_fini', 'kg', 30, 90, 780, '[STANDARD] Pré-starter porcelet 5-12 kg, haute qualité.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 21.0, 3400, 1.40, 0.48, 0.85, 0.65, 3.0, 89, 'industrielle', 'De Heus', 780, 'Importé Pays-Bas via distributeur agréé Abidjan.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('9bb95cc9-e7c5-4319-af0d-c24ca2626630', '00000000-0000-0000-0000-000000000001', 'De Heus Starter', 'aliment_fini', 'kg', 30, 90, 680, '[STANDARD] Starter porcelet 12-25 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 19.0, 3300, 1.25, 0.42, 0.85, 0.62, 3.5, 89, 'industrielle', 'De Heus', 680, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('2f4f479e-4272-41d5-9a33-aa325d457525', '00000000-0000-0000-0000-000000000001', 'De Heus Grower', 'aliment_fini', 'kg', 30, 90, 540, '[STANDARD] Croissance 25-60 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 16.5, 3200, 1.00, 0.32, 0.80, 0.58, 4.5, 88, 'industrielle', 'De Heus', 540, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('09bd1315-82c2-4a2f-a460-ce139bedf63f', '00000000-0000-0000-0000-000000000001', 'De Heus Finisher', 'aliment_fini', 'kg', 30, 90, 490, '[STANDARD] Finition 60-110 kg.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 14.5, 3100, 0.80, 0.27, 0.75, 0.55, 5.5, 88, 'industrielle', 'De Heus', 490, NULL, NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('d6cb5fd9-1999-4693-93b4-041486f4aac4', '00000000-0000-0000-0000-000000000001', 'Koudijs Porc Croissance', 'aliment_fini', 'kg', 30, 90, 560, '[STANDARD] Aliment complet croissance — filiale NUTRECO.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 17.0, 3200, 1.05, 0.33, 0.82, 0.60, 4.8, 88, 'industrielle', 'Koudijs', 560, 'À confirmer disponibilité distributeur CI 2024.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('a3f7aaf8-ae59-4338-bf1b-fc18cfba8cd9', '00000000-0000-0000-0000-000000000001', 'Vitalac Porc Croissance', 'aliment_fini', 'kg', 30, 90, 600, '[STANDARD] Gamme française premium, distribution CI.', '2026-05-21 12:45:15.828563+00', NULL, 'concentré_commercial', 17.5, 3250, 1.10, 0.35, 0.85, 0.62, 4.5, 88, 'industrielle', 'Vitalac', 600, 'À confirmer présence sur marché ivoirien — historiquement présent Afrique de l''Ouest.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('b2d6053f-e4f5-43bf-af70-4e0d5b46ee18', '00000000-0000-0000-0000-000000000001', 'Prémix vit-min porc croissance', 'matiere_premiere', 'kg', 20, 8, 1800, '[STANDARD] Source IFIP. CMV croissance-finition complet.', '2026-05-21 12:45:15.824158+00', NULL, 'additif', 0.0, 0, 0.00, 0.00, 12.00, 8.00, 0.0, 95, 'importee', NULL, 1800, 'Dosage 0,3-0,5% ration. Marques : Provimi, Trouw, BIOLAC.', NULL, NULL, NULL, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('ee7a8b31-ef8c-41e3-bc21-177c6b4df1be', '00000000-0000-0000-0000-000000000001', 'Maïs grain', 'matiere_premiere', 'kg', 100, 40, 280, '[STANDARD] Source INRA 2018. Base énergétique principale.', '2026-05-21 12:45:15.824158+00', NULL, 'céréale', 8.0, 3300, 0.25, 0.18, 0.03, 0.28, 2.5, 87, 'locale_ci', NULL, 280, 'Achat post-récolte (oct-déc) recommandé. Risque mycotoxines en stockage humide.', 0.270, 0.070, 0.210, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('3d921374-1ae1-4156-9647-2744f7ad6f6d', '00000000-0000-0000-0000-000000000001', 'Tourteau de soja 48%', 'matiere_premiere', 'kg', 100, 40, 480, '[STANDARD] Source INRA 2018. Référence protéique mondiale.', '2026-05-21 12:45:15.824158+00', NULL, 'tourteau', 47.0, 3300, 3.00, 0.68, 0.30, 0.65, 6.0, 88, 'importee', NULL, 480, 'Importé (Argentine/Brésil) via Abidjan port. Toaster (anti-trypsique).', 1.740, 0.620, 0.660, 0, '2026-05-22 01:42:59.760554+00');
+INSERT INTO public.matieres_premieres (id, ferme_id, nom, type, unite, seuil_alerte, stock_actuel, cout_moyen_unite, observations, created_at, deleted_at, categorie_nutritionnelle, mat_pct, em_porc_kcal_kg, lysine_pct, methionine_pct, calcium_pct, phosphore_pct, fibre_pct, matiere_seche_pct, origine, fournisseur, prix_indicatif_xof_kg, notes_terrain, threonine_pct, tryptophane_pct, cystine_pct, version, updated_at) VALUES ('6f8b4d90-a5e9-4bf1-ae5c-3fc5e411014b', '00000000-0000-0000-0000-000000000001', 'Farine de poisson 60%', 'matiere_premiere', 'kg', 50, 150, 950, '[STANDARD] Source NRC 2012. Excellente qualité AA + Ca/P.', '2026-05-21 12:45:15.824158+00', NULL, 'origine_animale', 60.0, 3000, 4.80, 1.70, 6.00, 3.20, 1.0, 91, 'importee', NULL, 950, 'Importation Mauritanie/Sénégal. Vérifier teneur sel < 5%. Indispensable porcelets.', 2.450, 0.650, 0.550, 0, '2026-05-22 01:42:59.760554+00');
+
+
+ALTER TABLE public.matieres_premieres ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: lots_matieres_premieres; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.lots_matieres_premieres DISABLE TRIGGER ALL;
+
+INSERT INTO public.lots_matieres_premieres (id, ferme_id, matiere_premiere_id, reference_lot, date_reception, quantite_kg, origine, analyse_aflatoxine_b1_ppb, analyse_zearalenone_ppb, analyse_don_ppb, date_analyse, observations, created_at, deleted_at, analyse_ochratoxine_a_ppb, analyse_fumonisine_ppb) VALUES ('9ee1225d-5110-4c1e-b989-c41ced4a14a8', '00000000-0000-0000-0000-000000000001', 'ee7a8b31-ef8c-41e3-bc21-177c6b4df1be', 'L-202605-001', '2026-05-11', 2000.00, 'Marché Bouaké', NULL, NULL, NULL, NULL, NULL, '2026-05-21 20:18:54.071085+00', NULL, NULL, NULL);
+INSERT INTO public.lots_matieres_premieres (id, ferme_id, matiere_premiere_id, reference_lot, date_reception, quantite_kg, origine, analyse_aflatoxine_b1_ppb, analyse_zearalenone_ppb, analyse_don_ppb, date_analyse, observations, created_at, deleted_at, analyse_ochratoxine_a_ppb, analyse_fumonisine_ppb) VALUES ('a3fee056-68a0-4574-86f3-548a7c22e2f5', '00000000-0000-0000-0000-000000000001', 'ee7a8b31-ef8c-41e3-bc21-177c6b4df1be', 'L-202605-002', '2026-05-09', 1500.00, 'Coopérative Korhogo', 8.50, 45.00, 320.00, '2026-05-16', 'Conforme aux seuils UE porcs', '2026-05-21 20:18:54.072991+00', NULL, NULL, NULL);
+INSERT INTO public.lots_matieres_premieres (id, ferme_id, matiere_premiere_id, reference_lot, date_reception, quantite_kg, origine, analyse_aflatoxine_b1_ppb, analyse_zearalenone_ppb, analyse_don_ppb, date_analyse, observations, created_at, deleted_at, analyse_ochratoxine_a_ppb, analyse_fumonisine_ppb) VALUES ('09aa208c-1b2a-4c09-8e1d-6af30ade9c9b', '00000000-0000-0000-0000-000000000001', '88888888-0000-0000-0000-000000000002', 'L-202605-003', '2026-05-18', 800.00, 'Fournisseur SIVOA', 35.00, NULL, NULL, '2026-05-20', 'NON CONFORME : aflatoxine B1 > 20 ppb — à refuser', '2026-05-21 20:18:54.074031+00', NULL, NULL, NULL);
+
+
+ALTER TABLE public.lots_matieres_premieres ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: mortalites; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.mortalites DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.mortalites ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: mouvements_stock; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.mouvements_stock DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.mouvements_stock ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: observations_bcs; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.observations_bcs DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.observations_bcs ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: pesees; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.pesees DISABLE TRIGGER ALL;
+
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6bebcb5d-e1e8-476c-a550-445256c804aa', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.79, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('fa6c905e-5553-4465-b4a2-e144d0c9d284', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.68, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f41de418-1952-46fd-8dcb-417c357720e6', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.23, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('de9034b4-60fa-4090-83a4-86ff31522449', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.19, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('e901fbc4-df44-451c-9e25-3d83297b0947', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2025-12-15', 3.66, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4978fe4e-652b-44af-98ef-10d44b1d0d50', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2025-12-15', 5.18, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('769981f2-67d3-4a56-bc2a-b358e768ef40', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2025-12-15', 3.83, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('92b0d1b2-3a6d-4ee9-b98f-02a9c4de4b5f', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2025-12-15', 5.18, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f829b21b-39b3-435d-8e23-d70c5a26ee6a', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.85, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('dde16e3f-00b5-4bfa-b09f-294ce49ccbe4', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2025-12-15', 3.76, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('59f3918a-263c-4254-8709-a9580dab4dc5', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2025-12-15', 4.26, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('5d122c9d-5863-489a-9f5a-8117a98044ec', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2025-12-15', 5.43, 1, 'individuelle', 'Seed IFIP', '2025-12-15 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d511405a-eaa1-4c57-9879-3d921c9f2209', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.96, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9b5fcdd8-d333-42fd-bfd2-8ca87827de66', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.63, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('5e09dedb-7d8a-4629-b5ef-b0140b64c03e', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.01, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f6f1f4bc-3a3e-4b29-bf9c-443826ac0c9e', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.22, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('819446fa-36a0-4112-bca1-1aa28c53d328', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2025-12-29', 6.71, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('3a18e2a6-03e2-46b5-a9ae-46f949c34bdf', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2025-12-29', 8.44, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('04671fc9-5497-401e-b465-489d5d4ba5f8', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.04, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('eae20730-5d2c-4826-9f72-d10d609f1fe6', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.81, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('37576c2d-8947-431a-9b22-9be86008c2f9', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2025-12-29', 6.72, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('7a38dee2-9ceb-4e2d-ba22-07ad053f78ea', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2025-12-29', 8.29, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('746901ba-fe68-4708-8459-4c5b0c066210', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.53, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('0ddf6a2c-705b-4051-b30e-74352da83988', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2025-12-29', 7.36, 1, 'individuelle', 'Seed IFIP', '2025-12-29 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('c0300452-8321-40e8-83cd-d07d73a9a1f1', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.91, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('eac9129d-de80-46e7-b591-e33b0d4a32f6', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.25, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('680cb9ed-46b4-487a-9585-2ed6a7c1e657', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.42, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('37fec79b-ea91-48d8-8f3e-e0d26c8ff189', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.48, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a5328bc9-2618-4b33-a1f2-d5a8572cbae4', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.35, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('66c0d134-760a-4ce7-b769-98efa4d413c2', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.40, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('5c623434-8adb-4d51-950e-0ade07249456', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.13, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('7c1b939c-f33f-47cc-b993-1bec075c35e6', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.38, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ac1b225b-9922-4091-896d-3458d25e66a3', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.61, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f300d02c-4aa5-4184-9d6c-20d705b05fff', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.79, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6c54ba13-89f2-4de1-bf6f-71f19d49951d', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-01-12', 14.78, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('48ae0b0f-f031-439f-9ba2-eb781e3698e6', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-01-12', 13.31, 1, 'individuelle', 'Seed IFIP', '2026-01-12 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('207f35bb-8215-4655-8d20-ac7539e46e0a', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-01-26', 19.75, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b8b632f9-07f6-4cfe-90ef-32faf0abb4ce', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-01-26', 20.90, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4528b07f-0ea8-480e-9d5d-e3b2c045f5e9', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-01-26', 21.06, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('7af515ec-220a-4c90-a9ba-9f0fda02de27', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-01-26', 20.87, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('e6c7efe4-d392-47b6-96c9-069641ace5d8', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-01-26', 19.66, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('8200a993-e872-4e1d-abe3-fe640fba8c87', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-01-26', 21.03, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ea24283d-efa9-41dc-bf48-874203278f54', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-01-26', 20.30, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2593a9f9-1b6c-407b-8e9e-78072168215d', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-01-26', 21.24, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('67e45a0b-e765-4af2-8672-6e2eb37db4e1', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-01-26', 20.96, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d174a53d-c0dc-4c28-bbee-9b8d0bdf69e2', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-01-26', 19.58, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('86b417a5-0eb1-4c4d-80bb-16003a440441', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-01-26', 21.22, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2f56f1a1-b659-4a4a-95fc-659cd6e74e78', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-01-26', 20.59, 1, 'individuelle', 'Seed IFIP', '2026-01-26 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6ea4d628-f954-47d4-b35b-839eaa2f514c', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-02-09', 27.26, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('c8fadfaa-d1e9-4edd-a99f-9949f742ac3e', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-02-09', 27.36, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d8580613-7789-4b62-8635-f3c2948d5c04', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.77, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d33b2ff2-50df-4e73-958a-cdf72f09f099', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.86, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('eb10cb3b-465f-4384-aa41-4803373e90a1', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-02-09', 25.61, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('c3043fea-2f83-4da5-ae08-c8f14c3667a2', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.30, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('3bfa8f62-5177-4241-86dd-f592a479a344', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-02-09', 27.17, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2c82fecc-7346-4522-a821-c77ee6c05eff', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-02-09', 25.90, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('253398ad-824f-4012-9665-054d7118d92a', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.63, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6e6ef4b8-38c6-4ef5-851c-38df68768ed8', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.16, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('65c00b25-c566-4e4f-bc36-97616c44bd2f', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-02-09', 26.31, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b9fab4b0-e8c8-42d0-b2f8-4e5886543973', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-02-09', 25.85, 1, 'individuelle', 'Seed IFIP', '2026-02-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('83baa42f-a870-4ed7-8102-6087d952f573', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.74, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('081d8c12-5582-4b38-9db3-443c73cb443e', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.44, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('be5c372b-a85e-4906-adc5-508e7f8af814', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.80, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9fff8003-7f4b-4315-9e3a-261ea0f59fee', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-02-23', 36.58, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4eefd468-0227-4966-896b-aba2de8437f0', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.75, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('1fcd5dca-0673-4a74-8962-450d132d595f', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.03, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a44fc7ba-ebc2-410f-ad38-a1ee673b36c8', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-02-23', 36.80, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2c3d7ac0-0965-454c-a3e7-0f025e84c8d8', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-02-23', 36.55, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('5fbb02f6-0b04-4ff7-95c8-81d94a6968d3', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.38, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('601a219b-f0f0-4c48-a6cb-b6c879fcc504', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-02-23', 36.85, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('cdfd7023-41e8-4f16-a453-8b1b5562f834', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-02-23', 38.45, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('1ec901f9-6511-41c9-b1cf-84062eaad821', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-02-23', 37.13, 1, 'individuelle', 'Seed IFIP', '2026-02-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('38c6f280-8dd7-4c61-8460-16c3c119f182', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-03-09', 48.43, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('900bc8e6-b085-44da-8041-6e1efde10ad5', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-03-09', 47.93, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('43c0b888-79a1-4aa3-b148-37fd5df9f3d8', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-03-09', 47.54, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b9dc6047-77b6-453b-86a6-93e89a625b69', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-03-09', 49.02, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('15d49425-c115-4800-9b6d-9dc5f6027dba', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-03-09', 48.17, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ff6d58d4-0225-4774-bd45-dea1261a1ea3', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-03-09', 48.96, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('e8267fce-82a3-4a2e-9855-28911a9015c5', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-03-09', 48.65, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6b5b6406-010f-4233-87e3-598f345c8ff6', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-03-09', 48.90, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('3729a28c-c674-4754-9796-9d6126c79e51', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-03-09', 47.78, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a942aa8e-39c8-4c83-8537-d93abe32f60f', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-03-09', 49.30, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('c4604678-a846-44c0-8bcc-0a36e74b78cf', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-03-09', 47.68, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('236254a3-9c4f-4de7-aeb2-0014ce026414', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-03-09', 47.87, 1, 'individuelle', 'Seed IFIP', '2026-03-09 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6479435d-74c3-408e-ad75-d3571f5cbd05', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-03-23', 58.98, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('8cca72a4-2dcd-4c2d-aa30-612d34281f4f', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-03-23', 58.92, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('71535e6b-35dc-4a2e-b5b3-9259769dcf96', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.01, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f722ab4b-0718-48fd-92d5-2d12ace40fd5', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-03-23', 58.80, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4a21552f-832f-4eae-a026-a9c667dadec0', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.98, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ae169787-5273-4343-b8ff-ec2deaa48aba', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-03-23', 60.23, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('85007ba0-ec4e-474e-ae08-a9575fed75e2', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.60, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('341c8975-72de-485e-8bf5-4d89e5009ddc', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.54, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('1a890ea2-f62b-45b4-a3ba-e2a73e9db728', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.19, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b26d6486-32c4-4541-b7b3-d2ef31eaa3d1', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-03-23', 59.64, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9b12eeff-5c87-4bdc-bbbb-0625e981d395', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-03-23', 58.84, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('1bb235f7-0b8a-4c9e-aa13-606d4b1061d8', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-03-23', 60.02, 1, 'individuelle', 'Seed IFIP', '2026-03-23 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ee582b43-f933-4d19-a6bf-5beec46c88e0', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-04-06', 69.53, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('603bc9c9-51ed-4ec0-bc41-cfdeaeacb986', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-04-06', 69.90, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4c63122d-5867-48d8-ab6b-d45cf883e8a1', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-04-06', 69.54, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d338b732-7feb-4a8f-b738-ba7dfd8811e0', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-04-06', 70.24, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('84abadf6-142e-45c5-977c-412dfd92f0d8', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-04-06', 70.71, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2bfcc322-1aed-43b4-964a-4463c68804d4', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-04-06', 69.86, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9a4986fa-7074-4a9f-9210-8aa1576f2b4f', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-04-06', 70.52, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d0f51ed9-e387-47ca-98b6-d23e95f4c0cc', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-04-06', 70.56, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6f7d8eb5-ded0-429e-ab64-87d5d9296d20', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-04-06', 69.29, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a40c1bcd-28e7-4d03-aedc-6bf47f5aeab9', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-04-06', 71.02, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('c00ebd2c-5efd-40ee-ba55-98b0b64b296c', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-04-06', 70.42, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a7deb457-9b29-4ec9-9b09-9bc3643845ff', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-04-06', 71.12, 1, 'individuelle', 'Seed IFIP', '2026-04-06 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('cd5e6c40-29a7-4b67-9f69-9cf2a15c4b0b', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-04-20', 80.59, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b3ad562d-7e42-4166-9ebe-4ea70e6dcc6d', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.47, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9f2d76eb-fe4c-4de0-a072-2709ec7d21a6', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.86, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d7e5f03c-2815-4179-9b65-2e29910726bf', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-04-20', 80.31, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('740f5c3e-052f-4cc7-a27f-72a61d165379', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.46, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6ae74d6c-6081-4762-9523-0c718764f7fd', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-04-20', 80.32, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('bf533970-41cd-40bd-bc1b-067ee9f1f036', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-04-20', 82.15, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2d0732c5-7221-4c81-b22d-030d9dc142fc', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.31, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('662945ea-5386-419d-96c5-5332aac4735a', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-04-20', 80.66, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('137904ad-ad91-4b08-a0b9-5181225d433f', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-04-20', 80.28, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b34b3f6a-f888-4335-a2f9-ccb75a7c2621', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.61, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('3a8b4fd6-30c8-4af0-8e35-fb7dfaac92a7', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-04-20', 81.66, 1, 'individuelle', 'Seed IFIP', '2026-04-20 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('0c906478-e201-4074-84b9-6e80cb870695', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-05-04', 92.89, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('143470a1-03e9-4867-ba09-1c6245f28c60', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.49, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('a8dd7dd2-9813-457e-a233-0307defe2c38', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-05-04', 92.11, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('862e4a75-e849-4e58-aae8-975e5c00a482', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-05-04', 92.80, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4f733955-d4d8-4033-81ec-4bc52a0a6fc7', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-05-04', 93.00, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('57098436-eff7-4cb8-8035-4efe7ce06120', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.78, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b741587c-5701-44d1-9fce-61ad399018a0', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.18, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('2a1df601-5f6f-44a2-9b47-223ff473ed37', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-05-04', 92.04, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('528acdc3-c41a-4c3e-84ed-3d0f33f82eed', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.27, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f616b467-98c1-40e4-bcc8-664cb0fe4d55', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.30, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4e1f783a-1b00-47d6-bf8c-eb3c791272f0', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-05-04', 92.05, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('4cac9d0b-763b-4b76-8267-cc87d59c0617', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-05-04', 91.28, 1, 'individuelle', 'Seed IFIP', '2026-05-04 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('324c817d-b0c9-4b12-975b-131b8154770b', '33333333-0000-0000-0000-100000000001', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.08, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('e4b4a23e-6594-4543-bd05-a742ed54ae6f', '33333333-0000-0000-0000-100000000002', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.22, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('ef7e7523-07e6-4674-a742-869c33d2412c', '33333333-0000-0000-0000-100000000003', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.77, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('d68b004a-7340-4a8f-854f-09a316998182', '33333333-0000-0000-0000-100000000004', '44444444-0000-0000-0000-000000000001', '2026-05-18', 103.49, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9301c819-8b94-4ac4-8c13-8c05ff67e9a7', '33333333-0000-0000-0000-100000000005', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.27, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('f24a31bf-dd17-4dfe-b1ea-cafe568c7c5e', '33333333-0000-0000-0000-100000000006', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.37, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6489bb59-53ae-4ca1-8592-1d623c32bc49', '33333333-0000-0000-0000-100000000007', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.06, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('85d9c383-f098-47af-a37e-231469e90280', '33333333-0000-0000-0000-100000000008', '44444444-0000-0000-0000-000000000001', '2026-05-18', 103.13, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('9c8ce79b-8875-4e15-a6de-6936d6060b62', '33333333-0000-0000-0000-100000000009', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.01, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('6f63f7a9-91ab-435f-a47e-be5dddeec42d', '33333333-0000-0000-0000-100000000010', '44444444-0000-0000-0000-000000000001', '2026-05-18', 102.95, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('77c25516-32dd-4585-8866-974345e594f0', '33333333-0000-0000-0000-100000000011', '44444444-0000-0000-0000-000000000001', '2026-05-18', 103.72, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+INSERT INTO public.pesees (id, animal_id, bande_id, date_pesee, poids_kg, nb_animaux, type, observations, created_at, deleted_at, idempotency_key) VALUES ('b149a35a-6b67-45aa-8a18-38bd663b2ddc', '33333333-0000-0000-0000-100000000012', '44444444-0000-0000-0000-000000000001', '2026-05-18', 103.32, 1, 'individuelle', 'Seed IFIP', '2026-05-18 00:00:00+00', NULL, NULL);
+
+
+ALTER TABLE public.pesees ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: plans_alimentation; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.plans_alimentation DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.plans_alimentation ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: ppa_observations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.ppa_observations DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.ppa_observations ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: produits_anti_mycotoxines; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.produits_anti_mycotoxines DISABLE TRIGGER ALL;
+
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('e521708b-5527-4bde-889a-7b1cd3706878', 'Detoxa Plus', 'Anpario', 'combiné', '{Afla,ZEA,DON,OTA,FUM}', 1.000, 1650.00, 'Liant + activateur immunitaire + protection hépatique.', NULL, true, '2026-05-21 23:09:14.743287+00');
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('a8dba5cb-df3a-43da-8ee1-94035daa5d33', 'Toxy-Nil Plus', 'Nutriad', 'combiné', '{Afla,ZEA,DON,OTA,FUM}', 1.500, 1700.00, 'Mélange aluminosilicates + extraits végétaux antioxydants.', NULL, true, '2026-05-21 23:09:14.743287+00');
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('95b22f43-ec5e-4df6-8b4d-230fac41abd3', 'Biotox', 'Cargill', 'combiné', '{Afla,ZEA,DON,FUM}', 2.000, 1900.00, 'Bentonite + parois levures + antioxydants. Cargill Provimi.', NULL, true, '2026-05-21 23:09:14.743287+00');
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('ceb09cd4-4c35-4dd3-8e60-801a1bb2a0a4', 'Mycosorb A+', 'Alltech', 'liant', '{Afla,ZEA,DON,OTA,FUM}', 1.000, 2200.00, 'Polysaccharides de paroi cellulaire (yeast cell wall). Reconnu international.', NULL, true, '2026-05-21 23:09:14.743287+00');
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('6c3e9394-3ff3-4fe8-a1e4-054398eca627', 'Mycoprotect', 'Vitalac', 'combiné', '{Afla,ZEA,DON,OTA,FUM}', 2.000, 1850.00, 'Liant argileux + enzymatique + antioxydants. Large spectre. Référence Vitalac.', NULL, true, '2026-05-21 23:09:14.743287+00');
+INSERT INTO public.produits_anti_mycotoxines (id, nom, fabricant, type, spectre, dose_kg_par_tonne_aliment, cout_fcfa_par_kg, description, url_fournisseur, actif, created_at) VALUES ('1439fa8a-0c26-47e9-8965-ff7c936228bd', 'Mycofix Plus', 'Biomin', 'combiné', '{Afla,ZEA,DON,OTA,FUM,T2}', 2.500, 2100.00, 'Solution biotransformation enzymatique (BBSH) + adsorbants. Biomin (Erber).', NULL, true, '2026-05-21 23:09:14.743287+00');
+
+
+ALTER TABLE public.produits_anti_mycotoxines ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: protocoles_anti_mycotoxines; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.protocoles_anti_mycotoxines DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.protocoles_anti_mycotoxines ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: protocoles_vaccinaux; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.protocoles_vaccinaux DISABLE TRIGGER ALL;
+
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('febf120c-a8ab-4527-8718-8af4272acba0', '00000000-0000-0000-0000-000000000001', 'Coccidiostatique oral (Baycox)', 'porcelet', 3, 'Toltrazuril 5% (Baycox)', 'Orale', 1.0, NULL, true, '[STANDARD] Prévention coccidiose porcelet. Dose unique orale J3-J5.', '{}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('86d4fcc8-34a8-4bbb-85ed-9b6673248400', '00000000-0000-0000-0000-000000000001', 'Castration mâles + soin plaie', 'porcelet', 7, 'Antiseptique + analgésique (méloxicam)', 'Topique', NULL, NULL, true, '[STANDARD] Castration chirurgicale des mâles non destinés à la reproduction, désinfection plaie + AINS.', '{}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('9db2ae09-a551-4e67-891f-c6b15e3a06eb', '00000000-0000-0000-0000-000000000001', 'Vermifuge porcelet (Ivermectine)', 'porcelet', 21, 'Ivermectine 1%', 'SC', 0.3, NULL, true, '[STANDARD] Vermifugation systémique 0,3 ml / 10 kg PV. Couvre nématodes et gale sarcoptique.', '{}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('7a48bd2b-868b-4dc7-bc48-9f69c21035e3', '00000000-0000-0000-0000-000000000001', 'Vermifuge rappel post-sevrage', 'sevrage', 56, 'Ivermectine 1%', 'SC', 0.3, NULL, true, '[STANDARD] Rappel vermifuge 2 semaines après le sevrage.', '{}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('b184bf58-d6df-4057-8839-588133d3d812', '00000000-0000-0000-0000-000000000001', 'Vaccin Mycoplasma hyopneumoniae (primo)', 'porcelet', 14, 'Mycoplasma hyopneumoniae inactivé', 'IM (encolure)', 2.0, 28, true, '[STANDARD] Primo-vaccination contre la pneumonie enzootique. Rappel J28.', '{28}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('a3646b75-35fd-4777-bee4-c0306c236e08', '00000000-0000-0000-0000-000000000001', 'Vaccin Mycoplasma rappel + Circovirose', 'porcelet', 28, 'Mycoplasma + Circovirus PCV2', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] Rappel Mycoplasma associé à la vaccination Circovirose (PCV2).', '{}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('b1c84109-18a3-4990-b283-128269d3155e', '00000000-0000-0000-0000-000000000001', 'Peste Porcine + Rouget (sevrage)', 'sevrage', 42, 'Peste porcine (souche disponible) + Erysipelothrix rhusiopathiae', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] Au sevrage J42. Peste Porcine Africaine : pas de vaccin homologué — utiliser PPC si disponible. Rouget systématique.', '{}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('3e9ffc94-4d23-4c96-9de3-14c119d58f08', '00000000-0000-0000-0000-000000000001', 'Pasteurellose', 'engraissement', 100, 'Pasteurella multocida toxinogène', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] Vaccin Pasteurellose en engraissement. Optionnel selon pression sanitaire.', '{}', false);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('46de7e01-0ead-448e-a774-6b4a27a4bb87', '00000000-0000-0000-0000-000000000001', 'Erysipèle + Parvovirose (truie gestante)', 'truie', NULL, 'Parvovirus + Erysipelothrix rhusiopathiae', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] À administrer 2 à 3 semaines avant la mise-bas, à chaque gestation.', '{}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('b9812511-639d-401e-81c6-c4955b1ce542', '00000000-0000-0000-0000-000000000001', 'Parvovirose + Leptospirose (verrat)', 'verrat', NULL, 'Parvovirus + Leptospira spp.', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] Vaccination semestrielle des verrats reproducteurs (2 fois par an).', '{}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('0f268404-831f-45ba-b024-11d0784c055d', '00000000-0000-0000-0000-000000000001', 'Fer dextran (anti-anémie)', 'porcelet', 1, 'Fer dextran 100 mg/ml', 'IM (encolure)', 2.0, NULL, true, '[STANDARD] Prévention de l''anémie ferriprive du porcelet. Injection unique J1-J3 en encolure (musculature massétère).', '{}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('267b7e11-f6c0-4ae4-bada-8a240f06ef16', '00000000-0000-0000-0000-000000000001', 'Parvovirose + Leptospirose (cochettes)', 'cochette', 70, 'Parvovirus porcin + Leptospira spp.', 'IM (encolure)', 2.0, 21, true, 'Primo J70, rappel J91 (J21 après primo), rappel pré-saillie J165 (5.5 mois). Référentiel IFIP — protège la portée via colostrum.', '{21,165}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('9d987d81-bd23-4682-92b7-b66e4f9523a9', '00000000-0000-0000-0000-000000000001', 'Rouget cochettes pré-saillie', 'cochette', 150, 'Vaccin érysipélothrix rhusiopathiae', 'IM (encolure)', 2.0, NULL, true, 'Vaccination Rouget cochettes 5 mois (J150). Rappel annuel ensuite. Indispensable en zone tropicale CI (humidité, contact sol).', '{365}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('6f8f0b8f-4903-48d4-9c6f-06c116fd33fb', '00000000-0000-0000-0000-000000000001', 'Érysipèle + Parvo combiné cochette pré-saillie', 'cochette', 165, 'Vaccin combiné (ex: Eryseng Parvo)', 'IM (encolure)', 2.0, NULL, true, 'Vaccination Érysipèle + Parvovirose 5.5 mois (J165) + rappel J186. Sécurise la 1ère saillie et la 1ère portée.', '{21}', true);
+INSERT INTO public.protocoles_vaccinaux (id, ferme_id, nom, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, actif, description, rappels_jours, obligatoire) VALUES ('f2df92bc-b03f-4a51-9e47-c5b670c42fc6', '00000000-0000-0000-0000-000000000001', 'Vermifuge cochettes pré-saillie', 'cochette', 165, 'Ivermectine ou Doramectine', 'SC', 0.3, NULL, true, 'Vermifuge large spectre 5.5 mois (J165, 14j avant saillie). Élimine endo/ectoparasites avant gestation. INRAE recommandation.', '{}', true);
+
+
+ALTER TABLE public.protocoles_vaccinaux ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: regles_sevrage; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.regles_sevrage DISABLE TRIGGER ALL;
+
+INSERT INTO public.regles_sevrage (id, ferme_id, nom, age_min_jours, age_max_jours, poids_min_kg, actif, created_at) VALUES ('95ef3a2d-2dfc-4b8b-adb4-1d974caa25b0', '00000000-0000-0000-0000-000000000001', 'Sevrage standard 28j', 25, 28, 7.0, true, '2026-05-20 22:22:09.127483+00');
+
+
+ALTER TABLE public.regles_sevrage ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: sevrages; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.sevrages DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.sevrages ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: tips_conseiller; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.tips_conseiller DISABLE TRIGGER ALL;
+
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('d4df6339-8daa-4bd5-bac0-32e657f44170', 'reperer-chaleurs-truie', 'Repérer les chaleurs d''une truie', 'reproduction', 'debutant', 'Une truie en chaleur présente vulve rouge gonflée, réflexe d''immobilisation au test du dos, et agitation.', '## Les 3 signes infaillibles
+
+**1. Signes vulvaires** : vulve rouge, gonflée, parfois écoulement clair. Apparaissent 12-24h avant l''ovulation.
+
+**2. Test du dos** : appuyer fermement sur le dos. Si la truie reste **immobile** (oreilles dressées, regard fixe), elle est en chaleur. Le test est plus fiable en présence d''un verrat (effet mâle).
+
+**3. Comportement** : agitation, refus de manger, vocalisations, tentatives de monter ses congénères.
+
+## Fréquence d''observation
+
+- **2 fois par jour minimum** (matin + soir), à heure fixe
+- Idéalement après un contact verrat de 5-10 min
+
+## Quand inséminer ?
+
+- Si chaleur détectée matin → IA le soir + lendemain matin
+- Si chaleur détectée soir → IA le lendemain matin + soir
+- **Double IA à 12h d''intervalle** = taux de fertilité optimal', '{chaleur,oestrus,truie,ia,detection}', 'INRA 2018, IFIP Mémento Porc', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('bebce2b0-461c-41c7-826b-99a2c562f7a2', 'cycle-oestral-porcin', 'Cycle œstral porcin : 21 jours', 'reproduction', 'debutant', 'Le cycle œstral de la truie dure 21 jours en moyenne. Chaleurs visibles 2-3 jours, ovulation au jour 1-2.', '## Phases du cycle
+
+| Phase | Durée | Caractéristique |
+|---|---|---|
+| Pro-œstrus | 2 jours | Vulve gonfle, pas de réflexe immobilisation |
+| **Œstrus** | **2-3 jours** | **Chaleur visible, ovulation J1-J2** |
+| Métœstrus | 2 jours | Vulve dégonfle |
+| Diœstrus | 14 jours | Repos sexuel |
+
+## Implications pratiques
+
+- Une truie non saillie revient en chaleur **21 jours après**
+- Détection ratée = 21 jours perdus = ~10 porcelets en moins/an
+- **Surveiller J18-J24 post-saillie** : retour en chaleur = échec gestation', '{cycle,oestrus,physiologie,ovulation}', 'NRC 2012, INRA 2018', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('1df43e2c-9ae1-450d-8d5b-fc0380eb35d0', 'ia-porcine-technique', 'Technique IA porcine en 7 étapes', 'reproduction', 'intermediaire', 'L''insémination artificielle porcine se fait en 7 étapes : préparation, hygiène, cathéter, dépôt, ocytocine optionnelle, observation.', '## Matériel nécessaire
+
+- Cathéter IA stérile (spirale ou type Melrose)
+- Dose semence tempérée à 17°C (sortie frigo 15 min avant)
+- Gants jetables, lubrifiant non spermicide
+- Eau tiède, papier essuie-tout
+
+## Les 7 étapes
+
+1. **Préparer la truie** : nettoyer la vulve (eau + papier propre)
+2. **Stimulation** : appuyer sur le dos, présence verrat si possible
+3. **Lubrifier** la pointe du cathéter (jamais de gel spermicide)
+4. **Insérer le cathéter** vers le haut puis horizontal, tourner anti-horaire jusqu''au verrouillage cervical (~20-25 cm)
+5. **Visser la dose** sur le cathéter, lever légèrement
+6. **Laisser la truie aspirer** la dose (5-8 min naturellement)
+7. **Retirer le cathéter** doucement, noter dans le carnet (date, heure, verrat, dose)
+
+## Conservation des doses
+
+- À **17°C** (jamais frigo classique 4°C !)
+- Durée : 3-7 jours selon diluant
+- Retourner doucement 1x/jour pour homogénéiser', '{ia,insemination,technique,catheter,semence}', 'IFIP, INRA, CIPAQ', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('bd331942-dc8f-44b3-a723-85f3d827103c', 'gestation-114-jours', 'Gestation porcine : 3 mois, 3 semaines, 3 jours', 'reproduction', 'debutant', 'La gestation dure 114 jours en moyenne (113-115). Date prévue mise-bas = saillie + 114j.', '## Calcul date mise-bas
+
+**Saillie + 114 jours = mise-bas**
+
+Moyen mnémotechnique : **3 mois + 3 semaines + 3 jours**
+
+## Variabilité normale
+
+- 110-118 jours = normal
+- < 110 j = prématuré (risque mortalité porcelets)
+- > 118 j = retard, surveiller
+
+## Diagnostic de gestation
+
+- **21 jours post-saillie** : surveiller retour en chaleur. Pas de chaleur = probable gestation
+- **28-35 jours** : échographie portable confirme à 95%
+- **45+ jours** : palpation rectale (vétérinaire)
+
+## Étapes clés
+
+| Jour | Événement |
+|---|---|
+| J21 | Implantation, surveiller retour chaleur |
+| J35 | Échographie possible |
+| J90 | Transfert maternité, vaccin parvo/rouget |
+| J110 | Préparer la mise-bas |
+| **J114** | **Mise-bas prévue** |', '{gestation,date-mise-bas,echographie,diagnostic}', 'INRA 2018, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('702999c0-fa37-4c96-95ed-216bb2da2ff5', 'preparer-mise-bas', 'Préparer une mise-bas en maternité', 'reproduction', 'intermediaire', 'Transférer la truie 5-7 jours avant la date prévue, désinfecter, ajuster température à 18-20°C truie / 30-32°C porcelets.', '## J-7 : transfert maternité
+
+- Bâtiment **nettoyé et désinfecté** (vide sanitaire 7j minimum)
+- Caillebotis fonctionnels
+- **Lampe chauffante** au-dessus du nid à porcelets (30-32°C)
+- Auge nettoyée, eau propre
+
+## J-3 : surveillance accrue
+
+- Vérifier descente du lait (mamelles tendues, sécrétion)
+- Truie agitée, fait son nid avec litière
+- **Glaire vulvaire** = mise-bas dans 24-48h
+
+## J0 : pendant la mise-bas
+
+- Durée normale : **3-5h**, intervalle entre porcelets < 30 min
+- Surveiller sans déranger
+- Si > 45 min entre 2 porcelets ou détresse truie → intervenir
+- **Soins porcelets** : sécher, désinfecter cordon (iode), placer sous lampe
+
+## Matériel à portée
+
+- Iode 7%, gants, ciseaux désinfectés
+- Antibiotique de couverture (post-partum)
+- Numéro vétérinaire
+- Lampe + eau chaude (réanimation porcelet froid)', '{mise-bas,maternite,preparation,porcelets}', 'IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('1ed8042e-7ca1-470d-bf71-b68797c1b787', 'soins-porcelet-naissance', 'Soins immédiats au porcelet', 'reproduction', 'debutant', 'Sécher, désinfecter cordon à l''iode, ferrer si nécessaire, mettre sous lampe à 32°C, faire téter le colostrum dans les 6h.', '## Dans les 5 premières minutes
+
+1. **Sécher** avec un linge ou paille
+2. **Désinfecter le cordon** (iode 7%) à 3 cm du ventre
+3. **Vérifier la respiration** : si faible, dégager les voies (mucus), masser, eau chaude
+4. **Placer sous lampe** chauffante (30-32°C nid porcelet)
+
+## Dans les 6 premières heures
+
+- **Colostrum impératif** : 200-250 g/porcelet sur 24h
+- Le colostrum apporte les anticorps maternels (immunité passive)
+- Mettre les plus faibles aux mamelles avant pour priorité d''accès
+
+## Dans les 24-72h
+
+- **Fer dextran 200 mg IM** (J1-J3) : 1 ml de Fer 100 mg/ml ou 0.5 ml de Fer 200 mg/ml. **NE PAS injecter 2 ml de 200 mg/ml = surdose toxique !**
+- Couper les dents (épointage) si bagarres tétine
+- Couper la queue si caudectomie pratiquée
+
+## J7 : castration des mâles
+
+- Avec antiseptique + méloxicam (anti-inflammatoire)
+- Plaie surveillée 3 jours', '{porcelet,naissance,colostrum,fer,castration}', 'INRA, IFIP, OIE', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('e8f2607a-23e6-4387-8a33-2b34c77959a1', 'intervalle-sevrage-saillie', 'Intervalle sevrage-saillie (ISS) : viser 5 jours', 'reproduction', 'expert', 'L''ISS optimal est de 4-7 jours. Au-delà de 10 jours, perte de productivité significative.', '## Qu''est-ce que l''ISS ?
+
+L''**Intervalle Sevrage-Saillie** = nombre de jours entre le sevrage des porcelets et la nouvelle saillie de la truie.
+
+## Cibles
+
+- **Excellent** : 4-5 jours
+- **Bon** : 6-7 jours
+- **À surveiller** : 8-12 jours
+- **Mauvais** : > 12 jours
+
+## Pourquoi c''est crucial
+
+- ISS de 5j vs 10j = **0.3 porcelets supplémentaires par truie/an**
+- Sur 20 truies = 6 porcelets/an = ~80 000 FCFA
+
+## Causes d''ISS allongé
+
+1. **Sous-nutrition en lactation** : truies maigres = anœstrus post-sevrage
+2. **Stress thermique** : > 28°C affecte la reprise œstrale
+3. **Première portée** : ISS souvent plus long (jusqu''à 10j)
+4. **Sevrage trop précoce** (< 18j) : utérus non involué
+5. **Pathologie utérine** : métrite
+
+## Solutions
+
+- Truie ad libitum en lactation, eau fraîche
+- Effet verrat dès J2 post-sevrage
+- Flushing énergétique 3-5j (concentré + eau)', '{iss,sevrage,productivite,truie}', 'IFIP, INRA, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('fc27a13f-9c4e-46d1-8f82-a5ebe04a4990', 'synchronisation-chaleurs', 'Synchronisation des chaleurs en lot', 'reproduction', 'expert', 'L''altrenogest (Regumate) administré 18 jours déclenche des chaleurs synchronisées 5-7j après arrêt, permettant la conduite en bande.', '## Principe
+
+Donner un progestagène (altrenogest oral) pendant **18 jours consécutifs** bloque l''œstrus. À l''arrêt, **toutes les truies viennent en chaleur dans une fenêtre de 4-7 jours**.
+
+## Protocole standard
+
+- **J1-J18** : 20 mg altrenogest/truie/jour dans l''aliment
+- **J19-J25** : arrêt → chaleurs groupées
+- **J22-J25** : IA des truies en chaleur
+
+## Intérêts
+
+- **Conduite en bande** : groupes homogènes de mises-bas
+- **Optimisation main-d''œuvre** : tâches groupées
+- **Vide sanitaire** plus efficace entre bandes
+- **Charge maternité** prédictible
+
+## Limites
+
+- **Coût** : ~3-5 000 FCFA/truie/cycle
+- Réservé aux **cochettes et truies cyclées normales** (pas d''anœstrus)
+- Ordonnance vétérinaire obligatoire
+- Manipulation hygiénique (hormone, gants)
+
+## Alternative économique
+
+- **Effet mâle groupé** : exposer plusieurs truies au verrat simultanément 2x/jour pendant 3-4 jours déclenche partiellement la synchronisation (60-70% du lot en chaleur sur 5j).', '{synchronisation,altrenogest,bande,regumate}', 'IFIP, ITP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('cd1ff08b-250d-4dc7-b967-6202047a3f12', 'refonte-cochettes', 'Cochettes : préparation au premier service', 'reproduction', 'intermediaire', 'Les cochettes doivent être saillies à 220-240 jours, 130-140 kg, après 2-3 cycles observés. Préparer avec un flushing 14j avant.', '## Critères pour la 1ère saillie
+
+| Critère | Valeur cible |
+|---|---|
+| Âge | 220-240 jours (~7-8 mois) |
+| Poids | 130-140 kg |
+| Épaisseur lard dorsal | 14-18 mm |
+| Cycles observés | 2-3 minimum |
+
+## Pourquoi attendre le 2e/3e cycle ?
+
+- Le **1er cycle** a peu d''ovulations (8-10) → petite portée
+- **2e cycle** : 12-14 ovulations
+- **3e cycle** : pleine maturité (14-18 ovulations)
+
+## Préparation 14 jours avant
+
+- **Flushing** : concentré + 0.5 kg supplément/jour
+- Hausse de la prise alimentaire = augmente le taux d''ovulation de 1-2 ovules
+- Effet **verrat** quotidien dès J-21
+
+## Erreurs courantes
+
+1. Saillir trop jeune → petite portée, longévité réduite
+2. Saillir trop grosse (> 150 kg) → problèmes locomoteurs
+3. Pas de flushing → ovulation faible
+4. Pas d''effet verrat → cochette non préparée hormonalement', '{cochette,premier-service,flushing,puberte}', 'INRA, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('7c042d4d-66cd-4eca-9838-37c4ec2ae3be', 'reforme-truies-criteres', 'Réformer une truie : 5 critères', 'reproduction', 'intermediaire', 'Réformer après 6-7 portées ou si : 2 retours en chaleur consécutifs, portée < 8 vivants 2 fois, mammites/métrites répétées, boiterie chronique.', '## Critères de réforme
+
+### 1. Âge productif
+- **6-7 portées** = fin de vie productive normale
+- Au-delà, productivité chute (< 10 porcelets/portée)
+
+### 2. Performance reproductive
+- **2 retours en chaleur consécutifs** (= 2 échecs de gestation)
+- **2 portées consécutives < 8 porcelets vivants**
+- **ISS > 15 jours** récurrent
+
+### 3. Santé
+- **Mammites/métrites répétées** (3+ épisodes)
+- **Prolapsus utérin** ou vaginal
+- **Boiterie chronique** (locomotion altérée 4+ semaines)
+
+### 4. Comportement
+- Agressive envers porcelets (écrasement répété)
+- Refus de téter (allaitement insuffisant)
+
+### 5. Économique
+- Productivité < seuil ferme (ex: < 22 porcelets/an)
+
+## Calcul économique
+
+**Marge truie/an** = (porcelets sevrés × prix) - (aliment + amortissement)
+
+Si marge < 0 sur 2 portées consécutives → réformer
+
+## Renouvellement
+
+Taux annuel cible : **30-40% de renouvellement**', '{reforme,productivite,longevite,truie}', 'IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('b4527234-5e84-47af-a7c3-02bc57d8d237', 'sas-sanitaire-entree', 'Aménager un sas sanitaire d''entrée', 'sanitaire', 'debutant', 'Le sas sanitaire est la 1ère ligne de défense biosécurité : pédiluve, vestiaire séparant zone propre et zone sale, lavage des mains.', '## Conception en 3 zones
+
+```
+EXTÉRIEUR → [pédiluve] → ZONE SALE → [bench/banc] → ZONE PROPRE → ÉLEVAGE
+```
+
+## Équipement minimum
+
+1. **Pédiluve à l''entrée** : bac 5L, désinfectant renouvelé chaque jour (cresyl, formol dilué, ou eau de javel 1%)
+2. **Vestiaire zone sale** : déposer ses vêtements de ville, bottes
+3. **Lavabo + savon** : lavage des mains obligatoire
+4. **Vestiaire zone propre** : tenue de ferme propre (combinaison + bottes dédiées)
+5. **Registre visiteurs** : date, nom, dernière visite porcine
+
+## Règle "douche" pour visiteurs externes
+
+- Si visiteur venant d''un autre élevage porcin **< 48h** : refuser ou exiger douche complète + tenue ferme
+- **48h-7j** : douche + tenue ferme
+- **> 7j** : tenue ferme suffit
+
+## Coût
+
+Sas basique : **150-300 000 FCFA** (matériaux locaux + plomberie simple)', '{biosecurite,sas,peluve,visiteurs}', 'OIE, FAO biosécurité porcine', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('c6ddd263-2ada-4197-ac6c-423bce4117ca', 'peste-porcine-africaine-prevention', 'Peste Porcine Africaine : 7 règles de prévention', 'sanitaire', 'expert', 'La PPA est mortelle à 95%, sans vaccin, présente en Afrique de l''Ouest. La prévention passe uniquement par la biosécurité stricte.', '## Pourquoi c''est critique
+
+- **Mortalité 95-100%** chez le porc
+- **Pas de vaccin** disponible en Afrique
+- **Présente en CI** (foyers signalés 2019-2024)
+- Virus très résistant : survit **18 mois** dans les viandes congelées
+
+## Les 7 règles strictes
+
+### 1. Pas de déchets de cuisine
+- **Interdit** de donner reliefs de table aux porcs (risque viande contaminée importée)
+
+### 2. Sas et pédiluve fonctionnels
+- Renouveler quotidiennement
+
+### 3. Quarantaine 30 jours
+- Tous nouveaux animaux isolés et observés
+
+### 4. Pas de contact avec porcs externes
+- Pas de foires, marchés, élevages voisins sans précaution
+
+### 5. Lutte contre tiques molles (Ornithodoros)
+- Vecteurs naturels du virus
+
+### 6. Lutte rongeurs/oiseaux
+- Vecteurs mécaniques
+
+### 7. Surveillance et déclaration
+- Mortalité brutale + fièvre + hémorragies → **ALERTE VÉTÉRINAIRE IMMÉDIATE**
+- Déclaration obligatoire MIRAH
+
+## Signes cliniques PPA
+
+- Fièvre 41°C+
+- Mortalité brutale (24-72h)
+- Cyanose oreilles/abdomen
+- Hémorragies cutanées et internes
+- Avortements truies
+
+## En cas de suspicion
+
+- **Isoler le bâtiment**
+- **Appeler vétérinaire/MIRAH** d''urgence
+- **Pas de mouvement d''animaux ni de personnel** hors ferme', '{ppa,peste-porcine,biosecurite,alerte}', 'OIE/WOAH, FAO EMPRES, MIRAH CI', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('006e01aa-6f24-4477-8184-a19a4c7f0eac', 'eau-besoin-quotidien', 'Eau : besoin quotidien par catégorie', 'nutrition', 'debutant', 'Eau = nutriment n°1. Porcelet 1-2 L/j, croissance 5-7 L/j, truie allaitante 25-35 L/j. Manque d''eau = manque d''aliment.', '## Besoins quotidiens (litres/jour)
+
+| Catégorie | Hiver | **Climat CI (chaud)** |
+|---|---|---|
+| Porcelet sevré (10-20 kg) | 2 | **3-4** |
+| Croissance (20-50 kg) | 5 | **6-8** |
+| Finition (50-110 kg) | 8 | **10-15** |
+| Truie gestante | 12 | **15-20** |
+| Truie allaitante | 25 | **25-40** |
+| Verrat | 12 | **15-20** |
+
+## Pourquoi l''eau est critique
+
+- Représente **70-80%** du corps
+- Régule la température (climat tropical CI)
+- **Pas d''eau = pas de prise alimentaire** (1 L manquant = 200-400 g d''aliment refusé)
+- Lactation truie : 1 L de lait = 3 L d''eau
+
+## Équipement
+
+### Abreuvoirs goutte-à-goutte (tétine)
+- Débit : 0.5-1 L/min (truie allaitante)
+- Hauteur : à la hauteur du dos de l''animal
+- 1 tétine pour 10-12 animaux
+
+### Abreuvoirs auge
+- Plus fragiles (souillures)
+- 1 cm de bord par animal
+
+## Contrôles
+
+- **Débit hebdomadaire** : tester chaque tétine
+- **Qualité bactériologique** : analyse 1x/an (LANADA)
+- **pH** : 6.5-8.5 idéal
+- **Température** : < 25°C', '{eau,abreuvement,tetine,besoin}', 'NRC 2012, INRA 2018', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('55d1eedc-0c50-4070-a397-c636a1c758dc', 'calendrier-vaccinal-porcelet', 'Calendrier vaccinal porcelet J1-J100', 'sanitaire', 'intermediaire', 'Calendrier de référence : Fer J1, Coccidiostatique J3, castration J7, Mycoplasma J14, Vermifuge J21, Vaccin sevrage J42.', '## Calendrier standard CI
+
+| Âge | Acte | Produit | Voie | Dose |
+|---|---|---|---|---|
+| **J1** | Fer dextran | Fer 100 mg/ml | IM | 2 ml |
+| **J3** | Coccidiostatique | Toltrazuril 5% (Baycox) | Orale | 1 ml |
+| **J7** | Castration mâles | Antiseptique + méloxicam | Topique | — |
+| **J14** | Vaccin Mycoplasma primo | Mhyo inactivé | IM | 2 ml |
+| **J21** | Vermifuge | Ivermectine 1% | SC | 0.3 ml/10kg |
+| **J28** | Mycoplasma rappel + Circovirus | Mhyo + PCV2 | IM | 2 ml |
+| **J42** | Peste classique + Rouget | PPC + Erysipelothrix | IM | 2 ml |
+| **J56** | Vermifuge rappel | Ivermectine 1% | SC | 0.3 ml/10kg |
+| **J70** | Parvo + Lepto (futurs reproducteurs) | Parvo + Lepto | IM | 2 ml |
+| **J100** | Pasteurellose | Pasteurella multocida | IM | 2 ml |
+
+## Règles d''or
+
+- **Aiguille neuve par animal** (ou désinfection)
+- **Site IM** : encolure (porcelet) ou cuisse (adulte)
+- **Conservation 2-8°C** (jamais congelé)
+- **Reconstitution** : utiliser dans les 2h
+- **Registre** : noter chaque acte (carnet d''élevage)
+
+## Coût annuel par porcelet
+
+~ **800-1 500 FCFA** de vaccins/porcelet jusqu''au sevrage', '{vaccination,calendrier,porcelet,protocole}', 'OIE, IFIP, MIRAH', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('72ec9a85-bb88-488f-bf35-e2004fdfba89', 'diarrhee-porcelets-diagnostic', 'Diarrhée porcelets : diagnostic différentiel', 'sanitaire', 'expert', 'Diarrhée néonatale (< 7j) = E. coli K88, rotavirus. Post-sevrage = E. coli, salmonelles, coccidies. Différencier avant traitement.', '## Diagnostic par âge
+
+### Néonatale (J1-J7)
+| Cause | Couleur diarrhée | Particularité |
+|---|---|---|
+| **E. coli K88** | Jaune-blanche, aqueuse | Toute la portée touchée, mortalité 50%+ |
+| **Rotavirus** | Jaune, mousseuse | Vomissements associés |
+| **Coccidiose (Isospora)** | Jaune pâle, pâteuse | J7-J21, déshydratation |
+| **C. perfringens type C** | Rouge sanglante | Mortalité brutale J1-J3 |
+
+### Post-sevrage (J21-J50)
+| Cause | Particularité |
+|---|---|
+| **E. coli post-sevrage** | Boiteries œdémateuses parfois associées |
+| **Salmonellose** | Fièvre, parfois septicémie |
+| **Coccidiose** | Persistance malgré antibio |
+| **TGE** | Très contagieuse, toute la bande |
+
+## Démarche diagnostique
+
+1. **Coproculture** vétérinaire (identifier germe)
+2. **Compter porcelets atteints / portée**
+3. **Mesurer la déshydratation** (pli cutané, yeux enfoncés)
+4. **Réhydrater immédiatement** (eau + sel + glucose, ou solution réhydratante)
+
+## Traitements
+
+- **E. coli** : amoxicilline 15 mg/kg ou colistine orale
+- **Coccidiose** : toltrazuril 20 mg/kg orale, 1 prise
+- **Salmonelles** : enrofloxacine 5 mg/kg, IM ou orale, 3-5j
+- **Virale (rota, TGE)** : seulement soutien (hydratation, environnement chaud)
+
+## Prévention
+
+- Colostrum dans les 6h
+- Hygiène maternité stricte
+- Vaccination truies en fin de gestation (E. coli, rotavirus)
+- Aliment de pré-sevrage progressif', '{diarrhee,porcelets,ecoli,coccidiose,antibio}', 'INRA, CIRAD, IFIP, OIE', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('1b0dd46b-0f6b-4be7-bcba-e6d02bb7c778', 'quarantaine-nouveaux-animaux', 'Quarantaine des nouveaux animaux : 30 jours', 'sanitaire', 'intermediaire', 'Tout nouvel animal entrant doit être isolé 30 jours minimum dans un bâtiment séparé, avec observation, dépistage et acclimatation.', '## Pourquoi 30 jours minimum
+
+Période d''incubation de la plupart des maladies porcines :
+- PPA : 4-19 jours
+- PPC : 5-14 jours  
+- Mycoplasmose : 14-21 jours
+- Gale : 14-21 jours
+
+**30 jours couvre largement** ces incubations.
+
+## Conditions de quarantaine
+
+1. **Bâtiment isolé**, à 50m+ des autres porcheries
+2. **Personnel dédié** ou intervention en fin de tournée
+3. **Matériel séparé** (auge, brosse, bottes)
+4. **Ne JAMAIS introduire dans l''élevage avant 30j d''observation**
+
+## Surveillance quotidienne
+
+- Température (rectale 2x/sem)
+- Appétit
+- Lésions cutanées (gale)
+- Comportement, démarche
+- Toux
+
+## Examens à J0 et J21
+
+- Prélèvement sérologique : PPA, PPC, parvo, lepto (vétérinaire)
+- Coproscopie : parasitisme
+
+## Vaccinations d''adaptation
+
+- Faire suivre le protocole de la ferme (mycoplasme, parvo-lepto)
+- Mise en contact progressive (échantillon de fèces de la ferme pour immunité d''écosystème)
+
+## Coût d''une mauvaise quarantaine
+
+Un seul animal porteur de PPA = perte de l''élevage entier (95% mortalité).', '{quarantaine,biosecurite,nouveaux-animaux}', 'OIE, FAO, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('853a98e2-2f17-4820-8843-b8907097137d', 'antibiotiques-usage-raisonne', 'Antibiotiques : usage raisonné', 'sanitaire', 'expert', 'Antibiothérapie = uniquement sur ordonnance, après diagnostic, avec respect du délai d''attente avant abattage. Risque antibiorésistance.', '## Règles d''or
+
+1. **Diagnostic d''abord** : pas d''antibio "à l''aveugle"
+2. **Ordonnance vétérinaire obligatoire** (CI : Code de la Santé Animale)
+3. **Dose et durée respectées** (sous-dose = résistance)
+4. **Délai d''attente** strict avant abattage
+5. **Pas de prophylaxie systématique**
+
+## Antibiotiques courants porc
+
+| Molécule | Indication | Voie | Délai abattage |
+|---|---|---|---|
+| **Amoxicilline LA** | Respiratoire, polyvalent | IM | 21 j |
+| **Tylosine** | Pulmonaire, digestif | IM/orale | 8 j |
+| **Enrofloxacine** | Sévères, salmonelles | IM | 10 j |
+| **Oxytétracycline LA** | Polyvalent | IM | 28 j |
+| **Colistine** | Diarrhée E. coli | Orale | 1 j |
+| **Sulfa-triméthoprime** | Coccidiose, respi | Orale | 15 j |
+| **Florfénicol** | Respiratoire | IM | 14 j |
+
+## Antibiorésistance : signes
+
+- Traitement habituel ne marche plus
+- Mortalité malgré antibio
+- Récidive rapide post-traitement
+
+→ **Antibiogramme** chez le vétérinaire
+
+## Bonnes pratiques anti-résistance
+
+- **Rotation** des familles d''antibio
+- **Pas de combinaisons** non validées
+- **Carnet d''élevage** : tracer chaque traitement
+- **Vacciner > traiter** (prévention coûte moins cher)
+- **Réformer** les chroniques (réservoirs)
+
+## Risque réglementaire
+
+Résidus antibio en abattoir = saisie carcasse + amende. Toujours respecter le **délai d''attente**.', '{antibiotiques,antibioresistance,delai-attente,prescription}', 'OMS, OIE, ANSES', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('0c5939e9-3aa0-48ef-83e9-27933ab7c02e', 'mycoplasmose-pulmonaire', 'Mycoplasmose pulmonaire : reconnaître et gérer', 'sanitaire', 'intermediaire', 'Toux sèche, persistante, dans les bandes d''engraissement. Maladie endémique en CI. Vaccination J14+J28 et traitement tylosine si crise.', '## Maladie
+
+**Mycoplasma hyopneumoniae** = pneumonie enzootique du porc. Très répandue en CI.
+
+## Signes cliniques
+
+- **Toux sèche chronique**, surtout après stress (mise en mouvement, changements de bâtiment)
+- Touche bande entière, pas mortalité aiguë
+- **Croissance ralentie** (-10 à -15% GMQ)
+- Lésions pulmonaires visibles à l''abattoir (zone craniale)
+
+## Diagnostic
+
+- Clinique (toux groupée bande engraissement)
+- Confirmation : sérologie ELISA ou PCR (vétérinaire)
+- Inspection carcasses à l''abattoir
+
+## Traitement
+
+- **Tylosine** 10 mg/kg/j orale ou IM, 5 jours
+- Ou **enrofloxacine** 5 mg/kg/j IM, 3-5 jours
+- Améliorer ventilation, baisser poussières
+
+## Prévention (clé)
+
+- **Vaccination J14 primo + J28 rappel** (système Smart Farm)
+- **Truies vaccinées** transmettent immunité
+- **All-in/all-out** strict
+- **Vide sanitaire** entre bandes
+- Bonne ventilation (pas de courants d''air mais renouvellement air)
+
+## Coût
+
+- Vaccination : ~300-500 FCFA/porcelet × 2 doses
+- Sans vaccin : perte croissance ~ 2-3 kg/porc à 100 kg = 4-6 000 FCFA/porc
+- **ROI vaccination = 5-10x**', '{mycoplasmose,pneumonie,toux,vaccin}', 'IFIP, CIRAD, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('47f923f4-0181-4024-a0b0-eea9eb48e143', 'detection-precoce-5-points', 'Check quotidien 5 points pour détection précoce', 'sanitaire', 'debutant', 'Faire une tournée matinale et vérifier 5 points : appétit, démarche, fèces, respiration, comportement. Détecter dans les 24h gagne 80% du traitement.', '## Les 5 points de la tournée matin
+
+### 1. Appétit
+- Aliment restant dans l''auge = anormal
+- Animal qui ne mange pas → fièvre probable
+
+### 2. Démarche
+- Boiterie, prostration, raideur
+- Truie qui peine à se lever
+
+### 3. Fèces et urines
+- Diarrhée (couleur, consistance)
+- Sang dans urines/fèces
+- Constipation (peu/sec)
+
+### 4. Respiration
+- Toux audible
+- Respiration accélérée (> 40/min adulte)
+- Halètement par la bouche = urgence
+
+### 5. Comportement
+- Isolé du groupe
+- Apathie, oreilles tombantes
+- Agressivité inhabituelle
+- Hyper-vocalisations
+
+## Outils
+
+- Thermomètre rectal (T° normale porc : 38.5-39.5°C)
+- Carnet d''observation par case/bâtiment
+- Lampe torche si tournée tôt
+
+## Tempo
+
+- **Matin** : à jeun, les animaux montrent l''appétit
+- **Soir** : avant nourrissage, animaux calmes = signes maladie visibles
+
+## Règle d''or
+
+**Détecter à J1 = 80% de chances de guérison**
+**Détecter à J3 = 50%**
+**Détecter à J5 = 20%**', '{surveillance,detection,tournee,temperature}', 'IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('8acce56c-b384-49f4-b366-fa2df85726e1', 'vermifugation-protocole', 'Vermifugation porcine : protocole annuel', 'sanitaire', 'intermediaire', 'Ivermectine SC ou orale, 2x/an pour reproducteurs, 1x au sevrage et 1x à mi-engraissement pour porcelets.', '## Parasites principaux
+
+- **Ascaris suum** (vers ronds intestinaux) : retard croissance, foie tigré abattoir
+- **Strongyloides** (parasitose néonatale)
+- **Trichures, Oesophagostomes**
+- **Gale sarcoptique** (parasite cutané)
+
+## Protocole standard
+
+### Reproducteurs (truies, verrats)
+- **Ivermectine 1% SC 0.3 ml/10 kg, 2x/an**
+- Ou en gestation (vers 90 j) et post-sevrage
+
+### Porcelets
+- **J21** : ivermectine SC (porcelet)
+- **J56** (post-sevrage) : rappel
+- **J100** si engraissement long
+
+## Molécules
+
+| Molécule | Voie | Spectre | Délai abattage |
+|---|---|---|---|
+| **Ivermectine 1%** | SC | Larges + gale | 28 j |
+| **Fenbendazole** | Orale | Vers ronds | 14 j |
+| **Lévamisole** | SC ou orale | Vers ronds | 7 j |
+| **Doramectine** | IM | Larges + gale | 35 j |
+
+## Rotation des familles
+
+Pour éviter résistances : changer de famille tous les 2-3 ans
+- Année 1-2 : ivermectine
+- Année 3 : fenbendazole
+- Année 4 : retour ivermectine
+
+## Coproscopie de contrôle
+
+- 1x/an minimum (vétérinaire)
+- Quantifie l''excrétion d''œufs
+- Décide si protocole suffisant', '{vermifuge,parasites,ivermectine,ascaris}', 'OIE, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('028def3d-1e1a-47a9-9d5d-7929e6493a60', 'comprendre-mat-em-lysine', 'Comprendre MAT, EM et Lysine', 'nutrition', 'debutant', 'MAT (protéine) = construction des tissus. EM = énergie pour vivre/grandir. Lysine = acide aminé limitant n°1 chez le porc.', '## Les 3 piliers nutritionnels
+
+### MAT (Matière Azotée Totale)
+- = protéines brutes (%)
+- Construit les tissus (muscles, organes)
+- Sources : tourteau soja (47%), arachide (45%), poisson (60%)
+- **Trop = gaspillage** (excrété en urée, pollue)
+- **Pas assez** = retard croissance
+
+### EM (Énergie Métabolisable)
+- = énergie utilisable (kcal/kg)
+- Carburant pour vivre + grandir
+- Sources : maïs (3300), sorgho (3250), huile palme (8500)
+- **Trop** = animal trop gras
+- **Pas assez** = arrêt croissance
+
+### Lysine
+- = 1er acide aminé limitant
+- Si pas assez de lysine → la MAT entière est gaspillée
+- "Loi du minimum"
+- Cible : ~1% en croissance, 1.3% en porcelet
+
+## Cibles par stade (NRC 2012)
+
+| Stade | MAT % | EM kcal | Lys % |
+|---|---|---|---|
+| Porcelet 1er âge | 21 | 3400 | 1.35 |
+| Porcelet 2e âge | 19 | 3350 | 1.20 |
+| Croissance | 17 | 3250 | 1.00 |
+| Finition | 14.5 | 3200 | 0.80 |
+| Gestante | 13 | 3100 | 0.55 |
+| Allaitante | 18 | 3300 | 1.00 |
+| Verrat | 14 | 3150 | 0.60 |', '{mat,em,lysine,fondamentaux}', 'NRC 2012, INRA 2018', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('f3c61ebb-5a94-4438-b8a0-174335a9e343', 'formule-croissance-mais-soja-son', 'Formule croissance maïs-soja-son', 'nutrition', 'intermediaire', 'Formule type pour porcs 30-60 kg : 60% maïs + 22% tourteau soja + 15% son blé + 3% prémix/calcaire = MAT 17%, EM 3036 kcal.', '## Recette
+
+| Ingrédient | % | MAT apport | EM apport |
+|---|---|---|---|
+| Maïs grain | 60 | 4.8 | 1980 |
+| Tourteau soja 48% | 22 | 10.34 | 726 |
+| Son de blé | 15 | 2.4 | 330 |
+| Prémix + CaCO₃ | 3 | 0 | 0 |
+| **Total** | **100** | **17.5%** | **3036** |
+
+## Évaluation
+
+- ✅ MAT : 17.5% ≥ cible 17% NRC 2012
+- ⚠️ EM : 3036 < cible 3250 (-6.6%)
+- ⚠️ Lysine : ~0.91% < cible 1.00% (-9%)
+- ⚠️ Ca/P : déficient en calcium
+
+## Améliorations
+
+- Ajouter **2% huile de palme** → EM +170 kcal
+- Ajouter **L-Lysine HCl** 0.1% → comble lysine
+- **CaCO₃** 1.5% → corrige Ca
+
+## Coût indicatif (prix CI 2025)
+
+- Maïs 280 FCFA × 0.60 = 168
+- Tourteau soja 480 × 0.22 = 106
+- Son blé 180 × 0.15 = 27
+- Prémix 1500 × 0.03 = 45
+- **Total ≈ 345 FCFA/kg**
+
+## Distribution porc 30-60 kg
+
+- 1.8 à 2.5 kg/jour selon poids
+- 2 repas (matin + soir)
+- Eau ad libitum', '{formule,croissance,mais,soja}', 'NRC 2012, INRA 2018, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('674e1645-6728-48dd-a25d-a160de2a9de1', 'aflatoxines-prevention', 'Aflatoxines : prévention vigilance maïs/arachide', 'nutrition', 'expert', 'Aflatoxines (Aspergillus flavus) dans maïs/arachide stockés humides. Toxicité hépatique, immunosuppression. Limite 20 ppb.', '## Qu''est-ce ?
+
+L''**aflatoxine B1** est une mycotoxine produite par *Aspergillus flavus* sur céréales et arachides stockées en milieu humide chaud.
+
+## Contexte CI
+
+Climat tropical humide = **risque élevé** pendant saison des pluies. Maïs et arachide locaux particulièrement à risque.
+
+## Effets sur le porc
+
+- **Hépatotoxique** : foie tuméfié, jaunisse
+- **Immunosuppression** : maladies opportunistes
+- **Retard croissance** dose-dépendant
+- **Lait contaminé** truie → porcelets affectés
+- **Reproduction** : avortements, mort-nés
+- **Carcinogène** (long terme)
+
+## Seuils légaux porc (UE/OIE)
+
+- Aliment porcs : **20 ppb max** (porcs en finition)
+- Aliment porcelets/truies : **5-10 ppb max**
+- Lait : 0.05 ppb (humain)
+
+## Prévention au stockage
+
+1. **Séchage maïs à < 14% humidité** avant stockage
+2. **Aération** des silos/sacs
+3. **Bâche bien tendue** (pas de condensation)
+4. **Rotation FIFO** (premier entré, premier sorti)
+5. **Inspection visuelle** : moisissures vertes/jaunes = jeter
+
+## Test rapide
+
+- **Bandelettes ELISA aflatoxine** (5-10 000 FCFA/test)
+- Laboratoires CI : LANADA, université
+
+## Traitement aliment contaminé
+
+- **Liants à mycotoxines** : bentonite (charbon activé alimentaire) ajoutée à 0.5-1% de l''aliment
+- Réduit absorption mais ne neutralise pas totalement
+- Si > 50 ppb : **ne pas donner**, détruire', '{aflatoxines,mycotoxines,stockage,mais}', 'FAO, ANSES, CIRAD', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('0e0c9cea-f6a2-42f4-9557-101a89238387', 'manioc-aliment-energetique', 'Manioc séché : substitut énergétique du maïs', 'nutrition', 'intermediaire', 'Le manioc séché remplace jusqu''à 30% du maïs dans une formule. MAT 2.5%, EM 3200, lysine 0.10% — compense avec tourteau.', '## Atouts
+
+- **Disponibilité locale CI** : production importante
+- **Prix** plus bas que maïs en saison de pic
+- **EM 3200 kcal/kg** = comparable au maïs
+- Stocke bien sec
+
+## Limites
+
+- **MAT seulement 2.5%** (vs maïs 8%) → besoin plus de tourteau
+- **Pauvre en acides aminés** (lysine 0.10%, méthionine 0.04%)
+- **Toxicité cyanogénique** si mal séché (acide cyanhydrique)
+- Goût parfois rebutant si frais
+
+## Préparation
+
+1. **Pelage** des racines
+2. **Trempage 24-48h** (élimine cyanures)
+3. **Séchage soleil 3-7 jours** ou séchoir 60°C
+4. **Broyage** en farine ou cossettes
+5. **Stockage sec** (humidité < 13%)
+
+## Formule type avec manioc
+
+| Ingrédient | % |
+|---|---|
+| Maïs grain | 30 |
+| **Manioc séché** | **20** |
+| Tourteau soja 48% | 30 |
+| Son blé | 17 |
+| Prémix + CaCO₃ + Sel | 3 |
+
+**Compensation** : on monte le tourteau soja à 30% (au lieu de 22%) pour compenser MAT et lysine.
+
+## Coût CI 2025
+
+- Manioc séché : **150-200 FCFA/kg**
+- Maïs : 250-300 FCFA/kg
+- Économie : 30% × 100 FCFA = **30 FCFA/kg** d''aliment formulé', '{manioc,alternative,mais,cossettes}', 'CIRAD, FAO, IRAT', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('39b76545-9a6c-4042-9c0b-7cd1a4b04f6c', 'truie-allaitante-rationnement', 'Truie allaitante : ration ad libitum', 'nutrition', 'expert', 'Truie allaitante : MAT 18%, EM 3300+. Distribution croissante J1 (3 kg) à J10 (6-7 kg). Eau 35 L/j minimum.', '## Pourquoi c''est crucial
+
+- La truie produit **8-12 L de lait/jour** (8 000 kcal/j)
+- Si pas assez nourrie → **mobilisation des réserves corporelles** → ISS allongé
+- Lactation longue + déficit = anœstrus post-sevrage
+
+## Plan de rationnement (truie 200 kg, portée 10 porcelets)
+
+| Jour | Aliment kg/jour | Eau L/j |
+|---|---|---|
+| J0 (mise-bas) | 1.5-2 (léger pour éviter MMA) | 25 |
+| J1-J3 | 2.5-3.5 | 30 |
+| J4-J7 | 4-5 | 35 |
+| J8-J14 | 5-6 | 35 |
+| J15-sevrage | **6-7 (ad libitum)** | 40 |
+
+## Formule allaitante (MAT 18%, EM 3300)
+
+| Ingrédient | % |
+|---|---|
+| Maïs grain | 50 |
+| Tourteau soja 48% | 25 |
+| Son blé | 12 |
+| Farine de poisson | 5 |
+| Huile de palme | 2 |
+| **Prémix + CaCO₃ + sel** | **6** |
+
+## Astuces tropicales CI
+
+- **Repas frais** : matin (5-6h) et soir (17-18h)
+- **Évite le pic chaleur 12-15h** (truie refuse de manger)
+- **Brumisation** maternité pour stimuler l''appétit
+- **3 repas/j** plutôt que 2 = +500 g consommés/j
+
+## Économie
+
+- Truie sous-nourrie en lactation = **-2 porcelets/portée** suivante
+- Gain pleine alimentation : 0.4 porcelet en plus × 2 portées/an = ~**16 000 FCFA**', '{truie-allaitante,rationnement,lactation}', 'NRC 2012, INRA 2018, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('27382ab1-b5fb-4341-aeb6-ea783d6b3fe4', 'aliment-porcelet-sevrage', 'Aliment porcelet sevré : transition douce', 'nutrition', 'intermediaire', 'Pre-starter J21-J35 (MAT 22%, lait sec, prébiotiques), puis Starter J35-J60. Pas de transition brutale = pas de diarrhée.', '## Phases d''alimentation porcelet
+
+### Pre-starter (J7 creep feeding → J35)
+- **Très digestible** : protéines de lait sec, plasma
+- **MAT 22-23%**, EM 3450 kcal
+- Texture : granulés petits ou farine fine
+- **Prébiotiques + acidifiants** pour stabiliser flore
+- Coût : 800-1 200 FCFA/kg (cher mais consommation faible)
+
+### Starter (J35-J60)
+- **MAT 20-21%**, EM 3400
+- Transition vers protéines végétales (tourteau soja extrudé)
+- **Coccidiostatique** parfois inclus
+- Coût : 600-800 FCFA/kg
+
+### Croissance (J60-J100)
+- MAT 17-18%, EM 3250
+- Formule classique maïs-soja-son
+
+## Transitions critiques
+
+### Au sevrage (J21-J28)
+- **Mélanger 70% pre-starter + 30% nouveau** pendant 3 j
+- Puis 30/70 pendant 3 j
+- Puis 100% nouveau
+- **Eau acidifiée** (pH 4.5) limite E. coli
+
+### Pre-starter → Starter
+- Mélange progressif sur 5 j
+
+## Erreurs courantes
+
+1. Passer brutalement → diarrhée post-sevrage massive
+2. Pre-starter trop tôt arrêté → retard croissance
+3. Eau froide ou sale → refus aliment
+4. Pas d''aliment de pré-sevrage en maternité → choc sevrage
+
+## Coût et ROI
+
+- Pre-starter : 1 kg consommé/porcelet = **800-1 200 FCFA**
+- Mais **gain GMQ post-sevrage +50 g/j × 30 j** = **+1.5 kg poids** à J60 = ~2 500 FCFA gagnés à la vente.
+- **ROI 2-3x** sur le pre-starter', '{porcelet,sevrage,pre-starter,transition}', 'NRC 2012, IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('52fddd8a-5655-4114-8c90-b4db6f3d69da', 'indice-consommation-cible', 'Indice de consommation (IC) : cibles et calcul', 'nutrition', 'intermediaire', 'IC = kg aliment / kg vif produit. Cibles : porcelet 1.3-1.5, croissance 2.3-2.7, finition 2.8-3.2.', '## Définition
+
+**IC = kg d''aliment consommé / kg de poids vif gagné**
+
+Indicateur n°1 d''efficacité économique d''un élevage.
+
+## Cibles par stade
+
+| Stade | IC objectif | IC moyen CI |
+|---|---|---|
+| Porcelet sevré (8-25 kg) | 1.3-1.5 | 1.6-1.8 |
+| Croissance (25-60 kg) | 2.3-2.7 | 2.7-3.0 |
+| Finition (60-110 kg) | 2.8-3.2 | 3.2-3.8 |
+| **Engraissement global (8-110 kg)** | **2.6-3.0** | **3.0-3.4** |
+
+## Calcul pratique
+
+**Exemple bande de 50 porcs**
+- Poids départ : 50 × 8 kg = 400 kg
+- Poids sortie : 50 × 100 kg = 5 000 kg
+- **Gain total** : 4 600 kg
+- Aliment consommé sur la période : 14 200 kg
+- **IC = 14 200 / 4 600 = 3.09**
+
+## Économie
+
+**Réduire IC de 3.4 à 3.0 sur un porc de 100 kg :**
+- Gain : (3.4 - 3.0) × (100 - 8) = 36.8 kg d''aliment économisé
+- Au prix 350 FCFA/kg = **12 880 FCFA/porc**
+- Sur 50 porcs/an = **644 000 FCFA**
+
+## Facteurs d''amélioration IC
+
+1. **Qualité aliment** (digestibilité, MAT optimale)
+2. **Génétique** (lignées performantes)
+3. **Eau** disponible 24h/24
+4. **Densité** non excessive (stress = +0.2 IC)
+5. **Santé** (animaux malades = IC dégradé)
+6. **Température** (au-delà de 28°C, IC monte)
+7. **Réduction gaspillage** (auge non débordante)
+
+## Suivi
+
+Calculer IC **par bande** à la sortie. Tableau de bord mensuel.', '{ic,efficacite,indicateur,cout}', 'NRC, INRA, IFIP, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('3383a66c-0322-4dad-aa3a-e2e5739e07f5', 'cout-formule-fcfa', 'Calculer le coût d''une formule en FCFA/kg', 'nutrition', 'debutant', 'Coût formule = Σ (% ingrédient × prix kg). Cible : croissance 300-380 FCFA/kg, finition 280-350, porcelet 600-900.', '## Méthode
+
+**Coût formule (FCFA/kg) = Σ (% ingrédient × prix kg)**
+
+## Exemple croissance maïs-soja-son
+
+| Ingrédient | % | Prix FCFA/kg | Apport coût |
+|---|---|---|---|
+| Maïs grain | 60 | 280 | 168 |
+| Tourteau soja 48% | 22 | 480 | 105.6 |
+| Son blé | 15 | 180 | 27 |
+| Prémix + CaCO₃ + sel | 3 | 1500 | 45 |
+| **Total** | **100** | | **345.6 FCFA/kg** |
+
+## Cibles CI 2025
+
+| Type aliment | FCFA/kg |
+|---|---|
+| Porcelet pre-starter | 800-1 200 |
+| Porcelet starter | 550-700 |
+| Croissance | 300-380 |
+| Finition | 280-350 |
+| Truie gestante | 250-320 |
+| Truie allaitante | 320-400 |
+
+## Optimisation
+
+### Substituer maïs ↗ par manioc ↘
+- Économie : 30 FCFA/kg × 30% = 9 FCFA/kg formule
+- Mais : ajuster tourteau soja en compensation
+
+### Saisonnalité matières premières
+- **Maïs** : plus cher en saison sèche (juin-août)
+- **Acheter en récolte** (oct-déc) pour stocker
+- Économie : **30-40 FCFA/kg** sur achats stratégiques
+
+### Concentré industriel vs fait-maison
+| | Faits-maison | Concentré industriel |
+|---|---|---|
+| Coût/kg | 280-380 | 500-800 |
+| Temps | + | - |
+| Qualité | Variable | Constante |
+| Quantité min | Sacs 50 kg | Sacs 50 kg |
+
+Économie fait-maison : **40-50%** mais exige formulation rigoureuse et matières premières disponibles.', '{cout,fcfa,formule,economie}', 'IFIP, BIPORC, prix marché CI 2025', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('623b13d7-3b32-4043-a0b3-a27b957eed25', 'stockage-matieres-premieres', 'Stockage matières premières : règles d''or', 'nutrition', 'debutant', 'Humidité < 13%, ventilation, palettes au sol, FIFO, lutte rongeurs. Pertes mauvais stockage = 10-20% des matières.', '## Conditions optimales
+
+| Paramètre | Valeur cible |
+|---|---|
+| Humidité grains | < 13% |
+| Humidité local | < 70% |
+| Température | < 25°C (zone ombre) |
+| Ventilation | Air libre |
+
+## Aménagement local de stockage
+
+1. **Sol bétonné** (pas terre battue = humidité)
+2. **Palettes bois** sous sacs (espace air 10-15 cm sol)
+3. **Espacement** entre piles de sacs (30-50 cm pour ventilation)
+4. **Ouvertures grillagées** anti-rongeurs/oiseaux
+5. **Toiture étanche** vérifiée chaque saison
+
+## Règle FIFO (First In, First Out)
+
+- **Premier entré, premier sorti**
+- Marquer date de réception sur chaque sac/lot
+- Ne JAMAIS empiler nouveau lot sur ancien
+
+## Lutte rongeurs
+
+- **Pièges mécaniques** (préférables aux raticides en élevage)
+- Si raticide : **boîtes appâts sécurisées**, jamais accessible aux porcs
+- Inspection hebdomadaire crottes/traces
+
+## Inspection régulière
+
+- **Visuelle 1x/semaine** : moisissures, échauffement, rongeurs
+- **Olfactive** : odeur de fermentation = problème
+- **Tactile** : sac chaud au toucher = humidité interne
+
+## Si sac infesté/moisi
+
+- **Isoler immédiatement**
+- Tester aflatoxines si maïs/arachide
+- Si > 20 ppb : **détruire** (incinérer, ne pas donner aux animaux)
+
+## Pertes types
+
+- Mauvais stockage : **10-20% des matières** = 50-100 000 FCFA/tonne perdue
+- Bon stockage : < 2% de pertes
+- **ROI investissement stockage = 6-12 mois**', '{stockage,humidite,fifo,rongeurs}', 'FAO, CIRAD, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('5713e489-1475-4dc1-83c1-1e59efd4637f', 'orientation-batiment-porcherie', 'Orientation bâtiment porcherie', 'conduite', 'intermediaire', 'En CI, orienter le bâtiment Est-Ouest pour minimiser exposition soleil. Façades longues au Nord et Sud, faîtière surélevée pour ventilation naturelle.', '## Principe en climat tropical CI
+
+**Objectif** : minimiser la chaleur solaire directe + maximiser ventilation naturelle.
+
+## Orientation idéale
+
+```
+        NORD
+         ↑
+  [══════════════]  ← longueur du bâtiment
+  [               ]
+  [══════════════]
+         ↓
+        SUD
+```
+
+- **Axe longitudinal Est-Ouest** : seules les pignons (petits côtés) sont au Est et Ouest
+- **Façades longues** au Nord et au Sud : ombragées la plus grande partie de la journée
+- **Vent dominant** doit traverser le bâtiment perpendiculairement à l''axe
+
+## Pourquoi pas Nord-Sud ?
+
+- Soleil tape sur les façades longues toute la journée
+- Chaleur excessive en après-midi (côté Ouest brûle)
+- Pertes GMQ 5-15% en saison chaude
+
+## Aménagements thermiques
+
+### Toiture
+- **Isolation** sous tôle (laine de verre 5 cm OU faux plafond paille)
+- **Couleur claire** (blanc, gris) plutôt que noire
+- **Faîtière surélevée** (15-30 cm) = effet cheminée → évacuation air chaud
+- **Débord toiture** 1.5-2 m pour ombrer murs
+
+### Murs
+- **Hauteur basse murs** (60-80 cm pleins) puis claustra/grillage
+- **Plantations arbres ombrageants** : manguier, anacardier à 5-10 m
+
+### Ventilation
+- **Largeur bâtiment** ≤ 12 m pour ventilation transversale efficace
+- **Brumisateurs** ou aspersion toiture en pic chaleur (35°C+)
+
+## Coût indicatif
+
+- Bâtiment 10 truies basique : **3-5 M FCFA** (avec orientation correcte)
+- Reconvertir mauvaise orientation = ~30% surcoût pour palliatifs (clim, brumisation)', '{batiment,orientation,ventilation,climat}', 'IFIP, CIRAD, FAO élevage tropical', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('10fde2a6-6d0e-4c32-b923-9aff21faacc2', 'densite-animaux-m2', 'Densité animaux par m²', 'conduite', 'debutant', 'Densités cibles : porcelet sevré 0.3 m²/tête, croissance 0.6, finition 0.9, truie gestante 2.0, maternité 4.0.', '## Tableau densités
+
+| Catégorie | m²/animal | Animaux/case 10 m² |
+|---|---|---|
+| Porcelet sevré (8-25 kg) | 0.3 | 33 |
+| Porc croissance (25-60 kg) | 0.6-0.7 | 14-16 |
+| Porc finition (60-110 kg) | 0.9-1.0 | 10-11 |
+| Truie gestante (groupe) | 2.0-2.5 | 4-5 |
+| Truie maternité (case) | 4-5 | 1 (+ porcelets) |
+| Verrat | 6-8 | 1 |
+
+## Conséquences sur-densité
+
+- **Bagarres** + lésions cutanées
+- **Stress** chronique → cortisol → baisse immunité
+- **GMQ -10 à -20%**
+- **IC dégradé** +0.2 à +0.3
+- **Caudo-cannibalisme** (queue, oreilles)
+
+## Conséquences sous-densité
+
+- **Coût construction** au m² surdimensionné
+- **Bâtiment plus difficile à chauffer/refroidir**
+- Animaux moins regroupés en hiver (impacts mineurs en CI)
+
+## Adaptation tropicale
+
+En climat chaud CI, **monter de 10-15%** la densité recommandée pour favoriser dissipation chaleur entre animaux (paradoxal mais efficace dans certains designs).
+
+Mais **toujours surveiller** : si toux/bagarres → trop dense.
+
+## Calcul ferme 50 truies
+
+- 50 truies × 4 m² maternité = 200 m² maternité (pic)
+- 50 × 2 portées × 10 porcs × 1 m² finition = 1 000 m² finition
+- + verrats, gestantes, sevrés...
+- **Total ~ 1 800-2 200 m² bâtiments**', '{densite,m2,logement,cases}', 'IFIP, INRA, FAO', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('a44293ee-29f7-44b9-a805-2ea9d101cda6', 'conduite-en-bande-principe', 'Conduite en bande : principe et avantages', 'conduite', 'intermediaire', 'Conduite en bande = regrouper saillies sur 1 semaine, donc mises-bas, sevrages et ventes synchronisées. Optimise main-d''œuvre et vide sanitaire.', '## Principe
+
+Au lieu de saillir au fil de l''eau, on **groupe les saillies sur 1 semaine** (la "bande"). Toutes les truies de la bande :
+- mettent bas la même semaine
+- sèvrent la même semaine
+- libèrent les cases la même semaine
+
+## Avantages
+
+1. **All-in / all-out** strict → vide sanitaire efficace → moins de maladies
+2. **Main-d''œuvre** : tâches groupées (vaccinations, pesées, tris)
+3. **Lots homogènes** à vendre → meilleur prix
+4. **Prévisibilité** : on sait combien de porcelets à J+114, j+135 (sevrage), j+170 (ventes)
+5. **Sécurité sanitaire** : pas de mélange d''âges → pas de transmission jeunes/vieux
+
+## Bandes courantes
+
+| Bandes | Truies/bande (pour 50 truies) | Rythme tâches |
+|---|---|---|
+| **7 jours** (hebdo) | 7 truies | Tâches chaque semaine |
+| **14 jours** (bi-mensuel) | 14 truies | Tâches tous les 15 j |
+| **21 jours** | 21 truies | Tâches tous les 3 sem |
+
+## Choix selon taille ferme
+
+- < 50 truies : bandes 14 ou 21 jours (intervalles plus longs)
+- 50-150 truies : bande hebdo (semaine) plus efficace
+- > 150 : bande hebdo ou continue
+
+## Mise en place
+
+1. **Synchronisation initiale** : altrenogest (Regumate) ou effet verrat groupé
+2. **Planning annuel** : tableau avec dates saillies, mises-bas, sevrages, ventes
+3. **Discipline rigoureuse** : ne pas saillir hors planning
+
+## Difficulté principale
+
+- Truie qui rate sa saillie → sortir de la bande ou retour 21 j (effort de re-synchronisation)
+- Investissement initial en synchronisation hormonale (3-5 000 FCFA/truie)', '{bande,conduite,organisation,vide-sanitaire}', 'IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('00bf077f-340e-4c9e-88bf-09488c4d0edc', 'stress-thermique-mitiger', 'Stress thermique en CI : 7 mesures concrètes', 'conduite', 'expert', 'Au-delà de 28°C, le porc consomme -1 à -3% d''aliment par °C. Mitiger : brumisation, ventilation, eau fraîche, orientation bâtiment.', '## Seuils critiques
+
+| Catégorie | Confort | Stress | Critique |
+|---|---|---|---|
+| Porcelet | 22-26°C | > 28 | > 32 |
+| Croissance | 18-22°C | > 25 | > 30 |
+| **Finition** | **15-20°C** | **> 24** | **> 28** |
+| Truie | 16-21°C | > 25 | > 30 |
+
+## Impact économique
+
+- À 30°C vs 22°C : **GMQ -25%**, IC +0.3, consommation -15%
+- Truie en lactation à 32°C : -2 kg aliment/j → -1 porcelet sevré
+
+## 7 mesures concrètes
+
+### 1. Orientation Est-Ouest (cf tip dédié)
+
+### 2. Toiture isolée + faîtière surélevée
+
+### 3. Ventilation naturelle
+- Largeur bâtiment ≤ 12 m
+- Ouvertures basses (entrée) et hautes (sortie)
+- Hauteur sous faîtage 3.5-4 m
+
+### 4. Brumisateurs
+- Sur le sol (pas directement sur porcs) — risque pneumonie
+- Mode pulsé : 30 sec ON / 5 min OFF
+- Active à T° > 28°C, RH < 70%
+- Conso eau : 0.3-0.5 L/porc/h
+
+### 5. Eau fraîche en abondance
+- Refroidir réservoir (zone ombre)
+- Eau < 22°C → +200 g consommation aliment/j
+
+### 6. Ventilateurs de plafond
+- Plus efficace que ventilateurs au sol
+- 1 ventilateur 80W / 30-50 m² de bâtiment
+- Conso : ~ 15-25 kWh/jour = 1 800-3 000 FCFA/jour
+
+### 7. Plantations ombrageantes
+- Manguiers, anacardiers, citronniers
+- À 5-10 m du bâtiment (pas trop près = humidité)
+- Bénéfice secondaire : fruits + lutte contre érosion
+
+## Astuce économique
+
+**Mouiller la toiture** en pic de chaleur (12-15h) avec un arroseur manuel ou automatique : baisse de 3-5°C intérieur.', '{stress-thermique,climatisation,brumisateurs,tropical}', 'IFIP, CIRAD élevage tropical, FAO', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('7cc47b34-9f86-4088-995c-e7afd854c1cb', 'vide-sanitaire-protocole', 'Vide sanitaire entre bandes', 'conduite', 'intermediaire', 'Entre 2 bandes, vider le bâtiment, nettoyer haute pression, désinfecter, sécher 7-14 jours minimum. Étape clé biosécurité.', '## Pourquoi c''est essentiel
+
+- **Casse les cycles** de pathogènes (parasites, bactéries, virus)
+- **Maladies courantes** (mycoplasme, E. coli) chutent de 50-80% avec vide sanitaire correct
+- **Croissance bande suivante** : +5-10% GMQ
+
+## Protocole en 5 étapes
+
+### 1. Sortie animaux (J0)
+- Vider toutes les cases
+- Identifier les animaux à réformer/vendre
+- Inspecter chaque case pour blessures, lésions à signaler
+
+### 2. Décapage gros (J0-J1)
+- Évacuer **toute la litière** + fumier
+- Démonter accessoires démontables
+- Brosser à sec
+
+### 3. Nettoyage haute pression (J1-J2)
+- **Eau + détergent alcalin** (soude diluée 1-2%)
+- Mouiller, laisser tremper 30 min, puis nettoyer
+- Toutes surfaces : sols, murs, plafonds, auges, tétines
+- Vérifier : aucune trace organique = nettoyage OK
+
+### 4. Désinfection (J2-J3)
+- **Désinfectant approprié** : glutaraldéhyde, formol 3%, ou peroxygène (Virkon, Oxypur)
+- Pulvérisateur basse pression
+- Respecter dose et temps de contact (15-30 min)
+- **Pédiluve renouvelé** à l''entrée
+
+### 5. Séchage (J3-J7+)
+- **Minimum 7 jours** secs avec aération max
+- Idéal : **14 jours** (élimine humidité résiduelle = ennemi des bactéries)
+- Vérifier : pas de flaques, sols secs au toucher
+
+## Coût
+
+- Détergent + désinfectant : ~5-15 000 FCFA / bâtiment 100 m²
+- Eau, main-d''œuvre : 1-2 j/personne
+- Pertes potentielles sans vide sanitaire : **50-200 000 FCFA** en mortalités + IC dégradé
+
+## Erreur fatale
+
+**Ne pas désinfecter** ou faire vide trop court (< 4 j) = perpétue les pathogènes. Bande suivante = mêmes problèmes.', '{vide-sanitaire,desinfection,biosecurite}', 'IFIP, OIE, FAO', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('aff5e124-e4cf-4ccf-ae7b-8ba6c442a3e7', 'tournee-matin-checklist', 'Tournée matin : checklist 10 points', 'conduite', 'debutant', 'Routine matinale : eau, aliment, comportement, mortalité, fèces, respiration, blessures, T° bâtiment, équipement, registre.', '## Checklist tournée matin (30-60 min)
+
+### 1. Tour rapide bâtiments
+- Comptage rapide animaux
+- Détection morts/mourants
+
+### 2. Eau
+- Tous abreuvoirs fonctionnels (presser tétines)
+- Eau propre et fraîche
+- Niveau réservoir suffisant
+
+### 3. Aliment
+- Auges propres, pas d''aliment moisi
+- Reste de la veille = surveiller (refus = problème)
+- Distribution selon plan
+
+### 4. Comportement
+- Animaux qui se lèvent, vifs
+- Pas d''isolés dans un coin
+
+### 5. Mortalités
+- Sortir et noter : âge, cause apparente
+- Si plusieurs morts → alerte vétérinaire
+
+### 6. Fèces / urines
+- Couleur, consistance
+- Diarrhée groupée = signal d''alerte
+
+### 7. Respiration
+- Écouter : toux ?
+- Respiration accélérée (> 40/min) = fièvre
+
+### 8. Blessures / boiteries
+- Plaies fraîches, gonflements
+- Boiterie = isoler + traiter
+
+### 9. Environnement bâtiment
+- Température (thermomètre fixe) : 22-26°C porcelet, 18-22°C adulte
+- Ventilation OK ? Pas de courant d''air ?
+- Litière sèche
+
+### 10. Registre quotidien
+- Noter : date, observations, actions
+- Carnet d''élevage à jour
+
+## Routine soir (15-30 min)
+
+- Comptage + tour rapide
+- Distribution repas soir
+- Eau
+- Sécurisation (portes, lumières)
+
+## Erreurs débutants
+
+- Faire vite et ne pas observer
+- Ne pas noter les observations
+- Ne pas réagir aux signaux faibles', '{tournee,checklist,routine,observation}', 'IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('f59f9af8-c141-46a7-b97f-5185a6e679d5', 'gmq-cible-par-stade', 'GMQ cibles par stade', 'conduite', 'intermediaire', 'GMQ (Gain Moyen Quotidien) : porcelet 250 g, sevré 400 g, croissance 700-800 g, finition 850-900 g.', '## Cibles standards (race améliorée, conditions optimales)
+
+| Stade | Poids | GMQ cible | GMQ moyen CI |
+|---|---|---|---|
+| Naissance-Sevrage (0-28j) | 1.5 → 8 kg | 230-260 g | 200-230 |
+| Sevrage-25 kg (28-65j) | 8 → 25 kg | 400-500 g | 350-450 |
+| Croissance (25-60 kg) | 25 → 60 kg | 700-800 g | 600-700 |
+| Finition (60-110 kg) | 60 → 110 kg | 850-950 g | 750-850 |
+
+## Calcul pratique
+
+**GMQ = (Poids final - Poids initial) / Nb jours**
+
+Exemple croissance :
+- Entrée à 8 kg, J28
+- Sortie à 25 kg, J70 (42 j de période)
+- **GMQ = (25 - 8) / 42 = 405 g/jour**
+
+## Facteurs influençant GMQ
+
+1. **Génétique** (lignée Large White / Landrace / Duroc / hybrides)
+2. **Alimentation** (qualité + quantité)
+3. **Eau** (souvent négligée)
+4. **Sanitaire** (animaux malades = GMQ ↓ 20-50%)
+5. **Température** (stress thermique ↓ 10-25%)
+6. **Densité** (sur-densité ↓ 10-15%)
+7. **Stress** (transports, mélanges = ↓ ponctuelle)
+
+## Impact économique GMQ
+
+**Améliorer GMQ croissance de 600 → 750 g/j :**
+- Période 25-60 kg : 47 j (au lieu de 58 j)
+- **Économie : 11 j × aliment 2 kg/j × 350 FCFA = 7 700 FCFA/porc**
+- Sur 50 porcs/cycle = **385 000 FCFA/cycle**
+
+## Mesure
+
+- **Pesées par bande** : entrée + sortie minimum
+- Idéal : pesées intermédiaires (toutes les 3-4 semaines)
+- Pèse-animaux : 50-150 000 FCFA', '{gmq,croissance,performance,indicateur}', 'INRA, IFIP, NRC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('a51203bb-500a-4b2b-b3e9-f2149ca6566a', 'bien-etre-enrichissement', 'Bien-être : enrichissement environnemental', 'conduite', 'intermediaire', 'Enrichir l''environnement (jouets, paille, bois à mâcher) prévient le cannibalisme caudal. Pratique simple, ROI élevé.', '## Pourquoi enrichir
+
+- Porc = animal **curieux et fouisseur** par nature
+- En case nue → s''attaque aux congénères (queue, oreilles)
+- Cannibalisme caudal coûte **2-5% mortalité** + dévaluation carcasses
+
+## Niveaux d''enrichissement
+
+### Niveau 1 — basique (gratuit ou peu cher)
+- **Paille fraîche** dans la case (1-2x/semaine)
+- **Bois dur à mâcher** suspendu (acacia, palmier)
+- **Sacs de jute** suspendus
+- **Boules ou chaînes** en plastique dur
+
+### Niveau 2 — moyen
+- **Tubes en bois** rotatifs
+- **Mangeoires de fouille** avec terre ou son
+- **Aire d''exercice** extérieure (parc plein air)
+
+### Niveau 3 — premium (élevages bio/bien-être labellisés)
+- Sol paillé épais
+- Cours d''exercice
+- Brossage automatique
+- Musique d''ambiance
+
+## Règles d''or
+
+1. **Renouvellement** : changer ou refresh régulièrement (curiosité s''émousse)
+2. **Adaptation à l''âge** : porcelets aiment textures molles, adultes objets durs
+3. **Sécurité** : pas de petits objets ingérables, pas de cordes nylon (étouffement)
+4. **Hygiène** : enlever et nettoyer objets souillés
+
+## ROI
+
+- Coût enrichissement : **0-500 FCFA/case/mois**
+- Réduction cannibalisme : -3-5% mortalité
+- Sur 100 porcs : 3-5 porcs sauvés × 50 000 FCFA = **150-250 000 FCFA**
+
+## Au-delà du ROI
+
+- Animaux moins stressés = meilleure conversion alimentaire
+- Image éthique de la ferme (export, vente directe)
+- Conditions de travail (animaux calmes = personnel moins stressé)', '{bien-etre,enrichissement,cannibalisme,jouets}', 'EFSA, IFIP, INRA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('2a49fc19-878f-475d-8edf-9d2a5b7baaac', 'mortalite-seuils-acceptables', 'Mortalité : seuils acceptables et alertes', 'conduite', 'expert', 'Mortalité acceptable : néonatale 8-10%, sevrage 2-3%, post-sevrage 2-3%, engraissement 2-3%. Total naissance-abattage < 15%.', '## Seuils par stade
+
+| Stade | Mortalité acceptable | Alerte |
+|---|---|---|
+| **Néonatale (0-3 j)** | 5-8% | > 10% |
+| 3-21 j (lactation) | 2-3% | > 5% |
+| Sevrage-25 kg | 2-3% | > 5% |
+| Croissance (25-60 kg) | 1-2% | > 3% |
+| Finition (60-110 kg) | 1-2% | > 3% |
+| **Total naissance-abattage** | **10-15%** | **> 20%** |
+
+## Causes principales par stade
+
+### Néonatale
+- Écrasement maternel (40-50%)
+- Hypothermie
+- Hypoglycémie / faim
+- Colostrum insuffisant
+- Malformations
+
+### Lactation
+- Colibacillose néonatale
+- Coccidiose
+- Anémie
+
+### Sevrage
+- E. coli post-sevrage
+- Streptococcie
+- Choc alimentaire/thermique
+
+### Engraissement
+- Mycoplasmose / pneumonie
+- Salmonelloses
+- Boiteries
+- Stress thermique
+
+## Démarche en cas de mortalité élevée
+
+1. **Autopsie immédiate** (idéalement vétérinaire)
+2. **Photo lésions** internes
+3. **Comptage par âge + bâtiment** (carte chaud)
+4. **Prélèvements** si suspicion bactérienne/virale
+5. **Revue du planning** : changement aliment ? introduction nouvelle bande ?
+
+## Tableau de bord mortalité
+
+- Suivi **hebdomadaire** : nb morts / nb animaux
+- Graphique mensuel
+- Seuil d''alerte : ferme + 50% vs moyenne 6 mois
+- **Investigation systématique** si dépassement', '{mortalite,seuils,kpi,autopsie}', 'IFIP, INRA, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('64d27cc3-5c11-4e8b-b07e-55c9a39ea724', 'all-in-all-out', 'All-in / All-out : règle d''or', 'conduite', 'intermediaire', 'All-in/all-out = entrer tous les animaux d''une bande ensemble, les sortir ensemble, vide sanitaire complet. Baisse mortalité de 30-50%.', '## Principe
+
+À chaque cycle d''un bâtiment :
+1. **Entrée groupée** : tous les animaux entrent le même jour (ou semaine)
+2. **Cycle commun** : ils vivent ensemble la phase complète (sevrage, croissance, etc.)
+3. **Sortie groupée** : tous partent le même jour
+4. **Vide sanitaire** : nettoyage + désinfection + séchage avant nouvelle bande
+
+## Avantages
+
+- **Casse cycles pathogènes** entre bandes
+- **Mortalité baisse 30-50%**
+- **GMQ +5-10%** (animaux homogènes = compétition équilibrée)
+- **IC amélioré** de 0.1-0.2
+- **Vente groupée** = meilleur prix
+- **Vide sanitaire efficace**
+
+## Inconvénients
+
+- **Planification rigoureuse** indispensable
+- **Bâtiments dimensionnés** pour le pic
+- **Souplesse réduite** (ajustements difficiles)
+
+## Conditions de réussite
+
+### Bâtiments dédiés par phase
+- Maternité ≠ Sevrage ≠ Engraissement
+- Pas de mélange d''âges dans un même bâtiment
+
+### Bandes synchronisées
+- Saillies sur 1 semaine (cf tip conduite-en-bande)
+- Calendrier annuel respecté strictement
+
+### Vide sanitaire 7-14 j minimum
+- Cf tip vide-sanitaire-protocole
+
+## Erreurs courantes
+
+1. **Mélanger des âges** "pour gagner de la place" → ruine le principe
+2. **Vider sans désinfecter** → pas de bénéfice
+3. **Bandes désynchronisées** → impossible all-in/all-out réel
+4. **Bâtiments multi-usages** sans cloison → cycles cassés
+
+## Continu vs All-in/all-out
+
+| Critère | Continu | All-in/all-out |
+|---|---|---|
+| Investissement | Faible | Plus élevé (modulable) |
+| Mortalité | 15-25% | 10-15% |
+| Productivité | 18-22 porcelets/truie/an | 22-26 |
+| Souplesse | +++ | + |
+| ROI long terme | Moyen | Excellent |', '{all-in-all-out,bande,biosecurite,organisation}', 'IFIP, INRA, OIE', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('a3fb97d3-2b2b-4f99-bdee-54418d1e2188', 'cout-production-porc-decomposition', 'Coût production porc : décomposition', 'economique', 'intermediaire', 'Sur 100 FCFA de coût total : aliment 65-75%, main-d''œuvre 10%, sanitaire 5%, amortissements 8%, divers 7%.', '## Répartition coûts standards
+
+| Poste | Part | FCFA/kg vif (cible 1 200-1 400) |
+|---|---|---|
+| **Aliment** | 65-75% | 850-1 000 |
+| Main-d''œuvre | 8-12% | 100-150 |
+| Sanitaire (vaccins, vétérinaire) | 4-6% | 50-80 |
+| Amortissements bâtiment + équipement | 6-10% | 80-120 |
+| Énergie (élec, eau) | 2-4% | 30-50 |
+| Reproducteurs (achat + amortissement) | 3-5% | 40-60 |
+| Divers (transport, frais) | 2-4% | 30-50 |
+| **TOTAL** | **100%** | **1 200-1 400** |
+
+## Cible vente porc CI 2025
+
+- **Prix vente vif** : 1 500-1 800 FCFA/kg
+- **Coût production** : 1 200-1 400
+- **Marge brute** : 100-400 FCFA/kg = ~10-25%
+
+## Levier prioritaire = ALIMENT
+
+Réduire de 10% le coût aliment = baisse 7% du coût total.
+
+### Comment ?
+
+1. **Formuler maison** (vs concentré industriel) : -30 à -40%
+2. **Achat groupé** ou en récolte (sept-déc) : -10 à -15%
+3. **Substitutions** (manioc, son riz) : -5 à -10%
+4. **Réduction gaspillage** (auges adaptées) : -3 à -5%
+5. **IC amélioré** (génétique + santé) : -5 à -10%
+
+## Tableau de bord coût
+
+Suivre **mensuel** :
+- Coût aliment / kg vif produit
+- Coût total / porc abattu
+- Marge brute / porc
+- Trésorerie
+
+## Erreurs à éviter
+
+- **Sous-estimer** main-d''œuvre (même si famille)
+- **Oublier** amortissements
+- **Pas de comptabilité** régulière', '{cout-production,budget,aliment,marge}', 'IFIP, BIPORC, FAO', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('3e8ba393-9c43-41cb-a1b4-f3a6ac8d37df', 'prix-porc-vif-marche-ci', 'Prix du porc vif marché CI 2025', 'economique', 'debutant', 'Prix indicatifs 2025 : porc vif 1 500-1 800 FCFA/kg, porcelet sevré 35-50 000 FCFA, truie réforme 200-300 000 FCFA.', '## Prix de référence marché CI 2025
+
+*(Indicatifs, à actualiser localement)*
+
+### Porc à l''abattage
+- **Porc vif (100-110 kg)** : 1 500-1 800 FCFA/kg = 150-200 000 FCFA/animal
+- **Carcasse (75 kg)** : 2 200-2 600 FCFA/kg
+- **Découpe détaillée** : 3 000-4 500 FCFA/kg
+
+### Reproducteurs
+- **Porcelet sevré (8-10 kg)** : 35-50 000 FCFA
+- **Cochette prête à saillir (130 kg)** : 250-350 000 FCFA
+- **Verrat reproducteur** : 400-700 000 FCFA
+- **Truie réformée** : 200-300 000 FCFA (selon état)
+
+## Saisonnalité
+
+| Période | Demande | Prix |
+|---|---|---|
+| **Tabaski/Aïd** (variable) | ↗↗↗ | +15-20% |
+| **Noël** (déc) | ↗↗ | +10-15% |
+| **Pâques** (mars-avril) | ↗ | +5-10% |
+| **Rentrée scolaire** (sept) | → | normal |
+| **Saison pluies** (juin-août) | → | normal-baisse |
+| **Carême** (40j avant Pâques) | ↘ | -5-10% (porc évité chrétiens) |
+
+## Canaux de distribution
+
+### Vente directe ferme
+- Marge max : pas d''intermédiaire
+- Volume limité
+- Prix : ~ 80-90% prix gros
+
+### Abattoirs (SIPRA, SIVAC)
+- Volumes garantis
+- Prix fixés (négociable un peu)
+- Délai paiement 15-30 j
+- Norme qualité
+
+### Grossistes / restaurateurs
+- Prix intermédiaire
+- Régularité de commande
+- Négociation possible
+
+### Marché informel
+- Prix variables
+- Risque trésorerie (paiement comptant pas garanti)
+
+## Stratégie
+
+**Vendre 70% via canaux formels** (récurrence, trésorerie) + 30% direct/vente détaillée (marge).', '{prix,marche,vente,fcfa}', 'BIPORC, MIRAH, marché CI 2025', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('3f560067-8224-4218-bbdb-cf1931e08a1c', 'seuil-rentabilite-calcul', 'Seuil de rentabilité élevage porcin', 'economique', 'expert', 'Seuil de rentabilité = charges fixes / marge unitaire. Pour 20 truies, atteindre 350-400 porcs vendus/an pour couvrir charges.', '## Formule
+
+**Seuil de rentabilité (SR) = Charges fixes annuelles / Marge unitaire par porc**
+
+## Exemple ferme 20 truies
+
+### Charges fixes annuelles
+- Amortissement bâtiments : 1 200 000 FCFA
+- Main-d''œuvre fixe : 1 800 000 FCFA
+- Énergie, eau : 400 000 FCFA
+- Vétérinaire forfait : 300 000 FCFA
+- Frais divers : 300 000
+- **Total CF : 4 000 000 FCFA/an**
+
+### Marge unitaire
+- Prix vente porc : 175 000 FCFA
+- Coût variable (aliment, sanitaire, semence) : 165 000 FCFA
+- **Marge unitaire : 10 000 FCFA/porc**
+
+### Calcul SR
+**SR = 4 000 000 / 10 000 = 400 porcs/an**
+
+## Productivité 20 truies
+
+- 20 truies × 2 portées × 9 porcelets sevrés = **360 porcs/an**
+- Production < SR → **pertes**
+
+## Améliorer la situation
+
+1. **Augmenter productivité** : 22 porcelets/truie/an au lieu de 18 → 440 porcs
+2. **Baisser coûts variables** : aliment maison → marge unitaire monte à 15 000 → SR descend à 267
+3. **Combiner les 2** : marge 15K + 440 porcs = **2 600 000 FCFA bénéfice**
+
+## Le piège des petites fermes
+
+- < 15 truies : très difficile d''atteindre SR
+- **Mini viable** : 20-30 truies en CI 2025', '{rentabilite,seuil,calcul,fixe-variable}', 'IFIP, BIPORC, MIRAH', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('d462cf3d-8bb1-4e6e-bb4c-be8caa2b196f', 'marge-brute-calcul', 'Marge brute / porc : calcul et cible', 'economique', 'intermediaire', 'Marge brute = Prix vente - Coûts variables. Cible : 15-25 000 FCFA/porc. Si < 10 000, alerte rentabilité.', '## Calcul
+
+**MB = Prix vente porc - Coûts variables**
+
+Coûts variables = aliment + sanitaire + semence + transport vers abattoir
+
+## Exemple porc 100 kg
+
+| Poste | FCFA |
+|---|---|
+| Prix vente vif 1 600 × 100 | 160 000 |
+| Aliment naissance-abattage (~300 kg × 350) | -105 000 |
+| Sanitaire (vaccins, vermifuges, antibio) | -8 000 |
+| Part semence (IA) | -2 000 |
+| Transport / abattoir | -3 000 |
+| **Marge brute** | **+42 000** |
+
+## Cibles
+
+| Situation | MB/porc |
+|---|---|
+| Excellente | > 30 000 |
+| **Bonne** | **15-30 000** |
+| Limite | 5-15 000 |
+| Pertes | < 5 000 |
+
+## Leviers d''amélioration
+
+### Côté revenus
+- **Vente directe** : +10-15% prix
+- **Saison favorable** (Noël, Tabaski) : +15-20%
+- **Qualité label** ou bio : +20-30%
+
+### Côté coûts
+- **Aliment maison** vs industriel : -30-40% sur le poste aliment
+- **Vaccinations préventives** : économies vétérinaire
+- **IA partagée** entre fermes : -50% coût semence
+
+## Tableau de bord
+
+Suivi mensuel ou trimestriel :
+- MB moyenne par porc abattu
+- Tendance vs 6 mois précédents
+- Comparaison vs ferme similaire (benchmark)', '{marge-brute,rentabilite,kpi}', 'IFIP, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('d21b4e5d-a6a2-4a35-852f-5367570b2156', 'plan-tresorerie-eleveur', 'Plan de trésorerie : indispensable', 'economique', 'intermediaire', 'Plan de trésorerie mensuel = entrées (ventes) - sorties (aliment, sanitaire, salaires, etc.). Anticiper les creux saisonniers.', '## Pourquoi c''est crucial
+
+- **Élevage = cycles longs** : 6 mois entre saillie et vente
+- **Cash flow négatif** au démarrage (achats reproducteurs + bâtiment) jusqu''à 12-18 mois
+- Mauvaise trésorerie = arrêt approvisionnement → famine porcs → catastrophe
+
+## Modèle simple plan trésorerie mensuel
+
+```
+Mois            | Jan | Fév | Mar | Avr | Mai | ...
+Ventes porcs    | 1.5M| 0   | 1.8M| 0   | 2.0M|
+Ventes truies   | 0   | 200K| 0   | 0   | 0   |
+Total entrées   | 1.5M| 200K| 1.8M| 0   | 2.0M|
+----
+Aliment         | 800K| 800K| 850K| 850K| 800K|
+Sanitaire       | 50K | 100K| 50K | 80K | 50K |
+Salaires        | 250K| 250K| 250K| 250K| 250K|
+Énergie + eau   | 80K | 80K | 80K | 80K | 80K |
+Divers          | 50K | 50K | 50K | 50K | 50K |
+Total sorties   | 1.2M| 1.3M| 1.3M| 1.3M| 1.2M|
+----
+Solde mois      | +300| -1.1M| +500| -1.3M| +800|
+Solde cumulé    | +300| -800K| -300K| -1.6M| -800K|
+```
+
+## Lecture
+
+- **Solde cumulé négatif** = besoin de cash (épargne, crédit, découvert)
+- **Anticipation 3 mois** minimum
+- **Pic difficulté** : Avril (1.6M négatif) → prévoir réserve
+
+## Outils
+
+- Excel/Google Sheets simple
+- App comptabilité : Sage, Ciel
+- Pour démarrage : carnet papier avec colonnes
+
+## Mises à jour
+
+- **1x/semaine** noter recettes/dépenses
+- **1x/mois** clôturer + projeter 3 mois
+- **1x/trimestre** analyser écarts vs prévisions', '{tresorerie,cash-flow,gestion}', 'CCI-CI, FIRCA, OHADA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('9b9ee44d-5f62-4087-9a1c-d4179539d242', 'financement-microfinance-ci', 'Financement élevage : microfinance CI', 'economique', 'intermediaire', 'Microfinance accessible : Coopec, RCMEC, Advans. Taux 12-18%/an. Banques (BICICI, Ecobank) plus difficiles d''accès pour petits éleveurs.', '## Acteurs financiers en CI
+
+### Microfinance (accessibles)
+- **Coopec** (Coopératives d''épargne et de crédit) : présence rurale forte
+- **RCMEC** : forte présence agritech
+- **Advans CI** : prêts agricoles dédiés
+- **PAMF** (Premier Agence Microfinance)
+- **GTI** (Groupe TGI)
+
+### Banques classiques (plus difficiles)
+- BICICI, Ecobank, NSIA, Société Générale
+- Garanties exigées (foncier, caution)
+- Taux : 8-12% mais conditions restrictives
+
+## Taux indicatifs 2025
+
+| Institution | Taux annuel | Montant max |
+|---|---|---|
+| Microfinance | 12-18% | 5-50 M |
+| Banque commerciale | 8-12% | > 20 M |
+| FIRCA (subvention) | 0-3% | 5-30 M |
+
+## FIRCA (Fonds Interprofessionnel pour la Recherche et le Conseil Agricoles)
+
+- Subventions et prêts bonifiés
+- Filière porcine éligible
+- Conditions : projet structuré, formation, suivi
+- Site : firca.ci
+
+## Documents pour dossier crédit
+
+1. **Pièces identité** (CNI, registre commerce)
+2. **Plan d''affaires** (3-5 ans)
+3. **Compte d''exploitation prévisionnel**
+4. **Garanties** : foncier (titre/permis occuper), caution solidaire, gage matériel
+5. **Devis bâtiments + équipements**
+6. **Historique** d''activité si déjà en cours
+
+## Astuce
+
+- **Démarrer petit avec fonds propres** (5 truies) puis financer extension
+- **Coopérative** d''éleveurs porcins : pouvoir négociation meilleure
+- **Garantie groupée** entre 5-10 éleveurs : moins de risque pour la banque
+
+## Éviter
+
+- Taux > 25% (usuraires)
+- Engagements trop courts (< 24 mois pour porc)
+- Garanties personnelles (maison familiale)', '{financement,credit,microfinance,firca}', 'BCEAO, MIRAH, FIRCA', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('1f46c84d-8736-43e4-a429-c971345afd83', 'vente-directe-marges', 'Vente directe vs grossiste', 'economique', 'debutant', 'Vente directe = +20-30% prix mais effort commercial. Grossiste/abattoir = volumes garantis, marge réduite mais récurrence.', '## Comparaison
+
+| Critère | Vente directe | Grossiste/Abattoir |
+|---|---|---|
+| **Prix** | 1 800-2 500 FCFA/kg | 1 400-1 700 |
+| **Marge** | Très élevée | Moyenne |
+| **Volume** | Limité (~10-30 porcs/mois) | Élevé (100+) |
+| **Temps** | Beaucoup (livraisons, négos) | Peu |
+| **Trésorerie** | Comptant | Paiement 15-45 j |
+| **Régularité** | Variable | Garantie |
+| **Risques** | Stock invendu | Aucun |
+
+## Stratégie mixte recommandée
+
+**70% grossiste + 30% direct** = équilibre revenus/marges
+
+## Vente directe — canaux
+
+### 1. Vente à la ferme
+- Cible : restaurateurs, traiteurs locaux
+- Prix : 1 800-2 200 FCFA/kg vif
+- Effort : ouverture programmée 1-2j/sem
+
+### 2. Marchés / kiosques fixes
+- Cible : particuliers
+- Marge maximale (3 000+ FCFA/kg en détaillé)
+- Investissement : kiosque + frigo + boucher
+
+### 3. Restauration
+- Contrat mensuel restaurants, maquis
+- Prix négocié : 1 700-2 000 FCFA/kg
+- Régularité : 2-3 porcs/sem
+
+### 4. Vente en ligne (émergent)
+- Réseaux sociaux + WhatsApp
+- Livraison Abidjan : marges premium
+- Investissement : photos, communication
+
+## Construire une clientèle
+
+1. **Qualité constante** (race, alimentation, durée engraissement)
+2. **Marque/identité** (logo, nom de ferme)
+3. **Bouche-à-oreille** : satisfaction = recommandation
+4. **Présence visible** : panneau ferme, carte de visite
+
+## Investissement vente directe
+
+- Kiosque urbain : **2-5 M FCFA**
+- Équipement (frigo, balance, billot) : **500 K - 1 M**
+- ROI : 18-36 mois si volumes maintenus', '{vente-directe,marge,commercial}', 'CGECI, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('a1bebe8b-d8a1-400d-be82-b00d53917a00', 'budget-demarrage-10-truies', 'Budget démarrage 10 truies CI', 'installation', 'debutant', 'Budget complet 10 truies en CI : 5-8 M FCFA. Bâtiments 50%, reproducteurs 20%, équipement 15%, fonds roulement 15%.', '## Estimation budget (CI 2025, terrain non inclus)
+
+### Bâtiments (~50% du total)
+- Porcherie 10 truies + maternité + engraissement (~150 m²) : **2 500 000 FCFA**
+- Mur, clôture, sas sanitaire : **500 000**
+- Adduction eau (forage ou raccord) : **400 000**
+- Électrification (solaire 1.5 kWc ou raccord) : **600 000**
+- **Total bâtiments : ~ 4 000 000 FCFA**
+
+### Reproducteurs (~20%)
+- 10 cochettes prêtes saillie × 250 000 : **2 500 000**
+- 1 verrat 500 000 (ou opter IA) : **500 000**
+- (Ou kit IA + 50 doses semence × 5 000 : **250 000**)
+- **Total reproducteurs : ~ 2 750 000 (avec verrat) ou 1 500 000 (IA)**
+
+### Équipement (~15%)
+- Auges, abreuvoirs : **200 000**
+- Lampes chauffantes (4) : **150 000**
+- Pèse-animaux + thermomètre : **100 000**
+- Pulvérisateur, brosses, seaux : **80 000**
+- Trousse premiers soins : **70 000**
+- **Total équipement : ~ 600 000**
+
+### Fonds de roulement 3 premiers mois (~15%)
+- Aliment 3 mois : **800 000**
+- Vétérinaire + vaccins : **150 000**
+- Salaire 1 ouvrier × 3 mois : **300 000**
+- Énergie, eau, divers : **150 000**
+- **Total fonds roulement : ~ 1 400 000**
+
+## TOTAL
+
+**5,5 à 8 M FCFA** selon options et négociations
+
+## Cash flow attendu
+
+- **Mois 1-6** : 100% sorties (investissement + nourrissage gestantes)
+- **Mois 7-9** : premières mises-bas, peu de ventes
+- **Mois 12-14** : premières ventes porcs engraissés
+- **Mois 18** : régime de croisière
+- **Retour sur investissement : 4-6 ans**
+
+## Erreurs à éviter
+
+1. **Sous-budget fonds roulement** → manque cash pendant 6 mois
+2. **Bâtiments trop grands** "pour plus tard" → amortissement écrasant
+3. **Importer reproducteurs sans préparation** → mortalité au transport', '{budget,demarrage,investissement,roi}', 'FIRCA, MIRAH, BIPORC CI', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('c46f579e-3cce-4751-913a-1f729e8c928f', 'choix-race-porc-ci', 'Choisir une race adaptée CI', 'installation', 'intermediaire', 'Large White + Landrace + Duroc = standards CI (croissance rapide). Races locales (Ashanti Dwarf, Bakossi) = rustiques mais lentes.', '## Races commerciales (croissance optimisée)
+
+### Large White
+- **Origine** : Royaume-Uni
+- **Profil** : truie excellente (12-14 porcelets/portée), bon allaitement
+- **GMQ adulte** : 750-900 g
+- **Disponibilité CI** : élevée (verraterie locale)
+- **Idéal pour** : amélioration de lignée femelle
+
+### Landrace
+- **Origine** : Danemark/Suède
+- **Profil** : très prolifique (13-15 porcelets), corps allongé
+- **GMQ** : 750-850 g
+- **Disponibilité** : moyenne (importation)
+- **Idéal pour** : truies en élevage intensif
+
+### Duroc
+- **Origine** : États-Unis
+- **Profil** : rusticité, qualité viande supérieure (persillé)
+- **GMQ** : 800-950 g (le meilleur)
+- **Disponibilité** : moyenne
+- **Idéal pour** : verrat terminal (croisement avec LW × Landrace)
+
+### Pietrain
+- **Origine** : Belgique
+- **Profil** : musculaire (rendement carcasse élevé)
+- **GMQ** : 750-850 g (mais sensible stress)
+- **Disponibilité CI** : faible
+- **Idéal pour** : verrat terminal, marché viande maigre
+
+## Schéma croisement classique
+
+```
+Truie [Large White × Landrace] = F1 (très prolifique)
+   × 
+Verrat Duroc ou Pietrain
+   = Porcs engraissement (croissance + qualité)
+```
+
+## Races locales africaines
+
+### Ashanti Dwarf, Bakossi
+- **Avantages** : rusticité, résistance pathologies tropicales, faibles besoins
+- **Inconvénients** : petite taille adulte (50-70 kg), portée réduite (6-8), croissance lente
+- **Niche** : élevage extensif rural, marchés traditionnels
+
+### Mix race exotique × locale
+- **Croisement F1** : compromis croissance/rusticité
+- Intéressant pour démarrage avec moyens limités
+
+## Recommandation pour démarrer en CI
+
+**Pour ferme commerciale moderne** : Large White × Landrace + verrat Duroc.
+**Pour ferme rurale autonomie** : F1 (race exotique × locale).
+
+## Où acheter
+
+- **Verraterie de l''État (MIRAH)** : reproducteurs certifiés
+- **Fermes membres BIPORC**
+- **Importation Burkina, Ghana** (génétique disponible)
+- ⚠️ Importation = quarantaine + tests sérologiques obligatoires', '{race,large-white,landrace,duroc,croisement}', 'MIRAH, BIPORC, FAO', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('5ab0ab41-649a-43d5-9303-94b9b651adda', 'plan-ferme-10-truies', 'Plan ferme porcine 10 truies', 'installation', 'intermediaire', 'Ferme 10 truies = ~150 m² bâtiments : maternité (30 m²), gestation (40 m²), porcelets sevrés (30 m²), engraissement (50 m²).', '## Calcul surface besoin
+
+### Maternité
+- 10 truies × 2 portées/an = 20 mises-bas/an
+- À tout moment : ~2-3 truies en maternité simultanément
+- **3 cases × 4 m² = 12 m² maternité**
+- + circulation + sas = **30 m² total**
+
+### Gestation
+- 10 truies + 1-2 cochettes en attente
+- **Groupe : 12 × 2 m² = 24 m²**
+- + circulation = **40 m² total**
+
+### Verrat (ou stockage IA)
+- 1 case verrat : 6-8 m²
+- **10 m² avec circulation**
+
+### Porcelets sevrés (8-25 kg)
+- 20 porcelets/portée × 3 portées simultanées = 60 porcelets
+- 60 × 0.3 m² = 18 m²
+- **30 m² avec circulation**
+
+### Croissance/Finition
+- 30-50 porcs simultanément
+- 50 × 1 m² = 50 m²
+- **50-60 m² avec circulation**
+
+### **TOTAL : 160-170 m² bâtis**
+
+## Plan schématique
+
+```
+                  Entrée ↓
+              ┌─[SAS sanitaire]
+              │
+   ┌──────────┴──────────┐
+   │     Gestation       │ 40 m²
+   │  (10 truies vides)  │
+   └──────────┬──────────┘
+              │
+   ┌──────────┴──────────┐
+   │   Maternité (3 cases)│ 30 m²
+   └──────────┬──────────┘
+              │
+   ┌──────────┴──────────┐
+   │  Porcelets sevrés   │ 30 m²
+   └──────────┬──────────┘
+              │
+   ┌──────────┴──────────┐
+   │  Engraissement      │ 50 m²
+   └─────────────────────┘
+              ↓
+          [Vente]
+```
+
+## Points d''attention
+
+- **Pente du sol** 2-3% pour évacuation urines/eaux
+- **Orientation Est-Ouest** (cf tip conduite)
+- **Drainage** autour du bâtiment
+- **Espace fumier** ~ 20 m² séparé
+- **Stockage aliment** : 15-20 m² (ventilé, surélevé)
+
+## Coût construction CI 2025
+
+- Matériaux locaux + travail simple : **15-20 000 FCFA/m²**
+- **Total bâtiments 10 truies : 2,5-3,5 M FCFA**', '{plan-ferme,batiment,dimensionnement,m2}', 'IFIP, FAO, IRAT', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('c47b302c-ed5e-4f24-af51-f338b3f71b9e', 'panneaux-solaires-eleveur', 'Panneaux solaires : électrifier la ferme', 'installation', 'intermediaire', 'Installation solaire 1.5-3 kWc couvre besoins ferme 10-20 truies : éclairage, pompage, lampes chauffantes. ROI 4-6 ans en CI.', '## Besoins électriques porcherie
+
+### Petite ferme 10 truies
+- **Éclairage** LED : 200-300 W
+- **Pompage eau** (forage 50 m) : 600-800 W intermittent
+- **Lampes chauffantes porcelets** (3) : 150-250 W chacune × 8h/j hiver
+- **Ventilateurs** : 100-300 W intermittent
+- **Brumisateurs** : 50-150 W intermittent
+- **Réfrigérateur** (vaccins, semence) : 100-150 W
+
+**Consommation moyenne : 4-8 kWh/jour**
+
+## Installation type 1.5 kWc
+
+### Composants
+- **5-6 panneaux solaires** 300 W (~ 1.5 kWc total)
+- **Onduleur hybride** 2-3 kW
+- **Batteries lithium** 5 kWh (autonomie 1 jour)
+- **Structure de fixation**, câblage, protections
+
+### Coût CI 2025
+- Kit complet 1.5 kWc + batteries : **1.5-2.5 M FCFA**
+- Kit 3 kWc + batteries : **2.5-4 M**
+- Pose locale : 200-400 000
+
+### Production journalière (CI ensoleillement ~ 5h équivalent)
+- 1.5 kWc → **7-8 kWh/jour**
+- Couvre largement ferme 10 truies
+
+## Comparaison vs raccordement CIE
+
+| Critère | Solaire | CIE (réseau) |
+|---|---|---|
+| Investissement | 2-3 M | 200-500 K raccord + ~30 000/mois |
+| Coût mensuel | 0 (entretien batteries 5 ans) | 25-50 000 FCFA |
+| Coupures | Aucune | Fréquentes en CI rurale |
+| Coût 10 ans | 2-3 M | 3-6 M |
+
+**ROI solaire : 4-6 ans**
+
+## Avantages stratégiques
+
+- **Autonomie totale** (pas de coupures)
+- **Refroidissement vaccins** garanti
+- **Pompage eau** sécurisé (vital)
+- **Image moderne** de la ferme
+- **Subventions FIRCA** parfois disponibles (énergie verte)
+
+## Installateurs solaires CI 2025
+
+- Helios CI, Solar23, Greenwish, Mobisol, Sun Capital
+- ⚠️ Demander 3 devis comparatifs
+- Garantie 10-25 ans sur panneaux exigée', '{solaire,electrification,autonomie,investissement}', 'AGER, ANARE-CI', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('3c92d7ca-63b2-49af-8c89-cc59a707fd8f', 'autorisations-administratives-ci', 'Autorisations administratives élevage porcin CI', 'installation', 'expert', 'Démarches : autorisation MIRAH (préfectorale), permis construire, déclaration ICPE, certificat sanitaire, immatriculation entreprise.', '## Démarches obligatoires en CI
+
+### 1. Immatriculation entreprise
+- **CEPICI** : Centre de Promotion des Investissements
+- Statut : entreprise individuelle, SARL, coopérative
+- Coût : 25-100 000 FCFA selon statut
+- Délai : 1-2 semaines
+
+### 2. Autorisation MIRAH (préfectorale)
+- **Ministère des Ressources Animales et Halieutiques**
+- Autorisation d''exploitation d''élevage
+- Dossier : plan ferme, statut, attestation foncière
+- Coût : ~50 000 FCFA
+- Délai : 1-3 mois
+
+### 3. Permis de construire
+- **Mairie de la commune**
+- Pour tout bâtiment > 50 m²
+- Plan architectural + autorisation préfectorale
+- Coût : variable (50-200 000)
+- Délai : 1-3 mois
+
+### 4. Déclaration ICPE (Installation Classée)
+- Si > 50 truies ou > 200 porcs engraissement
+- **Direction de l''Environnement**
+- Étude impact environnemental
+- Coût : 500 K - 2 M selon taille
+
+### 5. Certificat sanitaire
+- **Vétérinaire MIRAH** : attestation conformité bâtiments
+- Préalable à l''exploitation
+- Inspection sur place
+
+### 6. Carte d''éleveur professionnel (optionnel)
+- Délivrée par MIRAH ou BIPORC
+- Permet accès subventions FIRCA
+
+## Calendrier type
+
+| Étape | Mois |
+|---|---|
+| Création entreprise CEPICI | M1 |
+| Étude foncière + acquisition | M1-M2 |
+| Plan ferme + permis construire | M2-M4 |
+| Autorisation MIRAH | M3-M5 |
+| Construction | M5-M9 |
+| Certificat sanitaire (inspection) | M9 |
+| **Démarrage exploitation** | **M10** |
+
+## Coûts cumulés administratifs
+
+**Total démarches : 250 K - 1 M FCFA** (selon taille projet)
+
+## Conseils
+
+1. **Commencer par CEPICI** (entreprise existante facilite tout)
+2. **Solliciter conseiller agritech FIRCA** (gratuit, accompagnement)
+3. **Ne pas démarrer sans certificat sanitaire** = saisie possible
+4. **Adhérer à BIPORC** (Bureau Interprofessionnel Porcin) = poids collectif', '{autorisations,mirah,cepici,permis,reglementaire}', 'MIRAH, CEPICI, FIRCA, BIPORC', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('fabd6e60-27a2-4cb2-bdf4-c30a53d05ab6', 'equipement-liste-minimum', 'Liste équipement minimum 10 truies', 'installation', 'debutant', 'Équipement de base ferme 10 truies : auges, abreuvoirs, lampes chauffantes, balance, thermomètre, trousse soin, outillage. Budget 500-800 000.', '## Auges et abreuvoirs
+
+### Auges
+- **Maternité** : 3 auges acier ou ciment armé (100×30 cm) — **30 000 × 3 = 90 000**
+- **Gestation** : auge collective 2-3 m linéaires — **80 000**
+- **Engraissement** : 3-5 auges collectives — **120 000**
+
+### Abreuvoirs tétine
+- 12 tétines acier inox (1/case) × 8 000 = **96 000 FCFA**
+- Tuyauterie PVC + collier = **30 000**
+
+## Maternité
+
+### Lampes chauffantes
+- 3 lampes infrarouge 250 W avec garde + suspension : **45 000 × 3 = 135 000**
+- Câbles + interrupteurs : **20 000**
+
+### Cages mise-bas (optionnel)
+- 3 cages truie + nid porcelets : **150 000 × 3 = 450 000**
+- (Ou alternative : box paillé sans cage, économique mais plus de pertes par écrasement)
+
+## Outillage
+
+### Mesure et soins
+- **Balance pèse-animaux** (jusqu''à 200 kg) : **80 000-150 000**
+- **Thermomètre rectal** : **5 000**
+- **Aiguilles + seringues** : **15 000**
+- **Pince castration / dents** : **15 000**
+- **Cathéters IA** (10) : **20 000**
+- **Pince Marteau identification** : **15 000**
+
+### Hygiène et entretien
+- **Pulvérisateur 5L** : **15 000**
+- **Brouette** : **30 000**
+- **Pelle, brosses, balais** : **20 000**
+- **Seaux, bidons** : **15 000**
+- **Bottes (3 paires)** : **45 000**
+- **Combinaisons de travail (3)** : **30 000**
+
+## Stockage et réfrigération
+
+- **Réfrigérateur** (vaccins, médicaments) : **150 000**
+- **Glacière transport** : **20 000**
+- **Étagères stockage aliment** : **40 000**
+- **Bidons stockage 200L** (eau, désinfectant) : **60 000**
+
+## Trousse de premiers soins
+
+- Antiseptiques (iode, betadine) : 15 000
+- Anti-inflammatoires (méloxicam, kétoprofène) : 30 000
+- Antibiotiques de base (amox, pénicilline) : 40 000
+- Fer dextran pour porcelets : 20 000
+- Vermifuges (ivermectine) : 25 000
+- Pansements, alcool, gants : 15 000
+- **Sous-total : 145 000**
+
+## TOTAL équipement de base
+
+**~ 750 000 - 1 000 000 FCFA** (sans cages mise-bas premium)
+
+## Priorisation si budget serré
+
+1. **Indispensable** : abreuvoirs, auges, lampes maternité, balance, trousse soin → 500 000
+2. **Très utile** : pulvérisateur, brouette, bottes → 100 000
+3. **Confort** : cages mise-bas, réfrigérateur → 600 000
+
+## Économies
+
+- **Auges ciment armé** fait-maison : -40% vs acier
+- **Lampes IR locales** : 2 000-5 000 FCFA mais durée vie faible
+- **Achat groupé** entre fermes : -10-15%
+- **Second main** sur fermes en cessation', '{equipement,budget,demarrage,liste}', 'BIPORC, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('cfe0cb3c-a7d1-4e47-a583-9911db16215d', 'lutte-rongeurs-ferme', 'Lutte contre les rongeurs', 'installation', 'intermediaire', 'Rongeurs = vecteurs PPA, leptospirose, gaspillage aliment 5-15%. Stratégie : prévention construction + pièges + appâts sécurisés.', '## Pourquoi c''est critique
+
+- **Vecteurs maladies** : leptospirose (avortements), salmonellose, PPA potentielle
+- **Gaspillage aliment** : 1 rat consomme 30-50 g/jour + contamine 10x ce qu''il consomme
+- **Dégâts** : câbles électriques rongés, isolation, sacs aliment percés
+- **100 rats × 50 g × 365 j = 1,8 t aliment perdu/an = 600 000 FCFA**
+
+## Prévention (construction)
+
+1. **Béton de sol** sans fissures
+2. **Bouchage** des trous murs (ciment + verre cassé)
+3. **Grilles 1 cm** sur toutes ouvertures (aération)
+4. **Hauteur minimale** : pas d''abris sous bâtiments
+5. **Stockage aliment surélevé** (50 cm sol) ET fermé
+6. **Pas de déchets** stagnants autour
+
+## Pièges mécaniques (recommandé)
+
+- **Tapettes classiques** : efficaces et économiques (1 000 FCFA/pièce)
+- **Pièges-cages** (vivants) : utiles pour identification espèce
+- **Pièges électriques** : 30-80 000 FCFA, efficaces mais cher
+- **Disposition** : le long des murs, près des entrées, sous palettes
+
+## Appâts (à utiliser avec précaution)
+
+### Boîtes appâts sécurisées
+- **Indispensable** : accès rats seulement, pas porcs ni enfants
+- Coût : 5-15 000 FCFA/boîte
+- Disposer : 1 boîte / 50 m²
+
+### Anticoagulants (raticides)
+- **Bromadiolone, brodifacoum, difenacoum**
+- Action lente (3-7 jours) = rats ne se méfient pas
+- **Tox secondaire** : éviter rats morts mangés par chiens/chats
+
+### Alternative naturelle
+- **Chats** : très efficaces mais nécessitent gestion
+- **Chouettes** : nichoirs encourageant (mais coexistence avec porcherie ?)
+
+## Programme intégré (efficacité max)
+
+1. **Prévention construction** = base
+2. **Hygiène stockage** aliment
+3. **Inspection hebdomadaire** : crottes, traces, sacs percés
+4. **Pièges en permanence** (10-20 pièces selon taille ferme)
+5. **Appâts en complément** si infestation visible
+6. **Suivi mensuel** : noter captures, ajuster
+
+## Erreurs
+
+- **Appâts en libre accès** : danger porcs/humains
+- **Pas de prévention** : pièges seuls = bataille perdue
+- **Aliment ouvert** : invitation permanente', '{rongeurs,rats,biosecurite,aliment}', 'FAO, ANSES, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('85ff20f7-6324-4096-b25d-03f90cab1ce1', 'gestion-fumier-compostage', 'Gestion fumier et compostage', 'installation', 'intermediaire', 'Fumier porc = ressource (vente maraîchers 500-1500 FCFA/sac) ou compostage. Évacuation hebdo, fosse étanche, valorisation possible.', '## Production fumier ferme 10 truies
+
+- 10 truies × 5 kg fumier/j = 50 kg/j
+- + ~30 porcs en engraissement × 2 kg/j = 60 kg/j
+- **Total : ~110 kg/jour = 40 t/an**
+
+## Composition du fumier porcin
+
+- **N (azote)** : 8-12 kg/t
+- **P₂O₅ (phosphore)** : 6-9 kg/t
+- **K₂O (potassium)** : 4-7 kg/t
+- **Matière organique** : 25-35%
+
+→ **Excellent engrais** pour cultures maraîchères
+
+## Évacuation quotidienne
+
+1. **Brouette dédiée** (jamais utilisée pour aliment)
+2. **Pelle, fourche** pour décrasser
+3. **Vers zone stockage** éloignée bâtiment (15-30 m)
+4. **Fréquence** : quotidienne (raclage léger) + hebdomadaire (nettoyage approfondi)
+
+## Compostage (recommandé)
+
+### Composteur simple
+- Aire bétonnée 3×3 m + abri toit
+- Coût : 100-200 000 FCFA
+- Capacité : 5-10 m³ = 3-6 t fumier brut
+
+### Process compostage
+1. **Empilage** : alternance fumier + paille/copeaux (rapport C/N ~30)
+2. **Humidification** : poignée pressée = quelques gouttes
+3. **Retournement** : 1x/sem pendant 4-6 sem
+4. **Maturation** : 2-3 mois supplémentaires
+5. **Tamisage** : compost prêt = noir, odeur terreuse, texture friable
+
+### Bénéfices compost vs fumier brut
+- Moins de pathogènes (chaleur tue bactéries)
+- Meilleure manipulation (sec, sans odeur forte)
+- Plus concentré nutriments
+- Prix vente 2-3x plus élevé
+
+## Valorisation économique
+
+### Vente directe fumier brut
+- Maraîchers locaux : **500-1 000 FCFA/sac (50 kg)**
+- 40 t/an = 800 sacs = **400 000 - 800 000 FCFA**
+
+### Vente compost
+- **1 500-3 000 FCFA/sac (40 kg)**
+- 20 t compost/an = 500 sacs = **750 000 - 1,5 M FCFA**
+
+### Usage interne (potager ferme)
+- Maraîchage diversification revenus
+- Synergie agritech
+
+## Conformité environnementale
+
+- **Fosse étanche** obligatoire (pas de pollution nappe)
+- **Distance habitations** : 50-100 m
+- **Lagunage** pour effluents liquides si > 50 truies
+- **Pas d''épandage** par temps de pluie', '{fumier,compostage,engrais,valorisation}', 'CIRAD, FAO, IFIP', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('51e33ac1-97b8-49b0-a882-2d747f88530a', 'foncier-emplacement-ferme', 'Choisir l''emplacement de la ferme', 'installation', 'expert', 'Critères : foncier sécurisé, eau accessible, électricité, marché proche, distance habitations 100m+, terrain non inondable.', '## Critères de choix (par ordre priorité)
+
+### 1. Foncier sécurisé
+- **Titre foncier** > certificat de propriété > permis occuper
+- **Éviter** : terres coutumières non documentées (conflits)
+- **Coût terrain** rural CI 2025 : 500 000 - 5 M / ha selon zone
+
+### 2. Accès eau
+- **Forage** possible (nappe < 50m) ou rivière permanente
+- 1 ferme 10 truies = **20-30 m³ eau/mois**
+- Coût forage : **800 000 - 2 M FCFA** selon profondeur
+
+### 3. Accès électricité
+- **Réseau CIE** à proximité (< 500 m) OU solaire viable
+- Si solaire : ensoleillement OK partout CI
+
+### 4. Proximité marché
+- **Distance acheteurs** (abattoirs, grossistes) : < 50 km idéal
+- Routes praticables toute l''année (saison pluies !)
+- Coût transport porcs vers abattoir : 5-15% prix vente
+
+### 5. Distance habitations
+- **Réglementation MIRAH** : 100 m minimum d''habitations
+- **Vent dominant** : porcherie en aval (odeurs)
+- Bonnes relations voisinage indispensables
+
+### 6. Topographie
+- **Terrain non inondable** (pas de bas-fonds saison pluies)
+- **Pente légère** 2-5% pour drainage
+- **Sol stable** (pas sablonneux qui s''affaisse)
+
+### 7. Environnement
+- **Pas de zone protégée** (parcs, réserves)
+- **Pas de zone marécageuse** (paludisme, moustiques)
+- **Climat** : pas de zones extrêmes
+
+## Zones favorables en CI
+
+### Zone forestière (Sud)
+- Pluviométrie : 1500-2000 mm/an
+- Eau abondante mais humidité élevée
+- Marchés Abidjan proches
+- ⚠️ Risque maladies parasitaires
+
+### Zone savane (Centre-Nord)
+- Pluviométrie : 800-1300 mm/an
+- Climat plus sec = moins de pathologies
+- Marchés Bouaké, Korhogo
+- ⚠️ Saison sèche = stress thermique
+
+### Zone côtière (Sud-Est)
+- Humidité forte, températures élevées
+- Très près Abidjan = marché premium
+- ⚠️ Coûts foncier élevés
+
+## Procédure acquisition foncière
+
+1. **Recherche** : agence ou démarchage direct
+2. **Visite** : visite + voisins consultation
+3. **Diagnostic juridique** : titre, conflits potentiels
+4. **Promesse de vente** + acompte
+5. **Acte notarié** + paiement
+6. **Immatriculation** au cadastre
+7. **Permis bâtir** mairie
+
+**Délais : 3-6 mois**, **Coût frais juridiques : 8-12% prix terrain**', '{foncier,emplacement,terrain,choix-site}', 'MIRAH, MEMINADER, CEPICI', '2026-05-21 19:11:57.28071+00');
+INSERT INTO public.tips_conseiller (id, slug, titre, categorie, niveau, resume, contenu, tags, source, created_at) VALUES ('e832ae34-70c5-47c3-a4d0-c1d4ea1feb75', 'erreurs-debutants-eviter', 'Top 10 erreurs débutants à éviter', 'installation', 'debutant', 'Erreurs fréquentes : sous-budget fonds roulement, achat trop d''animaux, bâtiments mal orientés, négliger sanitaire, pas de comptabilité.', '## Les 10 erreurs qui coulent les fermes débutantes
+
+### 1. Sous-budgéter le fonds de roulement
+- **Erreur** : tout investir dans bâtiments + reproducteurs, oublier les 6 premiers mois sans revenus
+- **Conséquence** : famine porcs, arrêt brutal
+- **Solution** : prévoir 3-6 mois charges fonctionnement
+
+### 2. Acheter trop d''animaux d''un coup
+- **Erreur** : démarrer avec 30 truies sans expérience
+- **Conséquence** : maîtrise impossible, mortalités massives
+- **Solution** : commencer avec 5-10 truies, augmenter progressivement
+
+### 3. Bâtiments mal orientés / mal ventilés
+- **Erreur** : copier les plans européens (climat tempéré)
+- **Conséquence** : stress thermique chronique, GMQ chute
+- **Solution** : adaptation tropicale (cf tips conduite)
+
+### 4. Négliger la biosécurité dès le départ
+- **Erreur** : pas de sas, pas de quarantaine, visiteurs libres
+- **Conséquence** : maladies introduites, perte de cheptel
+- **Solution** : sas + clôture + protocole visiteurs dès J1
+
+### 5. Pas de carnet d''élevage
+- **Erreur** : "je me souviendrai"
+- **Conséquence** : pertes traçabilité, retards vaccination, erreurs gestion
+- **Solution** : carnet papier OU app dès première saillie
+
+### 6. Pas de comptabilité
+- **Erreur** : mélanger argent ferme et personnel
+- **Conséquence** : rentabilité inconnue, mauvaises décisions
+- **Solution** : compte bancaire dédié + Excel simple
+
+### 7. Mauvaise qualité génétique
+- **Erreur** : acheter "porcs du voisin" sans pedigree
+- **Conséquence** : GMQ médiocre, portées petites
+- **Solution** : reproducteurs certifiés MIRAH ou centres reconnus
+
+### 8. Aliment de mauvaise qualité (économies déplacées)
+- **Erreur** : sous-doser tourteau, utiliser maïs moisi
+- **Conséquence** : croissance lente, mortalités, IC catastrophique
+- **Solution** : qualité matières premières + formulation rigoureuse
+
+### 9. Pas d''écoute du vétérinaire
+- **Erreur** : auto-médication, ignorer signaux faibles
+- **Conséquence** : épidémies non gérées, antibiorésistance
+- **Solution** : véto référent + visites programmées
+
+### 10. Isolation professionnelle
+- **Erreur** : faire seul, pas de réseau
+- **Conséquence** : pas de partage expérience, pas de marché collectif
+- **Solution** : adhérer BIPORC, formations FIRCA, coopératives
+
+## Recommandations
+
+1. **Formation** : 3-6 mois apprentissage chez éleveur expérimenté avant démarrer
+2. **Mentor** : trouver un éleveur référent
+3. **Démarrer petit** : 5-10 truies max année 1
+4. **Mesurer tout** : pesées, conso, mortalités
+5. **Patience** : ROI moyen 4-6 ans, pas d''argent rapide', '{debutants,erreurs,conseils,demarrage}', 'BIPORC, FAO, retours d''expérience CI', '2026-05-21 19:11:57.28071+00');
+
+
+ALTER TABLE public.tips_conseiller ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: traitements; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.traitements DISABLE TRIGGER ALL;
+
+INSERT INTO public.traitements (id, animal_id, bande_id, date_debut, date_fin, motif, produit, posologie, voie, veterinaire, cout, observations, created_at, deleted_at, idempotency_key) VALUES ('61e16ce5-ac60-4f5b-b084-259e7ffd38e8', NULL, '44444444-0000-0000-0000-000000000001', '2026-05-21', NULL, 'Injection Fer dextran 200 mg', 'Fer dextran 200 mg', NULL, 'IM', NULL, NULL, 'Acte porcelets — mise-bas 2026-05-13 (calendrier sanitaire V2-B)', '2026-05-21 19:53:18.897086+00', NULL, NULL);
+
+
+ALTER TABLE public.traitements ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: transits_phase; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.transits_phase DISABLE TRIGGER ALL;
+
+
+
+ALTER TABLE public.transits_phase ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: utilisateur_fermes; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.utilisateur_fermes DISABLE TRIGGER ALL;
+
+INSERT INTO public.utilisateur_fermes (utilisateur_id, ferme_id, role) VALUES ('aaaaaaaa-0000-0000-0000-000000000001', '00000000-0000-0000-0000-000000000001', 'admin');
+
+
+ALTER TABLE public.utilisateur_fermes ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: vaccinations; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.vaccinations DISABLE TRIGGER ALL;
+
+INSERT INTO public.vaccinations (id, protocole_id, animal_id, bande_id, date_vaccination, produit, lot, dose_ml, veterinaire, observations, created_at, deleted_at, idempotency_key) VALUES ('37f34394-f826-4b40-9459-23ce0adfd051', NULL, NULL, '44444444-0000-0000-0000-000000000001', '2026-05-21', 'Vaccination Mycoplasmose H1', NULL, NULL, NULL, 'Acte porcelets — mise-bas 2026-05-13 (calendrier sanitaire V2-B)', '2026-05-21 19:53:18.903064+00', NULL, NULL);
+INSERT INTO public.vaccinations (id, protocole_id, animal_id, bande_id, date_vaccination, produit, lot, dose_ml, veterinaire, observations, created_at, deleted_at, idempotency_key) VALUES ('23e58404-78bf-4ef0-a49c-40c0af94ef62', NULL, NULL, '44444444-0000-0000-0000-000000000001', '2026-05-21', 'Vaccination Mycoplasmose H1', NULL, NULL, NULL, '[E2E TEST] Acte porcelets — mise-bas 2026-05-15 (calendrier sanitaire V2-B)', '2026-05-21 19:55:05.88142+00', NULL, NULL);
+
+
+ALTER TABLE public.vaccinations ENABLE TRIGGER ALL;
+
+--
+-- Data for Name: visites_biosecurite; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+ALTER TABLE public.visites_biosecurite DISABLE TRIGGER ALL;
+
+INSERT INTO public.visites_biosecurite (id, ferme_id, date_visite, type_visite, nom_visiteur, societe, provenance_ferme_porcine, delai_depuis_derniere_visite_jours, douche_obligatoire_effectuee, changement_tenue, pediluve_utilise, observations, enregistre_par, created_at, deleted_at) VALUES ('18ab46ac-0c9b-4df5-809f-bf29ea5efb86', '00000000-0000-0000-0000-000000000001', '2026-05-19 20:18:54.062455+00', 'veterinaire', 'Dr. Kouassi', 'Cabinet Vétos Abidjan', false, NULL, true, true, true, 'Visite trimestrielle, RAS', NULL, '2026-05-21 20:18:54.062455+00', NULL);
+INSERT INTO public.visites_biosecurite (id, ferme_id, date_visite, type_visite, nom_visiteur, societe, provenance_ferme_porcine, delai_depuis_derniere_visite_jours, douche_obligatoire_effectuee, changement_tenue, pediluve_utilise, observations, enregistre_par, created_at, deleted_at) VALUES ('6fb0b416-ff67-4505-88ae-f349ef6b767c', '00000000-0000-0000-0000-000000000001', '2026-05-16 20:18:54.066264+00', 'camion_aliment', 'M. Diallo', 'Transports SACI', false, NULL, false, false, true, 'Livraison aliment De Heus, déchargement quai externe', NULL, '2026-05-21 20:18:54.066264+00', NULL);
+INSERT INTO public.visites_biosecurite (id, ferme_id, date_visite, type_visite, nom_visiteur, societe, provenance_ferme_porcine, delai_depuis_derniere_visite_jours, douche_obligatoire_effectuee, changement_tenue, pediluve_utilise, observations, enregistre_par, created_at, deleted_at) VALUES ('132d866b-fd61-468b-906d-e9e091929948', '00000000-0000-0000-0000-000000000001', '2026-05-11 20:18:54.067384+00', 'technicien', 'M. Bamba', 'IVOGRAIN', true, 7, true, true, true, 'Audit nutritionnel — provenance autre ferme porcine, délai 7j OK', NULL, '2026-05-21 20:18:54.067384+00', NULL);
+
+
+ALTER TABLE public.visites_biosecurite ENABLE TRIGGER ALL;
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict Ucoyb3ylTWaxBCoBRmgkpBr5X874QKabpZEVa0CnToraGh72hKD1TrA4ut6LLjz
+
+
+SET session_replication_role = 'origin';
+COMMIT;
+
+-- Fin du seed de démo

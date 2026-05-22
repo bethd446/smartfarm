@@ -1,19 +1,8 @@
 # 🐖 Smart Farm
 
-> Application de gestion d'élevage porcin multi-fermes — ancrage **Côte d'Ivoire**.
-> **Statut : 🚧 Brouillon V1** (pas encore en production).
-
----
-
-## Stack technique
-
-| Couche       | Techno                                                                   |
-| ------------ | ------------------------------------------------------------------------ |
-| Frontend     | **Next.js 16.2.6** (App Router) + TypeScript + Tailwind v4 + shadcn/ui   |
-| Backend      | **Supabase local** (Docker) — Postgres 17 + PostgREST + Auth + Storage   |
-| Hébergement  | VPS Linux + Nginx + Certbot (Let's Encrypt)                              |
-| CI/CD        | GitHub Actions (build + typecheck, déploiement SSH à venir)              |
-| Conteneurs   | Dockerfile multi-stage Next.js (`output: standalone`)                    |
+> **Application de gestion d'élevage porcin multi-fermes — ancrage Côte d'Ivoire.**
+> Suivi reproduction, sanitaire, alimentation, KPI IFIP (MCA / IC / GMQ), alertes terrain.
+> **Statut : v0.3.0** — pré-production (déploiement Hostinger + Supabase Cloud en cours).
 
 ---
 
@@ -21,40 +10,52 @@
 
 ```bash
 # 1. Cloner
-git clone <repo> smartfarm && cd smartfarm
+git clone git@github.com:bethd446/smartfarm.git && cd smartfarm
 
-# 2. Configurer l'env Next
-cp app/.env.local.example app/.env.local   # puis renseigner les clés Supabase
-# Variables attendues :
-#   NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-
-# 3. Démarrer Supabase local (nécessite Docker + supabase CLI)
+# 2. Démarrer Supabase local (Docker + supabase CLI requis)
 supabase start --workdir .
 
-# 4. Lancer l'app Next en dev
+# 3. Configurer l'env Next
+cp app/.env.local.template app/.env.local
+# → renseigner NEXT_PUBLIC_SUPABASE_URL + ANON_KEY (sorties par `supabase start`)
+
+# 4. Installer et lancer
 cd app
 npm install
 npm run dev
 # → http://localhost:3000
 ```
 
-### Build production (local)
+### Build standalone (équivalent prod)
 
 ```bash
 cd app
-npm run build && npm start
+npm run build:standalone
+npm run start:standalone
 ```
 
-### Docker (app uniquement)
+---
 
-```bash
-# Build + run via compose
-docker compose --profile dev up --build
-```
+## 🚀 Déploiement production
 
-> ℹ️ Supabase a son **propre** docker-compose géré par le CLI Supabase — le
-> `docker-compose.yml` à la racine ne lance que l'app Next.js.
+Voir **[DEPLOY.md](./DEPLOY.md)** — guide complet Hostinger + Supabase Cloud.
+
+- Hostinger Node.js app (`main` auto-deploy)
+- Supabase Cloud (Frankfurt, RLS ON, Auth Magic Link)
+- Checklist post-deploy (HTTPS, headers sécu, 7 routes critiques)
+
+---
+
+## Stack technique
+
+| Couche       | Techno                                                                   |
+| ------------ | ------------------------------------------------------------------------ |
+| Frontend     | **Next.js 16.2.6** (App Router, output standalone) + React 19 + TS       |
+| UI           | Tailwind v4 · shadcn/ui · Radix · Big Shoulders Display + Instrument Sans|
+| Backend dev  | Supabase **local** (Docker) — Postgres 17 + PostgREST + Auth + Storage   |
+| Backend prod | **Supabase Cloud** (Frankfurt, RLS ON, Auth Magic Link)                  |
+| Hébergement  | **Hostinger Node.js app** (Node 22.x, HTTPS auto)                        |
+| CI/CD        | GitHub Actions (typecheck + build) · Hostinger auto-deploy sur `main`    |
 
 ---
 
@@ -62,51 +63,55 @@ docker compose --profile dev up --build
 
 ```
 smartfarm/
-├── app/                      # Next.js (App Router)
+├── app/                              # Next.js (App Router)
 │   ├── src/
-│   ├── Dockerfile            # Multi-stage build (standalone)
-│   ├── next.config.ts
+│   ├── deploy.sh                     # Deploy local (build + sync + restart)
+│   ├── deploy-static-copy.sh         # Sync standalone (utilisé par Hostinger)
+│   ├── .env.production.example       # Template env prod
+│   ├── next.config.ts                # output: standalone + headers sécu
 │   └── package.json
 ├── supabase/
 │   ├── config.toml
-│   ├── migrations/           # YYYYMMDDHHMMSS_*.sql
+│   ├── migrations/                   # YYYYMMDDHHMMSS_*.sql (versionnées)
 │   └── seed.sql
-├── docker-compose.yml        # App Next uniquement
-├── .github/workflows/
-│   ├── ci.yml                # PR : typecheck + build
-│   └── deploy.yml            # main : build + (TODO: deploy SSH)
-└── BRIEF_AGENTS.md           # Brief sous-agents
+├── DEPLOY.md                         # Guide déploiement Hostinger + Supabase Cloud
+├── docker-compose.yml                # App Next uniquement (Supabase CLI gère le sien)
+└── .github/workflows/
 ```
 
 ---
 
-## Liens utiles
+## État fonctionnel (v0.3.0)
 
-- 🌐 **URL test** : https://smartfarm.187-127-225-24.nip.io
-- 🛠️ **Supabase Studio (local)** : http://127.0.0.1:54323
-- 🗄️ **DB locale** : `postgresql://postgres:***@127.0.0.1:54322/postgres`
-- 📋 **Brief sous-agents** : [`BRIEF_AGENTS.md`](./BRIEF_AGENTS.md)
-- 📄 **Migrations** : [`supabase/migrations/`](./supabase/migrations/)
+✓ 43 tables RLS ON · 28 règles d'alertes (R01–R28 IFIP)
+✓ Sidebar 14 items / 5 groupes · hub /sanitaire · bottom-nav mobile
+✓ Repro : saillies, diagnostics gestation, mises bas, sevrages, BCS truie
+✓ Sanitaire : calendrier porcelets J1/J5/J14/J28, biosécurité 12 items, PPA, mycotoxines
+✓ KPI IFIP : MCA · IC · GMQ par stade (vues `v_kpi_*`)
+✓ Identité Cachet B Minimal · palette Terre & Mil · dark mode
+✓ Headers sécu (CSP / X-Frame-Options / HSTS) · empty states · export PDF KPI
+
+Voir [`CHANGELOG.md`](./CHANGELOG.md) pour le détail des sprints.
 
 ---
 
 ## Conventions
 
-- **FR** pour l'UI, **EN** pour code/SQL/commentaires techniques
+- **FR** pour l'UI / vocab terrain pro ; **EN** pour code/SQL/commentaires techniques
 - Pas de `console.log`, pas de `any` non justifié
 - Server Components par défaut, `'use client'` uniquement si interactif
-- Migrations idempotentes quand possible
-- Secrets **uniquement** dans `.env.local` (jamais committés)
+- Migrations idempotentes : nouvelle migration `YYYYMMDDHHMMSS_*.sql`, **jamais** modifier une existante
+- Secrets uniquement dans `.env.local` / `.env.production` (jamais committés)
 
 ---
 
-## Domaines fonctionnels (MVP)
+## Domaines fonctionnels
 
 Fermes & bâtiments · Races & animaux · Bandes · Reproduction (saillies,
 diagnostics, mises bas, sevrages) · Pesées · Santé (protocoles vaccinaux,
-vaccinations, traitements, mortalités) · Alimentation (types, formulations,
-plans, consommations) · Stocks (fournisseurs, matières premières, mouvements,
-commandes) · Départs · Utilisateurs multi-fermes · KPI bande & truie
+vaccinations, traitements, mortalités, biosécurité, PPA, mycotoxines) ·
+Alimentation (matières premières CI, formulations, plans, consommations,
+ratios AA NRC) · Stocks · Utilisateurs multi-fermes · KPI bande / truie / IFIP.
 
 ---
 

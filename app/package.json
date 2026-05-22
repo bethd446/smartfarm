@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build:standalone": "next build && bash deploy-static-copy.sh",
+    "start:standalone": "cd .next/standalone/projects/smartfarm/app && node server.js",
+    "db:push": "supabase db push"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
