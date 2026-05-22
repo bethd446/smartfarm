@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import { saillieSchema, diagnosticSchema } from './_schemas'
 import type { CreerSaillieInput, CreerDiagnosticInput } from './_schemas'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 const sb = () =>
   createClient(
@@ -11,8 +12,6 @@ const sb = () =>
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false } }
   )
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
 
 export async function creerSaillie(
   data: CreerSaillieInput
@@ -30,7 +29,7 @@ export async function creerSaillie(
 
   const supabase = sb()
   const { error } = await supabase.from('saillies').insert({
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: await getFermeId(),
     truie_id: d.truie_id,
     verrat_id: d.verrat_id || null,
     bande_id: d.bande_id || null,

@@ -18,11 +18,15 @@ function sb() {
 }
 
 /**
- * sexerBande — Marque la bande `sexee=true` et attribue `sous_groupe`
- * sur chaque ligne bande_animaux (M/F) selon le sexe de l'animal.
+ * G2 P0-5 — sexerBande : RPC atomique
  *
- * Règle métier Christophe : à ~60 j post-sevrage, séparer mâles/femelles
- * pour éviter la consanguinité.
+ * Avant : UPDATE bandes + boucle JS `for (const ba of animaux) UPDATE bande_animaux`
+ *   → crash mid-loop laisse bande à moitié sexée (sexee=true mais 20/40 sous_groupes
+ *   NULL). Re-run inutile car premier UPDATE déjà passé.
+ * Après : RPC `sexer_bande_atomique` → 1 transaction PG :
+ *   - UPDATE bande_animaux SET sous_groupe = a.sexe FROM animaux a WHERE ...
+ *   - UPDATE bandes SET sexee=true
+ *   Idempotent : 2ᵉ appel = 0 changements.
  */
 export async function sexerBande(formData: FormData) {
   const bande_id = String(formData.get('bande_id') ?? '')
@@ -30,25 +34,18 @@ export async function sexerBande(formData: FormData) {
 
   const s = sb()
 
-  // 1. Marquer la bande sexée
-  await s.from('bandes').update({ sexee: true }).eq('id', bande_id)
+  const { data: rpcRes, error } = await s.rpc('sexer_bande_atomique', {
+    p_bande_id: bande_id,
+  })
 
-  // 2. Récupérer les animaux de la bande encore présents
-  const { data: animaux } = await s
-    .from('bande_animaux')
-    .select('animal_id, animaux:animal_id(sexe)')
-    .eq('bande_id', bande_id)
-    .is('date_sortie', null)
-
-  // 3. Attribuer le sous_groupe selon le sexe de l'animal
-  for (const ba of (animaux ?? []) as any[]) {
-    const sexe = ba.animaux?.sexe
-    if (sexe === 'M' || sexe === 'F') {
-      await s
-        .from('bande_animaux')
-        .update({ sous_groupe: sexe })
-        .eq('bande_id', bande_id)
-        .eq('animal_id', ba.animal_id)
+  // Erreur RPC non bloquante : on log mais on continue la revalidation
+  // pour que l'UI ne reste pas figée. Côté UI, on pourra rajouter un toast.
+  if (error) {
+    console.error('sexer_bande_atomique error:', error)
+  } else {
+    const res = rpcRes as { ok: boolean; animaux_sexes?: number; deja_sexee?: boolean; error?: string } | null
+    if (res && res.ok !== true) {
+      console.error('sexer_bande_atomique not-ok:', res.error)
     }
   }
 

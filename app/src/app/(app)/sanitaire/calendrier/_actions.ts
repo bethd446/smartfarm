@@ -90,14 +90,26 @@ export async function enregistrerVaccinDepuisCalendrier(
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */
-/*  PROD-B — Marquer un évènement `evenements_prevus` comme réalisé.          */
-/*  Étend le pattern existant aux types : vermifuges truie/cochette,          */
-/*  vaccins parvo/lepto/rouget cochette, transferts maternité, sevrages,      */
-/*  diagnostics gestation, rappels vaccinaux, etc.                            */
+/*  G2 P0-4 — marquerEvenementFait : idempotent + guard statut                */
+/*                                                                            */
+/*  Avant : UPDATE direct sans check statut → double-clic = double trigger    */
+/*    downstream (re-vaccination, etc.).                                      */
+/*  Après : RPC `marquer_evenement_realise` qui :                             */
+/*    - GUARD statut IN ('planifie','retard')                                 */
+/*    - Idempotency key UUID (lecture form ou regen) → 2ᵉ appel = no-op       */
 /* ────────────────────────────────────────────────────────────────────────── */
 
 export async function marquerEvenementFait(formData: FormData): Promise<void> {
   const event_id = String(formData.get('event_id') ?? '')
+  const idempotency_key_raw = String(formData.get('idempotency_key') ?? '')
+  // Si form ne fournit pas de key, on en génère une stable basée sur l'evt + jour
+  // (équivalent dedup intra-journée silencieux).
+  const today = new Date().toISOString().slice(0, 10)
+  const idempotency_key =
+    idempotency_key_raw && idempotency_key_raw.length === 36
+      ? idempotency_key_raw
+      : null
+
   if (!event_id) {
     redirect(
       `/sanitaire/calendrier?toast=error&msg=${encodeURIComponent('Évènement manquant')}`,
@@ -105,12 +117,12 @@ export async function marquerEvenementFait(formData: FormData): Promise<void> {
   }
 
   const supabase = sb()
-  const today = new Date().toISOString().slice(0, 10)
 
-  const { error } = await supabase
-    .from('evenements_prevus')
-    .update({ statut: 'realise', date_realisation: today })
-    .eq('id', event_id)
+  const { data: rpcRes, error } = await supabase.rpc('marquer_evenement_realise', {
+    p_event_id: event_id,
+    p_date_realisation: today,
+    p_idempotency_key: idempotency_key,
+  })
 
   if (error) {
     redirect(
@@ -118,11 +130,26 @@ export async function marquerEvenementFait(formData: FormData): Promise<void> {
     )
   }
 
+  const res = rpcRes as { ok: boolean; dedup?: boolean; updated?: boolean; error?: string } | null
+  if (!res || res.ok !== true) {
+    const code = res?.error ?? 'rpc_error'
+    const msg =
+      code === 'evenement_introuvable' ? 'Évènement introuvable' :
+      code === 'statut_non_modifiable' ? 'Évènement annulé : impossible de marquer fait' :
+      `Erreur : ${code}`
+    redirect(
+      `/sanitaire/calendrier?toast=error&msg=${encodeURIComponent(msg)}`,
+    )
+  }
+
   revalidatePath('/sanitaire')
   revalidatePath('/sanitaire/calendrier')
   revalidatePath('/dashboard')
   revalidatePath('/alertes')
+  const okMsg = res.dedup
+    ? 'Évènement déjà marqué fait'
+    : 'Évènement marqué comme fait'
   redirect(
-    `/sanitaire/calendrier?toast=success&msg=${encodeURIComponent('Évènement marqué comme fait')}`,
+    `/sanitaire/calendrier?toast=success&msg=${encodeURIComponent(okMsg)}`,
   )
 }

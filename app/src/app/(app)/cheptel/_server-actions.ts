@@ -4,6 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import { animalSchema } from './_schemas'
 import type { CreerAnimalInput } from './_schemas'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 const sb = () =>
   createClient(
@@ -11,8 +12,6 @@ const sb = () =>
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false } }
   )
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
 
 export async function creerAnimal(
   data: CreerAnimalInput
@@ -28,7 +27,7 @@ export async function creerAnimal(
   const d = parsed.data
 
   const payload: Record<string, unknown> = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: await getFermeId(),
     tag: d.tag,
     sexe: d.sexe,
     categorie: d.categorie,

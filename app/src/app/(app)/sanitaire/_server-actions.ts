@@ -4,8 +4,7 @@ import { createClient } from '@supabase/supabase-js'
 import { revalidatePath } from 'next/cache'
 import { schemaVaccin, schemaSoin, schemaPerte } from './_schemas'
 import type { VaccinInput, SoinInput, PerteInput } from './_schemas'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 function sb() {
   return createClient(
@@ -106,6 +105,14 @@ export async function creerTraitement(data: SoinInput): Promise<ActionResult> {
   return { ok: true }
 }
 
+/**
+ * G2 P0-3 — creerMortalite : RPC atomique
+ *
+ * Avant : INSERT mortalité + UPDATE animaux.statut séparés → animal zombie si
+ *   UPDATE fail mais INSERT déjà commité.
+ * Après : RPC `enregistrer_mortalite_atomique` qui fait les 2 en transaction
+ *   PG unique avec idempotency. P0-6 : ferme_id résolu via getFermeId() helper.
+ */
 export async function creerMortalite(data: PerteInput): Promise<ActionResult> {
   const parsed = schemaPerte.safeParse(data)
   if (!parsed.success) {
@@ -116,37 +123,38 @@ export async function creerMortalite(data: PerteInput): Promise<ActionResult> {
     parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
       ? parsed.data.idempotency_key
       : null
-  const payload = clean({
-    animal_id: parsed.data.animal_id || null,
-    bande_id: parsed.data.bande_id || null,
-    ferme_id: DEMO_FERME_ID,
-    date_mort: parsed.data.date_mort,
-    cause: parsed.data.cause,
-    diagnostic: parsed.data.diagnostic || null,
-    autopsie: parsed.data.autopsie ?? false,
-    observations: parsed.data.observations || null,
-    idempotency_key: idempotencyKey,
+  const ferme_id = await getFermeId()
+
+  // RPC atomique : insert mortalité + update animaux.statut='mort'
+  const { data: rpcRes, error } = await supabase.rpc('enregistrer_mortalite_atomique', {
+    p_ferme_id: ferme_id,
+    p_date_mort: parsed.data.date_mort,
+    p_cause: parsed.data.cause,
+    p_animal_id: parsed.data.animal_id || null,
+    p_bande_id: parsed.data.bande_id || null,
+    p_diagnostic: parsed.data.diagnostic || null,
+    p_autopsie: parsed.data.autopsie ?? false,
+    p_observations: parsed.data.observations || null,
+    p_idempotency_key: idempotencyKey,
   })
-  const { error } = await supabase.from('mortalites').insert(payload)
+
   if (error) {
-    if (isIdempotencyDup(error)) return { ok: true, dedup: true }
     return { ok: false, error: error.message }
   }
 
-  // Si la perte concerne un animal identifié → marquer l'animal comme mort
-  if (parsed.data.animal_id) {
-    const { error: updErr } = await supabase
-      .from('animaux')
-      .update({ statut: 'mort' })
-      .eq('id', parsed.data.animal_id)
-    if (updErr) {
-      // L'INSERT a réussi : on remonte l'avertissement mais on ne fail pas.
-      return { ok: false, error: `Mortalité enregistrée mais statut animal non mis à jour : ${updErr.message}` }
-    }
+  const res = rpcRes as { ok: boolean; dedup?: boolean; error?: string } | null
+  if (!res || res.ok !== true) {
+    const errCode = res?.error ?? 'rpc_error'
+    const msgFr =
+      errCode === 'animal_introuvable' ? 'Animal introuvable dans cette ferme.' :
+      errCode === 'animal_deja_mort'   ? 'Animal déjà marqué comme mort.' :
+      errCode === 'parametres_manquants' ? 'Paramètres mortalité manquants.' :
+      `Erreur mortalité : ${errCode}`
+    return { ok: false, error: msgFr }
   }
 
   revalidatePath('/sanitaire')
   revalidatePath('/dashboard')
   revalidatePath('/cheptel')
-  return { ok: true }
+  return { ok: true, dedup: !!res.dedup }
 }

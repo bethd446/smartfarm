@@ -3,10 +3,11 @@ import { notFound } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { PiggyBank, ArrowLeft, Scale, Heart, Stethoscope, ArrowRightLeft, Clock, Zap, Skull, Target } from 'lucide-react'
+import { PiggyBank, ArrowLeft, Scale, Heart, Stethoscope, ArrowRightLeft, Clock, Zap, Skull, Target, GitBranch, Trophy } from 'lucide-react'
 import Link from 'next/link'
 import { AnimalTabs } from './_tabs'
-import { saisirBcsRapide } from './_actions'
+import { saisirBcsRapide, uploadPhotoAnimal } from './_actions'
+import { AnimalPhotoUpload } from '@/components/animal-photo-upload'
 import { QrCode } from 'lucide-react'
 import {
   KpiTechCard,
@@ -179,6 +180,34 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
     .select('*', { count: 'exact', head: true })
     .eq('animal_id', animalId)
 
+  // === H1 : Score reproducteur composite (truie active) ===
+  type ScoreRow = {
+    score_global: number | null
+    classement: number | null
+    total_truies_ferme: number | null
+    nes_vivants_moyen: number | null
+    vitalite: number | null
+    surv_hors_ecrases: number | null
+    issf_jours: number | null
+    nb_portees: number | null
+    sub_nv: number | null
+    sub_vitalite: number | null
+    sub_survie: number | null
+    sub_issf: number | null
+    sub_longevite: number | null
+  }
+  let scoreTruie: ScoreRow | null = null
+  if (isFemelle && animal.categorie === 'truie' && animal.statut === 'actif') {
+    const { data: scoreRow } = await sb
+      .from('v_score_truie')
+      .select(
+        'score_global, classement, total_truies_ferme, nes_vivants_moyen, vitalite, surv_hors_ecrases, issf_jours, nb_portees, sub_nv, sub_vitalite, sub_survie, sub_issf, sub_longevite',
+      )
+      .eq('truie_id', animalId)
+      .maybeSingle()
+    scoreTruie = (scoreRow as ScoreRow | null) ?? null
+  }
+
   const age = computeAge(animal.date_naissance)
   const raceNom = (animal.races as any)?.nom ?? '—'
 
@@ -212,7 +241,14 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
           </Link>
         </div>
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
+          <div className="flex items-start gap-4 flex-wrap">
+            {/* H1 — Photo + upload (truie / cochette / verrat affichés, upload partout) */}
+            <AnimalPhotoUpload
+              animalId={animal.id}
+              currentUrl={animal.photo_url ?? null}
+              uploadAction={uploadPhotoAnimal}
+            />
+            <div>
             <h1
               className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
               style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
@@ -233,13 +269,36 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               <Badge variant={animal.statut === 'actif' ? 'success' : 'secondary'}>
                 {animal.statut}
               </Badge>
+              {scoreTruie && scoreTruie.classement ? (
+                <Link
+                  href="/cheptel/classement-truies"
+                  title="Voir le classement complet"
+                >
+                  <Badge variant="success" className="font-mono tabular-nums">
+                    <Trophy className="h-3 w-3 mr-1" aria-hidden />#{scoreTruie.classement}
+                    {scoreTruie.total_truies_ferme
+                      ? ` / ${scoreTruie.total_truies_ferme}`
+                      : ''}{' '}
+                    truies
+                  </Badge>
+                </Link>
+              ) : null}
             </div>
             <p className="text-sm text-[var(--sf-muted)] mt-1">
               {raceNom} · {age}
             </p>
+            </div>
           </div>
           {/* Actions rapides */}
           <div className="flex gap-2 flex-wrap">
+            {isFemelle ? (
+              <Link href={`/cheptel/${animalId}/genealogie`}>
+                <Button variant="outline" size="sm">
+                  <GitBranch className="h-4 w-4 mr-2" />
+                  Généalogie
+                </Button>
+              </Link>
+            ) : null}
             <Link href={`/pesees?action=new&animal_id=${animalId}`}>
               <Button variant="outline" size="sm">
                 <Scale className="h-4 w-4 mr-2" />
@@ -411,6 +470,85 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               description="Cette truie n'a pas encore assez de mise-bas / sevrages pour calculer ses KPI techniques."
             />
           )}
+        </section>
+      ) : null}
+
+      {/* === H1 : Score reproducteur composite (truie active uniquement) === */}
+      {scoreTruie ? (
+        <section className="space-y-3">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <h2 className={eyebrowCls}>Score reproducteur (IFIP composite)</h2>
+            <Link
+              href="/cheptel/classement-truies"
+              className="text-xs text-[var(--sf-primary)] hover:underline inline-flex items-center gap-1"
+            >
+              <Trophy className="h-3 w-3" aria-hidden />
+              Voir le classement complet
+            </Link>
+          </div>
+          <Card>
+            <CardContent className="p-5 grid grid-cols-2 md:grid-cols-6 gap-4 items-center">
+              <div className="md:col-span-2">
+                <div className={eyebrowCls}>Score global</div>
+                <div
+                  className="text-5xl font-bold tabular-nums text-[var(--sf-primary)]"
+                  style={{ fontFamily: 'var(--sf-font-display)' }}
+                >
+                  {scoreTruie.score_global !== null ? Number(scoreTruie.score_global).toFixed(1) : '—'}
+                  <span className="text-xl text-[var(--sf-muted)] ml-1">/ 100</span>
+                </div>
+                {scoreTruie.classement ? (
+                  <p className="text-xs text-[var(--sf-muted)] mt-1">
+                    Classement&nbsp;: <strong className="text-[var(--sf-ink)]">#{scoreTruie.classement}</strong>
+                    {scoreTruie.total_truies_ferme
+                      ? ` sur ${scoreTruie.total_truies_ferme} truies actives`
+                      : ''}
+                  </p>
+                ) : null}
+              </div>
+              <div>
+                <div className={eyebrowCls}>NV / portée</div>
+                <div className="text-xl font-bold tabular-nums text-[var(--sf-ink)]">
+                  {scoreTruie.nes_vivants_moyen !== null
+                    ? Number(scoreTruie.nes_vivants_moyen).toFixed(1)
+                    : '—'}
+                </div>
+                <p className="text-[10px] text-[var(--sf-muted)]">
+                  {scoreTruie.sub_nv !== null ? `${Number(scoreTruie.sub_nv).toFixed(1)} / 30 pts` : '—'}
+                </p>
+              </div>
+              <div>
+                <div className={eyebrowCls}>Vitalité</div>
+                <div className="text-xl font-bold tabular-nums text-[var(--sf-ink)]">
+                  {scoreTruie.vitalite !== null ? Number(scoreTruie.vitalite).toFixed(1) : '—'}
+                </div>
+                <p className="text-[10px] text-[var(--sf-muted)]">
+                  {scoreTruie.sub_vitalite !== null ? `${Number(scoreTruie.sub_vitalite).toFixed(1)} / 20 pts` : '—'}
+                </p>
+              </div>
+              <div>
+                <div className={eyebrowCls}>Survie h. écr.</div>
+                <div className="text-xl font-bold tabular-nums text-[var(--sf-ink)]">
+                  {scoreTruie.surv_hors_ecrases !== null
+                    ? `${(Number(scoreTruie.surv_hors_ecrases) * 100).toFixed(0)} %`
+                    : '—'}
+                </div>
+                <p className="text-[10px] text-[var(--sf-muted)]">
+                  {scoreTruie.sub_survie !== null ? `${Number(scoreTruie.sub_survie).toFixed(1)} / 25 pts` : '—'}
+                </p>
+              </div>
+              <div>
+                <div className={eyebrowCls}>Portées</div>
+                <div className="text-xl font-bold tabular-nums text-[var(--sf-ink)]">
+                  {scoreTruie.nb_portees ?? 0}
+                </div>
+                <p className="text-[10px] text-[var(--sf-muted)]">
+                  ISSF&nbsp;:{' '}
+                  {scoreTruie.issf_jours !== null ? `${Number(scoreTruie.issf_jours).toFixed(1)} j` : '—'}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </section>
       ) : null}
 
