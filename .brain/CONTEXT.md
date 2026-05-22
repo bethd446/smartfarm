@@ -2,6 +2,13 @@
 
 > Sous-agent : lis ça, AGIS. Pas redécouvrir. Manque info → note dans rapport.
 
+## 🎯 SESSION ACTUELLE (2026-05-22)
+**Sprint 1 — Option A** acceptée par Christophe. Plan détaillé : `.brain/SPRINT_1_PLAN.md`.
+- Phase 1 (3h) : B1 déconnexion / B2 /performances 404 / B5 fallback démo / B6 dates fr-FR
+- Phase 2 (1.5j) : F2 bâtiments default + trigger / F1 onboarding wizard + bootstrap_ferme RPC
+- Compte test : `samotjeanmarc@gmail.com` / `Teste2023` / SF-061072 (viewer sans ferme)
+- Audit complet : `docs/audits/2026-05-22_audit_qa_e2e_+_code.md`
+
 ## STACK
 - Next.js 16 / React 19 / Tailwind v4 / Radix / shadcn — `/root/projects/smartfarm/app/`
 - **PROD** : https://smartfarm.group (Hostinger) + Supabase Cloud (Frankfurt) project `tpzhxjzwlxwujboboyit`
