@@ -101,6 +101,25 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // 4) F1 Sprint 1 — Gate onboarding : si user authentifié mais pas encore
+  //    onboardé (onboarded_at IS NULL), on force le passage par /onboarding.
+  //    Exception : la page /onboarding elle-même (sinon boucle infinie) +
+  //    les server actions / api qui pourraient être appelées depuis le wizard.
+  if (path !== '/onboarding' && !path.startsWith('/onboarding/')) {
+    const { data: profil } = await sb
+      .from('utilisateurs')
+      .select('onboarded_at')
+      .eq('auth_id', user.id)
+      .maybeSingle()
+
+    if (profil && !profil.onboarded_at) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/onboarding'
+      url.search = ''
+      return NextResponse.redirect(url)
+    }
+  }
+
   return response
 }
 
