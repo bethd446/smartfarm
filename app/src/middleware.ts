@@ -59,8 +59,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url, 308)
   }
 
-  // 2) Bypass mode démo — comportement actuel préservé intégralement
-  if (process.env.SMARTFARM_DEMO_MODE !== 'false') {
+  // 2) Bypass mode démo — lecture runtime explicite (pas bake-time edge)
+  //    Note : on lit process.env à chaque request, pas en module-scope
+  const demoMode = process.env['SMARTFARM_DEMO_MODE']
+  if (demoMode !== 'false') {
     return NextResponse.next()
   }
 
@@ -103,6 +105,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
+  // ⚠️ Runtime Node.js obligatoire (pas edge) :
+  //   - Hostinger LiteSpeed/LSNODE ne supporte pas edge workers
+  //   - process.env.SMARTFARM_DEMO_MODE doit être lu au runtime, pas bake-time
+  runtime: 'nodejs',
   matcher: [
     /*
      * Match toutes les routes SAUF :
