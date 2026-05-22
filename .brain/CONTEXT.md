@@ -4,8 +4,9 @@
 
 ## STACK
 - Next.js 16 / React 19 / Tailwind v4 / Radix / shadcn — `/root/projects/smartfarm/app/`
-- Standalone :3000 — `next/standalone/projects/smartfarm/app/server.js`
-- **DEPLOY** : `bash /root/projects/smartfarm/app/deploy.sh` (build + sync static/public + restart)
+- **PROD** : https://smartfarm.group (Hostinger) + Supabase Cloud (Frankfurt) project `tpzhxjzwlxwujboboyit`
+- **DEMO LOCAL** : Standalone :3000 — `next/standalone/projects/smartfarm/app/server.js` + Docker Supabase :54322
+- **DEPLOY local** : `bash /root/projects/smartfarm/app/deploy.sh` (build + sync static/public + restart)
   - PIÈGE : `next build` ne copie PAS `.next/static/` et `public/` dans `.next/standalone/`
   - Sans ces dossiers → 404 sur tous chunks JS/CSS → page navigateur cassée (HTML servi mais blanc)
 - Node 22 : `export PATH=/root/.hermes/node/bin:$PATH`
@@ -158,3 +159,11 @@ Output design SANS `skill_view(name='impeccable')` chargé = REJET.
 
 ## DERNIÈRE MIGRATION (mise à jour)
 `20260523010000_aa_matieres_ci.sql`
+
+
+## 🆕 Décisions 2026-05-22 (refonte landing + emails)
+- **Email business** : `contact@smartfarm.group` (Hostinger mail)
+- **Tone of voice landing** : **pro austère** — rassurant, vétérinaire, technique. Pas startup, pas chaleureux folklo. Vocabulaire zootechnique pro.
+- Palette : tokens Terre and Mil existants (kaki/argile/sable, surtout pas orange/vert vif)
+- Typo : sobre, sérif possible pour H1, sans-serif body
+- Copy : phrases courtes, faits, pas de superlatifs marketing
