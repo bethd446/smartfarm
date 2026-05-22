@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/patch-server-passenger.js",
+    "build": "next build",
     "start": "next start",
     "build:standalone": "next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
     "start:standalone": "cd .next/standalone/projects/smartfarm/app && node server.js",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "build:passenger": "next build && node scripts/patch-server-passenger.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
