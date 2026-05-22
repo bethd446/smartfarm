@@ -1,9 +1,12 @@
-<!-- Deploy: 2026-05-22-force-rebuild-clean -->
 # 🐖 Smart Farm
 
 > **Application de gestion d'élevage porcin multi-fermes — ancrage Côte d'Ivoire.**
 > Suivi reproduction, sanitaire, alimentation, KPI IFIP (MCA / IC / GMQ), alertes terrain.
-> **Statut : v0.3.0** — pré-production (déploiement Hostinger + Supabase Cloud en cours).
+> **Statut : v0.4.0** — production live sur [smartfarm.group](https://smartfarm.group)
+>
+> [![Production](https://img.shields.io/badge/prod-smartfarm.group-1c1916?style=flat-square)](https://smartfarm.group)
+> [![Stack](https://img.shields.io/badge/stack-Next.js%2016%20%2B%20Supabase-1c1916?style=flat-square)](#stack)
+> [![Hosting](https://img.shields.io/badge/hosting-Hostinger-1c1916?style=flat-square)](https://hostinger.com)
 
 ---
 

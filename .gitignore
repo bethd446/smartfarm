@@ -47,3 +47,6 @@ coverage
 
 # ---- Vercel ----
 .vercel
+
+# Données privées EasyFarm — jamais en public
+.brain/import-data/
