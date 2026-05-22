@@ -209,3 +209,27 @@ Output design SANS `skill_view(name='impeccable')` chargé = REJET.
 - **D4** : fix Passenger GO en parallèle (sous-agent lancé)
 - **Données réelles à importer** : EasyFarm CI = 17 truies (Monette, Fillaou, Penelope...) + 2 verrats (Bobi, Aligator) + 6 bandes + 118 porcelets + 22-30 saillies + ~100 pesées
 - **Ferme Audit Test Belgique** : IGNORER (test PorcTrack)
+
+
+## 🔬 Découverte technique 2026-05-22 : LSNODE pas Passenger
+- **Hostinger Cloud Hosting Node.js utilise LSNODE/LSAPI LiteSpeed**, pas Phusion Passenger
+- Process visible : `lsnode:/home/.../nodejs/` (PID 46586 etc.)
+- `.htaccess` Passenger* directives = mode compat LSWS, pas du vrai Passenger
+- **server.js Next.js standard fonctionne** : bind :3000 TCP, LiteSpeed proxifie depuis 443
+- Le patcher `scripts/patch-server-passenger.js` était inutile et cassait tout
+- **Désactivé** : build script remis à `next build` simple
+- Patcher gardé en `build:with-passenger-patch` pour référence future
+
+## ✅ État stable 2026-05-22 12:14
+- Site smartfarm.group HTTP 200 sur toutes pages publiques + protégées
+- Mode démo encore actif (SMARTFARM_DEMO_MODE=true)
+- `.env` mis à jour avec **vrai service_role 219 chars** (correction du bug majeur précédent)
+- Backups successifs en `~/domains/smartfarm.group/public_html/.builds/config/.env.bak-*`
+- Dernier commit déployé : `1f26121` (build sans patcher)
+
+## 🎯 Prochaine étape switch prod
+- Push `.env` avec SMARTFARM_DEMO_MODE=false (le service_role est déjà OK maintenant)
+- Trigger rebuild via commit (Hostinger ne lit .env qu'au build, pas au runtime)
+- Vérif redirect /dashboard → /connexion (preuve middleware actif)
+- Si OK : créer compte admin 13smartfarm@gmail.com SF-000001
+- Import 17 truies + 2 verrats + 118 porcelets EasyFarm
