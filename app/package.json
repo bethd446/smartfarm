@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/patch-server-passenger.js",
     "start": "next start",
     "build:standalone": "next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
     "start:standalone": "cd .next/standalone/projects/smartfarm/app && node server.js",
