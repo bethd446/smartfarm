@@ -51,6 +51,21 @@ function dateFrShort(d: Date): string {
 export default async function DashboardPage() {
   const sb = await createClient()
 
+  // Récupère le nom de la ferme du user pour l'eyebrow du header (au lieu du hardcode "YAMOUSSOUKRO")
+  let fermeNom: string | null = null
+  try {
+    const { data: { user } } = await sb.auth.getUser()
+    if (user) {
+      const { data: uf } = await sb
+        .from('utilisateur_fermes')
+        .select('fermes(nom)')
+        .eq('utilisateur_id', (await sb.from('utilisateurs').select('id').eq('auth_id', user.id).maybeSingle()).data?.id ?? '')
+        .limit(1)
+        .maybeSingle()
+      fermeNom = (uf?.fermes as { nom?: string } | null)?.nom ?? null
+    }
+  } catch { /* fallback null */ }
+
   const [
     { count: nbAnimaux },
     { count: nbTruies },
@@ -101,7 +116,7 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* === HEADER PageTitle === */}
       <PageTitle
-        eyebrow={`PILOTAGE · ${today} · YAMOUSSOUKRO`}
+        eyebrow={`PILOTAGE · ${today}${fermeNom ? ' · ' + fermeNom.toUpperCase() : ''}`}
         icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
       >
         Tableau de bord
