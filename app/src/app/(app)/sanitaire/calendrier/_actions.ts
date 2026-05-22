@@ -1,17 +1,9 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
 
 const schemaMarquerFait = z.object({
   protocoleId: z.string().uuid('protocole_id invalide'),
@@ -46,7 +38,7 @@ export async function enregistrerVaccinDepuisCalendrier(
     )
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   // Récupérer le protocole pour avoir produit + dose
   const { data: proto, error: errProto } = await supabase
@@ -116,7 +108,7 @@ export async function marquerEvenementFait(formData: FormData): Promise<void> {
     )
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   const { data: rpcRes, error } = await supabase.rpc('marquer_evenement_realise', {
     p_event_id: event_id,

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 /**
  * Smart Farm — Snapshot ferme pour le system prompt du chatbot.
@@ -9,38 +10,44 @@ import type { SupabaseClient } from '@supabase/supabase-js'
  * Tolérant aux erreurs : si une requête échoue (table absente, vue manquante),
  * on retourne une section vide plutôt que de casser le chat.
  *
- * P0-3 (defense-in-depth) : toutes les queries filtrent explicitement sur
- * DEMO_FERME_ID. La RLS Supabase ferait déjà le travail en prod multi-tenant,
- * mais en V1 single-tenant on veut être sûr de ne pas exposer des données
- * d'une autre ferme par accident si jamais la base était mutualisée.
+ * SPRINT_2_FIX_RLS : on filtre maintenant sur la VRAIE ferme du user via
+ * getFermeId() au lieu d'un DEMO_FERME_ID hardcodé. Couplé aux RLS, on a
+ * deux couches de défense.
  */
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
 
 export async function getContexteFerme(
   supabase: SupabaseClient
 ): Promise<string> {
+  let fermeId: string
+  try {
+    fermeId = await getFermeId()
+  } catch {
+    // Pas de session / pas de ferme → contexte vide (le chat reste utilisable
+    // sur les pages publiques).
+    return `## État de la ferme (snapshot temps réel)\n\nAucun contexte ferme disponible.\n`
+  }
+
   const [animauxRes, bandesRes, alertesRes, stockRes] = await Promise.all([
     supabase
       .from('animaux')
       .select('id', { count: 'exact', head: true })
-      .eq('ferme_id', DEMO_FERME_ID)
+      .eq('ferme_id', fermeId)
       .neq('statut', 'mort'),
     supabase
       .from('bandes')
       .select('id, code, nom')
-      .eq('ferme_id', DEMO_FERME_ID)
+      .eq('ferme_id', fermeId)
       .eq('statut', 'active')
       .is('deleted_at', null),
     supabase
       .from('v_alertes_actives')
       .select('gravite, titre')
-      .eq('ferme_id', DEMO_FERME_ID)
+      .eq('ferme_id', fermeId)
       .limit(10),
     supabase
       .from('matieres_premieres')
       .select('nom, stock_actuel, seuil_alerte')
-      .eq('ferme_id', DEMO_FERME_ID)
+      .eq('ferme_id', fermeId)
       .not('seuil_alerte', 'is', null)
       .is('deleted_at', null)
       .limit(50),

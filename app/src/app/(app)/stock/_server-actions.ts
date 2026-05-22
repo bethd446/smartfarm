@@ -1,16 +1,8 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 // ============================================================================
 // Types des payloads
@@ -57,7 +49,7 @@ export type NouvelleMatiereData = {
 // ============================================================================
 
 export async function creerEntreeStock(data: EntreeStockData) {
-  const supabase = sb()
+  const supabase = await createClient()
 
   const qte = Number(data.quantite)
   const cu = data.cout_unitaire != null ? Number(data.cout_unitaire) : null
@@ -101,7 +93,7 @@ export async function creerEntreeStock(data: EntreeStockData) {
 // ============================================================================
 
 export async function creerSortieStock(data: SortieStockData) {
-  const supabase = sb()
+  const supabase = await createClient()
 
   const qte = Number(data.quantite)
   if (!(qte > 0)) return { ok: false, error: 'Quantité invalide' }
@@ -149,10 +141,10 @@ export async function creerSortieStock(data: SortieStockData) {
 // ============================================================================
 
 export async function creerMatiere(data: NouvelleMatiereData) {
-  const supabase = sb()
+  const supabase = await createClient()
 
   const { error } = await supabase.from('matieres_premieres').insert({
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     nom: data.nom,
     type: data.type,
     unite: data.unite || 'kg',

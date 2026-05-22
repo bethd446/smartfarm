@@ -1,16 +1,8 @@
 'use server'
 
 import { z } from 'zod'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
 
 /* -------------------------------------------------------------------------- */
 /*  Schema (interne au fichier 'use server' — pas exporté pour respecter      */
@@ -68,7 +60,7 @@ export async function creerConsommation(
       error: parsed.error.issues[0]?.message ?? 'Données invalides',
     }
   }
-  const { data: inserted, error } = await sb()
+  const { data: inserted, error } = await (await createClient())
     .from('consommations_aliment')
     .insert(buildPayload(parsed.data))
     .select('id')
@@ -90,7 +82,7 @@ export async function modifierConsommation(
     }
   }
   if (!parsed.data.id) return { ok: false, error: 'Identifiant manquant' }
-  const { error } = await sb()
+  const { error } = await (await createClient())
     .from('consommations_aliment')
     .update(buildPayload(parsed.data))
     .eq('id', parsed.data.id)
@@ -102,7 +94,7 @@ export async function modifierConsommation(
 
 export async function supprimerConsommation(id: string): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const { error } = await sb()
+  const { error } = await (await createClient())
     .from('consommations_aliment')
     .delete()
     .eq('id', id)

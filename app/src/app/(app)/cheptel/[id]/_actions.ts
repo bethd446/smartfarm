@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { getFermeId } from '@/lib/supabase/ferme-context'
 
@@ -10,20 +10,12 @@ import { getFermeId } from '@/lib/supabase/ferme-context'
  * NB : service_role car écriture côté serveur (RLS V2 permissive,
  *      pattern identique aux autres _actions.ts du module).
  */
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
-
 export async function saisirBcsRapide(formData: FormData) {
   const animal_id = String(formData.get('animal_id') ?? '')
   const bcs = parseFloat(String(formData.get('bcs') ?? '0'))
   if (!animal_id || !Number.isFinite(bcs) || bcs < 1 || bcs > 5) return
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   // Récupère ferme_id de l'animal (RLS-friendly, multi-fermes)
   const { data: animal } = await supabase
@@ -79,7 +71,7 @@ export async function uploadPhotoAnimal(formData: FormData) {
     return { ok: false, error: 'Photo trop volumineuse (max 5 Mo)' }
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   // Vérifie que l'animal existe + récupère son ferme_id pour scoper le path
   const { data: animal } = await supabase

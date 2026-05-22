@@ -1,17 +1,10 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { animalSchema } from './_schemas'
 import type { CreerAnimalInput } from './_schemas'
 import { getFermeId } from '@/lib/supabase/ferme-context'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
 
 export async function creerAnimal(
   data: CreerAnimalInput
@@ -39,7 +32,7 @@ export async function creerAnimal(
     payload.poids_naissance_kg = d.poids_naissance_kg
   if (d.observations) payload.observations = d.observations
 
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase.from('animaux').insert(payload)
   if (error) return { ok: false, error: error.message }
 

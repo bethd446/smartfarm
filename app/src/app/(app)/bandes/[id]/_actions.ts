@@ -1,6 +1,6 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
 /**
@@ -9,14 +9,6 @@ import { revalidatePath } from 'next/cache'
  * Utilise le service_role pour garantir l'écriture (les RLS sur bandes/
  * bande_animaux/transits_phase restent permissives ou désactivées en V2).
  */
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
-
 /**
  * G2 P0-5 — sexerBande : RPC atomique
  *
@@ -32,7 +24,7 @@ export async function sexerBande(formData: FormData) {
   const bande_id = String(formData.get('bande_id') ?? '')
   if (!bande_id) return
 
-  const s = sb()
+  const s = (await createClient())
 
   const { data: rpcRes, error } = await s.rpc('sexer_bande_atomique', {
     p_bande_id: bande_id,
@@ -86,7 +78,7 @@ export async function transitPhase(formData: FormData) {
   const totalSum = totalM + totalF
   const poids_total_kg = totalSum > 0 ? totalSum : null
 
-  const s = sb()
+  const s = (await createClient())
   const { data: bande } = await s
     .from('bandes')
     .select('ferme_id')

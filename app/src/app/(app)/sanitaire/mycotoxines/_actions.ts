@@ -6,18 +6,9 @@
  * Le champ `conforme` est GENERATED ALWAYS AS — ne pas l'insérer.
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -69,7 +60,7 @@ export async function enregistrerLotMatierePremiere(
   }
 
   const payload = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     matiere_premiere_id: mpId,
     reference_lot: ref,
     date_reception: dateReception,
@@ -82,7 +73,7 @@ export async function enregistrerLotMatierePremiere(
     observations: nonEmpty(data.observations),
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
   const { data: inserted, error } = await supabase
     .from('lots_matieres_premieres')
     .insert(payload)

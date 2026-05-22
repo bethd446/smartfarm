@@ -6,18 +6,9 @@
  * (référentiel statique seedé par migration).
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 export type ActionResult = { ok: true; id?: string } | { ok: false; error: string }
 
@@ -67,7 +58,7 @@ export async function enregistrerVisite(data: VisiteInput): Promise<ActionResult
   }
 
   const payload: Record<string, unknown> = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     type_visite: data.type_visite,
     nom_visiteur: nonEmpty(data.nom_visiteur),
     societe: nonEmpty(data.societe),
@@ -85,7 +76,7 @@ export async function enregistrerVisite(data: VisiteInput): Promise<ActionResult
   const dateRaw = nonEmpty(data.date_visite)
   if (dateRaw) payload.date_visite = dateRaw
 
-  const supabase = sb()
+  const supabase = await createClient()
   const { data: inserted, error } = await supabase
     .from('visites_biosecurite')
     .insert(payload)
@@ -125,11 +116,11 @@ export async function noterAuditBiosecurite(formData: FormData): Promise<void> {
   if (!checklist_item_id) return
   if (!STATUTS_AUDIT.includes(statutRaw as StatutAudit)) return
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   // Ferme cible : par défaut la ferme démo (cohérent avec enregistrerVisite).
   // En prod multi-fermes, à remplacer par l'ID issu du contexte utilisateur.
-  let ferme_id: string | undefined = DEMO_FERME_ID
+  let ferme_id: string | undefined = (await getFermeId())
   const { data: fermes } = await supabase.from('fermes').select('id').limit(1)
   if (fermes?.[0]?.id) ferme_id = fermes[0].id as string
   if (!ferme_id) return

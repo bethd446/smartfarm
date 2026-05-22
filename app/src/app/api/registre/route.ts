@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { Document, Page, Text, View, StyleSheet, Font, renderToBuffer } from '@react-pdf/renderer'
 import React from 'react'
 
@@ -378,15 +378,8 @@ function nomAnimal(a: { tag?: string | null; nom?: string | null } | null | unde
 export async function GET(req: Request) {
   void req // route same-origin ; auth Phase 2 via middleware
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serviceKey) {
-    return NextResponse.json({ error: 'Configuration Supabase manquante' }, { status: 500 })
-  }
-
-  const sb = createClient(url, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  })
+  // SPRINT_2_FIX_RLS : registre = données du tenant courant → RLS via cookies session.
+  const sb = await createClient()
 
   const now = new Date()
   const debut = new Date(now.getFullYear(), now.getMonth(), 1)

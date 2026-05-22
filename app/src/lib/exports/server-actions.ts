@@ -12,7 +12,7 @@
  * - Retourne un Blob serialisé ({ filename, contentType, base64 }) au client
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 const ALLOWED_TABLES = new Set([
   'animaux',
@@ -64,15 +64,8 @@ export async function exportTableCsv(table: string): Promise<ExportResult> {
     return { ok: false, error: `Table non autorisée: ${table}` }
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serviceKey) {
-    return { ok: false, error: 'Configuration Supabase manquante' }
-  }
-
-  const sb = createClient(url, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  })
+  // SPRINT_2_FIX_RLS : export passe par RLS — un user n'exporte que sa ferme.
+  const sb = await createClient()
 
   const { data, error } = await sb.from(table).select('*')
   if (error) return { ok: false, error: error.message }
@@ -95,15 +88,15 @@ export async function exportTableCsv(table: string): Promise<ExportResult> {
 export async function refreshKpiViews(): Promise<
   { ok: true; refreshed_at: string } | { ok: false; error: string }
 > {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !serviceKey) {
-    return { ok: false, error: 'Configuration Supabase manquante' }
+  // SPRINT_2_FIX_RLS : refresh KPI MV = opération admin (cron) → service_role
+  // explicite, justifiée (la RPC est SECURITY DEFINER côté Postgres et n'est
+  // accessible que via service_role).
+  let sb
+  try {
+    sb = await createServiceClient()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Service client KO' }
   }
-
-  const sb = createClient(url, serviceKey, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  })
 
   const { error } = await sb.rpc('refresh_kpi_views')
   if (error) return { ok: false, error: error.message }

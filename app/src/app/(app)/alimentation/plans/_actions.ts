@@ -1,16 +1,8 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { schemaPlan, type PlanInput } from './_schemas'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
 
 type ActionResult = { ok: true; id?: string } | { ok: false; error: string }
 
@@ -39,7 +31,7 @@ export async function creerPlan(data: PlanInput): Promise<ActionResult> {
       error: parsed.error.issues[0]?.message ?? 'Données invalides',
     }
   }
-  const { data: inserted, error } = await sb()
+  const { data: inserted, error } = await (await createClient())
     .from('plans_alimentation')
     .insert(buildPayload(parsed.data))
     .select('id')
@@ -59,7 +51,7 @@ export async function modifierPlan(data: PlanInput): Promise<ActionResult> {
     }
   }
   if (!parsed.data.id) return { ok: false, error: 'Identifiant manquant' }
-  const { error } = await sb()
+  const { error } = await (await createClient())
     .from('plans_alimentation')
     .update(buildPayload(parsed.data))
     .eq('id', parsed.data.id)
@@ -71,7 +63,7 @@ export async function modifierPlan(data: PlanInput): Promise<ActionResult> {
 
 export async function supprimerPlan(id: string): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const { error } = await sb().from('plans_alimentation').delete().eq('id', id)
+  const { error } = await (await createClient()).from('plans_alimentation').delete().eq('id', id)
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/plans')
   revalidatePath('/alimentation')

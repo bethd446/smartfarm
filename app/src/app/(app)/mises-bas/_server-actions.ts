@@ -1,16 +1,9 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { miseBasSchema, sevrageSchema } from './_schemas'
 import type { CreerMiseBasInput, CreerSevrageInput } from './_schemas'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
 
 export async function creerMiseBas(
   data: CreerMiseBasInput
@@ -27,7 +20,7 @@ export async function creerMiseBas(
     const idempotencyKey =
       d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
-    const supabase = sb()
+    const supabase = await createClient()
 
     // Récupérer truie_id + bande_id depuis la saillie
     const { data: saillie, error: errSaillie } = await supabase
@@ -103,7 +96,7 @@ export async function creerSevrage(
     const idempotencyKey =
       d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
-    const supabase = sb()
+    const supabase = await createClient()
 
     // Récupérer truie_id + bande_id depuis la mise-bas
     const { data: mb, error: errMb } = await supabase

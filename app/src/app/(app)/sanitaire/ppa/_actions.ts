@@ -7,18 +7,9 @@
  * Enregistre une observation clinique suspecte dans `ppa_observations`.
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 export type ActionResult =
   | { ok: true; id?: string }
@@ -123,7 +114,7 @@ export async function enregistrerObservationPPA(
   const obs = nonEmpty(formData.get('observations'))
 
   const payload = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     date_observation: dateObs,
     nb_animaux_affectes: nb,
     niveau_suspicion: niveau,
@@ -144,7 +135,7 @@ export async function enregistrerObservationPPA(
     observations: obs,
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
   const { data: inserted, error } = await supabase
     .from('ppa_observations')
     .insert(payload)

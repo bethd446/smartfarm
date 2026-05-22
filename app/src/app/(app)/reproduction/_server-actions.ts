@@ -1,17 +1,10 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { saillieSchema, diagnosticSchema } from './_schemas'
 import type { CreerSaillieInput, CreerDiagnosticInput } from './_schemas'
 import { getFermeId } from '@/lib/supabase/ferme-context'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
 
 export async function creerSaillie(
   data: CreerSaillieInput
@@ -28,7 +21,7 @@ export async function creerSaillie(
     const idempotencyKey =
       d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
-    const supabase = sb()
+    const supabase = await createClient()
     const { error } = await supabase.from('saillies').insert({
       ferme_id: await getFermeId(),
       truie_id: d.truie_id,
@@ -89,7 +82,7 @@ export async function creerDiagnostic(
     }
     const d = parsed.data
 
-    const supabase = sb()
+    const supabase = await createClient()
     const { error } = await supabase.from('diagnostics_gestation').insert({
       saillie_id: d.saillie_id,
       date_diagnostic: d.date_diagnostic,

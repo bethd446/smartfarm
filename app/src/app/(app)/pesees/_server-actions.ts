@@ -1,16 +1,9 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { peseeSchema } from './_schemas'
 import type { CreerPeseeInput } from './_schemas'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
 
 export async function creerPesee(
   data: CreerPeseeInput
@@ -34,7 +27,7 @@ export async function creerPesee(
   if (d.bande_id) payload.bande_id = d.bande_id
   if (d.observations) payload.observations = d.observations
 
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase.from('pesees').insert(payload)
   if (error) return { ok: false, error: error.message }
 

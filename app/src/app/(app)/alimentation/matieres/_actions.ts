@@ -1,18 +1,9 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { schemaMatiere, type MatiereInput } from './_schemas'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 type ActionResult = { ok: true; id?: string } | { ok: false; error: string }
 
@@ -70,10 +61,10 @@ export async function creerMatiere(data: MatiereInput): Promise<ActionResult> {
     }
   }
   const payload = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     ...buildPayload(parsed.data),
   }
-  const { data: inserted, error } = await sb()
+  const { data: inserted, error } = await (await createClient())
     .from('matieres_premieres')
     .insert(payload)
     .select('id')
@@ -100,11 +91,11 @@ export async function modifierMatiere(data: MatiereInput): Promise<ActionResult>
   if (!parsed.data.id) return { ok: false, error: 'Identifiant manquant' }
 
   const payload = buildPayload(parsed.data)
-  const { error } = await sb()
+  const { error } = await (await createClient())
     .from('matieres_premieres')
     .update(payload)
     .eq('id', parsed.data.id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/matieres')
   revalidatePath('/alimentation/concentres')
@@ -118,11 +109,11 @@ export async function modifierMatiere(data: MatiereInput): Promise<ActionResult>
 
 export async function supprimerMatiere(id: string): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const { error } = await sb()
+  const { error } = await (await createClient())
     .from('matieres_premieres')
     .delete()
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/matieres')
   revalidatePath('/alimentation/concentres')
@@ -134,13 +125,13 @@ export async function supprimerMatiere(id: string): Promise<ActionResult> {
 /* -------------------------------------------------------------------------- */
 
 export async function reinitialiserMatieresStandards(): Promise<ActionResult> {
-  const supa = sb()
+  const supa = (await createClient())
   const { error: e1 } = await supa.rpc('seed_matieres_premieres_standards', {
-    p_ferme: DEMO_FERME_ID,
+    p_ferme: (await getFermeId()),
   })
   if (e1) return { ok: false, error: e1.message }
   const { error: e2 } = await supa.rpc('seed_concentres_industriels_standards', {
-    p_ferme: DEMO_FERME_ID,
+    p_ferme: (await getFermeId()),
   })
   if (e2) return { ok: false, error: e2.message }
   revalidatePath('/alimentation/matieres')
@@ -161,12 +152,12 @@ export async function ajouterStockMatiere(
   if (!Number.isFinite(delta)) {
     return { ok: false, error: 'Quantité invalide' }
   }
-  const supa = sb()
+  const supa = (await createClient())
   const { data: row, error: errRead } = await supa
     .from('matieres_premieres')
     .select('stock_actuel')
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
     .single()
   if (errRead) return { ok: false, error: errRead.message }
   const newStock = Math.max(0, Number(row?.stock_actuel ?? 0) + delta)
@@ -174,7 +165,7 @@ export async function ajouterStockMatiere(
     .from('matieres_premieres')
     .update({ stock_actuel: newStock })
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/matieres')
   revalidatePath('/alimentation/concentres')

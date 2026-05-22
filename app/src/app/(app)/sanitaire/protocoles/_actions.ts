@@ -1,22 +1,13 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 import {
   schemaProtocole,
   parseRappelsJours,
   type ProtocoleInput,
 } from './_schemas'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
 
 type ActionResult = { ok: true; id?: string } | { ok: false; error: string }
 
@@ -68,10 +59,10 @@ export async function creerProtocole(data: ProtocoleInput): Promise<ActionResult
     }
   }
   const payload = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     ...buildPayload(parsed.data),
   }
-  const supabase = sb()
+  const supabase = await createClient()
   const { data: inserted, error } = await supabase
     .from('protocoles_vaccinaux')
     .insert(payload)
@@ -98,12 +89,12 @@ export async function modifierProtocole(data: ProtocoleInput): Promise<ActionRes
   if (!parsed.data.id) return { ok: false, error: 'Identifiant manquant' }
 
   const payload = buildPayload(parsed.data)
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase
     .from('protocoles_vaccinaux')
     .update(payload)
     .eq('id', parsed.data.id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/sanitaire/protocoles')
   revalidatePath('/sanitaire')
@@ -119,12 +110,12 @@ export async function basculerProtocoleActif(
   actif: boolean,
 ): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase
     .from('protocoles_vaccinaux')
     .update({ actif })
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/sanitaire/protocoles')
   return { ok: true }
@@ -132,12 +123,12 @@ export async function basculerProtocoleActif(
 
 export async function supprimerProtocole(id: string): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase
     .from('protocoles_vaccinaux')
     .delete()
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/sanitaire/protocoles')
   return { ok: true }
@@ -148,9 +139,9 @@ export async function supprimerProtocole(id: string): Promise<ActionResult> {
 /* -------------------------------------------------------------------------- */
 
 export async function reinitialiserProtocolesStandards(): Promise<ActionResult> {
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase.rpc('seed_protocoles_standards', {
-    p_ferme: DEMO_FERME_ID,
+    p_ferme: (await getFermeId()),
   })
   if (error) return { ok: false, error: error.message }
   revalidatePath('/sanitaire/protocoles')

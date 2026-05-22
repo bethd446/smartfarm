@@ -1,78 +1,63 @@
 /**
- * G2 — P0-6 — Multi-tenant : helper getFermeId() + constante DEMO_FERME_ID.
+ * SPRINT 2 FIX RLS — Multi-tenant helper.
  *
- * Stratégie minimale pour préparer le multi-tenant sans casser le mode demo :
+ * getFermeId() résoud STRICTEMENT la ferme via la session Supabase Auth :
+ *   1. cookies → auth.getUser()
+ *   2. RPC current_farm_id() (déjà déployée en BDD, lit user_farms)
  *
- * 1. Mode demo (par défaut, SMARTFARM_DEMO_MODE != 'false') :
- *    - getFermeId() retourne la constante DEMO_FERME_ID hardcodée.
- *    - service_role bypass RLS via createClient() (cf. ./server.ts).
+ * Plus de fallback hardcodé sur DEMO_FERME_ID (Yamoussoukro). C'était la
+ * cause de la fuite cross-tenant observée sur smartfarm.group : dès que
+ * SUPABASE_SERVICE_ROLE_KEY était présent dans l'env (cas Hostinger),
+ * tous les users récupéraient la ferme démo au lieu de la leur.
  *
- * 2. Mode production (SMARTFARM_DEMO_MODE='false') :
- *    - getFermeId() résoud la ferme depuis le user via Supabase Auth.
- *    - Server Actions doivent utiliser createClient() SSR auth (cf. ./server.ts).
+ * Comportement :
+ *  - User non authentifié → throw 'Non authentifié'
+ *  - User sans ferme rattachée → throw 'Aucune ferme rattachée'
+ *  - Sinon → string UUID de la ferme.
  *
- * Migration progressive : les server actions remplacent
- *   `const DEMO_FERME_ID = '...'`
- * par
- *   `import { getFermeId } from '@/lib/supabase/ferme-context'`
- *   `const ferme_id = await getFermeId()`
- *
- * Quand `SMARTFARM_DEMO_MODE=false`, le helper bascule transparent.
+ * Le caller (Server Action / Page) doit catch et redirect('/connexion')
+ * si applicable, sinon laisser remonter (next.js error boundary).
  */
 
-import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from './server'
 
-// ID de la ferme demo (seed Yamoussoukro)
+// Conservée pour compat (seeds, scripts) — ne plus utiliser en runtime user.
 export const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-export const DEMO_USER_ID  = '00000000-0000-0000-0000-000000000001'
+export const DEMO_USER_ID = '00000000-0000-0000-0000-000000000001'
 
 /**
- * isDemoMode — Renvoie true si l'app tourne en mode demo.
- * Mode demo = SUPABASE_SERVICE_ROLE_KEY présent ET SMARTFARM_DEMO_MODE != 'false'.
+ * isDemoMode — SUPPRIMÉ. Plus de bypass RLS basé sur env vars.
+ *
+ * Si on a besoin d'un mode démo, il faut un user démo réel + auth réelle.
+ * On laisse la fonction comme stub qui renvoie toujours false pour ne
+ * pas casser d'éventuels imports — à supprimer une fois le code nettoyé.
+ *
+ * @deprecated
  */
 export function isDemoMode(): boolean {
-  return (
-    !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    process.env.SMARTFARM_DEMO_MODE !== 'false'
-  )
+  return false
 }
 
 /**
- * getFermeId — Retourne l'id de la ferme courante.
+ * getFermeId — Retourne l'UUID de la ferme du user authentifié.
  *
- * - En mode demo : DEMO_FERME_ID (constante).
- * - En mode prod : ferme rattachée au user_id depuis Supabase Auth, via la
- *   fonction PG `current_farm_id()` (déjà déployée — cf. migration RLS).
- *
- * @throws Error si mode prod et user non authentifié ou pas de ferme assignée.
+ * @throws Error('Non authentifié') si pas de session
+ * @throws Error('Aucune ferme rattachée') si user sans user_farms
  */
 export async function getFermeId(): Promise<string> {
-  if (isDemoMode()) {
-    return DEMO_FERME_ID
-  }
+  const sb = await createClient()
 
-  // Mode production : résolution via session Supabase Auth + RPC current_farm_id().
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() { return cookieStore.getAll() },
-        setAll() { /* read-only ici */ },
-      },
-    },
-  )
-
-  const { data: { user }, error: errUser } = await supabase.auth.getUser()
+  const {
+    data: { user },
+    error: errUser,
+  } = await sb.auth.getUser()
   if (errUser || !user) {
-    throw new Error('Non authentifié — getFermeId() requiert un user')
+    throw new Error('Non authentifié')
   }
 
-  const { data: fermeId, error: errFn } = await supabase.rpc('current_farm_id')
+  const { data: fermeId, error: errFn } = await sb.rpc('current_farm_id')
   if (errFn || !fermeId) {
-    throw new Error('Aucune ferme rattachée au user ' + user.id)
+    throw new Error('Aucune ferme rattachée')
   }
   return fermeId as string
 }

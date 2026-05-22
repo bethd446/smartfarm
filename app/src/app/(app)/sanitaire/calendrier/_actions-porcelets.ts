@@ -13,17 +13,9 @@
  * fallback sur la truie (animal_id = truie_id) avec un libellé explicite.
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -45,7 +37,7 @@ export async function marquerActePorceletFait(formData: FormData): Promise<void>
     toastError('type acte invalide')
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   // Récupérer le contexte mise-bas (truie + bande)
   const { data: mb, error: mbErr } = await supabase

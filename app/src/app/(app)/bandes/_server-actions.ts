@@ -1,16 +1,8 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-
-const sb = () =>
-  createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 const STATUTS_VALIDES = [
   'preparation',
@@ -39,7 +31,7 @@ export async function creerBande(
     }
 
     const payload: Record<string, unknown> = {
-      ferme_id: DEMO_FERME_ID,
+      ferme_id: (await getFermeId()),
       nom,
       code,
       date_debut,
@@ -48,7 +40,7 @@ export async function creerBande(
     if (date_fin_prevue) payload.date_fin_prevue = date_fin_prevue
     if (observations) payload.observations = observations
 
-    const supabase = sb()
+    const supabase = await createClient()
     const { error } = await supabase.from('bandes').insert(payload)
     if (error) return { ok: false, error: error.message }
 

@@ -1,18 +1,9 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { schemaFormulation, type FormulationInput } from './_schemas'
-
-const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } },
-  )
-}
+import { getFermeId } from '@/lib/supabase/ferme-context'
 
 type ActionResult =
   | { ok: true; id?: string; warning?: string }
@@ -42,10 +33,10 @@ export async function creerFormulation(data: FormulationInput): Promise<ActionRe
     }
   }
 
-  const supabase = sb()
+  const supabase = await createClient()
 
   const payload = {
-    ferme_id: DEMO_FERME_ID,
+    ferme_id: (await getFermeId()),
     nom: parsed.data.nom.trim(),
     stade_cible: parsed.data.stade_cible,
     type_aliment_id:
@@ -92,13 +83,13 @@ export async function creerFormulation(data: FormulationInput): Promise<ActionRe
 
 export async function supprimerFormulation(id: string): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const supabase = sb()
+  const supabase = await createClient()
   // CASCADE configuré côté FK → supprime aussi les ingrédients
   const { error } = await supabase
     .from('formulations')
     .delete()
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/formulation')
   return { ok: true }
@@ -113,12 +104,12 @@ export async function basculerFormulationActive(
   actif: boolean,
 ): Promise<ActionResult> {
   if (!id) return { ok: false, error: 'Identifiant manquant' }
-  const supabase = sb()
+  const supabase = await createClient()
   const { error } = await supabase
     .from('formulations')
     .update({ actif })
     .eq('id', id)
-    .eq('ferme_id', DEMO_FERME_ID)
+    .eq('ferme_id', (await getFermeId()))
   if (error) return { ok: false, error: error.message }
   revalidatePath('/alimentation/formulation')
   return { ok: true }

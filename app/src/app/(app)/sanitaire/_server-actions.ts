@@ -1,18 +1,10 @@
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { schemaVaccin, schemaSoin, schemaPerte } from './_schemas'
 import type { VaccinInput, SoinInput, PerteInput } from './_schemas'
 import { getFermeId } from '@/lib/supabase/ferme-context'
-
-function sb() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { persistSession: false } }
-  )
-}
 
 type ActionResult = { ok: true; dedup?: boolean } | { ok: false; error: string }
 
@@ -45,7 +37,7 @@ export async function creerVaccination(data: VaccinInput): Promise<ActionResult>
     if (!parsed.success) {
       return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
     }
-    const supabase = sb()
+    const supabase = await createClient()
     const idempotencyKey =
       parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
         ? parsed.data.idempotency_key
@@ -83,7 +75,7 @@ export async function creerTraitement(data: SoinInput): Promise<ActionResult> {
     if (!parsed.success) {
       return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
     }
-    const supabase = sb()
+    const supabase = await createClient()
     const idempotencyKey =
       parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
         ? parsed.data.idempotency_key
@@ -131,7 +123,7 @@ export async function creerMortalite(data: PerteInput): Promise<ActionResult> {
     if (!parsed.success) {
       return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
     }
-    const supabase = sb()
+    const supabase = await createClient()
     const idempotencyKey =
       parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
         ? parsed.data.idempotency_key
