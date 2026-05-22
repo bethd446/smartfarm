@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr">
+    <html lang="fr-FR">
       <head>
         <link rel="icon" href="/logo-smartfarm.svg" type="image/svg+xml" />
       </head>

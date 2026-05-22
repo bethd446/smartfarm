@@ -45,15 +45,79 @@ const nav = [
   { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Système' },
 ]
 
+// ---------------------------------------------------------------------------
+// L2 Sprint 1 — Types pour user/ferme injectés depuis le layout serveur.
+// On accepte le `null` partout pour rester ultra-défensif côté SSR.
+// ---------------------------------------------------------------------------
+export interface SidebarUser {
+  prenom: string | null
+  nom: string | null
+  role: string | null
+  numero_client: string | null
+  email: string | null
+}
+
+export interface SidebarFerme {
+  nom: string
+  localisation: string | null
+}
+
+export interface SidebarProps {
+  user: SidebarUser | null
+  ferme: SidebarFerme | null
+}
+
+// ---------------------------------------------------------------------------
+// Helpers identité (partagés sidebar/mobile-drawer si besoin plus tard)
+// ---------------------------------------------------------------------------
+function getInitiales(u: SidebarUser | null): string {
+  if (!u) return '?'
+  const p = (u.prenom ?? '').trim()
+  const n = (u.nom ?? '').trim()
+  if (p && n) return (p[0] + n[0]).toUpperCase()
+  if (p) return p[0].toUpperCase()
+  if (n) return n[0].toUpperCase()
+  if (u.email) return u.email[0].toUpperCase()
+  return '?'
+}
+
+function getNomComplet(u: SidebarUser | null): string {
+  if (!u) return 'Utilisateur'
+  const p = (u.prenom ?? '').trim()
+  const n = (u.nom ?? '').trim()
+  if (p && n) return `${p} ${n}`
+  if (p) return p
+  if (n) return n
+  if (u.email) return u.email
+  return 'Utilisateur'
+}
+
+function getRoleLabel(u: SidebarUser | null): string {
+  if (!u?.role) return '—'
+  const r = u.role.toLowerCase()
+  if (r === 'admin') return 'Admin'
+  if (r === 'superadmin') return 'Super admin'
+  if (r === 'viewer') return 'Lecteur'
+  if (r === 'editor') return 'Éditeur'
+  return r.charAt(0).toUpperCase() + r.slice(1)
+}
+
 /**
  * Sidebar responsive :
  *  - Mobile <md  : entièrement masqué (bottom-nav + drawer prennent le relais).
  *  - Tablette md à <lg : largeur 72px, icônes seules, label en tooltip CSS au hover.
  *  - Desktop ≥lg : largeur 256px (w-64), full label + group headings + footer.
+ *
+ * L2 Sprint 1 : reçoit `user` et `ferme` en props depuis le layout serveur.
+ * Plus aucune valeur hardcodée (fini "Christophe Liegeois / Yamoussoukro").
  */
-export function Sidebar() {
+export function Sidebar({ user, ferme }: SidebarProps) {
   const pathname = usePathname()
   const groups = Array.from(new Set(nav.map(n => n.group)))
+
+  const initiales = getInitiales(user)
+  const nomComplet = getNomComplet(user)
+  const roleLabel = getRoleLabel(user)
 
   return (
     <aside
@@ -75,15 +139,40 @@ export function Sidebar() {
           <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-9 w-9" />
         </div>
         <div className="hidden lg:block min-w-0">
-          <div className="font-bold text-base text-white">Smart Farm</div>
+          <div className="font-bold text-base text-white truncate">
+            {ferme?.nom ?? 'Smart Farm'}
+          </div>
           <div className="text-[10px] text-white/70 uppercase tracking-[0.15em] truncate">
             Élevage porcin · Côte d&apos;Ivoire
           </div>
-          <div className="text-[10px] text-white/40 uppercase tracking-wider truncate mt-0.5">
-            Yamoussoukro <span aria-hidden>🇨🇮</span>
-          </div>
+          {ferme?.localisation && (
+            <div className="text-[10px] text-white/40 uppercase tracking-wider truncate mt-0.5">
+              {ferme.localisation} <span aria-hidden>🇨🇮</span>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* L2 Sprint 1 — bandeau d'alerte si user pas lié à une ferme */}
+      {user && !ferme && (
+        <Link
+          href="/onboarding"
+          className={cn(
+            'mx-2 lg:mx-3 mt-3 rounded-md border border-amber-500/40 bg-amber-500/10',
+            'text-amber-200 hover:bg-amber-500/20 transition-colors',
+            'flex items-center gap-2',
+            'p-2 lg:p-3',
+            'justify-center lg:justify-start',
+          )}
+          title="Aucune ferme. Configurez votre exploitation."
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" />
+          <span className="hidden lg:inline text-[11px] leading-tight">
+            Aucune ferme.<br />
+            <span className="text-amber-100 underline">Configurer mon exploitation →</span>
+          </span>
+        </Link>
+      )}
 
       <nav className="flex-1 overflow-y-auto p-2 lg:p-3 space-y-1 lg:space-y-4">
         {groups.map(group => (
@@ -146,14 +235,22 @@ export function Sidebar() {
         'p-2 lg:p-3 space-y-2',
       )}>
         <ContrastToggle />
-        <div className={cn(
-          'flex items-center',
-          'justify-center lg:gap-3 lg:px-2 lg:py-1.5 lg:justify-start',
-        )}>
-          <div className="h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold shrink-0">CL</div>
+        <div
+          className={cn(
+            'flex items-center',
+            'justify-center lg:gap-3 lg:px-2 lg:py-1.5 lg:justify-start',
+          )}
+          title={user?.numero_client ? `${nomComplet} · ${user.numero_client}` : nomComplet}
+        >
+          <div className="h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-white text-xs font-bold shrink-0">
+            {initiales}
+          </div>
           <div className="hidden lg:block flex-1 min-w-0">
-            <div className="text-xs font-medium text-white truncate">Christophe Liegeois</div>
-            <div className="text-[10px] text-white/60">Admin</div>
+            <div className="text-xs font-medium text-white truncate">{nomComplet}</div>
+            <div className="text-[10px] text-white/60 truncate">
+              {roleLabel}
+              {user?.numero_client ? ` · ${user.numero_client}` : ''}
+            </div>
           </div>
         </div>
       </div>

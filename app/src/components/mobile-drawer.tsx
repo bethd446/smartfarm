@@ -9,8 +9,9 @@ import {
   LayoutDashboard, PiggyBank, Layers, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
   Sparkles, AlertTriangle,
-  X,
+  X, LogOut,
 } from 'lucide-react'
+import { deconnexionAction } from '@/app/(auth)/_actions'
 
 // ---------------------------------------------------------------------------
 // V2-HARMONIE (HARM-A) — doit rester aligné 1:1 avec sidebar.tsx
@@ -127,6 +128,25 @@ export function MobileDrawer({ open, onOpenChange }: MobileDrawerProps) {
               </div>
             ))}
           </nav>
+
+          {/* Bouton Déconnexion mobile (L1/B1) */}
+          <div className="border-t border-slate-800 p-3">
+            <form action={deconnexionAction}>
+              <button
+                type="submit"
+                aria-label="Déconnexion"
+                className={cn(
+                  'flex items-center gap-3 w-full px-3 h-12 rounded-md transition-colors',
+                  'text-base font-semibold uppercase tracking-[0.08em]',
+                  'text-white/80 hover:bg-white/5 hover:text-white',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                )}
+              >
+                <LogOut className="h-5 w-5 shrink-0" />
+                <span>Déconnexion</span>
+              </button>
+            </form>
+          </div>
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
