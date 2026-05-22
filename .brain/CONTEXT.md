@@ -190,3 +190,22 @@ Output design SANS `skill_view(name='impeccable')` chargé = REJET.
 - Push templates via Supabase Management API
 - Switch SMARTFARM_DEMO_MODE=false sur Hostinger via API
 - Smoke test 17 pages prod + flow auth complet
+
+## 🆕 Décisions 2026-05-22 (suite — admin + prod)
+- **Hébergement choisi** : Hostinger Cloud Hosting MAINTENU (raison: Claude Max sur Mac doit pouvoir reprendre projet via GitHub + Hostinger sans découvrir setup exotique)
+- **Email admin ferme** : `13smartfarm@gmail.com`
+- **Mot de passe admin** : à choisir par utilisateur au moment switch prod
+- **Numéro client SF-000001** : auto-généré 1er compte
+- **Bug Passenger Hostinger** : `server.js` Next.js standalone bind :3000, Passenger ignore → 503 quand on essaie SMARTFARM_DEMO_MODE=false. Fix requis : adapter server.js Passenger-compatible (FD socket via argv).
+- **Rollback effectué** : `.env` remis en mode démo, site UP HTTP 200 stable
+- **Plan 5 phases** : (1) Fix Passenger, (2) Switch prod, (3) Compte admin, (4) Import données, (5) Page super-admin
+- **Page super-admin** future : route `/super-admin`, role `superadmin`, vues activité users/fermes/logs/métriques, impersonate user pour assistance distance
+
+
+## 🆕 Décisions 2026-05-22 (suite — D1-D4 validées)
+- **D1 ferme** : nom = "Smart Farm" (compte = marque)
+- **D2 BDD** : reset total — purger les 17 démo, importer les 138 vrais d'EasyFarm
+- **D3 admin** : email=13smartfarm@gmail.com, password=Fermebio13, Magic Link backup ON, numéro SF-000001 auto
+- **D4** : fix Passenger GO en parallèle (sous-agent lancé)
+- **Données réelles à importer** : EasyFarm CI = 17 truies (Monette, Fillaou, Penelope...) + 2 verrats (Bobi, Aligator) + 6 bandes + 118 porcelets + 22-30 saillies + ~100 pesées
+- **Ferme Audit Test Belgique** : IGNORER (test PorcTrack)
