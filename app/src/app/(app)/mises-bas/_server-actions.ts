@@ -14,7 +14,7 @@ const sb = () =>
 
 export async function creerMiseBas(
   data: CreerMiseBasInput
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; dedup?: boolean } | { ok: false; error: string }> {
   const parsed = miseBasSchema.safeParse(data)
   if (!parsed.success) {
     return {
@@ -23,6 +23,8 @@ export async function creerMiseBas(
     }
   }
   const d = parsed.data
+  const idempotencyKey =
+    d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
   const supabase = sb()
 
@@ -51,6 +53,7 @@ export async function creerMiseBas(
     momifies: d.momifies,
     ecrases: d.ecrases,
     assistance: d.assistance,
+    idempotency_key: idempotencyKey,
   }
   if (d.poids_portee_kg !== '' && d.poids_portee_kg !== undefined)
     payload.poids_portee_kg = d.poids_portee_kg
@@ -62,7 +65,16 @@ export async function creerMiseBas(
 
   const { error } = await supabase.from('mises_bas').insert(payload)
   // trigger SQL : marque mise_bas_prevue comme realise, crée tarissement J+21, recalcule sevrage
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    if (
+      error.code === '23505' &&
+      (error.message.includes('idempotency') ||
+        error.message.includes('idempotency_key'))
+    ) {
+      return { ok: true, dedup: true }
+    }
+    return { ok: false, error: error.message }
+  }
 
   revalidatePath('/mises-bas')
   revalidatePath('/calendrier')
@@ -72,7 +84,7 @@ export async function creerMiseBas(
 
 export async function creerSevrage(
   data: CreerSevrageInput
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; dedup?: boolean } | { ok: false; error: string }> {
   const parsed = sevrageSchema.safeParse(data)
   if (!parsed.success) {
     return {
@@ -81,6 +93,8 @@ export async function creerSevrage(
     }
   }
   const d = parsed.data
+  const idempotencyKey =
+    d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
   const supabase = sb()
 
@@ -101,6 +115,7 @@ export async function creerSevrage(
     bande_id: mb.bande_id,
     date_sevrage: d.date_sevrage,
     nb_sevres: d.nb_sevres,
+    idempotency_key: idempotencyKey,
   }
   if (d.poids_total_kg !== '' && d.poids_total_kg !== undefined)
     payload.poids_total_kg = d.poids_total_kg
@@ -112,7 +127,16 @@ export async function creerSevrage(
 
   const { error } = await supabase.from('sevrages').insert(payload)
   // trigger SQL : marque sevrage_prevu + tarissement comme realises
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    if (
+      error.code === '23505' &&
+      (error.message.includes('idempotency') ||
+        error.message.includes('idempotency_key'))
+    ) {
+      return { ok: true, dedup: true }
+    }
+    return { ok: false, error: error.message }
+  }
 
   revalidatePath('/mises-bas')
   revalidatePath('/calendrier')

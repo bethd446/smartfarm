@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ExportButton } from '@/components/export-button'
 import { Layers, Plus } from 'lucide-react'
+import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
 
 export default async function BandesPage() {
   const sb = await createClient()
@@ -26,7 +27,13 @@ export default async function BandesPage() {
         </div>
         <div className="flex gap-2">
           <ExportButton table="bandes" />
-          <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700"><Plus className="h-5 w-5 mr-2" />Nouvelle bande</Button>
+          <DialogNouvelleBande
+            trigger={
+              <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700">
+                <Plus className="h-5 w-5 mr-2" />Nouvelle bande
+              </Button>
+            }
+          />
         </div>
       </div>
 

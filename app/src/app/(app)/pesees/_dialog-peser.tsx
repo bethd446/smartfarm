@@ -237,11 +237,21 @@ export function DialogPeser({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label htmlFor="date_pesee">Date *</Label>
-              <Input
-                id="date_pesee"
-                type="date"
-                {...register('date_pesee')}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="date_pesee"
+                  type="date"
+                  {...register('date_pesee')}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setValue('date_pesee', new Date().toISOString().slice(0, 10), { shouldValidate: true, shouldDirty: true })}
+                >
+                  Aujourd&apos;hui
+                </Button>
+              </div>
               {errors.date_pesee && (
                 <p className="text-xs text-[var(--sf-danger,#b00020)] mt-1">
                   {errors.date_pesee.message}

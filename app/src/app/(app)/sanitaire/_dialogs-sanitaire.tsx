@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -165,6 +165,12 @@ type PerteForm = z.input<typeof schemaPerte>
 export function DialogNouveauVaccin({ trigger, animaux, bandes }: CommonProps) {
   const [open, setOpen] = useState(false)
   const [cible, setCible] = useState<'animal' | 'bande'>('animal')
+  // F2 P0-9 : 1 clé d'idempotence par ouverture du dialog (anti double-tap réseau lent)
+  const idempotencyKey = useMemo(
+    () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open]
+  )
   const today = new Date().toISOString().slice(0, 10)
 
   const {
@@ -195,10 +201,12 @@ export function DialogNouveauVaccin({ trigger, animaux, bandes }: CommonProps) {
   }
 
   async function onSubmit(data: VaccinForm) {
+    // F2 P0-9 : clé d'idempotence générée côté client (1 par soumission)
     const payload = {
       ...data,
       animal_id: cible === 'animal' ? data.animal_id : '',
       bande_id: cible === 'bande' ? data.bande_id : '',
+      idempotency_key: idempotencyKey,
     }
     const res = await creerVaccination(payload)
     if (res.ok) {
@@ -332,6 +340,12 @@ export function DialogNouveauVaccin({ trigger, animaux, bandes }: CommonProps) {
 export function DialogNouveauSoin({ trigger, animaux, bandes }: CommonProps) {
   const [open, setOpen] = useState(false)
   const [cible, setCible] = useState<'animal' | 'bande'>('animal')
+  // F2 P0-9 : 1 clé d'idempotence par ouverture du dialog
+  const idempotencyKey = useMemo(
+    () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open]
+  )
   const today = new Date().toISOString().slice(0, 10)
 
   const {
@@ -369,6 +383,7 @@ export function DialogNouveauSoin({ trigger, animaux, bandes }: CommonProps) {
       ...data,
       animal_id: cible === 'animal' ? data.animal_id : '',
       bande_id: cible === 'bande' ? data.bande_id : '',
+      idempotency_key: idempotencyKey,
     }
     const res = await creerTraitement(payload)
     if (res.ok) {
@@ -532,6 +547,12 @@ export function DialogNouveauSoin({ trigger, animaux, bandes }: CommonProps) {
 
 export function DialogNouvellePerte({ trigger, animaux, bandes }: CommonProps) {
   const [open, setOpen] = useState(false)
+  // F2 P0-9 : 1 clé d'idempotence par ouverture du dialog
+  const idempotencyKey = useMemo(
+    () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open]
+  )
   const [cible, setCible] = useState<'animal' | 'bande'>('animal')
   const today = new Date().toISOString().slice(0, 10)
 
@@ -566,6 +587,7 @@ export function DialogNouvellePerte({ trigger, animaux, bandes }: CommonProps) {
       ...data,
       animal_id: cible === 'animal' ? data.animal_id : '',
       bande_id: cible === 'bande' ? data.bande_id : '',
+      idempotency_key: idempotencyKey,
     }
     const res = await creerMortalite(payload)
     if (res.ok) {

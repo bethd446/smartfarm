@@ -16,7 +16,7 @@ const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
 
 export async function creerSaillie(
   data: CreerSaillieInput
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; dedup?: boolean } | { ok: false; error: string }> {
   const parsed = saillieSchema.safeParse(data)
   if (!parsed.success) {
     return {
@@ -25,6 +25,8 @@ export async function creerSaillie(
     }
   }
   const d = parsed.data
+  const idempotencyKey =
+    d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
   const supabase = sb()
   const { error } = await supabase.from('saillies').insert({
@@ -39,9 +41,30 @@ export async function creerSaillie(
     bcs_truie:
       d.bcs_truie === '' || d.bcs_truie === undefined ? null : d.bcs_truie,
     observations: d.observations || null,
+    idempotency_key: idempotencyKey,
   })
   // trigger SQL auto crée diagnostics_gestation J+15 et J+28 dans evenements_prevus
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    // F2 P0-9 : idempotency replay → succès silencieux
+    if (
+      error.code === '23505' &&
+      (error.message.includes('idempotency') ||
+        error.message.includes('idempotency_key'))
+    ) {
+      return { ok: true, dedup: true }
+    }
+    // F2 P0-1 : doublon métier (même truie, même jour)
+    if (
+      error.code === '23505' &&
+      error.message.includes('idx_saillies_unique_truie_date_active')
+    ) {
+      return {
+        ok: false,
+        error: 'Saillie déjà enregistrée pour cette truie aujourd\u2019hui',
+      }
+    }
+    return { ok: false, error: error.message }
+  }
   revalidatePath('/reproduction')
   revalidatePath('/calendrier')
   revalidatePath('/dashboard')
@@ -50,7 +73,7 @@ export async function creerSaillie(
 
 export async function creerDiagnostic(
   data: CreerDiagnosticInput
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<{ ok: true; dedup?: boolean } | { ok: false; error: string }> {
   const parsed = diagnosticSchema.safeParse(data)
   if (!parsed.success) {
     return {

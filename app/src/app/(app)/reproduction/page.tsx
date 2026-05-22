@@ -284,8 +284,8 @@ export default async function ReproductionPage() {
               <tr>
                 <th className="py-3 px-4 font-semibold">Date</th>
                 <th className="py-3 px-4 font-semibold">Truie</th>
-                <th className="py-3 px-4 font-semibold">Le mâle</th>
-                <th className="py-3 px-4 font-semibold">Comment</th>
+                <th className="py-3 px-4 font-semibold">Verrat</th>
+                <th className="py-3 px-4 font-semibold">Méthode</th>
                 <th className="py-3 px-4 font-semibold">Rang portée</th>
                 <th className="py-3 px-4 font-semibold">Diagnostic</th>
               </tr>

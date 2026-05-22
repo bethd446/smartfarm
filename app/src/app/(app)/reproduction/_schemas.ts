@@ -16,6 +16,8 @@ export const saillieSchema = z.object({
     .optional()
     .or(z.literal('')),
   observations: z.string().optional().or(z.literal('')),
+  // F2 P0-9 : clé d'idempotence générée côté client (crypto.randomUUID)
+  idempotency_key: z.string().uuid().optional().or(z.literal('')),
 })
 
 export type CreerSaillieInput = z.input<typeof saillieSchema>
@@ -27,6 +29,7 @@ export const diagnosticSchema = z.object({
   resultat: z.enum(['positif', 'negatif', 'retour_chaleur', 'en_attente']),
   methode: z.string().optional().or(z.literal('')),
   observations: z.string().optional().or(z.literal('')),
+  idempotency_key: z.string().uuid().optional().or(z.literal('')),
 })
 
 export type CreerDiagnosticInput = z.input<typeof diagnosticSchema>

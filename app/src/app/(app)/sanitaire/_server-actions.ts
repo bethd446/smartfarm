@@ -15,7 +15,7 @@ function sb() {
   )
 }
 
-type ActionResult = { ok: true } | { ok: false; error: string }
+type ActionResult = { ok: true; dedup?: boolean } | { ok: false; error: string }
 
 function clean<T extends Record<string, unknown>>(o: T): Partial<T> {
   const out: Record<string, unknown> = {}
@@ -24,6 +24,16 @@ function clean<T extends Record<string, unknown>>(o: T): Partial<T> {
     out[k] = v
   }
   return out as Partial<T>
+}
+
+// F2 P0-9 : helper idempotency error detection
+function isIdempotencyDup(err: { code?: string; message?: string } | null): boolean {
+  if (!err) return false
+  return (
+    err.code === '23505' &&
+    !!err.message &&
+    (err.message.includes('idempotency') || err.message.includes('idempotency_key'))
+  )
 }
 
 /* -------------------------------------------------------------------------- */
@@ -36,6 +46,10 @@ export async function creerVaccination(data: VaccinInput): Promise<ActionResult>
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
   }
   const supabase = sb()
+  const idempotencyKey =
+    parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
+      ? parsed.data.idempotency_key
+      : null
   const payload = clean({
     animal_id: parsed.data.animal_id || null,
     bande_id: parsed.data.bande_id || null,
@@ -46,9 +60,13 @@ export async function creerVaccination(data: VaccinInput): Promise<ActionResult>
       typeof parsed.data.dose_ml === 'number' ? parsed.data.dose_ml : null,
     veterinaire: parsed.data.veterinaire || null,
     observations: parsed.data.observations || null,
+    idempotency_key: idempotencyKey,
   })
   const { error } = await supabase.from('vaccinations').insert(payload)
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    if (isIdempotencyDup(error)) return { ok: true, dedup: true }
+    return { ok: false, error: error.message }
+  }
   revalidatePath('/sanitaire')
   revalidatePath('/dashboard')
   return { ok: true }
@@ -60,6 +78,10 @@ export async function creerTraitement(data: SoinInput): Promise<ActionResult> {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
   }
   const supabase = sb()
+  const idempotencyKey =
+    parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
+      ? parsed.data.idempotency_key
+      : null
   const payload = clean({
     animal_id: parsed.data.animal_id || null,
     bande_id: parsed.data.bande_id || null,
@@ -72,9 +94,13 @@ export async function creerTraitement(data: SoinInput): Promise<ActionResult> {
     veterinaire: parsed.data.veterinaire || null,
     cout: typeof parsed.data.cout === 'number' ? parsed.data.cout : null,
     observations: parsed.data.observations || null,
+    idempotency_key: idempotencyKey,
   })
   const { error } = await supabase.from('traitements').insert(payload)
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    if (isIdempotencyDup(error)) return { ok: true, dedup: true }
+    return { ok: false, error: error.message }
+  }
   revalidatePath('/sanitaire')
   revalidatePath('/dashboard')
   return { ok: true }
@@ -86,6 +112,10 @@ export async function creerMortalite(data: PerteInput): Promise<ActionResult> {
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Données invalides' }
   }
   const supabase = sb()
+  const idempotencyKey =
+    parsed.data.idempotency_key && parsed.data.idempotency_key !== ''
+      ? parsed.data.idempotency_key
+      : null
   const payload = clean({
     animal_id: parsed.data.animal_id || null,
     bande_id: parsed.data.bande_id || null,
@@ -95,9 +125,13 @@ export async function creerMortalite(data: PerteInput): Promise<ActionResult> {
     diagnostic: parsed.data.diagnostic || null,
     autopsie: parsed.data.autopsie ?? false,
     observations: parsed.data.observations || null,
+    idempotency_key: idempotencyKey,
   })
   const { error } = await supabase.from('mortalites').insert(payload)
-  if (error) return { ok: false, error: error.message }
+  if (error) {
+    if (isIdempotencyDup(error)) return { ok: true, dedup: true }
+    return { ok: false, error: error.message }
+  }
 
   // Si la perte concerne un animal identifié → marquer l'animal comme mort
   if (parsed.data.animal_id) {

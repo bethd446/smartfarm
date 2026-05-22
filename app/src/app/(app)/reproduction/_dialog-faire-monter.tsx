@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -60,6 +60,12 @@ export function DialogFaireMonter({
   const open = openProp ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
   const today = new Date().toISOString().slice(0, 10)
+  // F2 P0-9 : 1 clé d'idempotence par ouverture du dialog (anti double-tap réseau lent)
+  const idempotencyKey = useMemo(
+    () => crypto.randomUUID(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [open]
+  )
 
   const {
     register,
@@ -85,7 +91,7 @@ export function DialogFaireMonter({
   const bcsValue = watch('bcs_truie')
 
   async function onSubmit(data: FormData) {
-    const res = await creerSaillie(data)
+    const res = await creerSaillie({ ...data, idempotency_key: idempotencyKey })
     if (res.ok) {
       toast.success('Montée enregistrée')
       reset()
@@ -135,7 +141,7 @@ export function DialogFaireMonter({
           </div>
 
           <div>
-            <Label htmlFor="verrat_id">Le mâle</Label>
+            <Label htmlFor="verrat_id">Verrat</Label>
             <select
               id="verrat_id"
               {...register('verrat_id')}
@@ -151,7 +157,7 @@ export function DialogFaireMonter({
           </div>
 
           <div>
-            <Label htmlFor="methode">Comment *</Label>
+            <Label htmlFor="methode">Méthode *</Label>
             <select
               id="methode"
               {...register('methode')}
@@ -165,7 +171,16 @@ export function DialogFaireMonter({
 
           <div>
             <Label htmlFor="date_saillie">Date de la montée *</Label>
-            <Input id="date_saillie" type="date" {...register('date_saillie')} />
+            <div className="flex gap-2">
+              <Input id="date_saillie" type="date" {...register('date_saillie')} className="flex-1" />
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setValue('date_saillie', new Date().toISOString().slice(0, 10), { shouldValidate: true, shouldDirty: true })}
+              >
+                Aujourd&apos;hui
+              </Button>
+            </div>
             {errors.date_saillie && (
               <p className={ERR_CLASS}>{errors.date_saillie.message}</p>
             )}

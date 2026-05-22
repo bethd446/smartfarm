@@ -10,6 +10,7 @@ export const schemaVaccin = z
     dose_ml: z.union([z.coerce.number().positive(), z.literal('')]).optional(),
     veterinaire: z.string().optional().or(z.literal('')),
     observations: z.string().optional().or(z.literal('')),
+    idempotency_key: z.string().uuid().optional().or(z.literal('')),
   })
   .refine((d) => !!d.animal_id || !!d.bande_id, {
     message: 'Choisir un animal OU une bande',
@@ -29,6 +30,7 @@ export const schemaSoin = z
     veterinaire: z.string().optional().or(z.literal('')),
     cout: z.union([z.coerce.number().min(0), z.literal('')]).optional(),
     observations: z.string().optional().or(z.literal('')),
+    idempotency_key: z.string().uuid().optional().or(z.literal('')),
   })
   .refine((d) => !!d.animal_id || !!d.bande_id, {
     message: 'Choisir un animal OU une bande',
@@ -44,6 +46,7 @@ export const schemaPerte = z
     diagnostic: z.string().optional().or(z.literal('')),
     autopsie: z.boolean().default(false),
     observations: z.string().optional().or(z.literal('')),
+    idempotency_key: z.string().uuid().optional().or(z.literal('')),
   })
   .refine((d) => !!d.animal_id || !!d.bande_id, {
     message: 'Choisir un animal OU une bande',

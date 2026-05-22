@@ -46,7 +46,7 @@ function diffDays(a: string, b: string): number | null {
   return Math.round((db - da) / (1000 * 60 * 60 * 24))
 }
 
-export function DialogEnleverPetits({
+export function DialogSevrage({
   trigger,
   mises_bas_sans_sevrage,
 }: {
@@ -104,7 +104,7 @@ export function DialogEnleverPetits({
   async function onSubmit(data: FormData) {
     const res = await creerSevrage(data)
     if (res.ok) {
-      toast.success('Petits enlevés enregistrés')
+      toast.success('Sevrage enregistré')
       reset()
       setOpen(false)
     } else {

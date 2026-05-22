@@ -57,7 +57,7 @@ function canProceed(step: number, values: FormData): boolean {
   return true
 }
 
-export function DialogElleAFait({
+export function DialogMiseBas({
   trigger,
   saillies,
 }: {
@@ -199,6 +199,7 @@ function StepTruie({
 }) {
   const {
     register,
+    setValue,
     formState: { errors },
   } = methods
   return (
@@ -230,7 +231,16 @@ function StepTruie({
 
       <div>
         <Label htmlFor="date_mise_bas">Date *</Label>
-        <Input id="date_mise_bas" type="date" {...register('date_mise_bas')} />
+        <div className="flex gap-2">
+          <Input id="date_mise_bas" type="date" {...register('date_mise_bas')} className="flex-1" />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setValue('date_mise_bas', new Date().toISOString().slice(0, 10), { shouldValidate: true, shouldDirty: true })}
+          >
+            Aujourd&apos;hui
+          </Button>
+        </div>
         {errors.date_mise_bas && (
           <p className={ERR_CLASS}>{errors.date_mise_bas.message}</p>
         )}

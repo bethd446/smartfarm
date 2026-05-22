@@ -8,8 +8,8 @@ import { ExportButton } from '@/components/export-button'
 import { Baby, Plus, Scissors } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { TERRAIN } from '@/lib/terrain-labels'
-import { DialogElleAFait } from './_dialog-elle-a-fait'
-import { DialogEnleverPetits } from './_dialog-enlever-petits'
+import { DialogMiseBas } from './_dialog-mise-bas'
+import { DialogSevrage } from './_dialog-sevrage'
 
 export const metadata: Metadata = {
   title: 'Mises bas & Sevrages — Smart Farm',
@@ -89,7 +89,7 @@ export default async function MisesBasPage() {
         </div>
         <div className="flex gap-2">
           <ExportButton table="mises_bas" />
-          <DialogEnleverPetits
+          <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
             trigger={
               <Button variant="outline" size="lg" className="h-12 text-base">
@@ -98,7 +98,7 @@ export default async function MisesBasPage() {
               </Button>
             }
           />
-          <DialogElleAFait
+          <DialogMiseBas
             saillies={saillesPourMb}
             trigger={
               <Button size="lg" className="h-12 text-base">
@@ -309,7 +309,7 @@ export default async function MisesBasPage() {
                 {sev && (
                   <div className="mt-2 pt-2 border-t border-[var(--sf-line)] text-xs">
                     <div className="font-semibold text-[var(--sf-success-ink,#1F3414)] mb-1">
-                      ✓ Petits enlevés le{' '}
+                      ✓ Sevrage effectué le{' '}
                       {new Date(sev.date_sevrage).toLocaleDateString('fr-FR')}
                     </div>
                     <div className="flex justify-between">

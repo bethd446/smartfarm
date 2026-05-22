@@ -113,7 +113,7 @@ export const REGLES_ALERTES: Record<string, RegleAlerte> = {
   'R11-aliment-rupture-prevue': {
     nom: 'Rupture de stock prévue',
     description:
-      'Matière première en cours de rupture sous 7 jours d\u2019après la consommation moyenne 30 j.',
+      'Matière première en cours de rupture sous 3 jours d\u2019après la consommation moyenne 30 j (max 3 alertes / ferme — top critiques).',
     gravite_default: 'moyenne',
     categorie: 'nutrition',
   },

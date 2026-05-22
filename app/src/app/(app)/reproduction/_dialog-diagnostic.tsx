@@ -283,11 +283,21 @@ export function DialogDiagnostic({
 
             <div>
               <Label htmlFor="date_diagnostic">Date du diagnostic *</Label>
-              <Input
-                id="date_diagnostic"
-                type="date"
-                {...register('date_diagnostic')}
-              />
+              <div className="flex gap-2">
+                <Input
+                  id="date_diagnostic"
+                  type="date"
+                  {...register('date_diagnostic')}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setValue('date_diagnostic', new Date().toISOString().slice(0, 10), { shouldValidate: true, shouldDirty: true })}
+                >
+                  Aujourd&apos;hui
+                </Button>
+              </div>
               {errors.date_diagnostic && (
                 <p className={ERR_CLASS}>{errors.date_diagnostic.message}</p>
               )}

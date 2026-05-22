@@ -30,6 +30,8 @@ export const miseBasSchema = z
       .optional()
       .or(z.literal('')),
     observations: z.string().optional().or(z.literal('')),
+    // F2 P0-9 : clé d'idempotence générée côté client
+    idempotency_key: z.string().uuid().optional().or(z.literal('')),
   })
   .refine(
     (d) =>
@@ -62,6 +64,7 @@ export const sevrageSchema = z.object({
     .optional()
     .or(z.literal('')),
   observations: z.string().optional().or(z.literal('')),
+  idempotency_key: z.string().uuid().optional().or(z.literal('')),
 })
 
 export type CreerSevrageInput = z.input<typeof sevrageSchema>
