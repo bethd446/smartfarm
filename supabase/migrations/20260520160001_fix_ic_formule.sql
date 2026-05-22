@@ -151,7 +151,12 @@ refresh materialized view mv_kpi_bande;
 -- mv_kpi_ferme dépend (en SELECT) de mv_kpi_bande pour ic_moyen. Comme les MV
 -- sont matérialisées (pas live), Postgres ne propage pas de CASCADE, mais on
 -- la rafraîchit explicitement pour propager les nouveaux IC.
-refresh materialized view mv_kpi_ferme;
+do $$
+begin
+  if exists (select 1 from pg_matviews where matviewname = 'mv_kpi_ferme') then
+    refresh materialized view mv_kpi_ferme;
+  end if;
+end $$;
 
 -- ----------------------------------------------------------------------------
 -- 6. FIX grant trop large sur refresh_kpi_views() : retirer execute à `anon`

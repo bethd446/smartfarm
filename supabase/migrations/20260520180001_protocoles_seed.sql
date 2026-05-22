@@ -103,4 +103,10 @@ end;
 $$;
 
 -- 3) Exécution du seed sur la ferme DEMO -------------------------------------
-select public.seed_protocoles_standards('00000000-0000-0000-0000-000000000001'::uuid);
+-- Conditionnel : skip si la ferme demo n'existe pas (cas cloud vierge avant seed-demo-data.sql)
+do $$
+begin
+  if exists (select 1 from public.fermes where id = '00000000-0000-0000-0000-000000000001'::uuid) then
+    perform public.seed_protocoles_standards('00000000-0000-0000-0000-000000000001'::uuid);
+  end if;
+end $$;

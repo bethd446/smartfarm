@@ -294,5 +294,11 @@ end;
 $$;
 
 -- 4) Exécution des seeds sur la ferme DEMO -----------------------------------
-select public.seed_matieres_premieres_standards('00000000-0000-0000-0000-000000000001'::uuid);
-select public.seed_concentres_industriels_standards('00000000-0000-0000-0000-000000000001'::uuid);
+-- Conditionnel : skip si la ferme demo n'existe pas (cas cloud vierge)
+do $$
+begin
+  if exists (select 1 from public.fermes where id = '00000000-0000-0000-0000-000000000001'::uuid) then
+    perform public.seed_matieres_premieres_standards('00000000-0000-0000-0000-000000000001'::uuid);
+    perform public.seed_concentres_industriels_standards('00000000-0000-0000-0000-000000000001'::uuid);
+  end if;
+end $$;
