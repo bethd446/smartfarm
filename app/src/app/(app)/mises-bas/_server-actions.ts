@@ -36,14 +36,17 @@ export async function creerMiseBas(
       }
     }
 
+    // Phase A compat : les colonnes legacy (date_mise_bas, nes_morts, nes_totaux,
+    // duree_minutes) sont GENERATED ALWAYS côté BDD → non-insertables.
+    // On insère dans les colonnes physiques (date_mb, morts_nes, duree_mb_minutes).
+    // nes_totaux est recalculé côté BDD via une colonne GENERATED.
     const payload: Record<string, unknown> = {
       saillie_id: d.saillie_id,
       truie_id: saillie.truie_id,
       bande_id: saillie.bande_id,
-      date_mise_bas: d.date_mise_bas,
-      nes_totaux: d.nes_totaux,
+      date_mb: d.date_mise_bas,
       nes_vivants: d.nes_vivants,
-      nes_morts: d.nes_morts,
+      morts_nes: d.nes_morts,
       momifies: d.momifies,
       ecrases: d.ecrases,
       assistance: d.assistance,
@@ -52,7 +55,7 @@ export async function creerMiseBas(
     if (d.poids_portee_kg !== '' && d.poids_portee_kg !== undefined)
       payload.poids_portee_kg = d.poids_portee_kg
     if (d.duree_minutes !== '' && d.duree_minutes !== undefined)
-      payload.duree_minutes = d.duree_minutes
+      payload.duree_mb_minutes = d.duree_minutes
     if (d.bcs_truie !== '' && d.bcs_truie !== undefined)
       payload.bcs_truie = d.bcs_truie
     if (d.observations) payload.observations = d.observations

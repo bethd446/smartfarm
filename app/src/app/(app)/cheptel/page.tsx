@@ -1,13 +1,13 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageTitle } from '@/components/ui/page-title'
-import { PiggyBank } from 'lucide-react'
+import { PiggyBank, Baby, Mars, Layers } from 'lucide-react'
 import { CheptelActions } from './_actions'
 import { CheptelRow, CheptelRowActions } from './_row-actions'
 import { toneTruie } from '@/lib/colors'
-import { categorieLabel } from '@/lib/terrain-labels'
 
 export const metadata: Metadata = {
   title: 'Cheptel — Smart Farm',
@@ -21,17 +21,98 @@ const TONE_TO_VARIANT = {
   neutre: 'secondary',
 } as const
 
-export default async function CheptelPage() {
+type TabKey = 'truies' | 'verrats' | 'porcelets' | 'portees'
+
+const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: 'truies', label: 'Truies', icon: PiggyBank },
+  { key: 'verrats', label: 'Verrats', icon: Mars },
+  { key: 'porcelets', label: 'Porcelets', icon: Baby },
+  { key: 'portees', label: 'Portées', icon: Layers },
+]
+
+const CAT_TRUIES = ['truie', 'cochette'] as const
+const CAT_VERRATS = ['verrat'] as const
+const CAT_PORCELETS = [
+  'porcelet_lait',
+  'porcelet_sevre',
+  'porcelet_croissance',
+  'porc_engraissement',
+  'porc_finition',
+] as const
+
+function isTab(v: string | undefined): v is TabKey {
+  return v === 'truies' || v === 'verrats' || v === 'porcelets' || v === 'portees'
+}
+
+export default async function CheptelPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string; q?: string }>
+}) {
+  const sp = (await searchParams) ?? {}
+  const tab: TabKey = isTab(sp.tab) ? sp.tab : 'truies'
+  const q = (sp.q ?? '').trim()
+
   const sb = await createClient()
-  const [{ data: animaux }, { data: races }] = await Promise.all([
-    sb.from('animaux').select('*, races(nom)').order('tag'),
-    sb.from('races').select('id, nom').order('nom'),
+
+  // === Compteurs en parallèle (head:true → uniquement count, payload minimal) ===
+  const countsSettled = await Promise.allSettled([
+    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F'),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_VERRATS as unknown as string[]),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_PORCELETS as unknown as string[]),
+    sb.from('portees').select('*', { count: 'exact', head: true }),
   ])
+  const counts: Record<TabKey, number | null> = {
+    truies: countsSettled[0].status === 'fulfilled' ? (countsSettled[0].value.count ?? 0) : null,
+    verrats: countsSettled[1].status === 'fulfilled' ? (countsSettled[1].value.count ?? 0) : null,
+    porcelets: countsSettled[2].status === 'fulfilled' ? (countsSettled[2].value.count ?? 0) : null,
+    portees: countsSettled[3].status === 'fulfilled' ? (countsSettled[3].value.count ?? 0) : null,
+  }
+
+  // === Données pour onglet actif ===
+  const racesP = sb.from('races').select('id, nom').order('nom')
+
+  let animaux: any[] = []
+  let portees: any[] = []
+
+  if (tab === 'portees') {
+    let pq = sb
+      .from('portees')
+      .select('*, truie:truie_id(tag, nom), mb:mb_id(date_mb, nes_vivants, morts_nes, momifies)')
+      .order('created_at', { ascending: false })
+    const { data } = await pq
+    portees = data ?? []
+    if (q) {
+      const qLow = q.toLowerCase()
+      portees = portees.filter((p: any) => {
+        const t = String(p.truie?.tag ?? '').toLowerCase()
+        const n = String(p.truie?.nom ?? '').toLowerCase()
+        const c = String(p.code ?? p.numero ?? '').toLowerCase()
+        return t.includes(qLow) || n.includes(qLow) || c.includes(qLow)
+      })
+    }
+  } else {
+    let aq = sb.from('animaux').select('*, races(nom)').order('tag')
+    if (tab === 'truies') {
+      aq = aq.in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F')
+    } else if (tab === 'verrats') {
+      aq = aq.in('categorie', CAT_VERRATS as unknown as string[])
+    } else if (tab === 'porcelets') {
+      aq = aq.in('categorie', CAT_PORCELETS as unknown as string[])
+    }
+    if (q) {
+      aq = aq.ilike('tag', `%${q}%`)
+    }
+    const { data } = await aq
+    animaux = data ?? []
+  }
+
+  const { data: races } = await racesP
 
   return (
     <div className="space-y-6">
-      {/* === Header de page : PageTitle unifié === */}
-      <div className="flex items-center justify-between gap-4">
+      {/* === Header de page === */}
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <PageTitle
             eyebrow="ÉLEVAGE"
@@ -44,32 +125,121 @@ export default async function CheptelPage() {
             className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
-            {animaux?.length ?? 0} animaux sur la ferme
+            {(counts.truies ?? 0) + (counts.verrats ?? 0)} reproducteurs ·{' '}
+            {counts.porcelets ?? 0} porcelets · {counts.portees ?? 0} portées
           </p>
         </div>
         <CheptelActions races={races ?? []} />
       </div>
 
-      {/* === Tableau carnet : pas de Card englobante (cf. brief Vague 3) === */}
-      {(animaux ?? []).length === 0 ? (
-        <EmptyState
-          icon={PiggyBank}
-          title="Le cheptel est vide"
-          description="Aucun animal n'est encore enregistré sur la ferme. Ajoute ta première truie, ton premier verrat ou ta première cochette pour commencer."
-        />
+      {/* === Onglets (Link-based, server-friendly) === */}
+      <nav
+        aria-label="Catégories du cheptel"
+        className="flex gap-1 border-b border-[var(--sf-line)] overflow-x-auto"
+      >
+        {TABS.map(({ key, label, icon: Icon }) => {
+          const active = key === tab
+          const c = counts[key]
+          return (
+            <Link
+              key={key}
+              href={`/cheptel?tab=${key}`}
+              aria-current={active ? 'page' : undefined}
+              className={[
+                'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold whitespace-nowrap',
+                'border-b-2 -mb-px transition-colors',
+                active
+                  ? 'border-[var(--sf-primary)] text-[var(--sf-primary)]'
+                  : 'border-transparent text-[var(--sf-muted)] hover:text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]/40',
+              ].join(' ')}
+              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="uppercase tracking-wide">{label}</span>
+              <Badge
+                variant={active ? 'secondary' : 'outline'}
+                className="ml-1 tabular-nums"
+              >
+                {c ?? '—'}
+              </Badge>
+            </Link>
+          )
+        })}
+      </nav>
+
+      {/* === Barre recherche (form GET → searchParams) === */}
+      <form
+        method="get"
+        action="/cheptel"
+        className="flex flex-wrap items-end gap-2"
+      >
+        <input type="hidden" name="tab" value={tab} />
+        <label className="flex-1 min-w-[200px]">
+          <span
+            className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-1"
+            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          >
+            Rechercher
+          </span>
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder={
+              tab === 'portees' ? 'Code portée, tag ou nom truie…' : 'Tag (ex : B.22)…'
+            }
+            className="h-10 w-full rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] px-3 text-sm text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]/30"
+          />
+        </label>
+        <button
+          type="submit"
+          className="h-10 rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface-2)]/40 px-4 text-sm font-semibold text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]"
+        >
+          Filtrer
+        </button>
+        {q ? (
+          <Link
+            href={`/cheptel?tab=${tab}`}
+            className="h-10 inline-flex items-center px-3 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-ink)]"
+          >
+            Effacer
+          </Link>
+        ) : null}
+      </form>
+
+      {/* === Contenu onglet === */}
+      {tab === 'portees' ? (
+        <PorteesTable rows={portees} />
       ) : (
-      <section aria-labelledby="cheptel-liste-titre">
-        <h2
-          id="cheptel-liste-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-3"
-        >
-          Liste des animaux
-        </h2>
-        <h3
-          className="font-[family-name:var(--sf-font-display)] text-sm uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-2"
-        >
-          Truies, verrats et cochettes enregistrés
-        </h3>
+        <AnimauxTable rows={animaux} tab={tab} />
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Sous-composants
+// ─────────────────────────────────────────────────────────────────────────────
+
+function AnimauxTable({ rows, tab }: { rows: any[]; tab: TabKey }) {
+  if (rows.length === 0) {
+    return (
+      <EmptyState
+        icon={PiggyBank}
+        title={
+          tab === 'truies'
+            ? 'Aucune truie ni cochette'
+            : tab === 'verrats'
+            ? 'Aucun verrat'
+            : 'Aucun porcelet'
+        }
+        description="Aucun animal ne correspond aux filtres en cours."
+      />
+    )
+  }
+
+  return (
+    <section aria-labelledby="cheptel-liste-titre">
       <div className="overflow-x-auto">
         <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
           <thead
@@ -93,7 +263,7 @@ export default async function CheptelPage() {
             </tr>
           </thead>
           <tbody>
-            {(animaux ?? []).map((a: any) => {
+            {rows.map((a: any) => {
               const tone = toneTruie(a.rang_porte, a.statut)
               const aSortir = tone === 'attendu' && a.statut === 'actif'
               const statutVariant = aSortir ? 'warning' : TONE_TO_VARIANT[tone]
@@ -117,7 +287,9 @@ export default async function CheptelPage() {
                       {a.categorie}
                     </Badge>
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink-soft)]">{a.races?.nom ?? '—'}</td>
+                  <td className="py-3 pr-4 text-[var(--sf-ink-soft)]">
+                    {a.races?.nom ?? '—'}
+                  </td>
                   <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
                     {a.date_naissance
                       ? new Date(a.date_naissance).toLocaleDateString('fr-FR')
@@ -138,8 +310,84 @@ export default async function CheptelPage() {
           </tbody>
         </table>
       </div>
-      </section>
-      )}
-    </div>
+    </section>
+  )
+}
+
+function PorteesTable({ rows }: { rows: any[] }) {
+  if (rows.length === 0) {
+    return (
+      <EmptyState
+        icon={Layers}
+        title="Aucune portée enregistrée"
+        description="Les portées seront listées ici dès la première mise-bas saisie."
+      />
+    )
+  }
+
+  return (
+    <section aria-labelledby="cheptel-portees-titre">
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
+          <thead
+            className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
+            style={{
+              fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+              fontSize: '11px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}
+          >
+            <tr>
+              <th className="py-3 pr-4 font-semibold">Code</th>
+              <th className="py-3 pr-4 font-semibold">Truie</th>
+              <th className="py-3 pr-4 font-semibold">Date MB</th>
+              <th className="py-3 pr-4 font-semibold">Nés vivants</th>
+              <th className="py-3 pr-4 font-semibold">Morts-nés</th>
+              <th className="py-3 pr-4 font-semibold">Effectif actuel</th>
+              <th className="py-3 pr-4 font-semibold">Phase</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((p: any) => {
+              const truieTag = p.truie?.tag ?? '—'
+              const truieNom = p.truie?.nom ?? null
+              const dateMb = p.mb?.date_mb ?? p.date_mise_bas ?? null
+              const nv = p.mb?.nes_vivants ?? p.nes_vivants ?? null
+              const mn = p.mb?.morts_nes ?? null
+              return (
+                <tr
+                  key={p.id}
+                  className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
+                >
+                  <td className="py-3 pr-4 font-mono font-bold text-[var(--sf-ink)]">
+                    {p.code ?? p.numero ?? '—'}
+                  </td>
+                  <td className="py-3 pr-4 text-[var(--sf-ink)]">
+                    <span className="font-mono font-bold">{truieTag}</span>
+                    {truieNom ? <span className="text-[var(--sf-muted)] ml-2">{truieNom}</span> : null}
+                  </td>
+                  <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
+                    {dateMb ? new Date(dateMb).toLocaleDateString('fr-FR') : '—'}
+                  </td>
+                  <td className="py-3 pr-4 tabular-nums">{nv ?? '—'}</td>
+                  <td className="py-3 pr-4 tabular-nums">{mn ?? '—'}</td>
+                  <td className="py-3 pr-4 tabular-nums">{p.effectif_actuel ?? '—'}</td>
+                  <td className="py-3 pr-4">
+                    {p.phase ? (
+                      <Badge variant="outline" className="capitalize">
+                        {p.phase}
+                      </Badge>
+                    ) : (
+                      '—'
+                    )}
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+    </section>
   )
 }
