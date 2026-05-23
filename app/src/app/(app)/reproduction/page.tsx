@@ -21,7 +21,7 @@ export default async function ReproductionPage() {
   const { data: saillies } = await sb
     .from('saillies')
     .select(
-      `*, truie:truie_id(tag,nom), verrat:verrat_id(tag,nom), diagnostics_gestation(resultat,date_diagnostic)`
+      `*, truie:truie_id(tag,nom), verrat:verrat_id(tag,nom), diagnostics_gestation(resultat,date_diag)`
     )
     .order('date_saillie', { ascending: false })
 
