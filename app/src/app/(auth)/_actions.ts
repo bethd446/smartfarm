@@ -19,26 +19,41 @@ import { redirect } from 'next/navigation'
 
 async function createAuthClient() {
   const cookieStore = await cookies()
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            )
-          } catch {
-            // Server component contexte — ignore (route handler set cookies)
-          }
-        },
+  // Lecture runtime des env vars — fallback sur SUPABASE_URL/SUPABASE_ANON_KEY
+  // (variants non-NEXT_PUBLIC_*) car Next.js 16 / Turbopack inline les NEXT_PUBLIC_*
+  // au build time. Si la build se fait sans elles (cas Hostinger Cloud), les
+  // Server Actions reçoivent undefined → @supabase/ssr crash.
+  const url =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    ''
+  const key =
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    ''
+
+  if (!url || !key) {
+    throw new Error(
+      `Supabase env vars manquantes au runtime — url=${url ? 'OK' : 'MISSING'} key=${key ? 'OK' : 'MISSING'}. Vérifier hPanel.`,
+    )
+  }
+
+  return createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          )
+        } catch {
+          // Server component contexte — ignore (route handler set cookies)
+        }
       },
     },
-  )
+  })
 }
 
 export type AuthResult =
@@ -70,27 +85,9 @@ export async function connexionAction(_prev: AuthResult | null, formData: FormDa
     email = data as string
   }
 
-  // ULTRA DEBUG : tracer ce que @supabase/ssr envoie réellement
-  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '(undefined)'
-  const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '(undefined)'
-
-  // Test 1: appel direct REST sans @supabase/ssr (pour comparer)
-  let directResult = ''
-  try {
-    const r = await fetch(`${supaUrl}/auth/v1/token?grant_type=password`, {
-      method: 'POST',
-      headers: { 'apikey': supaKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-    directResult = `DIRECT_${r.status}_${(await r.text()).substring(0, 80)}`
-  } catch (e) {
-    directResult = `DIRECT_THROW_${String(e).substring(0, 80)}`
-  }
-
-  // Test 2: via @supabase/ssr (le code actuel)
   const { error } = await sb.auth.signInWithPassword({ email, password })
   if (error) {
-    return { error: `SSR:${error.message}/${error.status}/${error.code} | URL:${supaUrl.substring(0,40)} | KEY:${supaKey.substring(0,30)}...len${supaKey.length} | ${directResult}` }
+    return { error: 'Identifiant ou mot de passe incorrect' }
   }
 
   // Marquer la dernière connexion (best-effort, ne bloque pas le login)
