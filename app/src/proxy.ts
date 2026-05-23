@@ -149,10 +149,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // ⚠️ Runtime Node.js obligatoire (pas edge) :
-  //   - Hostinger LiteSpeed/LSNODE ne supporte pas edge workers
-  //   - process.env.SMARTFARM_DEMO_MODE doit être lu au runtime, pas bake-time
-  runtime: 'nodejs',
+  // Note : depuis Next.js 16, Proxy tourne toujours en Node.js runtime
+  // (l'option `runtime: 'nodejs'` n'est plus autorisée et casse le build).
   matcher: [
     /*
      * Match toutes les routes SAUF :

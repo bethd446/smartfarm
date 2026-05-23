@@ -32,7 +32,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // R7-P1 V6 — `output: "standalone"` retiré (cause du 503 Hostinger).
+  // Hostinger Cloud lance `npm start` → `next start`, qui exige le mode
+  // serveur "default", PAS le mode standalone (qui veut un boot par
+  // `node .next/standalone/server.js` non utilisé sur cette infra).
+  // Les scripts scripts/patch-server-passenger.js + deploy-static-copy.sh
+  // (pour un futur déploiement Passenger custom) restent disponibles via
+  // `npm run build:standalone` si on bascule un jour vers ce mode.
   async headers() {
     return [
       {
