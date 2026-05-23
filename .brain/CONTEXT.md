@@ -32,6 +32,7 @@ Management API SQL via SUPABASE_ACCESS_TOKEN env (jamais commiter)
 
 ## COMPTE TEST PROD
 Email : 13smartfarm@gmail.com
+Password : Fermebio13
 Profil : SF-000001
 Ferme : "Smart Farm" id=fdba3bb2-85dd-4ac1-9ab3-713c750980dc, Yamoussoukro CI
 Cheptel : 17 truies + 2 verrats + 117 porcelets démarrage_2 + 10 saillies + 6 MB + 6 portées

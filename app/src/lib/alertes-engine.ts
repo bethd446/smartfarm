@@ -66,16 +66,29 @@ export const ORDRE_GRAVITE: Record<GraviteAlerte, number> = ORDRE_GRAVITE_REGLES
 // ---------------------------------------------------------------------------
 
 type AlerteRow = {
-  regle_id: string
-  cible_type: string
-  cible_id: string
-  cible_label: string | null
-  gravite: string
-  titre: string | null
-  description: string | null
-  lien_suggere: string | null
-  detecte_le: string | null
+  // View v_alertes_actives — schéma RÉEL (cf. migration 20260521000001)
+  id: string
   ferme_id?: string | null
+  type?: string | null
+  severity?: string | null
+  titre?: string | null
+  message?: string | null
+  date_evenement?: string | null
+  animal_id?: string | null
+  batiment_id?: string | null
+  portee_id?: string | null
+  created_at?: string | null
+  en_retard?: boolean | null
+  jours_retard?: number | null
+  // Champs legacy (compat si la view évolue) — facultatifs
+  regle_id?: string
+  cible_type?: string
+  cible_id?: string
+  cible_label?: string | null
+  gravite?: string
+  description?: string | null
+  lien_suggere?: string | null
+  detecte_le?: string | null
 }
 
 // ---------------------------------------------------------------------------
@@ -124,18 +137,51 @@ export async function getAlertesActives(
   return rows.map(normaliserAlerte)
 }
 
-/** Normalise une row SQL en `Alerte` typée (parse date, defaults). */
+/**
+ * Normalise une row SQL en `Alerte` typée.
+ *
+ * Mappe les noms de colonnes RÉELS de `v_alertes_actives` :
+ *   - severity (EN) → gravite (FR)
+ *   - message       → description
+ *   - date_evenement → detecte_le
+ *   - animal_id|batiment_id|portee_id → cible_id (premier non null)
+ *
+ * Si la view évolue et expose les colonnes "canoniques" (gravite, description,
+ * detecte_le, …), on utilise ces dernières en priorité — sinon fallback.
+ */
 function normaliserAlerte(r: AlerteRow): Alerte {
+  // Mapping severity EN → gravite FR
+  const severityToGravite: Record<string, GraviteAlerte> = {
+    critical: 'critique',
+    alert: 'élevée',
+    warning: 'moyenne',
+    info: 'info',
+  }
+  const rawGravite = r.gravite ?? r.severity ?? 'info'
+  const gravite: GraviteAlerte =
+    rawGravite in severityToGravite
+      ? severityToGravite[rawGravite]
+      : (rawGravite as GraviteAlerte)
+
+  // Cible : priorité regle_id legacy, sinon `type` view actuelle
+  const cible_type = (r.cible_type ?? r.type ?? 'animal') as CibleType
+  const cible_id =
+    r.cible_id ?? r.animal_id ?? r.batiment_id ?? r.portee_id ?? r.id
+
+  // Date détection
+  const detecteRaw = r.detecte_le ?? r.date_evenement ?? r.created_at
+  const detecte_le = detecteRaw ? new Date(detecteRaw) : new Date()
+
   return {
-    regle_id: r.regle_id,
-    cible_type: (r.cible_type as CibleType) ?? 'animal',
-    cible_id: r.cible_id,
+    regle_id: r.regle_id ?? r.type ?? r.id,
+    cible_type,
+    cible_id,
     cible_label: r.cible_label ?? '',
-    gravite: (r.gravite as GraviteAlerte) ?? 'info',
+    gravite,
     titre: r.titre ?? '',
-    description: r.description ?? '',
+    description: r.description ?? r.message ?? '',
     lien_suggere: r.lien_suggere ?? '#',
-    detecte_le: r.detecte_le ? new Date(r.detecte_le) : new Date(),
+    detecte_le,
     ferme_id: r.ferme_id ?? undefined,
   }
 }

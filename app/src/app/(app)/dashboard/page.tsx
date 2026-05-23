@@ -79,7 +79,13 @@ export default async function DashboardPage() {
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif'),
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'truie').eq('statut', 'actif'),
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'verrat').eq('statut', 'actif'),
-    sb.from('bandes').select('*', { count: 'exact', head: true }).eq('statut', 'active'),
+    // « Portées en cours » = mises_bas avec porcelets encore non sevrés.
+    // La table `bandes` étant vide (concept non utilisé pour l'instant),
+    // on remonte le nombre de portées récentes des 8 dernières semaines
+    // (durée max d'allaitement+sevrage). Plus parlant qu'un compteur figé à 0.
+    sb.from('mises_bas')
+      .select('*', { count: 'exact', head: true })
+      .gte('date_mb', new Date(Date.now() - 56 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)),
     sb.from('matieres_premieres').select('*').order('stock_actuel', { ascending: true }).limit(5),
     sb.from('mises_bas').select('*, animaux:truie_id(tag,nom)').order('date_mise_bas', { ascending: false }).limit(5),
     sb.from('v_calendrier_repro').select('*').limit(5),
@@ -168,7 +174,7 @@ export default async function DashboardPage() {
             </div>
             {/* Pied : bandes actives */}
             <div className="font-[family-name:var(--sf-font-display)] uppercase text-[10px] tracking-[0.14em] text-[var(--sf-subtle)]">
-              {nbBandesActives ?? 0} bande{(nbBandesActives ?? 0) > 1 ? 's' : ''} active{(nbBandesActives ?? 0) > 1 ? 's' : ''}
+              {nbBandesActives ?? 0} portée{(nbBandesActives ?? 0) > 1 ? 's' : ''} (8 dernières sem.)
             </div>
           </CardContent>
         </Card>
@@ -199,7 +205,7 @@ export default async function DashboardPage() {
           </Card>
           <Card className="flex-1">
             <CardContent className="flex flex-col justify-between h-full p-5">
-              <div className={eyebrowCls}>Bandes actives</div>
+              <div className={eyebrowCls}>Portées récentes</div>
               <div
                 className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink)] leading-none tabular-nums self-end"
                 style={{ fontSize: '28px' }}
@@ -297,9 +303,9 @@ export default async function DashboardPage() {
                 return (
                   <li key={e.id} className="flex items-center justify-between gap-3 py-3 min-h-[48px]">
                     <div className="flex items-center gap-3 min-w-0">
-                      <Badge variant={meta.variant}>
+                      <Badge variant={meta.variant} className="inline-flex items-center gap-1.5">
                         <PrioIcon className="size-3" aria-hidden />
-                        {meta.label}
+                        <span>{meta.label}</span>
                       </Badge>
                       <div className="min-w-0">
                         <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
