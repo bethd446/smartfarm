@@ -1,97 +1,161 @@
-# SMARTFARM — CONTEXT.md (caveman style, économique tokens)
-*Compact 23/05/2026 — Mode: import vérité terrain EasyFarm*
-
-## QUI / OÙ
-- User : Christophe Liegeois (Sr DevOps/Agritech, retour CI)
-- Project : Smart Farm (web-app gestion porcine multi-fermes)
-- Replace : PorcTrack 8 (abandonné mai 2026)
-- Prod live : https://smartfarm.group (HTTP 200, auth réelle OK)
-- Repo : github.com/bethd446/smartfarm PUBLIC
-
-## ADMIN COMPTE
-- 13smartfarm@gmail.com / Fermebio13
-- SF-655295, admin "Smart Farm CI-01"
-- ferme_id : 3b350176-d45c-4fea-a67e-eae4a5714aa3
+# SMART FARM — CONTEXT.md (cerveau projet, mode caveman)
+# Lu par tout sous-agent avant action. ≤ 200 lignes, télégraphique.
 
 ## STACK
-- Next.js 16 + React 19 + Tailwind v4 + shadcn/ui
-- Supabase Cloud tpzhxjzwlxwujboboyit
-- VPS Hostinger Hostinger Cloud, Traefik
-- 44 tables + 23 vues + 102 RLS policies
+Next 16.2.6 (Turbopack) · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Supabase Cloud
+PostgreSQL · Hostinger Cloud LSNODE/Passenger · output:"standalone" patché Passenger
 
-## RÈGLES OR
-1. **CAVEMAN** : briefs ≤200 lignes, sous-agents 3-5 fichiers max
-2. Sous-agents NE FONT PAS `npm run build` (orchestrateur centralise)
-3. Vues SQL : security_invoker=true + GRANT authenticated obligatoire
-4. Server actions : wrapper SSR cookies (jamais service_role direct)
-5. revalidatePath après chaque server action
-6. Migrations : `YYYYMMDDHHMMSS_*.sql`
-7. Vocab FR pro zootechnique (Saillie/Mise bas/Sevrage/Gestation/Cochette)
-8. Pas npm run build sous-agent — orchestrateur uniquement
+## PROD
+URL : https://smartfarm.group
+Repo : github.com/bethd446/smartfarm (branch main)
+Deploy auto sur push main → build Hostinger ~50s
+Build cmd : `npm run build` = next build + patch-server-passenger.js + deploy-static-copy.sh
+Start cmd : `npm start` = node .next/standalone/projects/smartfarm/app/server.js
 
-## SPRINT 3 - SQL APPLIQUÉ ✅
-Migration `20260522190000_portee_ration_fertilite_v2.sql` :
-- Table `portees` + trigger AFTER INSERT mises_bas → portée auto P-YYYYMM-NNN
-- animaux : portee_id, poids_actuel_kg, batiment_id, boucle_posee_le
-- batiments : ration_kg_jour, aliment_type, phase
-- enum phase étendu : demarrage_1, demarrage_2, croissance, finition
-- 10 bâtiments Smart Farm CI-01 stratégiques
-- 13 produits catalogue CI XOF Déc 2025
-- 4 vues fertilité/ration (security_invoker=true)
-- 2 RPC transferer_bande_phase + mortalité
+## SECRETS HOSTINGER (env vars actives, 8 vars)
+NEXT_PUBLIC_SUPABASE_URL=https://tpzhxjzwlxwujboboyit.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_VdYNHQZS-1ZMMSO4tpiVlg_bETYXHIT
+NEXT_PUBLIC_APP_URL=https://smartfarm.group
+NODE_ENV=production
+SMARTFARM_DEMO_MODE=false
+SUPABASE_SERVICE_ROLE_KEY=<.env.local>
+OPENROUTER_API_KEY=<.env.local>
+CHATBOT_SESSION_SECRET=<.env.local>
+(PORT/HOSTNAME SUPPRIMÉES — causaient boot loop Passenger)
 
-## DONNÉES PRÉSENTES BDD (À PURGER)
-- 17 truies FICTIVES TR001-TR017 (Croisé F1)
-- 2 verrats FICTIFS VR001-VR002 (Large White)
-- 120 porcelets FICTIFS PL001-PL120
-- Bande BD2-2026-05 FICTIVE
-- Diagnostics + saillies fictifs
-→ TOUT SOFT-DELETE avant import vérité EasyFarm
+## SUPABASE CLOUD (tpzhxjzwlxwujboboyit)
+50 tables / 31 vues / 18 functions / 42 triggers / 40 RLS policies
+Tables clés : utilisateurs, fermes, user_farms, animaux, saillies, mises_bas, sevrages,
+              porcelets, batiments, cases, pesees, alertes, donnees_metier
+Vues alias compat : utilisateur_fermes, v_calendrier_repro V2, v_saillies_a_diagnostiquer
+Management API SQL via SUPABASE_ACCESS_TOKEN env (jamais commiter)
 
-## CHEPTEL RÉEL EASYFARM (à importer)
-- **17 truies** (T01→T19 sauf T08/T17) boucles B.10→B.93
-- **2 verrats** : V01 Bobi B.89 LW + V02 Aligator B.100 Piétrain
-- **117 porcelets** (110 vivants + 7 malades, M56/F61)
-- Poids moy 10.4 kg au 19/05/2026
-- Tous → bâtiment **Démarrage 2** vrac (consigne user)
-- 6 truies CONFIRMÉES par photo cahier user :
-  - T01 Monette B.22 Flushing, MB 03/03, 10 vivants
-  - T02 Fillaou B.38 Flushing, MB 07/03, 14 vivants
-  - T03 Penelope B.23 Flushing, MB 06/03, 13 vivants
-  - T06 — B.93 Flushing, MB 14/03, 10 vivants (2 morts)
-  - T07 Choupette B.21 Flushing, MB 26/02, 6 vivants
-  - T09 Zapata B.31 Flushing, MB 07/03, 8 vivants
-- 11 truies à confirmer (statut + dernières MB/saillies)
-- 2 truies actuellement en loge maternité (lesquelles ?)
+## COMPTE TEST PROD
+Email : 13smartfarm@gmail.com
+Profil : SF-000001
+Ferme : "Smart Farm" id=fdba3bb2-85dd-4ac1-9ab3-713c750980dc, Yamoussoukro CI
+Cheptel : 17 truies + 2 verrats + 117 porcelets démarrage_2 + 10 saillies + 6 MB + 6 portées
+Pesées : 117 (B1-M -18.8% sévère, B1-F -2.6% normal, B3-M -38.3% sévère, B3-F +7.1%)
+Alertes auto : 54+ (sevrages retard, saillies non-diag, etc.)
 
-## INCOHÉRENCES DÉTECTÉES (à régulariser)
-- 55 boucles dédoublées M/F → convention user OK, ID BDD = boucle+sexe (B4-M / B4-F)
-- 2 vrais doublons :
-  - B45 femelle x2 → renommé `B45-F` / `B45-F-bis`
-  - B53 mâle x2 → renommé `B53-M` / `B53-M-bis`
-- 107/117 porcelets sans date_naissance + sans bande
-- Boucle "33" du cahier papier ≠ existe en CSV → probable B.93 (changement boucle physique)
+## DESIGN SYSTEM v1.0 (livré Claude Design)
+ZIP : /tmp/sf-design/release/smartfarm-design-v1/
+État : tokens.css + logos + favicons + fonts INTÉGRÉS commit c8a60f7
+       Composants HTML/CSS + screens NON ENCORE INTÉGRÉS dans React
 
-## PHOTOS CAHIER USER (vérité terrain)
-- Photo 1 : tableau saillies/MB manuscrit (vague 26/02→14/03 + B.24 le 01/04 13 porcelets)
-- Photo 2 : suivi maternité 9 loges (cases 1,2,3,4 lisibles)
-- Synthèse user partielle (6 truies confirmées + 5 partielles + reste à venir)
+Composants livrés (HTML+CSS pur, à porter en React shadcn) :
+  - alert-critique / alert-attention / alert-info
+  - card-kpi
+  - form-fields
+  - sidebar
+  - table-cheptel
+  - widget-cycle-truie
 
-## FICHIERS RÉFÉRENCE
-- Export EasyFarm : `/tmp/porctrack_audit/porctrack-export-2026-05-19/`
-- CSV truies/verrats/porcelets/saillies/bandes/pesees (filtrage `ferme=EasyFarm` obligatoire — fichier contient aussi "Ferme Audit Test" et "Ma ferme" à exclure)
+Screens livrés (HTML+CSS, à transcrire en routes Next) :
+  - 01-landing      → src/app/page.tsx
+  - 02-connexion    → src/app/(auth)/connexion/page.tsx
+  - 03-dashboard    → src/app/(app)/dashboard/page.tsx
+  - 04-cheptel-truies, 05-portees → src/app/(app)/cheptel/page.tsx
+  - 06-fiche-truie  → src/app/(app)/cheptel/[id]/page.tsx
+  - 07-reproduction → src/app/(app)/reproduction/page.tsx
+  - 08-mises-bas    → src/app/(app)/mises-bas/page.tsx
+  - 09-alertes      → src/app/(app)/alertes/page.tsx
+  - 10-sanitaire    → src/app/(app)/sanitaire/page.tsx
 
-## EN ATTENTE USER
-- JSON consolidé depuis autre session Claude (prompt fourni)
-- T IDs réordonnés proprement (T01→T17 séquentiel sans trous)
-- Réponse : 2 truies en loge maternité actuellement = lesquelles
-- Réponse : poids actualisé ou on garde 10.4 kg du 19/05
+Vibe : carnet d'éleveur tropical CI, austère pro vétérinaire, PAS SaaS US
+Palette : sahel-700 #2D4A1F dominant + or-600 #A16207 accent + latérite-700 #9A3412
+          mil-50 #FFFBEB surface + terre-900 #1C1917 ink
+Fonts : Big Shoulders Display (titres+chiffres) + Instrument Sans (body)
+Style : bordures fines, ombres parcimonieuses, stamp-ring CTAs, tabular-nums
+        uppercase letter-spaced, F-pattern dashboard (critiques top-left)
 
-## PROCHAINE ACTION
-Attendre JSON user → script import propre :
-1. Soft-delete 17 fictives + 2 fictifs + 120 fictifs + bande BD2
-2. Insert 17 vraies truies (avec MB historiques + saillies courantes)
-3. Insert 2 verrats Bobi + Aligator
-4. Insert 117 porcelets tous Démarrage 2 (avec doublons résolus)
-5. Insert portées historiques (vague 26/02→14/03 + 01/04)
-6. Vérif effectifs par bâtiment + dashboard live test
+## TOKENS CSS DÉJÀ CÂBLÉS dans app/src/app/globals.css
+--sf-primary (#2D4A1F), --sf-accent (#A16207), --sf-terre (#9A3412)
+--sf-ink, --sf-ink-secondary, --sf-muted, --sf-line, --sf-surface-0/1/2
+--sf-danger, --sf-warning, --sf-success, --sf-focus
+--sf-alert-{critical|critique,high|attention,medium|info}-{bg,ink,bd,border}
+--sf-success/warning/danger/info/neutral-{bg,ink,border} (paires sémantiques)
+--sf-radius-{xs,sm,md,lg,pill}, --sf-space-{xs,sm,md,lg,xl,2xl,3xl}
+--sf-touch-{min,default,comfort} (44/48/56)
+--sf-elev-{0..5}
+--sf-stamp-{ring,ring-accent,press}
+--sf-font-display ("Big Shoulders Display"...), --sf-font-body ("Instrument Sans"...)
+Dark mode + html[data-contrast="high"] couverts.
+
+## VOCABULAIRE FR PRO ZOOTECHNIQUE (RESPECTER STRICTEMENT)
+✅ OK : Saillie, Mise bas, Sevrage, Diagnostic gestation, Cochette, Truie {gestante|allaitante|vide}, Réforme, Verrat, Porcelet, Échographie, Bande, Cycle, Lot
+❌ INTERDIT : "faire monter", "elle a fait", "enlever les petits", "petite cochonne", "truc"...
+
+## RÈGLES ABSOLUES
+1. EPCV strict (Explore-Plan-Code-Verify) avant tout commit
+2. PAS de seed démo, PAS de fallback magique, schéma propre
+3. Migrations YYYYMMDDHHMMSS_*.sql, vues SQL security_invoker=true + GRANT
+4. Multi-tenant via RLS current_farm_id() + user_farms
+5. Climat tropical CI (24-32°C), GMQ -25g/+1°C >24°C, devise XOF
+6. Races CI : LW, Landrace, Piétrain, Duroc, Korhogo
+7. Cible UI : éleveur Android 4G, plein soleil 1500lx, mains sales, lecture 3s
+8. Validation visuelle OBLIGATOIRE : browser_console computed styles + playwright screenshot
+   PAS de "HTTP 200 = livré" — vérifier rendu réel
+
+## ARCHITECTURE FICHIERS CLÉS
+app/
+├── next.config.ts            (output:"standalone" RESTAURÉ)
+├── package.json              (build:standalone + start:node server.js standalone)
+├── scripts/patch-server-passenger.js  (rewrite server.js pour Passenger)
+├── deploy-static-copy.sh     (sync .next/static → public/_next/static + standalone)
+├── public/
+│   ├── logo-smartfarm.svg    (v1.0 Cachet Ivoire)
+│   ├── glyph-smartfarm.svg
+│   ├── manifest.json
+│   ├── favicon{-16,-32,-48}.png + favicon.ico + apple-touch + android-192/512
+│   ├── fonts/{BigShoulders,InstrumentSans}-{Regular,Bold}.woff2
+│   └── logo/  (7 variants v1.0)
+├── src/
+│   ├── app/
+│   │   ├── globals.css          (tokens v1.0 + dark + high-contrast)
+│   │   ├── layout.tsx           (metadata multi-icons + viewport)
+│   │   ├── page.tsx             (landing — À REFAIRE selon 01-landing.html)
+│   │   ├── (auth)/connexion/    (À REFAIRE selon 02-connexion.html)
+│   │   ├── (auth)/inscription/
+│   │   ├── (app)/dashboard/     (À REFAIRE selon 03-dashboard.html)
+│   │   ├── (app)/cheptel/       (4 onglets TRUIES/VERRATS/PORCELETS/PORTÉES OK)
+│   │   ├── (app)/cheptel/[id]/  (fiche truie — À REFAIRE selon 06)
+│   │   ├── (app)/reproduction/
+│   │   ├── (app)/mises-bas/
+│   │   ├── (app)/alertes/
+│   │   ├── (app)/sanitaire/
+│   │   └── (app)/layout.tsx     (sidebar — À REFAIRE selon sidebar.html)
+│   ├── components/
+│   │   ├── ui/                  (shadcn — alert, button, card, badge, input...)
+│   │   ├── sidebar.tsx          (legacy)
+│   │   ├── mobile-drawer.tsx
+│   │   └── app-shell.tsx
+│   ├── lib/
+│   │   ├── supabase/{client,server,ferme-context}.ts
+│   │   ├── chatbot/...
+│   │   └── i18n.ts (à créer pour glossaire FR centralisé)
+│   └── proxy.ts                 (ex-middleware, runtime forcé Node par Next 16)
+
+## TESTS REQUIS APRÈS CHAQUE MODIF
+1. TypeCheck : `npx tsc --noEmit` doit retourner 0 erreur
+2. Build : `npm run build` doit aller au bout sans erreur
+3. Playwright local : `node /tmp/check-css-real.js` pour vérifier rendu
+4. Smoke prod : curl HTTP 200 sur 8 routes (/, /connexion, /inscription,
+   /dashboard, /cheptel, /alertes, /sanitaire, /reproduction)
+
+## BUGS CONNUS À FIXER (à jour 2026-05-23 16:25)
+- Login 13smartfarm@gmail.com échoue (mot de passe perdu ?) → reset via Management API
+- Landing actuelle ≠ design v1.0 (utilise ancien code, 28/44/100% sont des chiffres
+  hardcodés au mauvais endroit, hero pas en stamp ring complet, pas de section
+  "Trois piliers" Big Shoulders propre)
+- Composants alertes shadcn non variant-isés sur les 3 niveaux v1.0
+- Pas de Widget Cycle Truie React (HTML+CSS du ZIP à porter)
+- Sidebar app n'utilise pas la structure sidebar.html du ZIP
+- Photo terrain manquante sur landing (placeholder ZIP a marius-avatar.webp à retirer)
+
+## INTERDITS ABSOLUS
+- Toucher next.config.ts ou package.json sans triple-check (cause de 503 répétés)
+- rm -rf public/_next (build artifact, géré par .gitignore + deploy-static-copy.sh)
+- Modifier les env vars Hostinger via le wizard "Connect Database" (corrompt PORT/HOSTNAME)
+- Inventer du vocabulaire métier (toujours valider contre glossaire FR pro)
+- Pousser sans avoir testé build + Playwright en local

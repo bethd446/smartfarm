@@ -72,7 +72,9 @@ export async function connexionAction(_prev: AuthResult | null, formData: FormDa
 
   const { error } = await sb.auth.signInWithPassword({ email, password })
   if (error) {
-    return { error: 'Identifiant ou mot de passe incorrect' }
+    // DEBUG TEMP : log précis du throw Supabase pour diagnostiquer
+    console.error('[connexionAction] Supabase auth error:', error.message, error.status, error.code, 'email:', email)
+    return { error: `DEBUG: ${error.message} (status ${error.status} code ${error.code}) email=${email}` }
   }
 
   // Marquer la dernière connexion (best-effort, ne bloque pas le login)

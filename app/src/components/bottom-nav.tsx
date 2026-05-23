@@ -56,7 +56,7 @@ export function BottomNav({ onOpenMore, alertesCount = 0 }: BottomNavProps) {
     <nav
       aria-label="Navigation principale mobile"
       className={cn(
-        'fixed bottom-0 inset-x-0 z-40 flex md:hidden',
+        'fixed bottom-0 inset-x-0 z-40 flex lg:hidden',
         'h-16 items-stretch justify-around',
         'bg-[var(--sf-surface-1)] border-t border-[var(--sf-line,rgba(0,0,0,0.08))]',
         'pb-[env(safe-area-inset-bottom)]',

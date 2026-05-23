@@ -3,16 +3,24 @@
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import { connexionAction, magicLinkAction, type AuthResult } from '../_actions'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { PasswordInput } from '@/components/ui/password-input'
 
 /**
- * Page Connexion — deux modes :
- *   1) Identifiant (email OU numéro client SF-XXXXXX) + mot de passe
- *   2) Magic link (lien email passwordless)
- * Toggle simple par lien texte. Mobile-first. Vocab FR pro.
+ * Smart Farm — Page connexion v1.0 (design system)
+ * -------------------------------------------------------------------------
+ * Form-side du split auth :
+ *  - back link + drapeau CI
+ *  - logo glyph 72px
+ *  - eyebrow "Connexion"
+ *  - H1 36px display
+ *  - lead
+ *  - form : input.input underline + btn.btn--primary stamp-ring
+ *  - toggle "Recevoir un lien magique" (mode passwordless)
+ *  - lien "Pas encore de compte ? Créer un compte"
+ *  - footer ARTCI
+ *
+ * Logique server-action CONSERVÉE :
+ *  - connexionAction (email/SF-XXXXXX + password) → redirect /dashboard
+ *  - magicLinkAction (email passwordless OTP)
  */
 export default function ConnexionPage() {
   const [mode, setMode] = useState<'password' | 'magic'>('password')
@@ -26,116 +34,160 @@ export default function ConnexionPage() {
   )
 
   return (
-    <section className="bg-[var(--sf-surface-1)] border border-[var(--sf-line)] rounded-lg p-6 sm:p-8">
-      <h1 className="font-[family-name:var(--sf-font-display)] uppercase tracking-tight text-2xl text-[var(--sf-ink)]">
-        Se connecter
-      </h1>
-      <p className="mt-1 text-sm text-[var(--sf-muted)]">
-        {mode === 'password'
-          ? 'Avec ton email ou ton numéro client SF-XXXXXX.'
-          : 'Reçois un lien magique par email — aucun mot de passe à retenir.'}
-      </p>
-
-      {mode === 'password' ? (
-        <form action={pwdAction} className="mt-6 space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="identifiant">Email ou numéro client</Label>
-            <Input
-              id="identifiant"
-              name="identifiant"
-              type="text"
-              autoComplete="username"
-              placeholder="ferme@exemple.ci ou SF-123456"
-              required
-              autoFocus
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="password">Mot de passe</Label>
-            <PasswordInput
-              id="password"
-              name="password"
-              autoComplete="current-password"
-              required
-            />
-          </div>
-
-          {pwdState && 'error' in pwdState && pwdState.error && (
-            <div role="alert" className="text-sm text-[var(--sf-terre,#9A3412)] bg-[var(--sf-surface-2,#FEF3C7)] border border-[var(--sf-terre,#9A3412)]/30 rounded-md px-3 py-2">
-              {pwdState.error}
-            </div>
-          )}
-
-          <Button type="submit" size="lg" className="w-full" disabled={pwdPending}>
-            {pwdPending ? 'Connexion…' : 'Se connecter'}
-          </Button>
-
-          <div className="flex items-center justify-between text-sm">
-            <button
-              type="button"
-              onClick={() => setMode('magic')}
-              className="text-[var(--sf-ink-deep,#14532D)] underline underline-offset-2 hover:text-[var(--sf-primary)]"
-            >
-              Recevoir un lien magique
-            </button>
-            <Link
-              href="/mot-de-passe-oublie"
-              className="text-[var(--sf-muted)] hover:text-[var(--sf-ink)]"
-            >
-              Mot de passe oublié ?
-            </Link>
-          </div>
-        </form>
-      ) : (
-        <form action={magicAction} className="mt-6 space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="email">Adresse email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              placeholder="ferme@exemple.ci"
-              required
-              autoFocus
-            />
-          </div>
-
-          {magicState && 'error' in magicState && magicState.error && (
-            <div role="alert" className="text-sm text-[var(--sf-terre,#9A3412)] bg-[var(--sf-surface-2,#FEF3C7)] border border-[var(--sf-terre,#9A3412)]/30 rounded-md px-3 py-2">
-              {magicState.error}
-            </div>
-          )}
-          {magicState && magicState.ok && (
-            <div role="status" className="text-sm text-[var(--sf-ink-deep,#14532D)] bg-[var(--sf-surface-2,#FEF3C7)] border border-[var(--sf-ink-deep,#14532D)]/20 rounded-md px-3 py-2">
-              {magicState.message}
-            </div>
-          )}
-
-          <Button type="submit" size="lg" className="w-full" disabled={magicPending}>
-            {magicPending ? 'Envoi…' : 'Envoyer le lien'}
-          </Button>
-
-          <button
-            type="button"
-            onClick={() => setMode('password')}
-            className="block text-sm text-[var(--sf-ink-deep,#14532D)] underline underline-offset-2 hover:text-[var(--sf-primary)]"
-          >
-            ← Revenir au mot de passe
-          </button>
-        </form>
-      )}
-
-      <div className="mt-8 pt-6 border-t border-[var(--sf-line)] text-center text-sm text-[var(--sf-muted)]">
-        Pas encore de compte ?{' '}
-        <Link
-          href="/inscription"
-          className="font-semibold text-[var(--sf-ink-deep,#14532D)] underline underline-offset-2 hover:text-[var(--sf-primary)]"
-        >
-          Créer un compte
+    <>
+      <div className="auth-form__head">
+        <Link href="/" className="auth-form__back">
+          ← Retour
         </Link>
+        <span className="flag-ci">
+          <span className="flag-ci__strip" aria-hidden="true">
+            <span style={{ background: '#F77F00', width: '33.3%' }} />
+            <span style={{ background: '#fff', width: '33.3%' }} />
+            <span style={{ background: '#009E60', width: '33.3%' }} />
+          </span>
+          Côte d&apos;Ivoire
+        </span>
       </div>
-    </section>
+
+      <div className="auth-form__body">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/logo/logo-full-color.svg"
+          alt="Smart Farm"
+          className="auth-form__logo"
+          width={72}
+          height={72}
+        />
+        <p className="eyebrow" style={{ marginTop: 24 }}>
+          Connexion
+        </p>
+        <h1 className="auth-form__h1">Connecte-toi à Smart&nbsp;Farm.</h1>
+        <p className="auth-form__lead">
+          {mode === 'password'
+            ? 'Saisis ton email ou ton numéro client SF — ou demande un lien magique.'
+            : 'Saisis ton email — on t\u2019envoie un lien magique pour entrer sans mot de passe.'}
+        </p>
+
+        {mode === 'password' ? (
+          <form action={pwdAction}>
+            <div className="field">
+              <label className="field__label" htmlFor="identifiant">
+                Email ou n° client SF
+              </label>
+              <input
+                className="input"
+                id="identifiant"
+                name="identifiant"
+                type="text"
+                autoComplete="username"
+                placeholder="ferme@exemple.ci ou SF-123456"
+                required
+                autoFocus
+              />
+              <div className="field__help">Ex : marius@ferme-ci01.com ou SF-000001</div>
+            </div>
+
+            <div className="field">
+              <label className="field__label" htmlFor="password">
+                Mot de passe
+              </label>
+              <input
+                className="input"
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+              />
+            </div>
+
+            {pwdState && 'error' in pwdState && pwdState.error && (
+              <div role="alert" className="auth-alert">
+                <div className="auth-alert__title">Connexion refusée</div>
+                <div>{pwdState.error}</div>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn--primary btn--lg btn--full"
+              disabled={pwdPending}
+              style={{ marginTop: 8 }}
+            >
+              {pwdPending ? 'Connexion…' : 'Se connecter →'}
+            </button>
+
+            <div className="toggle-row">
+              <button type="button" className="toggle-link" onClick={() => setMode('magic')}>
+                Recevoir un lien magique
+              </button>
+              <span style={{ margin: '0 8px', color: 'var(--sf-subtle)' }}>·</span>
+              <Link href="/mot-de-passe-oublie" className="toggle-link">
+                Mot de passe oublié&nbsp;?
+              </Link>
+            </div>
+          </form>
+        ) : (
+          <form action={magicAction}>
+            <div className="field">
+              <label className="field__label" htmlFor="email">
+                Adresse email
+              </label>
+              <input
+                className="input"
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="ferme@exemple.ci"
+                required
+                autoFocus
+              />
+              <div className="field__help">Le lien expire dans 15 minutes.</div>
+            </div>
+
+            {magicState && 'error' in magicState && magicState.error && (
+              <div role="alert" className="auth-alert">
+                <div className="auth-alert__title">Erreur</div>
+                <div>{magicState.error}</div>
+              </div>
+            )}
+            {magicState && magicState.ok && (
+              <div role="status" className="auth-alert auth-alert--ok">
+                <div className="auth-alert__title">✉ Lien envoyé</div>
+                <div>{magicState.message}</div>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btn btn--primary btn--lg btn--full"
+              disabled={magicPending}
+              style={{ marginTop: 8 }}
+            >
+              {magicPending ? 'Envoi…' : 'Envoyer le lien magique →'}
+            </button>
+
+            <div className="toggle-row">
+              <button type="button" className="toggle-link" onClick={() => setMode('password')}>
+                ← Revenir au mot de passe
+              </button>
+            </div>
+          </form>
+        )}
+
+        <div className="toggle-row" style={{ marginTop: 28 }}>
+          Pas encore de compte&nbsp;?{' '}
+          <Link href="/inscription" className="toggle-link">
+            Créer un compte
+          </Link>
+        </div>
+      </div>
+
+      <div className="auth-form__foot">
+        Smart Farm — plateforme déclarée à l&apos;ARTCI · Données hébergées en
+        UE · v1.0.0
+      </div>
+    </>
   )
 }

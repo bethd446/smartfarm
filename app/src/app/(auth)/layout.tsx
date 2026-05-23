@@ -1,49 +1,48 @@
 import type { ReactNode } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 
 /**
- * Smart Farm — Layout du segment (auth)
+ * Smart Farm — Layout (auth) v1.0
  * -------------------------------------------------------------------------
- * Pas de Sidebar / BottomNav ici (volontairement hors du groupe (app)).
- * Card centrée max-w-md, palette Terre & Mil, logo Cachet B en header.
- * Lisible sur mobile dès 320px, gros boutons (min-h-14) pour terrain.
+ * Split 2 colonnes :
+ *  - .auth-hero (gauche) : photo ambiance maternité + overlay sahel + brand
+ *  - .auth-form (droite) : enfant route (connexion / inscription / etc.)
+ *
+ * Le visuel (brand, h1, lead) du .auth-hero est rendu par ce layout pour
+ * éviter la duplication entre /connexion, /inscription, /mot-de-passe-oublie.
+ *
+ * Responsive : sous 900px, stack vertical (hero 200px haut).
+ *
+ * Vibe : carnet d'éleveur tropical CI — pas SaaS US.
  */
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[var(--sf-surface-0)] text-[var(--sf-ink)] flex flex-col">
-      <header className="px-5 pt-8 pb-4 flex flex-col items-center gap-3">
-        <Link href="/" aria-label="Retour à l'accueil" className="block">
-          <Image
-            src="/logo-smartfarm.svg"
-            alt="Smart Farm"
-            width={88}
-            height={88}
-            priority
-            className="h-20 w-20"
-          />
-        </Link>
-        <div className="text-center">
-          <div
-            className="font-[family-name:var(--sf-font-display)] uppercase tracking-tight text-[var(--sf-ink)] leading-none text-3xl"
-          >
-            Smart Farm
+    <div className="auth-shell">
+      <aside className="auth-hero" aria-hidden="true">
+        <div className="auth-hero__content">
+          <div className="auth-hero__brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo/logo-glyph-only.svg"
+              alt=""
+              width={36}
+              height={36}
+              style={{ borderRadius: 'var(--sf-radius-md)' }}
+            />
+            <span className="auth-hero__brand-name">Smart Farm</span>
           </div>
-          <div className="mt-1 text-[10px] uppercase tracking-[0.15em] text-[var(--sf-muted)]">
-            Élevage porcin · Côte d&apos;Ivoire
+          <div>
+            <div className="auth-hero__h1">
+              La gestion d&apos;élevage,<br />sans approximation.
+            </div>
+            <div className="auth-hero__lead">
+              Plateforme professionnelle pour éleveurs et techniciens en Côte
+              d&apos;Ivoire — traçabilité ISO, indicateurs IFIP, conformité
+              sanitaire.
+            </div>
           </div>
         </div>
-      </header>
-
-      <main className="flex-1 px-5 pb-10 flex items-start sm:items-center justify-center">
-        <div className="w-full max-w-md">
-          {children}
-        </div>
-      </main>
-
-      <footer className="px-5 py-6 text-center text-[10px] uppercase tracking-[0.14em] text-[var(--sf-subtle)]">
-        v0.1 — Hermes × Christophe Liegeois
-      </footer>
+      </aside>
+      <main className="auth-form">{children}</main>
     </div>
   )
 }

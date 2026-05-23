@@ -1,6 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* === Design System v1.0 — composants livrés par Claude Design === */
+@import "./design-v1.css";
 
 /* === Smart Farm — fonts self-hosted === */
 @font-face {

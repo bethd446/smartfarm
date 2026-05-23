@@ -1,250 +1,217 @@
 import Link from 'next/link'
-import Image from 'next/image'
-import { Activity, ShieldCheck, BarChart3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 /**
- * Smart Farm — Landing publique
+ * Smart Farm — Landing publique (Design System v1.0)
  * -------------------------------------------------------------------------
- * Style : PRO AUSTÈRE VÉTÉRINAIRE.
- * Server Component. Tokens --sf-* uniquement. Aucun gradient, aucun blur.
- * Sections : Header · Hero · Chiffres · Fonctionnalités · Pour qui · CTA · Footer
+ * Réécrite d'après /tmp/sf-design/release/smartfarm-design-v1/screens/01-landing.html.
+ * Structure : header nav · hero split 2 cols · section "Trois piliers" · footer.
+ * Tokens --sf-* via design-v1.css déjà importé par globals.css.
+ * Server Component. Image hero hotlinkée Unsplash (placeholder maternité porcine).
  */
+
+/** Drapeau Côte d'Ivoire — 3 bandes verticales orange/blanc/vert, 18×12. */
+function FlagCI() {
+  return (
+    <span className="flag-ci">
+      <span className="flag-ci__strip" aria-hidden="true">
+        <span style={{ background: '#F77F00' }} />
+        <span style={{ background: '#ffffff' }} />
+        <span style={{ background: '#009E60' }} />
+      </span>
+      Côte d&apos;Ivoire
+    </span>
+  )
+}
+
 export default function HomePage() {
   return (
-    <main
-      className="min-h-screen bg-[var(--sf-surface-0)] text-[var(--sf-ink)]"
-      style={{ fontFamily: 'var(--sf-font-body)' }}
-    >
-      {/* ─────────── 1. HEADER ─────────── */}
-      <header className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/logo-smartfarm.svg"
-              alt="Smart Farm"
-              width={40}
-              height={40}
-              priority
-              className="h-10 w-10"
-            />
-            <span
-              className="hidden sm:inline uppercase tracking-tight text-[var(--sf-ink)] text-lg"
-              style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-            >
-              Smart Farm
-            </span>
+    <>
+      {/* Styles page-scoped — repris du <style> inline du screen 01-landing.html
+          (les classes .nav-top / .hero / .props / .flag-ci / .footer ne sont
+          pas dans design-v1.css, elles sont propres à cette page). */}
+      <style>{`
+        body { background: var(--sf-surface-0); font-family: var(--sf-font-body); color: var(--sf-ink); }
+
+        .nav-top { display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid var(--sf-line); }
+        .nav-top__brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+        .nav-top__brand img { width: 40px; height: 40px; }
+        .nav-top__brand-name { font-family: var(--sf-font-display); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+        .nav-top__menu { display: flex; align-items: center; gap: 6px; }
+        .nav-top__menu a { padding: 10px 14px; color: var(--sf-ink); text-decoration: none; font-size: 14px; }
+        .nav-top__menu a:hover { color: var(--sf-primary); }
+
+        .hero { padding: 72px 40px 56px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+        .hero__title { font-family: var(--sf-font-display); font-size: 64px; line-height: 1; font-weight: 900; text-transform: uppercase; letter-spacing: -0.01em; margin: 10px 0 18px; color: var(--sf-ink); }
+        .hero__title b { color: var(--sf-primary); font-weight: 900; }
+        .hero__lead { font-size: 17px; line-height: 1.55; color: var(--sf-ink-secondary); max-width: 52ch; margin: 0 0 26px; }
+        .hero__cta { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        .hero__trust { display: flex; flex-wrap: wrap; gap: 22px; margin-top: 32px; align-items: center; font-size: 13px; color: var(--sf-muted); }
+        .hero__media { position: relative; aspect-ratio: 4/5; overflow: hidden; border-top: 4px solid var(--sf-primary); box-shadow: var(--sf-elev-1); background: var(--sf-surface-2); }
+        .hero__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .hero__caption { position: absolute; left: 18px; bottom: 18px; color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.6); }
+        .hero__caption .eyebrow { color: rgba(255,255,255,0.85); }
+        .hero__caption-name { font-family: var(--sf-font-display); font-size: 22px; font-weight: 700; text-transform: uppercase; margin-top: 4px; }
+
+        .props { background: var(--sf-surface-1); border-top: 1px solid var(--sf-line); border-bottom: 1px solid var(--sf-line); padding: 56px 40px; }
+        .props__inner { max-width: 1200px; margin: 0 auto; }
+        .props__title { font-family: var(--sf-font-display); font-size: 36px; font-weight: 700; text-transform: uppercase; max-width: 24ch; margin: 8px 0 32px; line-height: 1.05; color: var(--sf-ink); }
+        .props__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .prop__head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: var(--sf-primary); }
+        .prop__glyph { font-size: 22px; line-height: 1; font-family: var(--sf-font-display); font-weight: 700; }
+        .prop__title { font-family: var(--sf-font-display); font-size: 20px; font-weight: 700; text-transform: uppercase; margin: 4px 0 8px; color: var(--sf-ink); }
+        .prop__body { margin: 0; font-size: 14px; line-height: 1.5; color: var(--sf-ink-secondary); }
+
+        .flag-ci { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; }
+        .flag-ci__strip { display: inline-flex; width: 18px; height: 12px; overflow: hidden; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); }
+        .flag-ci__strip > span { width: 33.3333%; height: 100%; display: block; }
+
+        .footer { padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--sf-line); font-size: 13px; color: var(--sf-muted); flex-wrap: wrap; gap: 12px; }
+        .footer__brand { display: flex; gap: 12px; align-items: center; }
+        .footer__links { display: flex; gap: 20px; align-items: center; }
+        .footer__links a { color: var(--sf-muted); text-decoration: none; }
+        .footer__links a:hover { color: var(--sf-ink); }
+
+        @media (max-width: 768px) {
+          .nav-top { padding: 14px 16px; flex-wrap: wrap; gap: 8px; }
+          .nav-top__menu a:not([data-cta]) { display: none; }
+          .hero { padding: 32px 16px; grid-template-columns: 1fr; gap: 24px; }
+          .hero__title { font-size: 40px; }
+          .props { padding: 32px 16px; }
+          .props__grid { grid-template-columns: 1fr; }
+          .props__title { font-size: 26px; }
+          .footer { padding: 24px 16px; }
+        }
+      `}</style>
+
+      <main>
+        {/* ─────────── HEADER NAV ─────────── */}
+        <header className="nav-top">
+          <Link href="/" className="nav-top__brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo/logo-glyph-only.svg" alt="Smart Farm" width={40} height={40} />
+            <span className="nav-top__brand-name">Smart Farm</span>
           </Link>
-          <nav className="flex items-center gap-2 sm:gap-3">
-            <Link href="/connexion">
+          <nav className="nav-top__menu">
+            <a href="#features">La plateforme</a>
+            <a href="#metiers">Métiers</a>
+            <a href="#tarifs">Tarifs</a>
+            <Link href="/connexion" data-cta>
               <Button variant="outline" size="sm">Se connecter</Button>
             </Link>
-            <Link href="/inscription">
+            <Link href="/inscription" data-cta>
               <Button variant="default" size="sm">Créer un compte</Button>
             </Link>
           </nav>
-        </div>
-      </header>
+        </header>
 
-      {/* ─────────── 2. HERO ─────────── */}
-      <section className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto max-w-4xl px-5 py-20 md:py-28 text-center">
-          <p
-            className="eyebrow text-[var(--sf-ink-secondary)] mb-6"
-            style={{ fontFamily: 'var(--sf-font-display)' }}
-          >
-            Plateforme professionnelle · Côte d&apos;Ivoire
-          </p>
-          <h1
-            className="uppercase tracking-tight leading-[1.02] text-[var(--sf-ink)] text-4xl md:text-6xl"
-            style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-          >
-            La gestion d&apos;élevage porcin,
-            <br className="hidden sm:inline" /> sans approximation.
-          </h1>
-          <p className="mt-6 text-base md:text-lg text-[var(--sf-ink-secondary)] max-w-2xl mx-auto leading-relaxed">
-            Plateforme professionnelle pour éleveurs et techniciens en Côte d&apos;Ivoire.
-            Traçabilité ISO, indicateurs IFIP, conformité sanitaire.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/inscription">
-              <Button variant="default" size="lg">Créer un compte gratuit</Button>
-            </Link>
-            <Link href="/connexion">
-              <Button variant="outline" size="lg">Se connecter</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────── 3. CHIFFRES CLÉS ─────────── */}
-      <section className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto max-w-6xl px-5 py-14">
-          <dl className="grid grid-cols-1 md:grid-cols-3 gap-y-10 md:gap-y-0 md:divide-x divide-[var(--sf-line)]">
-            {[
-              { n: '28', label: 'alertes IFIP automatiques' },
-              { n: '44', label: 'indicateurs zootechniques suivis' },
-              { n: '100%', label: 'conformité réglementaire CI' },
-            ].map((s) => (
-              <div key={s.label} className="text-center md:px-6">
-                <dt
-                  className="text-5xl md:text-6xl tabular-nums leading-none text-[var(--sf-ink)]"
-                  style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-                >
-                  {s.n}
-                </dt>
-                <dd className="mt-3 text-sm uppercase tracking-wider text-[var(--sf-ink-secondary)]">
-                  {s.label}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      {/* ─────────── 4. FONCTIONNALITÉS ─────────── */}
-      <section className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto max-w-6xl px-5 py-20">
-          <div className="mb-12 text-center">
-            <p
-              className="eyebrow text-[var(--sf-ink-secondary)]"
-              style={{ fontFamily: 'var(--sf-font-display)' }}
-            >
-              Modules
+        {/* ─────────── HERO SPLIT ─────────── */}
+        <section className="hero">
+          <div className="hero__copy">
+            <p className="eyebrow">Élevage porcin tropical · Côte d&apos;Ivoire</p>
+            <h1 className="hero__title">
+              La gestion d&apos;élevage,
+              <br />
+              <b>sans approximation.</b>
+            </h1>
+            <p className="hero__lead">
+              Plateforme professionnelle pour <strong>éleveurs et techniciens</strong> ivoiriens.
+              Traçabilité ISO, indicateurs IFIP, conformité sanitaire — sur smartphone, hors-ligne,
+              4G ou plein soleil.
             </p>
-            <h2
-              className="mt-3 text-2xl md:text-3xl uppercase tracking-tight text-[var(--sf-ink)]"
-              style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-            >
-              Trois piliers, un seul registre
+            <div className="hero__cta">
+              <Link href="/inscription">
+                <Button variant="default" size="lg">Créer un compte →</Button>
+              </Link>
+              <Link href="/connexion">
+                <Button variant="outline" size="lg">J&apos;ai déjà un compte</Button>
+              </Link>
+            </div>
+            <div className="hero__trust">
+              <FlagCI />
+              <span>● Conforme ISO 22005</span>
+              <span>● Indicateurs IFIP</span>
+              <span>● Multi-fermes</span>
+            </div>
+          </div>
+
+          <div className="hero__media">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&q=80"
+              alt="Truie en maternité avec sa portée — Smart Farm CI-01"
+            />
+            <div className="hero__caption">
+              <div className="eyebrow">Maternité · Smart Farm CI-01</div>
+              <div className="hero__caption-name">Truie B.22 · 11 porcelets</div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─────────── TROIS PILIERS ─────────── */}
+        <section className="props" id="features">
+          <div className="props__inner">
+            <p className="eyebrow">Ce que la plateforme fait pour vous</p>
+            <h2 className="props__title">
+              Un carnet d&apos;élevage qui tient la cadence du terrain.
             </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[var(--sf-line)] border border-[var(--sf-line)]">
-            {[
-              {
-                Icon: Activity,
-                title: 'Reproduction',
-                body: 'Cycles, saillies, mises bas, sevrages. Détection chaleurs assistée.',
-              },
-              {
-                Icon: ShieldCheck,
-                title: 'Sanitaire',
-                body: 'Protocoles vaccinaux, suivi traitements, registre conforme à la réglementation ivoirienne.',
-              },
-              {
-                Icon: BarChart3,
-                title: 'Performances',
-                body: 'Indicateurs IFIP en temps réel. Classement reproducteurs. Détection contre-performances.',
-              },
-            ].map(({ Icon, title, body }) => (
-              <article
-                key={title}
-                className="bg-[var(--sf-surface-0)] p-8"
-              >
-                <Icon
-                  className="h-6 w-6 text-[var(--sf-ink)]"
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                />
-                <h3
-                  className="mt-5 text-lg uppercase tracking-tight text-[var(--sf-ink)]"
-                  style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-                >
-                  {title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-[var(--sf-ink-secondary)]">
-                  {body}
-                </p>
+            <div className="props__grid">
+              <article className="card prop">
+                <div className="card__content">
+                  <div className="prop__head">
+                    <span className="prop__glyph">~</span>
+                    <span className="eyebrow" style={{ color: 'var(--sf-primary)' }}>Suivi technique</span>
+                  </div>
+                  <h3 className="prop__title">Indicateurs IFIP en temps réel</h3>
+                  <p className="prop__body">
+                    ISSF, GMQ, IC, TMM, productivité numérique — calculés par bande, comparés à votre référentiel.
+                  </p>
+                </div>
               </article>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* ─────────── 5. POUR QUI ─────────── */}
-      <section className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto max-w-3xl px-5 py-20 text-center">
-          <p
-            className="eyebrow text-[var(--sf-ink-secondary)] mb-6"
-            style={{ fontFamily: 'var(--sf-font-display)' }}
-          >
-            Pour qui
-          </p>
-          <p
-            className="text-xl md:text-2xl leading-relaxed text-[var(--sf-ink)]"
-            style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 400 }}
-          >
-            Conçu pour les exploitations porcines de 50 à 2&nbsp;000 truies.
-            Utilisé par les éleveurs professionnels, vétérinaires conseil et
-            techniciens d&apos;élevage en Côte d&apos;Ivoire.
-          </p>
-        </div>
-      </section>
+              <article className="card prop">
+                <div className="card__content">
+                  <div className="prop__head">
+                    <span className="prop__glyph">+</span>
+                    <span className="eyebrow" style={{ color: 'var(--sf-primary)' }}>Conformité</span>
+                  </div>
+                  <h3 className="prop__title">Traçabilité ISO sanitaire</h3>
+                  <p className="prop__body">
+                    Lots, mouvements, traitements véto, biosécurité. Export PDF pour les contrôles MIRAH.
+                  </p>
+                </div>
+              </article>
 
-      {/* ─────────── 6. CTA FINAL ─────────── */}
-      <section className="border-b border-[var(--sf-line)]">
-        <div className="mx-auto max-w-4xl px-5 py-20 text-center">
-          <h2
-            className="text-3xl md:text-4xl uppercase tracking-tight text-[var(--sf-ink)]"
-            style={{ fontFamily: 'var(--sf-font-display)', fontWeight: 700 }}
-          >
-            Démarrer aujourd&apos;hui.
-          </h2>
-          <p className="mt-4 text-base text-[var(--sf-ink-secondary)]">
-            Aucune carte bancaire requise.
-          </p>
-          <div className="mt-8 flex justify-center">
-            <Link href="/inscription">
-              <Button variant="default" size="lg">Créer mon compte</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────── 7. FOOTER ─────────── */}
-      <footer className="bg-[var(--sf-surface-0)]">
-        <div className="mx-auto max-w-6xl px-5 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
-            <div>
-              <p
-                className="eyebrow text-[var(--sf-ink-secondary)] mb-3"
-                style={{ fontFamily: 'var(--sf-font-display)' }}
-              >
-                Smart Farm
-              </p>
-              <p className="text-[var(--sf-ink-secondary)] leading-relaxed">
-                Plateforme de gestion d&apos;élevage porcin professionnel — Côte d&apos;Ivoire.
-              </p>
-            </div>
-            <div>
-              <p
-                className="eyebrow text-[var(--sf-ink-secondary)] mb-3"
-                style={{ fontFamily: 'var(--sf-font-display)' }}
-              >
-                Contact
-              </p>
-              <a
-                href="mailto:contact@smartfarm.group"
-                className="text-[var(--sf-ink)] underline-offset-4 hover:underline"
-              >
-                contact@smartfarm.group
-              </a>
-            </div>
-            <div>
-              <p
-                className="eyebrow text-[var(--sf-ink-secondary)] mb-3"
-                style={{ fontFamily: 'var(--sf-font-display)' }}
-              >
-                Légal
-              </p>
-              <p className="text-[var(--sf-ink-secondary)]">
-                © 2026 Smart Farm. Tous droits réservés.
-              </p>
+              <article className="card prop">
+                <div className="card__content">
+                  <div className="prop__head">
+                    <span className="prop__glyph">▣</span>
+                    <span className="eyebrow" style={{ color: 'var(--sf-primary)' }}>Multi-fermes</span>
+                  </div>
+                  <h3 className="prop__title">Une marque, plusieurs sites</h3>
+                  <p className="prop__body">
+                    Smart Farm CI-01, CI-02, CI-03… Vue consolidée et permissions par ferme.
+                  </p>
+                </div>
+              </article>
             </div>
           </div>
-        </div>
-      </footer>
-    </main>
+        </section>
+
+        {/* ─────────── FOOTER ─────────── */}
+        <footer className="footer">
+          <div className="footer__brand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo/logo-glyph-only.svg" alt="" width={24} height={24} />
+            <span>© 2026 Smart Farm · smartfarm.group</span>
+          </div>
+          <div className="footer__links">
+            <FlagCI />
+            <a href="#mentions">Mentions légales</a>
+            <a href="#confidentialite">Confidentialité</a>
+          </div>
+        </footer>
+      </main>
+    </>
   )
 }
