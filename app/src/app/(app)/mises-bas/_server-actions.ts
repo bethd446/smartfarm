@@ -113,11 +113,11 @@ export async function creerSevrage(
     }
 
     const payload: Record<string, unknown> = {
-      mise_bas_id: d.mise_bas_id,
+      mb_id: d.mise_bas_id,
       truie_id: mb.truie_id,
       bande_id: mb.bande_id,
       date_sevrage: d.date_sevrage,
-      nb_sevres: d.nb_sevres,
+      effectif_sevre: d.nb_sevres,
       idempotency_key: idempotencyKey,
     }
     if (d.poids_total_kg !== '' && d.poids_total_kg !== undefined)
