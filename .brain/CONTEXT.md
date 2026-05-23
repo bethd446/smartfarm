@@ -1,242 +1,97 @@
-# SmartFarm CONTEXT.md (caveman v2 — token frugal extrême)
+# SMARTFARM — CONTEXT.md (caveman style, économique tokens)
+*Compact 23/05/2026 — Mode: import vérité terrain EasyFarm*
 
-> Sous-agent : lis ça, AGIS. Pas redécouvrir. Manque info → note dans rapport.
+## QUI / OÙ
+- User : Christophe Liegeois (Sr DevOps/Agritech, retour CI)
+- Project : Smart Farm (web-app gestion porcine multi-fermes)
+- Replace : PorcTrack 8 (abandonné mai 2026)
+- Prod live : https://smartfarm.group (HTTP 200, auth réelle OK)
+- Repo : github.com/bethd446/smartfarm PUBLIC
 
-## 🎯 SESSION ACTUELLE (2026-05-22)
-**Sprint 1 — Option A** acceptée par Christophe. Plan détaillé : `.brain/SPRINT_1_PLAN.md`.
-- Phase 1 (3h) : B1 déconnexion / B2 /performances 404 / B5 fallback démo / B6 dates fr-FR
-- Phase 2 (1.5j) : F2 bâtiments default + trigger / F1 onboarding wizard + bootstrap_ferme RPC
-- Compte test : `samotjeanmarc@gmail.com` / `Teste2023` / SF-061072 (viewer sans ferme)
-- Audit complet : `docs/audits/2026-05-22_audit_qa_e2e_+_code.md`
+## ADMIN COMPTE
+- 13smartfarm@gmail.com / Fermebio13
+- SF-655295, admin "Smart Farm CI-01"
+- ferme_id : 3b350176-d45c-4fea-a67e-eae4a5714aa3
 
 ## STACK
-- Next.js 16 / React 19 / Tailwind v4 / Radix / shadcn — `/root/projects/smartfarm/app/`
-- **PROD** : https://smartfarm.group (Hostinger) + Supabase Cloud (Frankfurt) project `tpzhxjzwlxwujboboyit`
-- **DEMO LOCAL** : Standalone :3000 — `next/standalone/projects/smartfarm/app/server.js` + Docker Supabase :54322
-- **DEPLOY local** : `bash /root/projects/smartfarm/app/deploy.sh` (build + sync static/public + restart)
-  - PIÈGE : `next build` ne copie PAS `.next/static/` et `public/` dans `.next/standalone/`
-  - Sans ces dossiers → 404 sur tous chunks JS/CSS → page navigateur cassée (HTML servi mais blanc)
-- Node 22 : `export PATH=/root/.hermes/node/bin:$PATH`
-- DB : `PGPASSWORD=postgres psql -h 127.0.0.1 -p 54322 -U postgres -d postgres`
-- Vocab FR pro (Cochette, Reproduction, Mises bas, Sanitaire, Stock). PAS folklo CI.
+- Next.js 16 + React 19 + Tailwind v4 + shadcn/ui
+- Supabase Cloud tpzhxjzwlxwujboboyit
+- VPS Hostinger Hostinger Cloud, Traefik
+- 44 tables + 23 vues + 102 RLS policies
 
-## RÈGLES DURES sous-agent
-- ❌ `npm run build` (orchestrateur fait, une fois, fin de vague)
-- ❌ tuer/restart serveur
-- ❌ modifier migration existante → toujours créer NOUVELLE `YYYYMMDDHHMMSS_*.sql`
-- ❌ modifier `v_alertes_actives` sans `pg_get_viewdef` backup (26 règles à préserver)
-- ❌ explorer schéma DB inutile → `\d tablename` ou `SELECT column_name FROM information_schema.columns WHERE table_name='X'`
-- ✅ 3-5 fichiers max modifiés
-- ✅ `security_invoker=true` + `GRANT … TO anon, authenticated` sur vue recréée
-- ✅ `revalidatePath('/route')` après Server Action
+## RÈGLES OR
+1. **CAVEMAN** : briefs ≤200 lignes, sous-agents 3-5 fichiers max
+2. Sous-agents NE FONT PAS `npm run build` (orchestrateur centralise)
+3. Vues SQL : security_invoker=true + GRANT authenticated obligatoire
+4. Server actions : wrapper SSR cookies (jamais service_role direct)
+5. revalidatePath après chaque server action
+6. Migrations : `YYYYMMDDHHMMSS_*.sql`
+7. Vocab FR pro zootechnique (Saillie/Mise bas/Sevrage/Gestation/Cochette)
+8. Pas npm run build sous-agent — orchestrateur uniquement
 
-## TABLES (43 — RLS ON partout, policies via `current_farm_id()`/`user_has_farm_access()`)
-Liste : `\dt public.*` ou `SELECT table_name FROM information_schema.tables WHERE table_schema='public'`.
-Colonnes d'une table : `\d animaux` ou `SELECT column_name,data_type FROM information_schema.columns WHERE table_name='animaux'`.
+## SPRINT 3 - SQL APPLIQUÉ ✅
+Migration `20260522190000_portee_ration_fertilite_v2.sql` :
+- Table `portees` + trigger AFTER INSERT mises_bas → portée auto P-YYYYMM-NNN
+- animaux : portee_id, poids_actuel_kg, batiment_id, boucle_posee_le
+- batiments : ration_kg_jour, aliment_type, phase
+- enum phase étendu : demarrage_1, demarrage_2, croissance, finition
+- 10 bâtiments Smart Farm CI-01 stratégiques
+- 13 produits catalogue CI XOF Déc 2025
+- 4 vues fertilité/ration (security_invoker=true)
+- 2 RPC transferer_bande_phase + mortalité
 
-**Tables clés** : animaux, bandes, batiments, cases, saillies, mises_bas, sevrages, diagnostics_gestation, vaccinations, traitements, mortalites, pesees, lots_matieres_premieres, matieres_premieres, formulations, consommations_aliment, consommations_eau, biosecurite_audits, ppa_observations, observations_bcs, produits_anti_mycotoxines, checks_post_mb, transits_phase, evenements_prevus, audit_logs.
+## DONNÉES PRÉSENTES BDD (À PURGER)
+- 17 truies FICTIVES TR001-TR017 (Croisé F1)
+- 2 verrats FICTIFS VR001-VR002 (Large White)
+- 120 porcelets FICTIFS PL001-PL120
+- Bande BD2-2026-05 FICTIVE
+- Diagnostics + saillies fictifs
+→ TOUT SOFT-DELETE avant import vérité EasyFarm
 
-## VUES SQL (lire `pg_get_viewdef('nom')` avant recréer)
-| Vue | Note |
-|---|---|
-| **v_alertes_actives** | 26 règles R01-R26. UI mapping : `src/lib/alertes-regles.ts`. NE PAS casser. |
-| **v_calendrier_sanitaire_porcelets** | Fer J1, Castration J5, Mycoplasma J14+J28, Sevrage J28 |
-| **v_kpi_techniques_truie**, **v_kpi_techniques_ferme** | ISSF, TMM (exclut écrasés IFIP), PN, productivite |
-| **v_bcs_historique_truie** | union saillies/MB/sevrages |
-| **v_biosecurite_etat_actuel** | dernier audit par item |
-| **v_calendrier_repro**, **v_kpi_truie**, **v_kpi_bande**, **v_densite_batiment**, **v_ppa_surveillance**, **v_recommandations_anti_mycotoxines**, **v_saillies_a_diagnostiquer**, **v_bande_effectif**, **v_checks_post_mb_attendus** | utilitaires |
+## CHEPTEL RÉEL EASYFARM (à importer)
+- **17 truies** (T01→T19 sauf T08/T17) boucles B.10→B.93
+- **2 verrats** : V01 Bobi B.89 LW + V02 Aligator B.100 Piétrain
+- **117 porcelets** (110 vivants + 7 malades, M56/F61)
+- Poids moy 10.4 kg au 19/05/2026
+- Tous → bâtiment **Démarrage 2** vrac (consigne user)
+- 6 truies CONFIRMÉES par photo cahier user :
+  - T01 Monette B.22 Flushing, MB 03/03, 10 vivants
+  - T02 Fillaou B.38 Flushing, MB 07/03, 14 vivants
+  - T03 Penelope B.23 Flushing, MB 06/03, 13 vivants
+  - T06 — B.93 Flushing, MB 14/03, 10 vivants (2 morts)
+  - T07 Choupette B.21 Flushing, MB 26/02, 6 vivants
+  - T09 Zapata B.31 Flushing, MB 07/03, 8 vivants
+- 11 truies à confirmer (statut + dernières MB/saillies)
+- 2 truies actuellement en loge maternité (lesquelles ?)
 
-## RÈGLES R01-R26 (catégories : reproduction / sanitaire / nutrition / pertes / stock)
-Détails dans `src/lib/alertes-regles.ts`. Ne JAMAIS modifier numérotation existante. Nouvelle règle = R27+.
+## INCOHÉRENCES DÉTECTÉES (à régulariser)
+- 55 boucles dédoublées M/F → convention user OK, ID BDD = boucle+sexe (B4-M / B4-F)
+- 2 vrais doublons :
+  - B45 femelle x2 → renommé `B45-F` / `B45-F-bis`
+  - B53 mâle x2 → renommé `B53-M` / `B53-M-bis`
+- 107/117 porcelets sans date_naissance + sans bande
+- Boucle "33" du cahier papier ≠ existe en CSV → probable B.93 (changement boucle physique)
 
-## ROUTES sidebar (14 items / 5 groupes)
-```
-PILOTAGE  : /dashboard /alertes /kpi
-ÉLEVAGE   : /cheptel /bandes /batiments /reproduction /mises-bas
-SANTÉ     : /sanitaire (HUB) /sanitaire/ppa
-LOGISTIQUE: /alimentation /stock
-SYSTÈME   : /assistant /parametres
-```
-Hors sidebar (accessibles URL) : `/cheptel/[id]`, `/bandes/[id]`, `/batiments/[id]`, `/mises-bas/check-j1`, `/sanitaire/{calendrier,biosecurite,mycotoxines,maladies,maladies/[slug],protocoles}`, `/alimentation/{matieres,formulations,concentres}`, `/actions-rapides`, `/calendrier`, `/conseiller`, `/pesees`.
+## PHOTOS CAHIER USER (vérité terrain)
+- Photo 1 : tableau saillies/MB manuscrit (vague 26/02→14/03 + B.24 le 01/04 13 porcelets)
+- Photo 2 : suivi maternité 9 loges (cases 1,2,3,4 lisibles)
+- Synthèse user partielle (6 truies confirmées + 5 partielles + reste à venir)
 
-Middleware redirects 308 : `/biosecurite` `/mycotoxines` `/calendrier-sanitaire` `/protocoles` `/maladies` `/ppa` → `/sanitaire/*`. `/sanitaire/eau` → 307 `/sanitaire`.
+## FICHIERS RÉFÉRENCE
+- Export EasyFarm : `/tmp/porctrack_audit/porctrack-export-2026-05-19/`
+- CSV truies/verrats/porcelets/saillies/bandes/pesees (filtrage `ferme=EasyFarm` obligatoire — fichier contient aussi "Ferme Audit Test" et "Ma ferme" à exclure)
 
-## LIB `src/lib/` (sources de vérité)
-- `alertes-regles.ts` — 26 entrées R01-R26 (catégorie, gravite_default, nom, description)
-- `nutrition-engine.ts` — `computeMixNutrition`, `calculerRatiosAA`, `CIBLES_RATIOS_AA` (NRC 2012 par stade), `AJUSTEMENT_HEAT_STRESS`
-- `repro-cibles.ts` — `CIBLES_BCS` 5 stades, `bcsAlerte`, `evaluerBCS`
-- `terrain-labels.ts` — vocab FR pro
-- `colors.ts` — tones nominal/attendu/urgence/neutre
-- `alertes-engine.ts` — types + helpers
-- `supabase/server.ts` — wrapper SSR. Mode demo via `SMARTFARM_DEMO_MODE` + `SUPABASE_SERVICE_ROLE_KEY`. Switch prod = `SMARTFARM_DEMO_MODE=false`.
+## EN ATTENTE USER
+- JSON consolidé depuis autre session Claude (prompt fourni)
+- T IDs réordonnés proprement (T01→T17 séquentiel sans trous)
+- Réponse : 2 truies en loge maternité actuellement = lesquelles
+- Réponse : poids actualisé ou on garde 10.4 kg du 19/05
 
-## COMPONENTS
-`@/components/ui/{card,button,badge,dialog,input,label,select,radio-group,empty-state,skeleton}` · sidebar · bottom-nav · app-shell · mobile-drawer · contrast-toggle · barcode-scanner · export-button · kpi/kpi-tech-card.
-
-⚠️ Pas de Tooltip dans `@/components/ui` → fallback `title=""` HTML natif.
-
-## PATTERNS
-### Server Action Next 16
-```ts
-'use server'
-export async function maFonction(formData: FormData) {
-  const x = String(formData.get('x') ?? '')
-  // INSERT/UPDATE supabase
-  revalidatePath('/route')
-}
-```
-Page : `<form action={maFonction}>` + hidden inputs.
-
-### Migration
-`supabase/migrations/YYYYMMDDHHMMSS_*.sql` · `BEGIN; ... COMMIT;` · `psql -f`.
-
-### Vue security_invoker
-```sql
-CREATE OR REPLACE VIEW v_xxx WITH (security_invoker=true) AS …;
-GRANT SELECT ON v_xxx TO anon, authenticated;
-```
-
-### Test sans rebuild
-- HTTP : `curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3000/route`
-- SQL : `psql … -c "SELECT … FROM …;"`
-
-## CHARTE "Terrain Vivant" actuelle
-- Primary `--sf-primary` = #2D4A1F (vert sahel)
-- Surfaces `--sf-surface-0` / `--sf-surface-1` (light + dark)
-- Ink `--sf-ink`
-- Display : Big Shoulders Display (uppercase tracking-wide)
-- Body : Instrument Sans
-- Boutons : min-h-14, uppercase tracking-[0.08em], stamp shadows
-- Dark mode : light 9/10 + dark 9/10 (post-fix v3)
-
-## SKILLS DESIGN OBLIGATOIRES (charger AVANT action design/UI/UX/visuel)
-
-### Niveau 1 — Méthodologie (≥1 obligatoire)
-- **impeccable** — squelette setup → register → sub-command. Refs : craft, shape, polish, audit, critique, harden, typography, motion, cognitive-load, brand. Anti "AI slop".
-- **frontend-design** — production-grade, anti-générique.
-- **ui-ux-pro-max** — DB BM25 : 67 styles, 161 palettes, 99 UX guidelines, 25 charts × 10 stacks. Script :
-  `python3 ~/.hermes/skills/creative/ui-ux-pro-max/scripts/search.py "<query>" --domain <product|style|color|typography|landing|chart|ux>`
-
-### Niveau 2 — Spécialistes
-- **ckm:design-system** — tokens 3 couches (primitive→semantic→component)
-- **ckm:ui-styling** — shadcn/ui + Tailwind + dark mode + a11y
-- **canvas-design** — posters/PDF/PNG
-- **brand-guidelines** — charte couleurs/typo
-- **theme-factory** — 10 thèmes pré-réglés
-
-### Règle dure
-Output design SANS `skill_view(name='impeccable')` chargé = REJET.
-
-## ÉTAT POST-OPTION-1 (mai 2026)
-✓ 26 règles R01-R26, 43 tables RLS ON, wrapper service_role demo mode
-✓ Sidebar 14 items, hub /sanitaire (6 cards), bottom-nav 5 slots
-✓ BCS truie partout, KPI IFIP, calendrier sanitaire J1/J5/J14/J28
-✓ Biosécurité 12 items, mycotoxines + 6 produits anti-myco, PPA surveillance
-✓ Triggers auto-événements (cochette→J16 saillie, MB→Fer J1+Castration J5+Mycoplasma J14/J28)
-✓ Mode dark fonctionnel, empty states, skeleton, chatbot WhatsApp, export PDF KPI
-✓ Backup DB quotidien cron 03h + monitor 04h
-
-## TODO non-bloquants
-- Sprint B IFIP : MCA, IC ferme, GMQ par stade, AA matières CI hors Maïs/Soja
-- Sprint C : automatisation calendrier unifié, FIFO mycotoxines, suggestion commande
-- Barcode scanner mobile (PROD-B residue)
-- Audit visuel R4 (en cours)
-- Paie ouvriers, marketplace, finances (non démarré)
-
-## DERNIÈRE MIGRATION
-`20260522090000_rls_complete.sql` (+ patch RLS observations_bcs in-place)
-## DÉCISIONS BRANDING (B1 mai 2026)
-- **Nom marque** : SMART FARM (verrouillé — pas de rebrand Eburnea/Akwaba)
-- **Logo officiel** : Cachet B Minimal (`public/logo-smartfarm.svg`) — octogone double-bordure + monogramme SF Big Shoulders 900, vert sahel #2D4A1F sur crème mil #FFFBEB
-- **Palette Terre & Mil** appliquée dans `globals.css` : tokens additifs --sf-accent-warm (#A16207), --sf-terre (#9A3412), --sf-surface-2 (#FEF3C7), --sf-ink-deep (#14532D). WCAG 10/10 paires AA+ validées.
-- **Tagline sidebar** : "Élevage porcin · Côte d'Ivoire" (text-[10px] uppercase tracking-[0.15em])
-
-## ÉTAT POST-D4 (mai 2026 — Sprint enchaîné D1→D4)
-✓ Identité B1 déployée (logo Cachet B + palette Terre & Mil + tagline)
-✓ D2 fix 5 P0 : h1 uppercase 4 pages, h2/h3 sémantique 4 pages, button h-14 default, text-xs 13px base, aria-label défensif alertes
-✓ D3 logo Cachet C v2 (3 variations truie subtile dans /tmp/d3-logo/) — choix Christophe en attente
-✓ D4 IFIP : 3 nouvelles vues (v_kpi_mca_ferme, v_kpi_ic_ferme, v_kpi_gmq_par_stade), 2 nouvelles règles R27 IC plus de 3.2 + R28 GMQ moins de 600g/j, 11 matières CI seedées NRC, section UI /kpi avec MCA+IC+GMQ
-✓ Migrations : 20260523000000_kpi_ifip_productivite + 20260523010000_aa_matieres_ci
-
-## NOUVEAUTÉS SCHÉMA POST-D4
-- 28 règles (R01-R28) dans v_alertes_actives
-- Vues IFIP : `v_kpi_mca_ferme(ferme_id, mca_xof_par_kg, conso_total_kg, ...)` · `v_kpi_ic_ferme(ferme_id, ic, ...)` · `v_kpi_gmq_par_stade(ferme_id, bande_id, stade, gmq_g_par_jour, ...)`
-- Stades nutrition : porcelet 0-28j / sevrage 28-70j / engraissement plus de 70j
-- Cibles IFIP cards : MCA moins de 800 vert / 800-1200 gold / plus de 1200 rouge, IC 2.6-2.8 vert / 2.8-3.2 gold / plus de 3.2 rouge
-
-## DERNIÈRE MIGRATION (mise à jour)
-`20260523010000_aa_matieres_ci.sql`
-
-
-## 🆕 Décisions 2026-05-22 (refonte landing + emails)
-- **Email business** : `contact@smartfarm.group` (Hostinger mail)
-- **Tone of voice landing** : **pro austère** — rassurant, vétérinaire, technique. Pas startup, pas chaleureux folklo. Vocabulaire zootechnique pro.
-- Palette : tokens Terre and Mil existants (kaki/argile/sable, surtout pas orange/vert vif)
-- Typo : sobre, sérif possible pour H1, sans-serif body
-- Copy : phrases courtes, faits, pas de superlatifs marketing
-
-
-## ✅ Sprint 2026-05-22 (suite) — SMTP + Auth Magic Link
-- **SMTP Hostinger configuré et testé** : smtp.hostinger.com:465 SSL, user `contact@smartfarm.group`, password en `/root/.hermes-memory/credentials.md`
-- **Test swaks direct** : HTTP 250 OK queued — mail reçu confirmé par screenshot utilisateur
-- **Supabase Auth SMTP configuré** via Management API PATCH HTTP 200 :
-  - smtp_host = smtp.hostinger.com
-  - smtp_port = 465 (str obligatoire dans payload)
-  - smtp_user = contact@smartfarm.group
-  - smtp_sender_name = Smart Farm
-  - site_url = https://smartfarm.group
-  - uri_allow_list = smartfarm.group + www + /** wildcards
-  - mailer_autoconfirm = false (Magic Link requis)
-  - external_email_enabled = true
-- **POST /auth/v1/otp** déclenché vers `contact@smartfarm.group` → HTTP 200 (mail attendu via SMTP Hostinger)
-- **Landing publique pro austère** livrée commit `c53988b` : 7 sections, Server Component, statique, tokens --sf-*, build OK 50 routes
-
-## 🎯 Reste à faire
-- Confirmer réception mail Magic Link (test #2)
-- Créer templates HTML brandés Smart Farm (welcome, magic_link, recovery, confirmation)
-- Push templates via Supabase Management API
-- Switch SMARTFARM_DEMO_MODE=false sur Hostinger via API
-- Smoke test 17 pages prod + flow auth complet
-
-## 🆕 Décisions 2026-05-22 (suite — admin + prod)
-- **Hébergement choisi** : Hostinger Cloud Hosting MAINTENU (raison: Claude Max sur Mac doit pouvoir reprendre projet via GitHub + Hostinger sans découvrir setup exotique)
-- **Email admin ferme** : `13smartfarm@gmail.com`
-- **Mot de passe admin** : à choisir par utilisateur au moment switch prod
-- **Numéro client SF-000001** : auto-généré 1er compte
-- **Bug Passenger Hostinger** : `server.js` Next.js standalone bind :3000, Passenger ignore → 503 quand on essaie SMARTFARM_DEMO_MODE=false. Fix requis : adapter server.js Passenger-compatible (FD socket via argv).
-- **Rollback effectué** : `.env` remis en mode démo, site UP HTTP 200 stable
-- **Plan 5 phases** : (1) Fix Passenger, (2) Switch prod, (3) Compte admin, (4) Import données, (5) Page super-admin
-- **Page super-admin** future : route `/super-admin`, role `superadmin`, vues activité users/fermes/logs/métriques, impersonate user pour assistance distance
-
-
-## 🆕 Décisions 2026-05-22 (suite — D1-D4 validées)
-- **D1 ferme** : nom = "Smart Farm" (compte = marque)
-- **D2 BDD** : reset total — purger les 17 démo, importer les 138 vrais d'EasyFarm
-- **D3 admin** : email=13smartfarm@gmail.com, password=Fermebio13, Magic Link backup ON, numéro SF-000001 auto
-- **D4** : fix Passenger GO en parallèle (sous-agent lancé)
-- **Données réelles à importer** : EasyFarm CI = 17 truies (Monette, Fillaou, Penelope...) + 2 verrats (Bobi, Aligator) + 6 bandes + 118 porcelets + 22-30 saillies + ~100 pesées
-- **Ferme Audit Test Belgique** : IGNORER (test PorcTrack)
-
-
-## 🔬 Découverte technique 2026-05-22 : LSNODE pas Passenger
-- **Hostinger Cloud Hosting Node.js utilise LSNODE/LSAPI LiteSpeed**, pas Phusion Passenger
-- Process visible : `lsnode:/home/.../nodejs/` (PID 46586 etc.)
-- `.htaccess` Passenger* directives = mode compat LSWS, pas du vrai Passenger
-- **server.js Next.js standard fonctionne** : bind :3000 TCP, LiteSpeed proxifie depuis 443
-- Le patcher `scripts/patch-server-passenger.js` était inutile et cassait tout
-- **Désactivé** : build script remis à `next build` simple
-- Patcher gardé en `build:with-passenger-patch` pour référence future
-
-## ✅ État stable 2026-05-22 12:14
-- Site smartfarm.group HTTP 200 sur toutes pages publiques + protégées
-- Mode démo encore actif (SMARTFARM_DEMO_MODE=true)
-- `.env` mis à jour avec **vrai service_role 219 chars** (correction du bug majeur précédent)
-- Backups successifs en `~/domains/smartfarm.group/public_html/.builds/config/.env.bak-*`
-- Dernier commit déployé : `1f26121` (build sans patcher)
-
-## 🎯 Prochaine étape switch prod
-- Push `.env` avec SMARTFARM_DEMO_MODE=false (le service_role est déjà OK maintenant)
-- Trigger rebuild via commit (Hostinger ne lit .env qu'au build, pas au runtime)
-- Vérif redirect /dashboard → /connexion (preuve middleware actif)
-- Si OK : créer compte admin 13smartfarm@gmail.com SF-000001
-- Import 17 truies + 2 verrats + 118 porcelets EasyFarm
+## PROCHAINE ACTION
+Attendre JSON user → script import propre :
+1. Soft-delete 17 fictives + 2 fictifs + 120 fictifs + bande BD2
+2. Insert 17 vraies truies (avec MB historiques + saillies courantes)
+3. Insert 2 verrats Bobi + Aligator
+4. Insert 117 porcelets tous Démarrage 2 (avec doublons résolus)
+5. Insert portées historiques (vague 26/02→14/03 + 01/04)
+6. Vérif effectifs par bâtiment + dashboard live test
