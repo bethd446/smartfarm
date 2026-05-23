@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { getSupabaseServerEnv, getSupabaseServiceEnv } from './env'
 
 /**
  * SPRINT 2 FIX RLS — Wrapper Supabase côté serveur.
@@ -28,6 +29,10 @@ import { cookies } from 'next/headers'
  *
  * Si on a besoin d'un mode démo non-authentifié, il faut un USER démo réel
  * en BDD + se connecter avec ce user — pas bypass RLS.
+ *
+ * Lecture des env vars : centralisée dans `./env.ts` (runtime-safe, gère le
+ * fait que Next.js 16 inline les NEXT_PUBLIC_* au build, qui ne sont pas
+ * dispo lors du build Hostinger Cloud).
  */
 
 const DEMO_FERME_ID = '00000000-0000-0000-0000-000000000001'
@@ -43,27 +48,24 @@ const DEMO_ROLE = 'admin'
  */
 export async function createClient() {
   const cookieStore = await cookies()
+  const { url, anonKey } = getSupabaseServerEnv()
 
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll()
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options),
-            )
-          } catch {
-            /* server component, ignore */
-          }
-        },
+  return createServerClient(url, anonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll()
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options),
+          )
+        } catch {
+          /* server component, ignore */
+        }
       },
     },
-  )
+  })
 }
 
 /**
@@ -77,15 +79,9 @@ export async function createClient() {
  * Throw si SUPABASE_SERVICE_ROLE_KEY absent → on évite tout fallback silencieux.
  */
 export async function createServiceClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
-  if (!url || !key) {
-    throw new Error(
-      'createServiceClient: SUPABASE_SERVICE_ROLE_KEY ou NEXT_PUBLIC_SUPABASE_URL manquant',
-    )
-  }
+  const { url, serviceKey } = getSupabaseServiceEnv()
   const { createClient: createSupabaseClient } = await import('@supabase/supabase-js')
-  return createSupabaseClient(url, key, {
+  return createSupabaseClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
+import { getSupabaseServerEnv } from '@/lib/supabase/env'
 
 /**
  * Smart Farm — Middleware Next.js
@@ -75,23 +76,32 @@ export async function proxy(request: NextRequest) {
   //    mode démo si une session Auth réelle est présente.
   const response = NextResponse.next({ request })
 
-  const sb = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value)
-            response.cookies.set(name, value, options)
-          })
-        },
+  // Env vars runtime-safe (cf. lib/supabase/env.ts)
+  let sbUrl: string
+  let sbKey: string
+  try {
+    const env = getSupabaseServerEnv()
+    sbUrl = env.url
+    sbKey = env.anonKey
+  } catch (err) {
+    // En middleware on ne peut pas bloquer toute la prod : log + laisse passer
+    console.error('[mw] supabase env missing — bypass auth check:', err)
+    return response
+  }
+
+  const sb = createServerClient(sbUrl, sbKey, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll()
+      },
+      setAll(cookiesToSet) {
+        cookiesToSet.forEach(({ name, value, options }) => {
+          request.cookies.set(name, value)
+          response.cookies.set(name, value, options)
+        })
       },
     },
-  )
+  })
 
   const { data: { user } } = await sb.auth.getUser()
 

@@ -3,6 +3,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { getSupabaseServerEnv } from '@/lib/supabase/env'
 
 /**
  * Smart Farm — Server Actions Authentification (R8)
@@ -19,26 +20,9 @@ import { redirect } from 'next/navigation'
 
 async function createAuthClient() {
   const cookieStore = await cookies()
-  // Lecture runtime des env vars — fallback sur SUPABASE_URL/SUPABASE_ANON_KEY
-  // (variants non-NEXT_PUBLIC_*) car Next.js 16 / Turbopack inline les NEXT_PUBLIC_*
-  // au build time. Si la build se fait sans elles (cas Hostinger Cloud), les
-  // Server Actions reçoivent undefined → @supabase/ssr crash.
-  const url =
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    process.env.SUPABASE_URL ||
-    ''
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.SUPABASE_ANON_KEY ||
-    ''
+  const { url, anonKey } = getSupabaseServerEnv()
 
-  if (!url || !key) {
-    throw new Error(
-      `Supabase env vars manquantes au runtime — url=${url ? 'OK' : 'MISSING'} key=${key ? 'OK' : 'MISSING'}. Vérifier hPanel.`,
-    )
-  }
-
-  return createServerClient(url, key, {
+  return createServerClient(url, anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll()
