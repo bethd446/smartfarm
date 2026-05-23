@@ -62,11 +62,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           email: profil.email ?? authUser.email ?? null,
         }
 
-        // 3. Ferme liée (première trouvée)
+        // 3. Ferme liée (première trouvée) — schéma GENESIS V2 = user_farms (vs ancien utilisateur_fermes)
         const { data: liaison } = await sb
-          .from('utilisateur_fermes')
+          .from('user_farms')
           .select('fermes(nom, localisation)')
-          .eq('utilisateur_id', profil.id)
+          .eq('user_id', authUser.id)
           .limit(1)
           .maybeSingle()
 
