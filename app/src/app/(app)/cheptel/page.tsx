@@ -37,7 +37,6 @@ const CAT_PORCELETS = [
   'porcelet_sevre',
   'porcelet_croissance',
   'porc_engraissement',
-  'porc_finition',
 ] as const
 
 function isTab(v: string | undefined): v is TabKey {
