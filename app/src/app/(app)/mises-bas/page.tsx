@@ -62,9 +62,6 @@ export default async function MisesBasPage() {
     // Erreur sur la requête principale : on log côté serveur, on n'expose RIEN à l'utilisateur.
     console.error('[mises-bas] erreur chargement mises_bas:', mbErr.message)
   }
-  // DEBUG TEMP : log côté server le count de rows pour diagnostiquer le 0 portées en prod
-  console.log('[mises-bas] DEBUG count rows:', mb.length, 'mbErr:', mbErr?.message ?? 'none')
-  const __DEBUG_HEADER = `MB=${mb.length} ERR=${mbErr?.message ?? 'none'}`
 
   // 3) Saillies avec diagnostic POSITIF + sans mise-bas, pour le formulaire "Nouvelle mise bas"
   //    Même logique : on scinde pour ne pas dépendre de `diagnostics_gestation` (RLS instable).
@@ -143,7 +140,7 @@ export default async function MisesBasPage() {
             className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
-            {mb?.length ?? 0} portées enregistrées <span style={{ opacity: 0.4, fontSize: 10 }}>[{__DEBUG_HEADER}]</span>
+            {mb?.length ?? 0} portées enregistrées
           </p>
         </div>
         <div className="flex gap-2">
