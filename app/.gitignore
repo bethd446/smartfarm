@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+# Build artifact : assets static générés par deploy-static-copy.sh
+# Ne pas commit, le build Hostinger les régénère à chaque déploiement
+public/_next/
