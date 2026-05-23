@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
+    "start": "node .next/standalone/projects/smartfarm/app/server.js",
+    "build:next-only": "next build",
+    "start:dev-prod": "next start",
     "build:standalone": "next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
     "start:standalone": "cd .next/standalone/projects/smartfarm/app && node server.js",
     "db:push": "supabase db push",

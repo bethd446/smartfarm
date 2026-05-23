@@ -32,13 +32,17 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // R7-P1 V6 — `output: "standalone"` retiré (cause du 503 Hostinger).
-  // Hostinger Cloud lance `npm start` → `next start`, qui exige le mode
-  // serveur "default", PAS le mode standalone (qui veut un boot par
-  // `node .next/standalone/server.js` non utilisé sur cette infra).
-  // Les scripts scripts/patch-server-passenger.js + deploy-static-copy.sh
-  // (pour un futur déploiement Passenger custom) restent disponibles via
-  // `npm run build:standalone` si on bascule un jour vers ce mode.
+  // R7-P1 V7 — `output: "standalone"` RESTAURÉ (cause du 503 etait son ABSENCE).
+  // Hostinger Cloud lance le process via Phusion Passenger / LSNODE.
+  // Passenger fork le worker et attend qu'il listen() sur un socket Unix
+  // (path passé en argv[2]). Le `next start` classique bind un TCP :3000
+  // → Passenger ne voit jamais l'app prête → respawn loop → 503.
+  //
+  // Avec output:"standalone", `next build` génère un .next/standalone/server.js
+  // que scripts/patch-server-passenger.js rewrite pour :
+  //   - listen() sur argv[2] si Unix socket (Passenger Hostinger)
+  //   - fallback TCP $HOSTNAME:$PORT sinon (dev local)
+  output: "standalone",
   async headers() {
     return [
       {
