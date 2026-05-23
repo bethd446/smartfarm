@@ -54,7 +54,7 @@ function isPublic(pathname: string): boolean {
   return false
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname
 
   // 1) Redirects sanitaire (priorité)
@@ -159,7 +159,7 @@ export const config = {
      *  - _next/static, _next/image (assets build Next)
      *  - favicon, sitemap, robots, manifest
      *  - fichiers avec extension (images publiques, etc.)
-     * Le filtrage fin (public vs (app)) est fait dans `middleware()` ci-dessus.
+     * Le filtrage fin (public vs (app)) est fait dans `proxy()` ci-dessus.
      */
     '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|manifest.json).*)',
   ],
