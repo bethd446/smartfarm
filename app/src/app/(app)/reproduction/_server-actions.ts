@@ -85,7 +85,7 @@ export async function creerDiagnostic(
     const supabase = await createClient()
     const { error } = await supabase.from('diagnostics_gestation').insert({
       saillie_id: d.saillie_id,
-      date_diagnostic: d.date_diagnostic,
+      date_diag: d.date_diagnostic,
       resultat: d.resultat,
       methode: d.methode || null,
       observations: d.observations || null,
