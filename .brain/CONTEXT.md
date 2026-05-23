@@ -186,3 +186,32 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 **Leçon** : Sur Supabase, RLS policies seules ne suffisent pas. Tables créées via migrations custom doivent avoir GRANT explicite pour rôles `authenticated`/`anon`. Tables créées via Studio en ont par défaut. À vérifier systématiquement sur nouvelle table métier.
 
 **Commit cleanup** : `78ff95c` (retrait debug probe `[MB=X ERR=Y]` sur /mises-bas).
+
+---
+## SEEDING DATA — 2026-05-23 (post-GRANT service_role)
+
+**Contexte** : User a validé Option B (B.24 saillie post-MB → diag NÉGATIF, éditable manuellement plus tard).
+
+### Diagnostics gestation (9 créés)
+- 8 POSITIF (B.38, B.85, B.37, B.39, B.26, B.31, B.21, B.12) — saillies confirmées
+- 1 NÉGATIF (B.24, 05/04/2026) — anomalie data (saillie 4j post-MB, à investiguer manuellement)
+- 1 EN ATTENTE (B.29 saillie 10/05, fenêtre diag 18-24j pas encore atteinte)
+
+### Sevrages (5 créés)
+- B.37 (17/04), B.26 (28/03), B.85 (25/04), B.76 (28/04), B.24 (29/04)
+- Effectif par défaut 10 porcelets @ 7.5kg (à affiner via UI)
+- B.10 reste en allaitement (MB 05/05, J18)
+
+### Protocoles vaccinaux (3 créés)
+1. Cochette pré-saillie : Parvo/Rouget J-30, Rappel + Lepto J-15
+2. Truie gestante : Coli J85, Rappel Coli/Clostri J100
+3. Porcelet sevrage : Mycoplasmose + Circovirose PCV2 J21
+
+### Réaffectations bâtiments
+- B.76 : Maternité → Gestation (sevrée 28/04, retour gestation)
+- 117 porcelets sevrés → Démarrage 2 (selon user)
+
+### Fix bug /batiments
+- Cause : JOIN sur table `cases` vide → query retournait []
+- Fix commit `fbc033f` : 2 queries séparées (batiments + animaux), groupBy côté serveur
+- Résultat attendu : 7 bâtiments visibles avec taux d'occupation

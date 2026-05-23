@@ -43,14 +43,14 @@ export default async function MisesBasPage() {
     const mbIds = mb.map((m) => m.id)
     const { data: sevData } = await sb
       .from('sevrages')
-      .select('mise_bas_id, date_sevrage, nb_sevres, poids_total_kg')
-      .in('mise_bas_id', mbIds)
+      .select('mb_id, date_sevrage, nb_sevres, poids_total_kg')
+      .in('mb_id', mbIds)
     if (sevData && sevData.length > 0) {
       const sevByMb = new Map<string, any[]>()
       for (const s of sevData as any[]) {
-        const arr = sevByMb.get(s.mise_bas_id) ?? []
+        const arr = sevByMb.get(s.mb_id) ?? []
         arr.push(s)
-        sevByMb.set(s.mise_bas_id, arr)
+        sevByMb.set(s.mb_id, arr)
       }
       mb = mb.map((m) => ({ ...m, sevrages: sevByMb.get(m.id) ?? [] }))
     } else {
