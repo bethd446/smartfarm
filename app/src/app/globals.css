@@ -196,7 +196,67 @@
   /* === TYPOGRAPHY tokens === */
   --sf-font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
   --sf-font-body:    "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* === Design System v1.0 — tokens additifs (alias ZIP) ====================
+   * Source : Smart Farm Design System v1.0.0 / tokens/tokens.css
+   * Ne pas supprimer les variables ci-dessus : on ajoute, on n'écrase pas. */
+
+  /* Alertes 3 niveaux — alias v1.0 (FR : critique/attention/info) */
+  --sf-alert-critique-bg:   var(--sf-alert-critical-bg);
+  --sf-alert-critique-ink:  var(--sf-alert-critical-ink);
+  --sf-alert-critique-bd:   #7A2A0E;
+  --sf-alert-attention-bg:  #FBE7C4;
+  --sf-alert-attention-ink: #5C3E11;
+  --sf-alert-attention-bd:  var(--sf-accent);
+  --sf-alert-info-bg:       #DCE9CB;
+  --sf-alert-info-ink:      #1F3414;
+  --sf-alert-info-bd:       var(--sf-primary);
+
+  /* Radii */
+  --sf-radius-none: 0;
+  --sf-radius-xs:   2px;
+  --sf-radius-sm:   4px;
+  --sf-radius-md:   6px;
+  --sf-radius-lg:   12px;
+  --sf-radius-pill: 9999px;
+
+  /* Spacing */
+  --sf-space-xs:  4px;
+  --sf-space-sm:  8px;
+  --sf-space-md:  16px;
+  --sf-space-lg:  24px;
+  --sf-space-xl:  32px;
+  --sf-space-2xl: 48px;
+  --sf-space-3xl: 64px;
+
+  /* Touch targets (terrain, mains sales, gants) */
+  --sf-touch-min:     44px;
+  --sf-touch-default: 48px;
+  --sf-touch-comfort: 56px;
+
+  /* Elevation — parcimonie (carnet, pas SaaS) */
+  --sf-elev-0: none;
+  --sf-elev-1: 0 1px 0 rgba(0,0,0,0.18);
+  --sf-elev-2: 0 1px 2px rgba(0,0,0,0.10);
+  --sf-elev-3: 0 4px 12px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);
+  --sf-elev-4: 0 12px 24px rgba(0,0,0,0.18), 0 4px 8px rgba(0,0,0,0.10);
+  --sf-elev-5: 0 24px 48px rgba(0,0,0,0.22), 0 8px 16px rgba(0,0,0,0.12);
+
+  /* Stamp ring (signature CTA "cachet" Smart Farm) */
+  --sf-stamp-ring:        inset 0 0 0 2px var(--sf-primary), inset 0 0 0 3px #FFFFFF;
+  --sf-stamp-ring-accent: inset 0 0 0 2px var(--sf-accent),  inset 0 0 0 3px #FFFFFF;
+  --sf-stamp-press:       inset 0 2px 4px rgba(0,0,0,0.18);
 }
+
+/* === Mode haut contraste — tokens v1.0 overrides === */
+html[data-contrast="high"] {
+  --sf-stamp-ring:        inset 0 0 0 3px #000000;
+  --sf-stamp-ring-accent: inset 0 0 0 3px #000000;
+  --sf-alert-attention-bd: #000000;
+  --sf-alert-critique-bd:  #000000;
+  --sf-alert-info-bd:      #000000;
+}
+html[data-contrast="high"] * { font-weight: 600; }
 
 /* === FIX-D2 P0-5 — text-xs base size augmentée pour lisibilité terrain Sahel === */
 @media screen {

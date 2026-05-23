@@ -1,32 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Cachet Ivoire — Smart Farm — Variation B Minimal">
-  <!-- Cachet Ivoire B — version épurée, monogramme SF dans octogone double-trait, pas de truie -->
-
-  <!-- Fond crème -->
-  <rect width="240" height="240" fill="#FFFBEB"/>
-
-  <!-- Octogone extérieur : trait gravure 4px vert sahel -->
-  <polygon
-    points="75.61,12.83 164.39,12.83 227.17,75.61 227.17,164.39 164.39,227.17 75.61,227.17 12.83,164.39 12.83,75.61"
-    fill="none" stroke="#2D4A1F" stroke-width="4" stroke-linejoin="miter"/>
-
-  <!-- Octogone intérieur : trait 1.5px à 8px du précédent -->
-  <polygon
-    points="83.27,20.49 156.73,20.49 219.51,83.27 219.51,156.73 156.73,219.51 83.27,219.51 20.49,156.73 20.49,83.27"
-    fill="none" stroke="#2D4A1F" stroke-width="1.5"/>
-
-  <!-- Monogramme SF central, énorme, vert sahel -->
-  <text x="120" y="142" text-anchor="middle"
-        font-family="'Big Shoulders Display', Impact, sans-serif"
-        font-weight="900" font-size="96" fill="#2D4A1F"
-        letter-spacing="4">SF</text>
-
-  <!-- Filet haut + bas accent gold (équilibre lecture) -->
-  <line x1="80" y1="62" x2="160" y2="62" stroke="#A16207" stroke-width="2"/>
-  <line x1="80" y1="178" x2="160" y2="178" stroke="#A16207" stroke-width="2"/>
-
-  <!-- Micro-texte sous filet : "EST. 2026" — registre officiel -->
-  <text x="120" y="196" text-anchor="middle"
-        font-family="'Big Shoulders Display', Impact, sans-serif"
-        font-weight="700" font-size="11" fill="#2D4A1F"
-        letter-spacing="3.5">EST · 2026</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Smart Farm — Cachet Ivoire pleine couleur">
+  <title>Smart Farm — Cachet Ivoire</title>
+  <rect width="240" height="240" fill="#FFFBEB"></rect>
+  <polygon points="75.61,12.83 164.39,12.83 227.17,75.61 227.17,164.39 164.39,227.17 75.61,227.17 12.83,164.39 12.83,75.61" fill="none" stroke="#2D4A1F" stroke-width="4" stroke-linejoin="miter"></polygon>
+  <polygon points="83.27,20.49 156.73,20.49 219.51,83.27 219.51,156.73 156.73,219.51 83.27,219.51 20.49,156.73 20.49,83.27" fill="none" stroke="#2D4A1F" stroke-width="1.5"></polygon>
+  <text x="120" y="142" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="96" fill="#2D4A1F" letter-spacing="4">SF</text>
+  <line x1="80" y1="62" x2="160" y2="62" stroke="#A16207" stroke-width="2"></line>
+  <line x1="80" y1="178" x2="160" y2="178" stroke="#A16207" stroke-width="2"></line>
+  <text x="120" y="196" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="700" font-size="11" fill="#2D4A1F" letter-spacing="3.5">EST · 2026</text>
 </svg>

@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Smart Farm — Glyph SF">
-  <!-- Fond crème mil -->
-  <rect width="64" height="64" rx="6" fill="#FFFBEB"/>
-  <!-- Monogramme SF — Big Shoulders Black, vert sahel, lisible jusqu'à 16×16 -->
-  <text x="32" y="46" text-anchor="middle"
-        font-family="'Big Shoulders Display', Impact, sans-serif"
-        font-weight="900" font-size="42" fill="#2D4A1F"
-        letter-spacing="1">SF</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Smart Farm — Glyph SF (fallback sub-48px)">
+  <title>Smart Farm — Glyph SF</title>
+  <rect width="240" height="240" rx="22" fill="#FFFBEB"></rect>
+  <text x="120" y="160" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="156" fill="#2D4A1F" letter-spacing="2">SF</text>
 </svg>
