@@ -289,23 +289,33 @@ export default async function KpiPage() {
     }
   })
 
-  // Agrégats globaux (across fermes)
+  // Agrégats globaux (across fermes) — coerce en Number et filtre NaN/null
+  // pour éviter le bug "NaN" si Postgres renvoie un numeric en string.
   const psta_global = (() => {
-    const vals = fList.map(f => f.psta_moyen_ferme).filter((v): v is number => v !== null)
+    const vals = fList
+      .map((f) => Number(f.psta_moyen_ferme))
+      .filter((v) => Number.isFinite(v))
     if (!vals.length) return null
     return vals.reduce((a, b) => a + b, 0) / vals.length
   })()
   const ic_global = (() => {
-    const vals = fList.map(f => f.ic_moyen_ferme).filter((v): v is number => v !== null)
+    const vals = fList
+      .map((f) => Number(f.ic_moyen_ferme))
+      .filter((v) => Number.isFinite(v))
     if (!vals.length) return null
     return vals.reduce((a, b) => a + b, 0) / vals.length
   })()
   const mort_global = (() => {
-    const vals = fList.map(f => f.mortalite_taux_30j).filter((v): v is number => v !== null)
+    const vals = fList
+      .map((f) => Number(f.mortalite_taux_30j))
+      .filter((v) => Number.isFinite(v))
     if (!vals.length) return null
     return vals.reduce((a, b) => a + b, 0) / vals.length
   })()
-  const cout_global = fList.reduce((a, f) => a + Number(f.cout_alim_30j ?? 0), 0)
+  const cout_global = fList.reduce((a, f) => {
+    const v = Number(f.cout_alim_30j)
+    return a + (Number.isFinite(v) ? v : 0)
+  }, 0)
 
   // Anciens agrégats (cartes legacy conservées en bas)
   const totalProlificite = tList.reduce((a, t) => a + Number(t.prolificite_moyenne ?? 0), 0)
@@ -548,7 +558,7 @@ export default async function KpiPage() {
             >
               <Target className="h-5 w-5 text-[var(--sf-primary)] mb-2" />
               <div className="text-2xl font-bold tabular-nums text-[var(--sf-ink)]">
-                {psta_global !== null ? psta_global.toFixed(2) : '—'}
+                {Number.isFinite(psta_global) ? (psta_global as number).toFixed(2) : '—'}
               </div>
               <div className="mt-1" style={eyebrowStyle}>{TERRAIN.psta.court}</div>
               <div className="mt-1" style={terrainSubStyle}>
@@ -563,7 +573,7 @@ export default async function KpiPage() {
             >
               <Gauge className="h-5 w-5 text-[var(--sf-accent-deep)] mb-2" />
               <div className="text-2xl font-bold tabular-nums text-[var(--sf-ink)]">
-                {ic_global !== null ? ic_global.toFixed(2) : '—'}
+                {Number.isFinite(ic_global) ? (ic_global as number).toFixed(2) : '—'}
               </div>
               <div className="mt-1" style={eyebrowStyle}>IC · aliment par kilo</div>
               <div className="mt-1" style={terrainSubStyle}>
@@ -578,7 +588,7 @@ export default async function KpiPage() {
             >
               <Skull className="h-5 w-5 text-[var(--sf-danger-ink,#7A2A1F)] mb-2" />
               <div className="text-2xl font-bold tabular-nums text-[var(--sf-ink)]">
-                {mort_global !== null ? `${mort_global.toFixed(2)}%` : '—'}
+                {Number.isFinite(mort_global) ? `${(mort_global as number).toFixed(2)}%` : '—'}
               </div>
               <div className="mt-1" style={eyebrowStyle}>Pertes 30 j</div>
               <div className="mt-1" style={terrainSubStyle}>

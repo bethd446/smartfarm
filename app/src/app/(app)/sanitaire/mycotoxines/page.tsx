@@ -153,7 +153,14 @@ function bordureRisque(niveau: RecoAntiMyco['niveau_risque']): string {
 export default async function MycotoxinesPage() {
   const sb = await createClient()
 
-  const { data: lotsData, error } = await sb
+  // Lots — la table `lots_matieres_premieres` peut être bloquée RLS/GRANT et/ou
+  //        avoir un schéma alternatif (`lot`, `qte_kg` au lieu de
+  //        `reference_lot`, `quantite_kg`). On retombe sur le second schéma
+  //        avant d'afficher un message générique.
+  let lots: LotRow[] = []
+  let loadErr: string | null = null
+
+  const r1 = await sb
     .from('lots_matieres_premieres')
     .select(
       'id, reference_lot, date_reception, quantite_kg, origine, analyse_aflatoxine_b1_ppb, analyse_zearalenone_ppb, analyse_don_ppb, date_analyse, conforme, observations, matiere_premiere:matieres_premieres(nom)',
@@ -161,7 +168,42 @@ export default async function MycotoxinesPage() {
     .is('deleted_at', null)
     .order('date_reception', { ascending: false })
 
-  const lots = ((lotsData ?? []) as unknown) as LotRow[]
+  if (!r1.error && r1.data) {
+    lots = ((r1.data as unknown) as LotRow[])
+  } else {
+    // Tentative 2 : schéma réel minimal (lot, qte_kg, mycotoxine_test, ...)
+    const r2 = await sb
+      .from('lots_matieres_premieres')
+      .select(
+        'id, lot, date_reception, qte_kg, mycotoxine_test, observations, matiere_premiere:matieres_premieres(nom)',
+      )
+      .order('date_reception', { ascending: false })
+
+    if (!r2.error && r2.data) {
+      lots = (r2.data as Array<Record<string, unknown>>).map((l) => ({
+        id: String(l.id ?? ''),
+        reference_lot: String((l.lot as string) ?? ''),
+        date_reception: String(l.date_reception ?? ''),
+        quantite_kg: Number((l.qte_kg as number) ?? 0),
+        origine: null,
+        analyse_aflatoxine_b1_ppb: null,
+        analyse_zearalenone_ppb: null,
+        analyse_don_ppb: null,
+        date_analyse: null,
+        // mycotoxine_test = boolean test fait ou pas — on considère "conforme" par défaut
+        conforme: l.mycotoxine_test !== false,
+        observations: (l.observations as string | null) ?? null,
+        matiere_premiere: (l.matiere_premiere as { nom: string } | null) ?? null,
+      })) as LotRow[]
+    } else {
+      console.error(
+        '[mycotoxines] lots_matieres_premieres inaccessible:',
+        r1.error?.message ?? r2.error?.message,
+      )
+      loadErr =
+        'Impossible de charger les lots — réessayez plus tard.'
+    }
+  }
 
   // Matières premières sensibles pour le dialog
   const { data: mpData } = await sb
@@ -524,9 +566,9 @@ export default async function MycotoxinesPage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {error ? (
+          {loadErr ? (
             <p className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-              Erreur de chargement : {error.message}
+              {loadErr}
             </p>
           ) : lots.length === 0 ? (
             <div className="p-2">

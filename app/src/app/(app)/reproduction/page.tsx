@@ -18,12 +18,40 @@ export const metadata: Metadata = {
 export default async function ReproductionPage() {
   const sb = await createClient()
 
-  const { data: saillies } = await sb
+  // 1) Saillies — requête principale SANS jointure `diagnostics_gestation` (RLS
+  //    sur cette table cassait toute la page : compteur "0 montées" tandis que
+  //    la vue `v_saillies_a_diagnostiquer` (accessible) listait 10 saillies).
+  const { data: saillesBase, error: saillesErr } = await sb
     .from('saillies')
     .select(
-      `*, truie:truie_id(tag,nom), verrat:verrat_id(tag,nom), diagnostics_gestation(resultat,date_diag)`
+      `*, truie:truie_id(tag,nom), verrat:verrat_id(tag,nom)`
     )
     .order('date_saillie', { ascending: false })
+
+  let saillies: any[] = (saillesBase ?? []) as any[]
+
+  // 2) Diagnostics gestation : best-effort. Si bloqué par RLS on continue avec []
+  if (saillies.length > 0) {
+    const saillieIds = saillies.map((s) => s.id)
+    const { data: diagData } = await sb
+      .from('diagnostics_gestation')
+      .select('saillie_id, resultat, date_diag')
+      .in('saillie_id', saillieIds)
+    const diagBySaillie = new Map<string, any[]>()
+    for (const d of (diagData ?? []) as any[]) {
+      const arr = diagBySaillie.get(d.saillie_id) ?? []
+      arr.push(d)
+      diagBySaillie.set(d.saillie_id, arr)
+    }
+    saillies = saillies.map((s) => ({
+      ...s,
+      diagnostics_gestation: diagBySaillie.get(s.id) ?? [],
+    }))
+  }
+
+  if (saillesErr) {
+    console.error('[reproduction] erreur chargement saillies:', saillesErr.message)
+  }
 
   // Truies actives F catégorie truie/cochette
   const { data: truies } = await sb

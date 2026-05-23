@@ -27,23 +27,78 @@ const TONE_TO_VARIANT = {
 export default async function MisesBasPage() {
   const sb = await createClient()
 
-  const { data: mb } = await sb
+  // 1) Mises-bas — requête CŒUR sans dépendance à `sevrages` (table parfois bloquée
+  //    par RLS/GRANT côté authenticated). Si la jointure plantait, on perdait
+  //    TOUT le compteur "X portées" + l'historique. On scinde donc.
+  const { data: mbBase, error: mbErr } = await sb
     .from('mises_bas')
-    .select(
-      `*, truie:truie_id(tag,nom), sevrages(date_sevrage,nb_sevres,poids_total_kg)`
-    )
+    .select(`*, truie:truie_id(tag,nom)`)
     .order('date_mise_bas', { ascending: false })
 
-  // Saillies avec diagnostic POSITIF + sans mise-bas, pour le formulaire "Nouvelle mise bas"
-  const { data: saillies } = await sb
+  let mb: any[] = (mbBase ?? []) as any[]
+
+  // 2) Sevrages : best-effort. Si la table est inaccessible, on continue
+  //    sans sevrage plutôt que de casser toute la page.
+  if (mb.length > 0) {
+    const mbIds = mb.map((m) => m.id)
+    const { data: sevData } = await sb
+      .from('sevrages')
+      .select('mise_bas_id, date_sevrage, nb_sevres, poids_total_kg')
+      .in('mise_bas_id', mbIds)
+    if (sevData && sevData.length > 0) {
+      const sevByMb = new Map<string, any[]>()
+      for (const s of sevData as any[]) {
+        const arr = sevByMb.get(s.mise_bas_id) ?? []
+        arr.push(s)
+        sevByMb.set(s.mise_bas_id, arr)
+      }
+      mb = mb.map((m) => ({ ...m, sevrages: sevByMb.get(m.id) ?? [] }))
+    } else {
+      mb = mb.map((m) => ({ ...m, sevrages: [] }))
+    }
+  }
+
+  if (mbErr) {
+    // Erreur sur la requête principale : on log côté serveur, on n'expose RIEN à l'utilisateur.
+    console.error('[mises-bas] erreur chargement mises_bas:', mbErr.message)
+  }
+
+  // 3) Saillies avec diagnostic POSITIF + sans mise-bas, pour le formulaire "Nouvelle mise bas"
+  //    Même logique : on scinde pour ne pas dépendre de `diagnostics_gestation` (RLS instable).
+  const { data: salliesBase } = await sb
     .from('saillies')
-    .select(
-      `id, date_saillie,
-       truie:truie_id(tag,nom),
-       diagnostics_gestation(resultat),
-       mises_bas(id)`
-    )
+    .select(`id, date_saillie, truie:truie_id(tag,nom)`)
     .order('date_saillie', { ascending: false })
+
+  let saillies: any[] = (salliesBase ?? []) as any[]
+
+  if (saillies.length > 0) {
+    const saillieIds = saillies.map((s) => s.id)
+    const [{ data: diagData }, { data: mbForSaillie }] = await Promise.all([
+      sb
+        .from('diagnostics_gestation')
+        .select('saillie_id, resultat')
+        .in('saillie_id', saillieIds),
+      sb.from('mises_bas').select('id, saillie_id').in('saillie_id', saillieIds),
+    ])
+    const diagBySaillie = new Map<string, any[]>()
+    for (const d of (diagData ?? []) as any[]) {
+      const arr = diagBySaillie.get(d.saillie_id) ?? []
+      arr.push(d)
+      diagBySaillie.set(d.saillie_id, arr)
+    }
+    const mbBySaillie = new Map<string, any[]>()
+    for (const m of (mbForSaillie ?? []) as any[]) {
+      const arr = mbBySaillie.get(m.saillie_id) ?? []
+      arr.push(m)
+      mbBySaillie.set(m.saillie_id, arr)
+    }
+    saillies = saillies.map((s) => ({
+      ...s,
+      diagnostics_gestation: diagBySaillie.get(s.id) ?? [],
+      mises_bas: mbBySaillie.get(s.id) ?? [],
+    }))
+  }
 
   const saillesPourMb = ((saillies ?? []) as any[])
     .filter(

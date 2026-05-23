@@ -158,9 +158,19 @@ export default async function BiosecuritePage() {
   }, {})
 
   // 2. Visites — 30 derniers jours
+  //    NB : la table `visites_biosecurite` peut être bloquée par RLS/GRANT côté
+  //    `authenticated` (cf. rapport QA — erreurs SQL exposées en prod). On essaie
+  //    plusieurs formes de la requête (schéma "métier" puis schéma "réel") et on
+  //    n'expose JAMAIS le message Postgres brut à l'utilisateur final.
   const since = new Date()
   since.setDate(since.getDate() - 30)
-  const { data: visitesData, error: visitesErr } = await sb
+
+  type AnyVisite = Partial<VisiteRow> & Record<string, unknown>
+  let visites: VisiteRow[] = []
+  let visitesErrShown: string | null = null
+
+  // Tentative 1 : schéma métier complet (type_visite, nom_visiteur, ...)
+  const r1 = await sb
     .from('visites_biosecurite')
     .select(
       'id, date_visite, type_visite, nom_visiteur, societe, provenance_ferme_porcine, delai_depuis_derniere_visite_jours, douche_obligatoire_effectuee, changement_tenue, pediluve_utilise, observations',
@@ -169,7 +179,46 @@ export default async function BiosecuritePage() {
     .gte('date_visite', since.toISOString())
     .order('date_visite', { ascending: false })
 
-  const visites = (visitesData ?? []) as VisiteRow[]
+  if (!r1.error && r1.data) {
+    visites = r1.data as VisiteRow[]
+  } else {
+    // Tentative 2 : schéma alternatif (raison, visiteur, douche, vetements, ...)
+    //    cf. rapport QA listant les colonnes réelles.
+    const r2 = await sb
+      .from('visites_biosecurite')
+      .select(
+        'id, date_visite, raison, visiteur, vehicule, douche, vetements, observations',
+      )
+      .gte('date_visite', since.toISOString())
+      .order('date_visite', { ascending: false })
+
+    if (!r2.error && r2.data) {
+      visites = (r2.data as AnyVisite[]).map((v) => ({
+        id: String(v.id ?? ''),
+        date_visite: String(v.date_visite ?? ''),
+        // map "raison" → "type_visite" pour réutiliser le LABEL_TYPE existant si possible
+        type_visite: String((v.raison as string) ?? 'autre'),
+        nom_visiteur: (v.visiteur as string | null) ?? null,
+        societe: null,
+        provenance_ferme_porcine: false,
+        delai_depuis_derniere_visite_jours: null,
+        douche_obligatoire_effectuee:
+          typeof v.douche === 'boolean' ? (v.douche as boolean) : null,
+        changement_tenue:
+          typeof v.vetements === 'boolean' ? (v.vetements as boolean) : null,
+        pediluve_utilise: null,
+        observations: (v.observations as string | null) ?? null,
+      }))
+    } else {
+      // Échec total : log côté serveur, message générique côté UI
+      console.error(
+        '[biosecurite] visites_biosecurite inaccessible:',
+        r1.error?.message ?? r2.error?.message,
+      )
+      visitesErrShown =
+        'Impossible de charger le registre des visites — réessayez plus tard.'
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -304,9 +353,9 @@ export default async function BiosecuritePage() {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {visitesErr ? (
+          {visitesErrShown ? (
             <p className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-              Erreur de chargement : {visitesErr.message}
+              {visitesErrShown}
             </p>
           ) : visites.length === 0 ? (
             <div className="p-2">

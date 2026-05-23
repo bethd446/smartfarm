@@ -106,7 +106,15 @@ function formatRappels(r: number[] | null) {
 
 export default async function ProtocolesPage() {
   const sb = await createClient()
-  const { data, error } = await sb
+
+  // NB : la table `protocoles_vaccinaux` peut être bloquée par RLS/GRANT et/ou
+  //      avoir un schéma différent selon l'environnement (cf. rapport QA :
+  //      "column protocoles_vaccinaux.description does not exist"). On essaie
+  //      les deux schémas connus avant de tomber sur un message générique.
+  let rows: ProtocoleRow[] = []
+  let loadErr: string | null = null
+
+  const r1 = await sb
     .from('protocoles_vaccinaux')
     .select(
       'id, nom, description, categorie_cible, age_jours, produit, voie, dose_ml, rappel_jours, rappels_jours, obligatoire, actif',
@@ -114,7 +122,40 @@ export default async function ProtocolesPage() {
     .order('age_jours', { ascending: true, nullsFirst: false })
     .order('nom', { ascending: true })
 
-  const rows = (data ?? []) as ProtocoleRow[]
+  if (!r1.error && r1.data) {
+    rows = r1.data as ProtocoleRow[]
+  } else {
+    // Tentative 2 : schéma alternatif (observations + vaccins + calendrier)
+    const r2 = await sb
+      .from('protocoles_vaccinaux')
+      .select('id, nom, observations, vaccins, calendrier')
+      .order('nom', { ascending: true })
+
+    if (!r2.error && r2.data) {
+      rows = (r2.data as Array<Record<string, unknown>>).map((p) => ({
+        id: String(p.id ?? ''),
+        nom: String(p.nom ?? ''),
+        description: (p.observations as string | null) ?? null,
+        categorie_cible: null,
+        age_jours: null,
+        produit: null,
+        voie: null,
+        dose_ml: null,
+        rappel_jours: null,
+        rappels_jours: null,
+        obligatoire: false,
+        actif: true,
+      })) as ProtocoleRow[]
+    } else {
+      console.error(
+        '[protocoles] inaccessible:',
+        r1.error?.message ?? r2.error?.message,
+      )
+      loadErr =
+        'Impossible de charger les protocoles vaccinaux — réessayez plus tard.'
+    }
+  }
+
   const total = rows.length
   const obligatoires = rows.filter((r) => r.obligatoire).length
   const actifs = rows.filter((r) => r.actif).length
@@ -217,9 +258,9 @@ export default async function ProtocolesPage() {
           <CardTitle className="text-lg">Liste des protocoles</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {error ? (
+          {loadErr ? (
             <p className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-              Erreur de chargement : {error.message}
+              {loadErr}
             </p>
           ) : rows.length === 0 ? (
             <div className="p-8 text-center space-y-3">

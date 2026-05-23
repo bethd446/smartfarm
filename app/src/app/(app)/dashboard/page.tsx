@@ -23,16 +23,29 @@ export const metadata: Metadata = {
   title: 'Tableau de bord — Smart Farm',
 }
 
-/** Map priorité 1/2/3 → variante Badge sémantique + icône + label. */
-function prioMeta(p: number): {
+/** Map priorité (numérique 1/2/3 OU sémantique critique/elevee/normale) → Badge. */
+function prioMeta(p: number | string | null | undefined): {
   variant: 'danger' | 'warning' | 'info' | 'secondary'
   Icon: typeof AlertCircle
   label: string
 } {
+  // Forme numérique historique
   if (p === 1) return { variant: 'danger', Icon: AlertCircle, label: 'URGENT' }
   if (p === 2) return { variant: 'warning', Icon: Clock, label: 'IMPORTANT' }
   if (p === 3) return { variant: 'info', Icon: Calendar, label: 'NORMAL' }
-  return { variant: 'secondary', Icon: Calendar, label: `P${p}` }
+  // Forme sémantique renvoyée par v_calendrier_repro (critique, elevee, ...)
+  if (typeof p === 'string') {
+    const s = p.toLowerCase().replace(/^p[_-]?/, '')
+    if (s === 'critique' || s === 'urgent')
+      return { variant: 'danger', Icon: AlertCircle, label: 'CRITIQUE' }
+    if (s === 'elevee' || s === 'eleve' || s === 'important' || s === 'haute' || s === 'high')
+      return { variant: 'warning', Icon: Clock, label: 'ÉLEVÉE' }
+    if (s === 'moyenne' || s === 'normale' || s === 'normal' || s === 'medium')
+      return { variant: 'info', Icon: Calendar, label: 'MOYENNE' }
+    if (s === 'info' || s === 'basse' || s === 'low' || s === 'faible')
+      return { variant: 'secondary', Icon: Calendar, label: 'INFO' }
+  }
+  return { variant: 'secondary', Icon: Calendar, label: 'INFO' }
 }
 
 /** Map ton portée → variante Badge. */
