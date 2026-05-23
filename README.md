@@ -99,6 +99,19 @@ Voir [`CHANGELOG.md`](./CHANGELOG.md) pour le détail des sprints.
 
 ---
 
+## 🎨 Design & UX
+
+L'identité visuelle **Terrain Vivant** (palette Terre & Mil, Big Shoulders Display + Instrument Sans) est documentée au format **Google DESIGN.md** :
+
+- **[`DESIGN.md`](./DESIGN.md)** — Spec design tokens (couleurs, typo, components) lintable via `npx -y @google/design.md lint DESIGN.md`.
+- **[`docs/DESIGN_BRIEF_CLAUDE.md`](./docs/DESIGN_BRIEF_CLAUDE.md)** — Brief destiné à Claude Design (cible utilisateur, do's/don'ts métier).
+- **[`docs/SCREENSHOTS.md`](./docs/SCREENSHOTS.md)** — Liste écrans à capturer pour audits visuels.
+- **[`docs/REPO_STRUCTURE.md`](./docs/REPO_STRUCTURE.md)** — Tour guidé du repo pour outils de design.
+
+Source des tokens en production : [`app/src/app/globals.css`](./app/src/app/globals.css) (`@theme` Tailwind v4 CSS-first + variables `--sf-*`).
+
+---
+
 ## Conventions
 
 - **FR** pour l'UI / vocab terrain pro ; **EN** pour code/SQL/commentaires techniques

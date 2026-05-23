@@ -1,0 +1,83 @@
+# Exclusions Claude Design — Smart Farm
+# Patterns à ne PAS crawler pour la feature "Set up your design system" de Claude.ai.
+# Format : 1 pattern par ligne, gitignore-like.
+
+# --- Dépendances et builds ---
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# --- Base de données / backend (pas pertinent pour design) ---
+supabase/migrations/
+supabase/.temp/
+supabase/.branches/
+supabase/seed.sql
+
+# --- Scripts opérationnels ---
+scripts/
+**/scripts/patch-server-passenger.js
+**/scripts/screenshot-*.ts
+
+# --- Cerveau projet et docs internes ---
+.brain/
+agents/
+docs/archive/
+docs/audits/
+docs/MIGRATE-TO-CLOUD.md
+docs/MIGRATION.md
+docs/RLS.md
+docs/RAPPORT_*.md
+docs/BRIEF_*.md
+!docs/DESIGN_BRIEF_CLAUDE.md
+!docs/SCREENSHOTS.md
+!docs/REPO_STRUCTURE.md
+
+# --- Tests et artefacts ---
+test-results/
+playwright-report/
+tests/
+**/tests/
+*.test.ts
+*.test.tsx
+*.spec.ts
+
+# --- Logs et temp ---
+*.log
+npm-debug.log*
+.cache/
+.tmp/
+tmp/
+
+# --- Env et secrets ---
+.env
+.env.*
+!.env.example
+**/.env.local
+
+# --- Docker et infra ---
+docker-compose.yml
+Dockerfile
+.docker/
+.dockerignore.local
+deploy.sh
+deploy-static-copy.sh
+
+# --- Git ---
+.git/
+.gitignore
+.github/
+
+# --- IDE ---
+.vscode/
+.idea/
+*.swp
+
+# --- OS ---
+.DS_Store
+Thumbs.db
