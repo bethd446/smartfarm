@@ -70,11 +70,27 @@ export async function connexionAction(_prev: AuthResult | null, formData: FormDa
     email = data as string
   }
 
+  // ULTRA DEBUG : tracer ce que @supabase/ssr envoie réellement
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '(undefined)'
+  const supaKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '(undefined)'
+
+  // Test 1: appel direct REST sans @supabase/ssr (pour comparer)
+  let directResult = ''
+  try {
+    const r = await fetch(`${supaUrl}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': supaKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    directResult = `DIRECT_${r.status}_${(await r.text()).substring(0, 80)}`
+  } catch (e) {
+    directResult = `DIRECT_THROW_${String(e).substring(0, 80)}`
+  }
+
+  // Test 2: via @supabase/ssr (le code actuel)
   const { error } = await sb.auth.signInWithPassword({ email, password })
   if (error) {
-    // DEBUG TEMP : log précis du throw Supabase pour diagnostiquer
-    console.error('[connexionAction] Supabase auth error:', error.message, error.status, error.code, 'email:', email)
-    return { error: `DEBUG: ${error.message} (status ${error.status} code ${error.code}) email=${email}` }
+    return { error: `SSR:${error.message}/${error.status}/${error.code} | URL:${supaUrl.substring(0,40)} | KEY:${supaKey.substring(0,30)}...len${supaKey.length} | ${directResult}` }
   }
 
   // Marquer la dernière connexion (best-effort, ne bloque pas le login)
