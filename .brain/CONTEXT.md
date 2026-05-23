@@ -160,3 +160,29 @@ app/
 - Modifier les env vars Hostinger via le wizard "Connect Database" (corrompt PORT/HOSTNAME)
 - Inventer du vocabulaire métier (toujours valider contre glossaire FR pro)
 - Pousser sans avoir testé build + Playwright en local
+
+---
+## RÉSOLU 2026-05-21 — GRANT manquants sur 7 tables métier
+
+**Symptôme** : /mises-bas, /reproduction, /sanitaire/biosecurite|protocoles|mycotoxines, /bandes affichaient "0 portées / 0 visites / etc." malgré données présentes en BDD.
+
+**Cause racine** : `permission denied for table mises_bas` (et 6 autres). RLS policies étaient `TO public` (donc OK pour authenticated), mais le GRANT au niveau ACL Postgres manquait. Postgres refuse l'accès AVANT même d'évaluer les policies RLS.
+
+**Fix** (appliqué par user via Supabase Studio SQL Editor) :
+```sql
+ALTER TABLE public.{7 tables} ENABLE ROW LEVEL SECURITY;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.{7 tables} TO authenticated;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
+```
+
+**Tables concernées** : mises_bas, sevrages, diagnostics_gestation, visites_biosecurite, protocoles_vaccinaux, lots_matieres_premieres, bandes.
+
+**Validation prod** :
+- /mises-bas → 6 portées ✅
+- /reproduction → 10 montées + diagnostics ✅
+- /sanitaire/biosecurite, /protocoles, /mycotoxines → chargent sans erreur SQL ✅
+- /bandes → "Aucune bande créée" UX (table vide en BDD, normal) ✅
+
+**Leçon** : Sur Supabase, RLS policies seules ne suffisent pas. Tables créées via migrations custom doivent avoir GRANT explicite pour rôles `authenticated`/`anon`. Tables créées via Studio en ont par défaut. À vérifier systématiquement sur nouvelle table métier.
+
+**Commit cleanup** : `78ff95c` (retrait debug probe `[MB=X ERR=Y]` sur /mises-bas).

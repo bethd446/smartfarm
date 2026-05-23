@@ -17,19 +17,16 @@ export const metadata: Metadata = {
  */
 export default async function BatimentsPage() {
   const sb = await createClient()
-  const { data: batiments } = await sb
-    .from('batiments')
-    .select(`
-      *,
-      cases(id, numero, capacite, type, animaux(id, tag, statut, sexe, categorie))
-    `)
-    .order('nom')
+  // V2 : on évite le JOIN sur `cases` (table vide en début de cycle → certaines configs
+  // RLS bloquent la query entière). On charge bâtiments + animaux séparément.
+  const [{ data: batiments }, { data: animauxActifsAll }] = await Promise.all([
+    sb.from('batiments').select('*').is('deleted_at', null).order('nom'),
+    sb.from('animaux').select('id, tag, statut, sexe, categorie, batiment_id').eq('statut', 'actif').is('deleted_at', null),
+  ])
 
-  // Calcul occupation côté serveur
+  // Calcul occupation côté serveur (groupBy batiment_id)
   const enriched = (batiments ?? []).map((b: any) => {
-    const animauxActifs = (b.cases ?? [])
-      .flatMap((c: any) => c.animaux ?? [])
-      .filter((a: any) => a.statut === 'actif')
+    const animauxActifs = (animauxActifsAll ?? []).filter((a: any) => a.batiment_id === b.id)
     const capacite = b.capacite ?? 0
     const taux = capacite > 0 ? (animauxActifs.length / capacite) * 100 : 0
     return { ...b, animauxActifs, taux }
