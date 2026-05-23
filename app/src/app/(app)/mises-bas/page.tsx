@@ -127,7 +127,7 @@ export default async function MisesBasPage() {
   return (
     <div className="space-y-6">
       {/* === Header de page : PageTitle unifié === */}
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <PageTitle
             eyebrow="ÉLEVAGE"
@@ -143,7 +143,7 @@ export default async function MisesBasPage() {
             {mb?.length ?? 0} portées enregistrées
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <ExportButton table="mises_bas" />
           <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
