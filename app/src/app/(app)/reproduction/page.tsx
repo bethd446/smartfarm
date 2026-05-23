@@ -288,7 +288,7 @@ export default async function ReproductionPage() {
           />
         ) : (
         <div
-          className="overflow-x-auto"
+          className="overflow-x-auto -mx-4 sm:mx-0"
           style={{
             borderTop: 'var(--sf-rule-top, 4px solid var(--sf-primary, #2D4A1F))',
             borderBottom:
@@ -300,7 +300,7 @@ export default async function ReproductionPage() {
             background: 'var(--sf-surface-1, #FFFFFF)',
           }}
         >
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[800px] text-sm">
             <thead
               className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
               style={{

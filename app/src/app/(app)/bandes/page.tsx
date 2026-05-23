@@ -28,12 +28,12 @@ export default async function BandesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-amber-600" />Bandes</h1>
           <p className="text-sm text-slate-500 mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <ExportButton table="bandes" />
           <DialogNouvelleBande
             trigger={

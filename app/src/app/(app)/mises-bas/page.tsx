@@ -180,8 +180,8 @@ export default async function MisesBasPage() {
           <CardTitle>Historique des mises-bas ({mb!.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="w-full min-w-[800px] text-sm">
               <thead className="bg-muted/40 border-b">
                 <tr>
                   <th className="text-left p-3 font-medium">Truie</th>

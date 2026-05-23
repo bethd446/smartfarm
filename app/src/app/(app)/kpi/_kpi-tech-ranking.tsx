@@ -141,7 +141,7 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
 
   return (
     <div
-      className="overflow-x-auto"
+      className="overflow-x-auto -mx-4 sm:mx-0"
       style={{
         borderTop: 'var(--sf-rule-top, 4px solid var(--sf-primary, #2D4A1F))',
         borderBottom: 'var(--sf-rule-bottom, 1px solid var(--sf-border, rgba(0,0,0,0.18)))',
@@ -150,7 +150,7 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
         background: 'var(--sf-surface-1, #FFFFFF)',
       }}
     >
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[700px] text-sm">
         <thead
           className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
           style={headStyle}
