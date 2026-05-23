@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Smart Farm — Cachet effet tampon encreur grain organique">
+  <title>Smart Farm — Cachet Stamp Grain</title>
+  <defs>
+    
+    <filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="2" seed="7" result="noise"></feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.6"></feDisplacementMap>
+    </filter>
+    
+    <filter id="erosion" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="13" result="t"></feTurbulence>
+      <feColorMatrix in="t" type="matrix" values="0 0 0 0 1&#xA;                             0 0 0 0 1&#xA;                             0 0 0 0 1&#xA;                             0 0 0 -0.55 0.85" result="mask"></feColorMatrix>
+      <feComposite in="SourceGraphic" in2="mask" operator="in"></feComposite>
+    </filter>
+  </defs>
+
+  <rect width="240" height="240" fill="#FFFBEB"></rect>
+
+  <g filter="url(#erosion)">
+    <g filter="url(#grain)">
+      <polygon points="75.61,12.83 164.39,12.83 227.17,75.61 227.17,164.39 164.39,227.17 75.61,227.17 12.83,164.39 12.83,75.61" fill="none" stroke="#9A3412" stroke-width="5.5" stroke-linejoin="miter"></polygon>
+      <polygon points="83.27,20.49 156.73,20.49 219.51,83.27 219.51,156.73 156.73,219.51 83.27,219.51 20.49,156.73 20.49,83.27" fill="none" stroke="#9A3412" stroke-width="2"></polygon>
+      <text x="120" y="142" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="96" fill="#9A3412" letter-spacing="4">SF</text>
+      <line x1="80" y1="62" x2="160" y2="62" stroke="#9A3412" stroke-width="2.5"></line>
+      <line x1="80" y1="178" x2="160" y2="178" stroke="#9A3412" stroke-width="2.5"></line>
+      <text x="120" y="196" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="700" font-size="11" fill="#9A3412" letter-spacing="3.5">EST · 2026</text>
+    </g>
+  </g>
+</svg>

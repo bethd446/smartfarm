@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" aria-label="Smart Farm — Lockup horizontal glyph + wordmark">
+  <title>Smart Farm — Wordmark Lockup</title>
+  
+  <rect x="0" y="0" width="200" height="200" rx="18" fill="#FFFBEB"></rect>
+  <text x="100" y="148" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="140" fill="#2D4A1F" letter-spacing="2">SF</text>
+  
+  <text x="232" y="118" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="92" fill="#1C1917" letter-spacing="4">SMART FARM</text>
+  <line x1="232" y1="146" x2="660" y2="146" stroke="#A16207" stroke-width="3"></line>
+  <text x="232" y="178" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="700" font-size="20" fill="#5C5346" letter-spacing="6">ÉLEVAGE PORCIN · CÔTE D&#39;IVOIRE</text>
+</svg>
