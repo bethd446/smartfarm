@@ -1,81 +1,79 @@
+import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 
-/**
- * Smart Farm — Loading state pour /kpi (Performances)
- *   - header H1 + sous-titre + boutons actions
- *   - KPI Ferme (4 cards)
- *   - Section Truies: header + 4 KPI techniques + tableau ranking (~8 lignes)
- *   - Section Bandes: header + 4 KPI techniques + tableau ranking (~5 lignes)
- */
-export default function Loading() {
+export default function KpiLoading() {
   return (
-    <div className="space-y-8" aria-busy="true" aria-live="polite">
-      {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="space-y-2">
-          <Skeleton className="h-10 w-56" />
-          <Skeleton className="h-4 w-72" />
-        </div>
-        <div className="flex gap-2">
-          <Skeleton className="h-10 w-28" />
-          <Skeleton className="h-10 w-32" />
+    <div className="space-y-6 pb-8">
+      {/* Header skeleton */}
+      <div>
+        <Skeleton className="h-3 w-48 mb-2" />
+        <Skeleton className="h-10 w-80 mb-2" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+
+      {/* Grid asymétrique skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="md:col-span-2 border-[var(--sf-line)]">
+          <CardContent className="p-6">
+            <Skeleton className="h-16 w-full mb-4" />
+            <Skeleton className="h-4 w-3/4 mb-2" />
+            <Skeleton className="h-3 w-1/2" />
+          </CardContent>
+        </Card>
+        <div className="flex flex-col gap-4">
+          <Card className="border-[var(--sf-line)]">
+            <CardContent className="p-4">
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+          <Card className="border-[var(--sf-line)]">
+            <CardContent className="p-4">
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+          <Card className="border-[var(--sf-line)]">
+            <CardContent className="p-4">
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
         </div>
       </div>
 
-      {/* KPI Ferme (4 cards) */}
-      <section className="space-y-3">
-        <Skeleton className="h-5 w-48" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-          <Skeleton className="h-32" />
-        </div>
-      </section>
+      {/* Performance bande skeleton */}
+      <Card className="border-[var(--sf-line)]">
+        <CardContent className="p-6">
+          <Skeleton className="h-6 w-48 mb-4" />
+          <div className="space-y-3">
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+            <Skeleton className="h-12 w-full" />
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Section Truies */}
-      <section className="space-y-4">
-        <Skeleton className="h-7 w-64" />
-        
-        {/* 4 KPI techniques truies */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
-
-        {/* Ranking truies */}
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-40 mb-3" />
-          <Skeleton className="h-10 w-full" />
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 w-full" />
-          ))}
-        </div>
-      </section>
-
-      {/* Section Bandes */}
-      <section className="space-y-4">
-        <Skeleton className="h-7 w-56" />
-        
-        {/* 4 KPI techniques bandes */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
-
-        {/* Ranking bandes */}
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-40 mb-3" />
-          <Skeleton className="h-10 w-full" />
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-14 w-full" />
-          ))}
-        </div>
-      </section>
+      {/* Top 5 + À surveiller skeleton */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="border-[var(--sf-line)]">
+          <CardContent className="p-6">
+            <Skeleton className="h-6 w-48 mb-4" />
+            <div className="space-y-3">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-[var(--sf-line)]">
+          <CardContent className="p-6">
+            <Skeleton className="h-6 w-48 mb-4" />
+            <div className="space-y-3">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
