@@ -7,14 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ExportButton } from '@/components/export-button'
 import { Activity, Plus, ChevronLeft } from 'lucide-react'
 import { format } from 'date-fns'
@@ -244,73 +237,86 @@ export default async function ConsommationsPage() {
               />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Bande</TableHead>
-                  <TableHead>Aliment</TableHead>
-                  <TableHead className="text-right">Quantité (kg)</TableHead>
-                  <TableHead className="text-right">Coût</TableHead>
-                  <TableHead>Observations</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {rows.map((c) => {
-                  const coutLigne =
-                    Number(c.formule?.cout_kg_fcfa ?? 0) *
-                    Number(c.qte_kg ?? 0)
-                  return (
-                    <TableRow key={c.id}>
-                      <TableCell className="text-sm tabular-nums">
-                        {fmtDate(c.date)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{c.bande?.code ?? '—'}</div>
-                      </TableCell>
-                      <TableCell className="text-sm">
-                        {c.formule?.nom ?? '—'}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums font-medium">
-                        {new Intl.NumberFormat('fr-FR').format(
-                          Number(c.qte_kg ?? 0),
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
-                        {fmtXof(Number.isFinite(coutLigne) ? coutLigne : null)}
-                      </TableCell>
-                      <TableCell className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[16rem] truncate">
-                        {c.observations ?? '—'}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-1 flex-wrap">
-                          <DialogConsommation
-                            mode="edit"
-                            initial={{
-                              id: c.id,
-                              bande_id: c.bande_id,
-                              formule_id: c.formule_id,
-                              date: c.date,
-                              qte_kg: Number(c.qte_kg),
-                              observations: c.observations,
-                            }}
-                            bandes={bandes}
-                            formules={formules}
-                            trigger={
-                              <Button variant="ghost" size="sm">
-                                Modifier
-                              </Button>
-                            }
-                          />
-                          <FormDelete id={c.id} />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )
-                })}
-              </TableBody>
-            </Table>
+            <ResponsiveTable
+              data={rows}
+              columns={[
+                {
+                  key: 'date',
+                  label: 'DATE',
+                  primary: true,
+                  className: 'text-sm tabular-nums',
+                  render: (v: string | null) => fmtDate(v),
+                },
+                {
+                  key: 'bande',
+                  label: 'BANDE',
+                  render: (bande: any) => (
+                    <div className="font-medium">{bande?.code ?? '—'}</div>
+                  ),
+                },
+                {
+                  key: 'formule',
+                  label: 'ALIMENT',
+                  className: 'text-sm',
+                  render: (formule: any) => formule?.nom ?? '—',
+                },
+                {
+                  key: 'qte_kg',
+                  label: 'QUANTITÉ (KG)',
+                  className: 'text-right tabular-nums font-medium',
+                  headerClassName: 'text-right',
+                  render: (v: number | null) =>
+                    new Intl.NumberFormat('fr-FR').format(Number(v ?? 0)),
+                },
+                {
+                  key: 'cout',
+                  label: 'COÛT',
+                  className: 'text-right tabular-nums',
+                  headerClassName: 'text-right',
+                  render: (_: any, item: any) => {
+                    const coutLigne =
+                      Number(item.formule?.cout_kg_fcfa ?? 0) *
+                      Number(item.qte_kg ?? 0)
+                    return fmtXof(Number.isFinite(coutLigne) ? coutLigne : null)
+                  },
+                },
+                {
+                  key: 'observations',
+                  label: 'OBSERVATIONS',
+                  className: 'text-xs text-[var(--sf-muted,#5C5346)] max-w-[16rem] truncate',
+                },
+                {
+                  key: 'actions',
+                  label: 'ACTIONS',
+                  headerClassName: 'text-right',
+                  render: (_: any, c: any) => (
+                    <div className="flex justify-end gap-1 flex-wrap">
+                      <DialogConsommation
+                        mode="edit"
+                        initial={{
+                          id: c.id,
+                          bande_id: c.bande_id,
+                          formule_id: c.formule_id,
+                          date: c.date,
+                          qte_kg: Number(c.qte_kg),
+                          observations: c.observations,
+                        }}
+                        bandes={bandes}
+                        formules={formules}
+                        trigger={
+                          <Button variant="ghost" size="sm">
+                            Modifier
+                          </Button>
+                        }
+                      />
+                      <FormDelete id={c.id} />
+                    </div>
+                  ),
+                },
+              ]}
+              getRowKey={(item) => item.id}
+              emptyMessage="Aucune consommation enregistrée"
+            />
           )}
         </CardContent>
       </Card>

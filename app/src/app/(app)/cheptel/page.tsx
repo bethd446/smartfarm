@@ -4,9 +4,10 @@ import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageTitle } from '@/components/ui/page-title'
+import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { PiggyBank, Baby, Mars, Layers } from 'lucide-react'
 import { CheptelActions } from './_actions'
-import { CheptelRow, CheptelRowActions } from './_row-actions'
+import { CheptelRowActions } from './_row-actions'
 import { toneTruie } from '@/lib/colors'
 
 export const metadata: Metadata = {
@@ -239,76 +240,84 @@ function AnimauxTable({ rows, tab }: { rows: any[]; tab: TabKey }) {
 
   return (
     <section aria-labelledby="cheptel-liste-titre">
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
-          <thead
-            className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
-            style={{
-              fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-            }}
-          >
-            <tr>
-              <th className="py-3 pr-4 font-semibold">Tag</th>
-              <th className="py-3 pr-4 font-semibold">Nom</th>
-              <th className="py-3 pr-4 font-semibold">Sexe</th>
-              <th className="py-3 pr-4 font-semibold">Catégorie</th>
-              <th className="py-3 pr-4 font-semibold">Race</th>
-              <th className="py-3 pr-4 font-semibold">Naissance</th>
-              <th className="py-3 pr-4 font-semibold">Statut</th>
-              <th className="py-3 pr-4 font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((a: any) => {
-              const tone = toneTruie(a.rang_porte, a.statut)
-              const aSortir = tone === 'attendu' && a.statut === 'actif'
+      <ResponsiveTable
+        data={rows}
+        columns={[
+          {
+            key: 'tag',
+            label: 'TAG',
+            primary: true,
+            className: 'font-mono font-bold text-[var(--sf-ink)] tabular-nums',
+          },
+          {
+            key: 'nom',
+            label: 'NOM',
+            className: 'text-[var(--sf-ink)]',
+          },
+          {
+            key: 'sexe',
+            label: 'SEXE',
+            render: (v: string) => (
+              <Badge variant={v === 'M' ? 'outline' : 'secondary'}>
+                {v === 'M' ? '♂ Mâle' : '♀ Femelle'}
+              </Badge>
+            ),
+          },
+          {
+            key: 'categorie',
+            label: 'CATÉGORIE',
+            render: (v: string) => (
+              <Badge variant="outline" className="capitalize">
+                {v}
+              </Badge>
+            ),
+          },
+          {
+            key: 'races',
+            label: 'RACE',
+            render: (races: any) => (
+              <span className="text-[var(--sf-ink-soft)]">{races?.nom ?? '—'}</span>
+            ),
+          },
+          {
+            key: 'date_naissance',
+            label: 'NAISSANCE',
+            className: 'text-[var(--sf-muted)] tabular-nums',
+            render: (v: string | null) =>
+              v ? new Date(v).toLocaleDateString('fr-FR') : '—',
+          },
+          {
+            key: 'statut',
+            label: 'STATUT',
+            render: (v: string, item: any) => {
+              const tone = toneTruie(item.rang_porte, item.statut)
+              const aSortir = tone === 'attendu' && item.statut === 'actif'
               const statutVariant = aSortir ? 'warning' : TONE_TO_VARIANT[tone]
               return (
-                <CheptelRow
-                  key={a.id}
-                  animalId={a.id}
-                  className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
-                >
-                  <td className="py-3 pr-4 font-mono font-bold text-[var(--sf-ink)] tabular-nums">
-                    {a.tag}
-                  </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink)]">{a.nom ?? '—'}</td>
-                  <td className="py-3 pr-4">
-                    <Badge variant={a.sexe === 'M' ? 'outline' : 'secondary'}>
-                      {a.sexe === 'M' ? '♂ Mâle' : '♀ Femelle'}
-                    </Badge>
-                  </td>
-                  <td className="py-3 pr-4">
-                    <Badge variant="outline" className="capitalize">
-                      {a.categorie}
-                    </Badge>
-                  </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink-soft)]">
-                    {a.races?.nom ?? '—'}
-                  </td>
-                  <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
-                    {a.date_naissance
-                      ? new Date(a.date_naissance).toLocaleDateString('fr-FR')
-                      : '—'}
-                  </td>
-                  <td className="py-3 pr-4">
-                    <Badge variant={statutVariant}>
-                      {a.statut}
-                      {aSortir ? ' · à sortir' : ''}
-                    </Badge>
-                  </td>
-                  <td className="py-3 pr-4">
-                    <CheptelRowActions animalId={a.id} animalTag={a.tag} />
-                  </td>
-                </CheptelRow>
+                <Badge variant={statutVariant}>
+                  {v}
+                  {aSortir ? ' · à sortir' : ''}
+                </Badge>
               )
-            })}
-          </tbody>
-        </table>
-      </div>
+            },
+          },
+          {
+            key: 'actions',
+            label: 'ACTIONS',
+            render: (_: any, item: any) => (
+              <CheptelRowActions animalId={item.id} animalTag={item.tag} />
+            ),
+          },
+        ]}
+        getRowKey={(item) => item.id}
+        emptyMessage={
+          tab === 'truies'
+            ? 'Aucune truie ni cochette'
+            : tab === 'verrats'
+            ? 'Aucun verrat'
+            : 'Aucun porcelet'
+        }
+      />
     </section>
   )
 }
