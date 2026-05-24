@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { getFermeId } from '@/lib/supabase/ferme-context'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { PiggyBank, TrendingUp, Users, Gauge, AlertTriangle, ArrowRight } from 'lucide-react'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import Link from 'next/link'
+import { BoutonPdfMensuel } from './_bouton-pdf-mensuel'
 
 export const metadata: Metadata = {
   title: 'Indicateurs zootechniques — Smart Farm',
@@ -135,6 +137,7 @@ const eyebrowStyle: React.CSSProperties = {
 
 export default async function KpiPageV2() {
   const sb = await createClient()
+  const fermeId = await getFermeId()
   const today = new Date().toLocaleDateString('fr-FR', {
     day: '2-digit',
     month: 'short',
@@ -184,24 +187,38 @@ export default async function KpiPageV2() {
 
   return (
     <div className="space-y-6 pb-8">
-      {/* ===== HEADER : EYEBROW + H1 ===== */}
+      {/* ===== HEADER : EYEBROW + H1 + BOUTON PDF ===== */}
       <div>
         <div className="mb-2" style={eyebrowStyle}>
           PILOTAGE · {today.toUpperCase()} · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
         </div>
-        <h1
-          className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
-          style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-        >
-          <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
-          Indicateurs zootechniques
-        </h1>
-        <p
-          className="text-sm text-[var(--sf-muted)] mt-1"
-          style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
-        >
-          Performance IFIP, productivité numérique et classement truies
-        </p>
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+          <div>
+            <h1
+              className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
+              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+            >
+              <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
+              Indicateurs zootechniques
+            </h1>
+            <p
+              className="text-sm text-[var(--sf-muted)] mt-1"
+              style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+            >
+              Performance IFIP, productivité numérique et classement truies
+            </p>
+          </div>
+
+          {/* Encart Exports PDF */}
+          <Card className="border-[var(--sf-line)] bg-[var(--sf-surface-1)] lg:w-auto w-full">
+            <CardContent className="p-4">
+              <div className="mb-2" style={eyebrowStyle}>
+                EXPORTS
+              </div>
+              <BoutonPdfMensuel fermeId={fermeId} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* ===== GRID ASYMÉTRIQUE : KPI HÉRO + 3 STACK ===== */}
