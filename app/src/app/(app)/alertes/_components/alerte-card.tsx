@@ -134,7 +134,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
               </span>{' '}
               <Link
                 href={alerte.lien_suggere}
-                className="font-medium text-[var(--sf-primary,#2D4A1F)] hover:underline"
+                className="inline-flex items-center min-h-[44px] py-2 font-medium text-[var(--sf-primary,#2D4A1F)] hover:underline"
               >
                 {alerte.cible_label}
               </Link>
@@ -144,7 +144,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
           {/* CTA */}
           <div className="shrink-0 sm:self-center">
             <Link href={alerte.lien_suggere}>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="default">
                 {getCtaLabel(alerte.regle_id)}
                 <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>

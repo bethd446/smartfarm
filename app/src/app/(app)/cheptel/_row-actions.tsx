@@ -69,7 +69,7 @@ export function CheptelRowActions({
     >
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-[var(--sf-line)] text-[var(--sf-muted)] hover:bg-[var(--sf-surface-2)]/40 hover:text-[var(--sf-ink)]"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-[var(--sf-line)] text-[var(--sf-muted)] hover:bg-[var(--sf-surface-2)]/40 hover:text-[var(--sf-ink)]"
           aria-label={`Actions rapides pour ${animalTag}`}
         >
           <MoreHorizontal className="h-4 w-4" />

@@ -55,7 +55,7 @@ export function AppShell({
             onClick={() => setDrawerOpen(true)}
             aria-label="Ouvrir le menu"
             className={cn(
-              'inline-flex h-10 w-10 items-center justify-center rounded-md',
+              'inline-flex h-11 w-11 items-center justify-center rounded-md',
               'text-[var(--sf-ink,#1a1a1a)] hover:bg-black/5',
               'focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]',
             )}

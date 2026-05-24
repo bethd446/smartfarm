@@ -201,14 +201,14 @@ export default async function CheptelPage({
         </label>
         <button
           type="submit"
-          className="h-10 rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface-2)]/40 px-4 text-sm font-semibold text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]"
+          className="h-11 rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface-2)]/40 px-4 text-sm font-semibold text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]"
         >
           Filtrer
         </button>
         {q ? (
           <Link
             href={`/cheptel?tab=${tab}`}
-            className="h-10 inline-flex items-center px-3 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-ink)]"
+            className="h-11 inline-flex items-center px-3 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-ink)]"
           >
             Effacer
           </Link>
