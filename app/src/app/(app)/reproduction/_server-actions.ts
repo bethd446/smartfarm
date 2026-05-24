@@ -88,15 +88,35 @@ export async function creerDiagnostic(
     const d = parsed.data
 
     const supabase = await createClient()
+    // FIX 2026-05-24 BUG-SC10 : ferme_id + truie_id sont NOT NULL en BDD prod.
+    // Auparavant le payload n'envoyait ni l'un ni l'autre → erreur 23502 silencieuse
+    // côté client (dialog ferme, toast invisible). On résout ferme via session,
+    // truie via la saillie sélectionnée.
+    const fermeId = await getFermeId()
+    const { data: saillieRow, error: errSaillie } = await supabase
+      .from('saillies')
+      .select('truie_id')
+      .eq('id', d.saillie_id)
+      .single()
+    if (errSaillie || !saillieRow) {
+      console.error('[creerDiagnostic] saillie introuvable:', errSaillie)
+      return { ok: false, error: 'Saillie introuvable' }
+    }
+
     const { error } = await supabase.from('diagnostics_gestation').insert({
+      ferme_id: fermeId,
       saillie_id: d.saillie_id,
+      truie_id: saillieRow.truie_id,
       date_diag: d.date_diagnostic,
       resultat: d.resultat,
       methode: d.methode || null,
       observations: d.observations || null,
     })
     // trigger SQL : si positif → crée évts transfert_maternite J+107, mise_bas_prevue J+114, sevrage_prevu
-    if (error) return { ok: false, error: error.message }
+    if (error) {
+      console.error('[creerDiagnostic] supabase insert error:', error)
+      return { ok: false, error: error.message }
+    }
     revalidatePath('/reproduction')
     revalidatePath('/calendrier')
     revalidatePath('/dashboard')

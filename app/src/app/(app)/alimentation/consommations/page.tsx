@@ -66,6 +66,9 @@ function fmtXof(n: number | null) {
 
 /* -------------------------------------------------------------------------- */
 /*  PAGE                                                                       */
+/*                                                                             */
+/*  FIX 2026-05-24 BUG-SC12 : la table joint `formules` (FAF, achetée…), PAS  */
+/*  une table `types_aliment` inexistante. Coût = qte_kg × formules.cout_kg.  */
 /* -------------------------------------------------------------------------- */
 
 export default async function ConsommationsPage() {
@@ -74,13 +77,14 @@ export default async function ConsommationsPage() {
   const [
     { data: consoData, error },
     { data: bandesData },
-    { data: typesData },
+    { data: formulesData },
   ] = await Promise.all([
     sb
       .from('consommations_aliment')
       .select(
-        'id, bande_id, type_aliment_id, date, quantite_kg, cout, observations, bande:bande_id(id, code, nom), type_aliment:type_aliment_id(id, nom)',
+        'id, bande_id, formule_id, date, qte_kg, observations, bande:bande_id(id, code, nom), formule:formule_id(id, nom, cout_kg_fcfa)',
       )
+      .is('deleted_at', null)
       .order('date', { ascending: false })
       .limit(30),
     sb
@@ -88,25 +92,33 @@ export default async function ConsommationsPage() {
       .select('id, code, nom')
       .is('deleted_at', null)
       .order('code', { ascending: false }),
-    sb.from('types_aliment').select('id, nom').order('nom'),
+    sb
+      .from('formules')
+      .select('id, nom')
+      .is('deleted_at', null)
+      .order('nom'),
   ])
 
   type Row = ConsoRow & {
     bande: { id: string; code: string; nom: string } | null
-    type_aliment: { id: string; nom: string } | null
+    formule: { id: string; nom: string; cout_kg_fcfa: number | null } | null
   }
 
   const rows = (consoData ?? []) as unknown as Row[]
 
-  const totalKg = rows.reduce((s, r) => s + Number(r.quantite_kg ?? 0), 0)
-  const totalCout = rows.reduce((s, r) => s + Number(r.cout ?? 0), 0)
+  const totalKg = rows.reduce((s, r) => s + Number(r.qte_kg ?? 0), 0)
+  // Coût total dérivé : pour chaque ligne, qte_kg × formules.cout_kg_fcfa
+  const totalCout = rows.reduce((s, r) => {
+    const c = Number(r.formule?.cout_kg_fcfa ?? 0) * Number(r.qte_kg ?? 0)
+    return s + (Number.isFinite(c) ? c : 0)
+  }, 0)
 
   const bandes = (bandesData ?? []) as Array<{
     id: string
     code: string
     nom: string
   }>
-  const typesAliment = (typesData ?? []) as Array<{ id: string; nom: string }>
+  const formules = (formulesData ?? []) as Array<{ id: string; nom: string }>
 
   return (
     <div className="space-y-6">
@@ -132,7 +144,7 @@ export default async function ConsommationsPage() {
           <DialogConsommation
             mode="create"
             bandes={bandes}
-            typesAliment={typesAliment}
+            formules={formules}
             trigger={
               <Button variant="default" size="sm">
                 <Plus className="h-4 w-4 mr-1" />
@@ -222,7 +234,7 @@ export default async function ConsommationsPage() {
               <DialogConsommation
                 mode="create"
                 bandes={bandes}
-                typesAliment={typesAliment}
+                formules={formules}
                 trigger={
                   <Button variant="default" size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -245,54 +257,58 @@ export default async function ConsommationsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="text-sm tabular-nums">
-                      {fmtDate(c.date)}
-                    </TableCell>
-                    <TableCell>
-                      <div className="font-medium">{c.bande?.code ?? '—'}</div>
-                    </TableCell>
-                    <TableCell className="text-sm">
-                      {c.type_aliment?.nom ?? '—'}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums font-medium">
-                      {new Intl.NumberFormat('fr-FR').format(
-                        Number(c.quantite_kg ?? 0),
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {fmtXof(c.cout)}
-                    </TableCell>
-                    <TableCell className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[16rem] truncate">
-                      {c.observations ?? '—'}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-1 flex-wrap">
-                        <DialogConsommation
-                          mode="edit"
-                          initial={{
-                            id: c.id,
-                            bande_id: c.bande_id,
-                            type_aliment_id: c.type_aliment_id,
-                            date: c.date,
-                            quantite_kg: Number(c.quantite_kg),
-                            cout: c.cout,
-                            observations: c.observations,
-                          }}
-                          bandes={bandes}
-                          typesAliment={typesAliment}
-                          trigger={
-                            <Button variant="ghost" size="sm">
-                              Modifier
-                            </Button>
-                          }
-                        />
-                        <FormDelete id={c.id} />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {rows.map((c) => {
+                  const coutLigne =
+                    Number(c.formule?.cout_kg_fcfa ?? 0) *
+                    Number(c.qte_kg ?? 0)
+                  return (
+                    <TableRow key={c.id}>
+                      <TableCell className="text-sm tabular-nums">
+                        {fmtDate(c.date)}
+                      </TableCell>
+                      <TableCell>
+                        <div className="font-medium">{c.bande?.code ?? '—'}</div>
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {c.formule?.nom ?? '—'}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums font-medium">
+                        {new Intl.NumberFormat('fr-FR').format(
+                          Number(c.qte_kg ?? 0),
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {fmtXof(Number.isFinite(coutLigne) ? coutLigne : null)}
+                      </TableCell>
+                      <TableCell className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[16rem] truncate">
+                        {c.observations ?? '—'}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1 flex-wrap">
+                          <DialogConsommation
+                            mode="edit"
+                            initial={{
+                              id: c.id,
+                              bande_id: c.bande_id,
+                              formule_id: c.formule_id,
+                              date: c.date,
+                              qte_kg: Number(c.qte_kg),
+                              observations: c.observations,
+                            }}
+                            bandes={bandes}
+                            formules={formules}
+                            trigger={
+                              <Button variant="ghost" size="sm">
+                                Modifier
+                              </Button>
+                            }
+                          />
+                          <FormDelete id={c.id} />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
               </TableBody>
             </Table>
           )}

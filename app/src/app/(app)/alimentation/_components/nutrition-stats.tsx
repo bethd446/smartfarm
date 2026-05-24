@@ -32,21 +32,28 @@ export async function NutritionStats() {
   const dateFromISO = dateFrom.toISOString().slice(0, 10)
 
   /* ---------- 1+2 : conso & coût 30 j ---------- */
+  // FIX BUG-SC12 : colonnes réelles `qte_kg` / `formule_id` (pas
+  // `quantite_kg` / `cout` / `type_aliment_id`). Le coût est dérivé via
+  // `formules.cout_kg_fcfa × qte_kg`.
   const { data: consoData } = await sb
     .from('consommations_aliment')
-    .select('quantite_kg, cout, date, type_aliment_id, bande_id')
+    .select('qte_kg, date, formule_id, bande_id, formule:formule_id(cout_kg_fcfa)')
+    .is('deleted_at', null)
     .gte('date', dateFromISO)
 
-  const conso = (consoData ?? []) as Array<{
-    quantite_kg: number | null
-    cout: number | null
+  const conso = (consoData ?? []) as unknown as Array<{
+    qte_kg: number | null
     date: string
-    type_aliment_id: string | null
+    formule_id: string | null
     bande_id: string | null
+    formule: { cout_kg_fcfa: number | null } | null
   }>
 
-  const totalKg = conso.reduce((s, r) => s + Number(r.quantite_kg ?? 0), 0)
-  const totalCout = conso.reduce((s, r) => s + Number(r.cout ?? 0), 0)
+  const totalKg = conso.reduce((s, r) => s + Number(r.qte_kg ?? 0), 0)
+  const totalCout = conso.reduce((s, r) => {
+    const c = Number(r.formule?.cout_kg_fcfa ?? 0) * Number(r.qte_kg ?? 0)
+    return s + (Number.isFinite(c) ? c : 0)
+  }, 0)
 
   /* ---------- 3 : IC = kg aliment / kg vif produit ---------- */
   // Approximation : sur les bandes concernées, différence entre les pesées
