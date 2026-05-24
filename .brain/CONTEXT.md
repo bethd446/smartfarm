@@ -294,8 +294,13 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 - PWA : manifest + sw.js custom sans deps (offline-first sauf API Supabase)
 - Pagination 10/page sur /alertes + filtres sticky
 
-### KNOWN ISSUE 24/05 PM
-- Login démo Supabase échoue : "Invalid API key" sur sb_publishable_VdYNHQZS-1ZMMSO4tpiVlg_bETYXHIT
-- Tests Playwright qui nécessitent login : 1 skip
-- À investiguer : Hostinger env NEXT_PUBLIC_SUPABASE_ANON_KEY, peut-être key rotated ou not deployed
-- L'app prod tourne, juste impossible de nouveau login démo
+### KNOWN ISSUE 24/05 PM → RÉSOLUS
+- ~~Login démo Supabase échoue~~ FAUX POSITIF : typo `l` vs `I` dans la clé que j'utilisais en test. La prod tournait correctement avec la vraie clé.
+- ~~/cheptel 500 ERROR 3602523190~~ FIXÉ commit 3f7f2ce : ResponsiveTable était `'use client'` et recevait des fonctions render() en props depuis un Server Component → boundary client implicite + crash. Solution : vire `'use client'`, utilise `<table>` HTML natif au lieu du Table shadcn (qui est lui 'use client').
+
+### LEÇON CRITIQUE Next.js 16 + RSC
+Si un Server Component passe une **fonction** (callback, render prop) à un Client Component (`'use client'`), ça crash. 2 solutions :
+1. Faire du composant un Server Component (virer `'use client'`, ne pas utiliser de hooks)
+2. Wrapper le composant Client dans un autre composant Client qui définit les callbacks
+
+Et : `shadcn/ui` Table a `'use client'` baked-in → ne pas wrapper directement depuis un Server Component avec des callbacks. Utiliser `<table>` HTML natif.
