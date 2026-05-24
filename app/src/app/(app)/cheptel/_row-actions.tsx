@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { MoreHorizontal, Scale, Syringe, Stethoscope, Skull, Eye, ArrowRight } from 'lucide-react'
 import { useTransition } from 'react'
+import { toast } from 'sonner'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -52,10 +53,10 @@ export function CheptelRowActions({
     startTransition(async () => {
       const res = await transfererUnVersCroissance(animalId)
       if (res.ok) {
-        alert(`${animalTag} a été transféré vers le bâtiment Croissance`)
+        toast.success(`${animalTag} a été transféré vers le bâtiment Croissance`)
         router.refresh()
       } else {
-        alert(`Erreur : ${res.error}`)
+        toast.error(`Erreur : ${res.error}`)
       }
     })
   }

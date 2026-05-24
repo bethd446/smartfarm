@@ -3,6 +3,7 @@
 import { useTransition } from 'react'
 import { Button } from '@/components/ui/button'
 import { Download, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { exportKpiPDF } from './_actions-pdf'
 
 /**
@@ -31,7 +32,7 @@ export function ExportPdfButton() {
         URL.revokeObjectURL(url)
       } catch (e) {
         console.error('Erreur export PDF:', e)
-        alert('Erreur lors de la génération du PDF. Réessaye dans un instant.')
+        toast.error('Erreur lors de la génération du PDF. Réessaye dans un instant.')
       }
     })
   }
