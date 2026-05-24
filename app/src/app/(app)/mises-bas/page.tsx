@@ -11,6 +11,7 @@ import { toneTauxPortee } from '@/lib/colors'
 import { TERRAIN } from '@/lib/terrain-labels'
 import { DialogMiseBas } from './_dialog-mise-bas'
 import { DialogSevrage } from './_dialog-sevrage'
+import { MisesBasFab } from './_fab'
 
 export const metadata: Metadata = {
   title: 'Mises bas & Sevrages — Smart Farm',
@@ -383,6 +384,9 @@ export default async function MisesBasPage() {
       </div>
       </>
       )}
+
+      {/* === FAB mobile === */}
+      <MisesBasFab saillies={saillesPourMb} />
     </div>
   )
 }

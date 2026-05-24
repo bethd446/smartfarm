@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { getAlertesActives, compteParGravite } from '@/lib/alertes-engine'
 import { AlertesList } from './_components/alertes-list'
 import { DialogAlerteManuelle } from './_components/dialog-alerte-manuelle'
+import { AlertesFab } from './_fab'
 
 export const metadata: Metadata = {
   title: 'Alertes — Smart Farm',
@@ -179,6 +180,9 @@ export default async function AlertesPage() {
       ) : (
         <AlertesList alertes={alertes} />
       )}
+
+      {/* === FAB mobile === */}
+      <AlertesFab />
     </div>
   )
 }

@@ -15,6 +15,7 @@ import { fr } from 'date-fns/locale'
 
 import { DialogConsommation, type ConsoRow } from './_dialog-conso'
 import { supprimerConsommation } from './_actions'
+import { ConsommationsFab } from './_fab'
 
 /* -------------------------------------------------------------------------- */
 /*  Server action button                                                      */
@@ -320,6 +321,9 @@ export default async function ConsommationsPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* === FAB mobile === */}
+      <ConsommationsFab bandes={bandes} formules={formules} />
     </div>
   )
 }

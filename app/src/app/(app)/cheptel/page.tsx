@@ -8,6 +8,7 @@ import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { PiggyBank, Baby, Mars, Layers } from 'lucide-react'
 import { CheptelActions } from './_actions'
 import { CheptelRowActions } from './_row-actions'
+import { CheptelFab } from './_fab'
 import { toneTruie } from '@/lib/colors'
 
 export const metadata: Metadata = {
@@ -213,6 +214,9 @@ export default async function CheptelPage({
       ) : (
         <AnimauxTable rows={animaux} tab={tab} />
       )}
+
+      {/* === FAB mobile === */}
+      <CheptelFab races={races ?? []} />
     </div>
   )
 }

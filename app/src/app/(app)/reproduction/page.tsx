@@ -10,6 +10,7 @@ import { AlertCircle, Heart, Plus, Stethoscope } from 'lucide-react'
 import { diagnosticLabel } from '@/lib/terrain-labels'
 import { DialogFaireMonter } from './_dialog-faire-monter'
 import { DialogDiagnostic } from './_dialog-diagnostic'
+import { ReproductionFab } from './_fab'
 
 export const metadata: Metadata = {
   title: 'Reproduction — Smart Farm',
@@ -370,6 +371,9 @@ export default async function ReproductionPage() {
         </div>
         )}
       </section>
+
+      {/* === FAB mobile === */}
+      <ReproductionFab truies={truies ?? []} verrats={verrats ?? []} bandes={bandes ?? []} />
     </div>
   )
 }
