@@ -252,3 +252,26 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 
 ### Commit récent
 - `f668daa` : fix 5 bugs P0/P1 démo (saillies/stock/alertes/KPI/fiche truie) - 4 fixés, BUG-5 fiche truie skippé (RLS mises_bas à investiguer)
+
+---
+## PHASE 1 STABILISATION — 2026-05-24
+
+### Livrables
+- ✅ Migration `portees.code_portee` → `UNIQUE(ferme_id, code_portee)` (20260524100000)
+- ✅ Reset password `13smartfarm@gmail.com` → nouveau pass communiqué hors-bande
+- ✅ Seed 235 pesées démo (porcelets/engraissement/truies/verrats/cochettes courbes croissance climat CI)
+- ✅ Tests Playwright smoke prod : 11 tests, 11 PASS en 15s
+- ✅ Workflow CI `.github/workflows/smoke.yml` post-push main
+- ✅ RUNBOOK.md (procédures urgence, reset password, migrations, backup)
+- ✅ /batiments/[id] nutrition prédictive (commit 638384b push enfin effectif)
+
+### Leçons critiques
+1. **GoTrue `?email=X` ne filtre pas** — toujours lister + filtrer côté script
+2. **Toujours `git log origin/main..HEAD`** AVANT de débugger un fix qui "devrait marcher" : un commit peut être local sans être pushé
+3. **Sous-agents parallèles sur même repo = conflits massifs** : sérialiser quand fichiers partagés (page.tsx, _actions.ts), paralléliser SEULEMENT sur chemins disjoints
+4. **Management API SQL endpoint** : `POST https://api.supabase.com/v1/projects/{ref}/database/query` avec `Authorization: Bearer $SUPABASE_ACCESS_TOKEN` — pratique pour migrations sans Studio
+
+### Secrets — emplacements actuels
+- `SUPABASE_SERVICE_ROLE_KEY` : `/root/projects/smartfarm/app/.env.local`
+- `SUPABASE_ACCESS_TOKEN` : env shell (`echo $SUPABASE_ACCESS_TOKEN`)
+- Password ferme réelle : Bitwarden / 1Password (jamais commit)

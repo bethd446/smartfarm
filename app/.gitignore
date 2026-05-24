@@ -44,3 +44,9 @@ next-env.d.ts
 # Build artifact : assets static générés par deploy-static-copy.sh
 # Ne pas commit, le build Hostinger les régénère à chaque déploiement
 public/_next/
+
+# Playwright artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

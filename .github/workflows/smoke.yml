@@ -1,0 +1,66 @@
+# Smart Farm — Smoke prod (e2e Playwright contre smartfarm.group)
+#
+# Lancé après chaque deploy main (push) + déclenchable manuellement.
+# Cible : https://smartfarm.group + login démo réel.
+# Une régression bloque visiblement la livraison.
+
+name: smoke-prod
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL à smoke-tester (override SMOKE_URL)"
+        required: false
+        default: "https://smartfarm.group"
+
+jobs:
+  smoke:
+    name: Playwright smoke prod
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install deps
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      # Petit délai pour laisser le déploiement Hostinger se propager (~3 min build)
+      - name: Wait for prod deploy (180s)
+        if: github.event_name == 'push'
+        run: sleep 180
+
+      - name: Smoke desktop
+        env:
+          SMOKE_URL: ${{ github.event.inputs.url || 'https://smartfarm.group' }}
+          SMOKE_EMAIL: ${{ secrets.SMOKE_EMAIL || 'demo@smartfarm.group' }}
+          SMOKE_PASS: ${{ secrets.SMOKE_PASS }}
+        run: npm run e2e:smoke:desktop
+
+      - name: Smoke mobile
+        env:
+          SMOKE_URL: ${{ github.event.inputs.url || 'https://smartfarm.group' }}
+          SMOKE_EMAIL: ${{ secrets.SMOKE_EMAIL || 'demo@smartfarm.group' }}
+          SMOKE_PASS: ${{ secrets.SMOKE_PASS }}
+        run: npm run e2e:smoke:mobile
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-smoke-report-${{ github.run_id }}
+          path: app/playwright-report/
+          retention-days: 14

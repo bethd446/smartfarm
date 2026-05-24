@@ -11,6 +11,9 @@
     "build:standalone": "next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
     "start:standalone": "cd .next/standalone/projects/smartfarm/app && node server.js",
     "db:push": "supabase db push",
+    "e2e:smoke": "playwright test --config=playwright.smoke.config.ts",
+    "e2e:smoke:desktop": "playwright test --config=playwright.smoke.config.ts --project=chromium-desktop",
+    "e2e:smoke:mobile": "playwright test --config=playwright.smoke.config.ts --project=mobile-pixel",
     "build:passenger": "next build && node scripts/patch-server-passenger.js",
     "build:with-passenger-patch": "next build && node scripts/patch-server-passenger.js"
   },
