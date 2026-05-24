@@ -16,13 +16,50 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Calendar, Plus, ChevronLeft } from 'lucide-react'
+import { Calendar, Plus, ChevronLeft, TrendingDown, AlertTriangle } from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 import { DialogPlan, type PlanRow } from './_dialog-plan'
 import { supprimerPlan } from './_actions'
 import { calculerStatutPlan, type StatutPlan } from './_schemas'
+
+/* -------------------------------------------------------------------------- */
+/*  PROJECTION STOCK — feature nutrition prédictive (2026-05-24)              */
+/* -------------------------------------------------------------------------- */
+
+type ProjectionRow = {
+  formule_id: string
+  formule_nom: string
+  formule_stade: string | null
+  conso_quotidienne_kg: number
+  stock_kg_actuel: number
+  jours_restants: number | null
+  date_epuisement: string | null
+}
+
+function variantPourJours(j: number | null): 'success' | 'warning' | 'danger' | 'secondary' {
+  if (j === null) return 'secondary'
+  if (j < 7) return 'danger'
+  if (j < 14) return 'warning'
+  return 'success'
+}
+
+function styleBgPourVariant(v: 'success' | 'warning' | 'danger' | 'secondary'): {
+  background: string
+  color: string
+} {
+  if (v === 'danger') {
+    return { background: 'var(--sf-danger-bg, #F5D9D2)', color: 'var(--sf-danger-ink, #7A2A1F)' }
+  }
+  if (v === 'warning') {
+    return { background: 'var(--sf-warning-bg, #F5E0B8)', color: 'var(--sf-warning-ink, #5A3E0E)' }
+  }
+  if (v === 'success') {
+    return { background: 'var(--sf-success-bg, #D6E3CC)', color: 'var(--sf-success-ink, #1F3B12)' }
+  }
+  return { background: 'transparent', color: 'var(--sf-muted, #5C5346)' }
+}
 
 /* -------------------------------------------------------------------------- */
 /*  Server action button                                                      */
@@ -111,6 +148,7 @@ export default async function PlansAlimentationPage(props: {
     { data: plansData, error },
     { data: bandesData },
     { data: typesData },
+    { data: projectionData },
   ] = await Promise.all([
     sb
       .from('plans_alimentation')
@@ -124,7 +162,19 @@ export default async function PlansAlimentationPage(props: {
       .is('deleted_at', null)
       .order('code', { ascending: false }),
     sb.from('types_aliment').select('id, nom').order('nom'),
+    sb
+      .from('v_stock_projection_ferme')
+      .select(
+        'formule_id, formule_nom, formule_stade, conso_quotidienne_kg, stock_kg_actuel, jours_restants, date_epuisement',
+      )
+      .order('jours_restants', { ascending: true, nullsFirst: false }),
   ])
+
+  const projections = ((projectionData ?? []) as unknown as ProjectionRow[]).map((p) => ({
+    ...p,
+    conso_quotidienne_kg: Number(p.conso_quotidienne_kg ?? 0),
+    stock_kg_actuel: Number(p.stock_kg_actuel ?? 0),
+  }))
 
   type Row = PlanRow & {
     bande: { id: string; code: string; nom: string; statut: string } | null
@@ -188,6 +238,94 @@ export default async function PlansAlimentationPage(props: {
           />
         </div>
       </div>
+
+      {/* === PROJECTION STOCK (en tête, feature nutrition prédictive) === */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingDown className="h-5 w-5 text-[var(--sf-primary)]" />
+            Projection stock par formule
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {projections.length === 0 ? (
+            <p className="p-6 text-sm text-[var(--sf-muted,#5C5346)] italic">
+              Aucune formule configurée — ajouter des composants matières premières pour activer
+              la projection.
+            </p>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Formule</TableHead>
+                  <TableHead className="text-right">Conso (kg/j)</TableHead>
+                  <TableHead className="text-right">Stock (kg)</TableHead>
+                  <TableHead className="text-right">Jours restants</TableHead>
+                  <TableHead>Épuisement</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {projections.map((p) => {
+                  const v = variantPourJours(p.jours_restants)
+                  return (
+                    <TableRow key={p.formule_id}>
+                      <TableCell>
+                        <div className="font-medium">{p.formule_nom}</div>
+                        {p.formule_stade && (
+                          <div className="text-xs text-[var(--sf-muted,#5C5346)] capitalize">
+                            {p.formule_stade.replace('_', ' ')}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums font-mono">
+                        {p.conso_quotidienne_kg.toFixed(2)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums font-mono">
+                        {p.stock_kg_actuel.toFixed(0)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {p.jours_restants !== null ? (
+                          <span
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold tabular-nums"
+                            style={styleBgPourVariant(v)}
+                          >
+                            {v === 'danger' && <AlertTriangle className="h-3 w-3" />}
+                            {p.jours_restants} j
+                          </span>
+                        ) : (
+                          <span className="text-[var(--sf-muted,#5C5346)] italic">—</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="tabular-nums text-sm">
+                        {p.date_epuisement
+                          ? new Date(p.date_epuisement).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                            })
+                          : '—'}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {p.jours_restants !== null && p.jours_restants < 14 ? (
+                          <Link
+                            href={`/alimentation/formulation?formule=${p.formule_id}`}
+                            className="inline-flex items-center justify-center rounded-md border border-[var(--sf-line,rgba(0,0,0,0.08))] px-3 py-1.5 text-xs font-medium hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.02))]"
+                          >
+                            Anticiper production
+                          </Link>
+                        ) : (
+                          <span className="text-xs text-[var(--sf-muted,#5C5346)]">OK</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
       {/* KPI ----------------------------------------------------------------- */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
