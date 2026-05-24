@@ -119,9 +119,10 @@ export function ResponsiveTable<T extends Record<string, any>>({
             >
               {/* Titre card = colonne primary */}
               <div
-                className="font-bold text-base text-[var(--sf-ink)]"
+                className="font-bold text-base text-[var(--sf-ink)] break-words"
                 style={{
                   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  overflowWrap: 'anywhere',
                 }}
               >
                 {primaryRendered ?? '—'}

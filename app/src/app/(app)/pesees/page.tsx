@@ -25,7 +25,7 @@ export default async function PeseesPage() {
           <h1 className="text-4xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
             <Scale className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />Pesées
           </h1>
-          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">Gain par jour · Courbes de poids</p>
+          <p className="text-sm text-stone-700 mt-1">Gain par jour · Courbes de poids</p>
         </div>
         <ActionsPeser animaux={animaux ?? []} bandes={bandes ?? []} />
       </div>
@@ -34,8 +34,8 @@ export default async function PeseesPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Scale className="h-12 w-12 mx-auto text-[var(--sf-line,rgba(0,0,0,0.2))] mb-3" />
-            <p className="eyebrow text-[12px] text-[var(--sf-muted,#5C5346)]">Aucune pesée pour l'instant</p>
-            <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-2">
+            <p className="eyebrow text-[12px] text-stone-700">Aucune pesée pour l'instant</p>
+            <p className="text-sm text-stone-700 mt-2">
               Commence par peser une bande.
             </p>
           </CardContent>
@@ -49,7 +49,7 @@ export default async function PeseesPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b border-[var(--sf-ink,#1a1a1a)] text-left">
-                  <tr className="eyebrow text-[11px] text-[var(--sf-muted,#5C5346)]">
+                  <tr className="eyebrow text-[11px] text-stone-700">
                     <th className="pb-3 pr-4 font-semibold">Date</th>
                     <th className="pb-3 pr-4 font-semibold">Sujet</th>
                     <th className="pb-3 pr-4 font-semibold">Type</th>

@@ -9,6 +9,7 @@ import {
   DialogSortieStock,
   DialogNouvelleMatiere,
 } from './_dialogs-stock'
+import { StockFab } from './_fab'
 
 export default async function StockPage() {
   const sb = await createClient()
@@ -241,6 +242,9 @@ export default async function StockPage() {
           </table>
         </div>
       </div>
+
+      {/* === FAB mobile === */}
+      <StockFab />
     </div>
   )
 }

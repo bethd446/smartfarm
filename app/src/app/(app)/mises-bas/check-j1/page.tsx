@@ -214,7 +214,7 @@ function CheckCard({
               <Badge variant={variant}>{mb.phase_check}</Badge>
             </CardTitle>
             <CardDescription>
-              Mise-bas du{' '}
+              Mise bas du{' '}
               {new Date(mb.date_mise_bas).toLocaleDateString('fr-FR')} ·{' '}
               {mb.nes_vivants ?? 0} porcelet
               {(mb.nes_vivants ?? 0) > 1 ? 's' : ''} né

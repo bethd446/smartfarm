@@ -151,9 +151,9 @@ export default async function ParametresPage() {
             href="/api/registre"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex"
+            className="inline-flex min-h-[44px] items-center"
           >
-            <Button variant="default">
+            <Button variant="default" className="min-h-[44px]">
               <Download className="h-4 w-4 mr-2" />
               Télécharger le registre du mois
             </Button>

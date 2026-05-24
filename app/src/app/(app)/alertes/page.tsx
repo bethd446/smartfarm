@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
-import { Bell, AlertTriangle, AlertCircle, Siren, ShieldCheck } from 'lucide-react'
+import Link from 'next/link'
+import { Bell, AlertTriangle, AlertCircle, Siren, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
-import { EmptyState } from '@/components/ui/empty-state'
 import { getAlertesActives, compteParGravite } from '@/lib/alertes-engine'
 import { AlertesList } from './_components/alertes-list'
 import { DialogAlerteManuelle } from './_components/dialog-alerte-manuelle'
@@ -168,13 +168,35 @@ export default async function AlertesPage() {
       {/* Liste ou état vide */}
       {total === 0 ? (
         <Card>
-          <CardContent className="p-6">
-            <EmptyState
-              icon={ShieldCheck}
-              tone="good"
-              title="Aucune alerte active ✅"
-              description="Tout va bien sur la ferme — aucune anomalie détectée sur le cheptel, la reproduction, le sanitaire ou le stock."
-            />
+          <CardContent className="p-8 text-center">
+            <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
+              <CheckCircle2 
+                className="h-6 w-6 text-[var(--sf-success-ink,#166534)]" 
+                strokeWidth={2.5} 
+              />
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--sf-ink,#1a1a1a)] mb-1">
+                  Aucune alerte active
+                </h2>
+                <p className="text-sm text-[var(--sf-muted,#5C5346)]">
+                  Toutes les tâches critiques sont à jour. Continue ton suivi quotidien depuis le dashboard.
+                </p>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-2">
+                <Link 
+                  href="/dashboard" 
+                  className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-lg bg-[var(--sf-primary,#2D4A1F)] text-[var(--sf-warm,#FFFBEB)] font-semibold text-sm hover:opacity-90 transition-opacity"
+                >
+                  Voir le tableau de bord
+                </Link>
+                <Link 
+                  href="/parametres" 
+                  className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-lg border border-[var(--sf-line,rgba(0,0,0,0.12))] text-[var(--sf-ink,#1a1a1a)] font-semibold text-sm hover:bg-[var(--sf-surface-2,#F5F1ED)] transition-colors"
+                >
+                  Configurer les règles d&apos;alerte
+                </Link>
+              </div>
+            </div>
           </CardContent>
         </Card>
       ) : (

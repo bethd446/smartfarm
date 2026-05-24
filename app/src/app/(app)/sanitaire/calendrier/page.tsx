@@ -477,7 +477,7 @@ function BlocPorcelets({
               <th className="pb-3 pr-4 font-semibold">Acte</th>
               <th className="pb-3 pr-4 font-semibold">Jour</th>
               <th className="pb-3 pr-4 font-semibold">Date prévue</th>
-              <th className="pb-3 pr-4 font-semibold">Mise-bas</th>
+              <th className="pb-3 pr-4 font-semibold">Mise bas</th>
               <th className="pb-3 pl-4 font-semibold text-right">Action</th>
             </tr>
           </thead>

@@ -10,8 +10,7 @@ import { Button } from '@/components/ui/button'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ExportButton } from '@/components/export-button'
 import { Activity, Plus, ChevronLeft } from 'lucide-react'
-import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
+import { formatDateContextuel } from '@/lib/format/dates'
 
 import { DialogConsommation, type ConsoRow } from './_dialog-conso'
 import { supprimerConsommation } from './_actions'
@@ -43,15 +42,6 @@ function FormDelete({ id }: { id: string }) {
 /* -------------------------------------------------------------------------- */
 /*  Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
-
-function fmtDate(d: string | null) {
-  if (!d) return '—'
-  try {
-    return format(new Date(d), 'dd MMM yyyy', { locale: fr })
-  } catch {
-    return d
-  }
-}
 
 function fmtXof(n: number | null) {
   if (n == null) return '—'
@@ -246,7 +236,7 @@ export default async function ConsommationsPage() {
                   label: 'DATE',
                   primary: true,
                   className: 'text-sm tabular-nums',
-                  render: (v: string | null) => fmtDate(v),
+                  render: (v: string | null) => v ? formatDateContextuel(v) : '—',
                 },
                 {
                   key: 'bande',

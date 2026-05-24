@@ -129,7 +129,7 @@ export function DialogMiseBas({
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             }}
           >
-            Mise-bas — étape {step + 1}/{STEPS.length} : {STEPS[step]}
+            Mise bas — étape {step + 1}/{STEPS.length} : {STEPS[step]}
           </DialogTitle>
           {/* Progress bar */}
           <div className="flex gap-1 mt-2" aria-label="Progression du wizard">

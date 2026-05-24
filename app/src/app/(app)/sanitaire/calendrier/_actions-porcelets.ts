@@ -45,7 +45,7 @@ export async function marquerActePorceletFait(formData: FormData): Promise<void>
     .select('id, truie_id, bande_id, date_mise_bas')
     .eq('id', miseBasId)
     .maybeSingle()
-  if (mbErr || !mb) toastError('Mise-bas introuvable')
+  if (mbErr || !mb) toastError('Mise bas introuvable')
 
   const today = new Date().toISOString().slice(0, 10)
 
