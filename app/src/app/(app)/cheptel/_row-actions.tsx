@@ -1,7 +1,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { MoreHorizontal, Scale, Syringe, Stethoscope, Skull, Eye } from 'lucide-react'
+import { MoreHorizontal, Scale, Syringe, Stethoscope, Skull, Eye, ArrowRight } from 'lucide-react'
+import { useTransition } from 'react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -9,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { transfererUnVersCroissance } from './_server-actions'
 
 /**
  * Mini menu "Actions rapides" affiché en bout de ligne du cheptel.
@@ -24,14 +26,38 @@ import {
 export function CheptelRowActions({
   animalId,
   animalTag,
+  stade,
+  poidsActuel,
 }: {
   animalId: string
   animalTag: string
+  stade?: string
+  poidsActuel?: number
 }) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
 
   const go = (path: string) => () => {
     router.push(path)
+  }
+
+  // Phase 4.A : afficher "Transférer en Croissance" si éligible
+  const eligibleCroissance =
+    stade &&
+    ['demarrage_1', 'demarrage_2'].includes(stade) &&
+    poidsActuel !== undefined &&
+    poidsActuel >= 24
+
+  const handleTransferCroissance = () => {
+    startTransition(async () => {
+      const res = await transfererUnVersCroissance(animalId)
+      if (res.ok) {
+        alert(`${animalTag} a été transféré vers le bâtiment Croissance`)
+        router.refresh()
+      } else {
+        alert(`Erreur : ${res.error}`)
+      }
+    })
   }
 
   return (
@@ -65,6 +91,19 @@ export function CheptelRowActions({
             <Stethoscope className="h-4 w-4 mr-2" />
             Soigner
           </DropdownMenuItem>
+          {eligibleCroissance && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleTransferCroissance}
+                disabled={isPending}
+                className="text-[var(--sf-accent-ink,#A16207)]"
+              >
+                <ArrowRight className="h-4 w-4 mr-2" />
+                {isPending ? 'Transfert...' : 'Transférer en Croissance'}
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={go(`/cheptel/${animalId}?action=mort`)}

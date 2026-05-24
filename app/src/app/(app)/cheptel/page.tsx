@@ -10,6 +10,7 @@ import { CheptelActions } from './_actions'
 import { CheptelRowActions } from './_row-actions'
 import { CheptelFab } from './_fab'
 import { toneTruie } from '@/lib/colors'
+import { BannerTransfertCroissance } from './_banner-transfert-croissance'
 
 export const metadata: Metadata = {
   title: 'Cheptel — Smart Farm',
@@ -48,11 +49,12 @@ function isTab(v: string | undefined): v is TabKey {
 export default async function CheptelPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; q?: string }>
+  searchParams: Promise<{ tab?: string; q?: string; filter?: string }>
 }) {
   const sp = (await searchParams) ?? {}
   const tab: TabKey = isTab(sp.tab) ? sp.tab : 'truies'
   const q = (sp.q ?? '').trim()
+  const filter = sp.filter ?? ''
 
   const sb = await createClient()
 
@@ -101,6 +103,12 @@ export default async function CheptelPage({
     } else if (tab === 'porcelets') {
       aq = aq.in('categorie', CAT_PORCELETS as unknown as string[])
     }
+    
+    // Phase 4.A : filtrer porcelets ≥24 kg si filter=pret_croissance
+    if (filter === 'pret_croissance') {
+      aq = aq.in('stade', ['demarrage_1', 'demarrage_2']).gte('poids_actuel_kg', 24)
+    }
+    
     if (q) {
       aq = aq.ilike('tag', `%${q}%`)
     }
@@ -112,6 +120,11 @@ export default async function CheptelPage({
 
   return (
     <div className="space-y-6">
+      {/* === Banner Phase 4.A : porcelets prêts pour Croissance === */}
+      {filter === 'pret_croissance' && animaux.length > 0 && (
+        <BannerTransfertCroissance count={animaux.length} />
+      )}
+
       {/* === Header de page === */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
@@ -309,7 +322,12 @@ function AnimauxTable({ rows, tab }: { rows: any[]; tab: TabKey }) {
             key: 'actions',
             label: 'ACTIONS',
             render: (_: any, item: any) => (
-              <CheptelRowActions animalId={item.id} animalTag={item.tag} />
+              <CheptelRowActions
+                animalId={item.id}
+                animalTag={item.tag}
+                stade={item.stade}
+                poidsActuel={item.poids_actuel_kg}
+              />
             ),
           },
         ]}

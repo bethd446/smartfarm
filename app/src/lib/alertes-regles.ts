@@ -223,6 +223,13 @@ export const REGLES_ALERTES: Record<string, RegleAlerte> = {
     gravite_default: 'moyenne',
     categorie: 'pertes',
   },
+  'R27-porcelets-pret-croissance': {
+    nom: 'Porcelets prêts pour Croissance',
+    description:
+      'Porcelets en démarrage avec poids ≥ 24 kg — transfert vers bâtiment Croissance requis (référentiel zootechnique CI).',
+    gravite_default: 'info',
+    categorie: 'reproduction',
+  },
 }
 
 // ---------------------------------------------------------------------------
