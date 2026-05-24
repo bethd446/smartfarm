@@ -23,6 +23,7 @@ export type CategorieAlerte =
   | 'nutrition'
   | 'pertes'
   | 'stock'
+  | 'observations'
 
 export type RegleAlerte = {
   /** Libellé court affichable (titre de règle). */
@@ -251,6 +252,7 @@ export const LABEL_CATEGORIE: Record<CategorieAlerte, string> = {
   nutrition: 'Nutrition',
   pertes: 'Pertes',
   stock: 'Stock',
+  observations: 'Observations',
 }
 
 /**

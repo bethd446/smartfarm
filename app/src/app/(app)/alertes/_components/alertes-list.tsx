@@ -61,6 +61,7 @@ const ORDRE_CATEGORIES: readonly string[] = [
   'pertes',
   'stock',
   'nutrition',
+  'observations',
   CATEGORIE_FALLBACK,
 ] as const
 
@@ -102,6 +103,10 @@ function getCategorie(regle_id: string): CategorieAlerte | typeof CATEGORIE_FALL
   if (t.startsWith('stock')) return 'stock'
   if (t.startsWith('aliment') || t.startsWith('eau')) return 'nutrition'
   if (t.startsWith('transition')) return 'reproduction'
+  // Observations manuelles (F2)
+  if (t === 'observation_manuelle' || t.startsWith('observation')) {
+    return 'observations'
+  }
   return CATEGORIE_FALLBACK
 }
 
@@ -302,6 +307,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                   <SelectItem value="nutrition">Nutrition</SelectItem>
                   <SelectItem value="pertes">Pertes</SelectItem>
                   <SelectItem value="stock">Stock</SelectItem>
+                  <SelectItem value="observations">Observations</SelectItem>
                 </SelectContent>
               </Select>
             </div>

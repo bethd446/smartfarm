@@ -2,23 +2,44 @@
 
 import { useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { DialogDeplacerAnimal } from './_dialog-deplacer-animal'
+
+type Batiment = { id: string; nom: string; type?: string | null }
+type Mouvement = {
+  id: string
+  type: string
+  date_mouvement: string
+  batiment_source_id: string | null
+  batiment_dest_id: string | null
+  motif: string | null
+  effectif: number | null
+}
 
 /**
- * AnimalTabs — stub initial.
- * Affiche 4 onglets (Pesées, Reproduction, Santé, Mouvements).
- * Le contenu détaillé sera ajouté par la prochaine itération ; pour
- * l'instant on garantit juste un rendu propre et le build qui passe.
+ * AnimalTabs — onglets de la fiche animal.
+ * F3 — Onglet "Mouvements" : bouton déplacer + historique transferts.
  */
 export function AnimalTabs({
   animalId,
+  animalTag,
   isFemelle,
   nbVaccinations,
   nbTraitements,
+  batimentSourceId,
+  batimentSourceNom,
+  batiments,
+  mouvements,
 }: {
   animalId: string
+  animalTag: string
   isFemelle: boolean
   nbVaccinations: number
   nbTraitements: number
+  batimentSourceId: string | null
+  batimentSourceNom: string | null
+  batiments: Batiment[]
+  mouvements: Mouvement[]
 }) {
   const allTabs = [
     { id: 'pesees', label: 'Pesées' },
@@ -30,6 +51,30 @@ export function AnimalTabs({
 
   const eyebrowCls =
     'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold'
+
+  const batimentNom = (id: string | null): string => {
+    if (!id) return '—'
+    return batiments.find((b) => b.id === id)?.nom ?? id.slice(0, 8)
+  }
+
+  const typeLabel = (t: string): string => {
+    switch (t) {
+      case 'transfert':
+        return 'Transfert'
+      case 'entree':
+        return 'Entrée'
+      case 'sortie':
+        return 'Sortie'
+      case 'mort':
+        return 'Mort'
+      case 'vente':
+        return 'Vente'
+      case 'reforme':
+        return 'Réforme'
+      default:
+        return t
+    }
+  }
 
   return (
     <div className="space-y-4">
@@ -54,34 +99,87 @@ export function AnimalTabs({
         })}
       </div>
 
-      <Card>
-        <CardHeader>
-          <div className={eyebrowCls}>{allTabs.find((t) => t.id === active)?.label}</div>
-        </CardHeader>
-        <CardContent>
-          {active === 'pesees' && (
-            <p className="text-sm text-[var(--sf-muted)]">
-              Historique des pesées — à venir (animal {animalId.slice(0, 8)}…).
-            </p>
-          )}
-          {active === 'repro' && (
-            <p className="text-sm text-[var(--sf-muted)]">
-              Saillies, diagnostics, mises-bas — à venir.
-            </p>
-          )}
-          {active === 'sante' && (
-            <p className="text-sm text-[var(--sf-muted)]">
-              {nbVaccinations} vaccination{nbVaccinations > 1 ? 's' : ''} ·{' '}
-              {nbTraitements} traitement{nbTraitements > 1 ? 's' : ''}. Détail à venir.
-            </p>
-          )}
-          {active === 'mouvements' && (
-            <p className="text-sm text-[var(--sf-muted)]">
-              Historique des mouvements entre bâtiments — à venir.
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      {active === 'mouvements' ? (
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className={eyebrowCls}>Mouvements bâtiment</div>
+              <DialogDeplacerAnimal
+                animalId={animalId}
+                animalTag={animalTag}
+                batimentSourceId={batimentSourceId}
+                batimentSourceNom={batimentSourceNom}
+                batiments={batiments}
+              />
+            </div>
+          </CardHeader>
+          <CardContent>
+            {mouvements.length === 0 ? (
+              <p className="text-sm text-[var(--sf-muted)]">
+                Aucun mouvement enregistré pour cet animal.
+              </p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-[var(--sf-line)] text-left text-xs uppercase tracking-wide text-[var(--sf-muted)]">
+                      <th className="py-2 pr-3">Date</th>
+                      <th className="py-2 pr-3">Type</th>
+                      <th className="py-2 pr-3">De</th>
+                      <th className="py-2 pr-3">Vers</th>
+                      <th className="py-2 pr-3">Motif</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {mouvements.map((m) => (
+                      <tr
+                        key={m.id}
+                        className="border-b border-[var(--sf-line)] last:border-0"
+                      >
+                        <td className="py-2 pr-3 tabular-nums">
+                          {new Date(m.date_mouvement).toLocaleDateString('fr-FR')}
+                        </td>
+                        <td className="py-2 pr-3">
+                          <Badge variant="outline">{typeLabel(m.type)}</Badge>
+                        </td>
+                        <td className="py-2 pr-3">{batimentNom(m.batiment_source_id)}</td>
+                        <td className="py-2 pr-3">{batimentNom(m.batiment_dest_id)}</td>
+                        <td className="py-2 pr-3 text-[var(--sf-muted)]">
+                          {m.motif ?? '—'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader>
+            <div className={eyebrowCls}>{allTabs.find((t) => t.id === active)?.label}</div>
+          </CardHeader>
+          <CardContent>
+            {active === 'pesees' && (
+              <p className="text-sm text-[var(--sf-muted)]">
+                Historique des pesées — à venir (animal {animalId.slice(0, 8)}…).
+              </p>
+            )}
+            {active === 'repro' && (
+              <p className="text-sm text-[var(--sf-muted)]">
+                Saillies, diagnostics, mises-bas — à venir.
+              </p>
+            )}
+            {active === 'sante' && (
+              <p className="text-sm text-[var(--sf-muted)]">
+                {nbVaccinations} vaccination{nbVaccinations > 1 ? 's' : ''} ·{' '}
+                {nbTraitements} traitement{nbTraitements > 1 ? 's' : ''}. Détail à venir.
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

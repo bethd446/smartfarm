@@ -3,6 +3,115 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { getFermeId } from '@/lib/supabase/ferme-context'
+import { z } from 'zod'
+import {
+  TOUS_LES_STADES,
+  nouvelleCategoriePourStade,
+  type StadeAnimal,
+} from '@/lib/stades-animaux'
+
+/**
+ * F1 — Changement manuel de stade zootechnique sur fiche animal.
+ *
+ * Met à jour `animaux.stade` (+ `animaux.categorie` si bascule cochette → truie),
+ * et trace le changement dans `audit_log` avec le motif éventuel.
+ *
+ * Note : le trigger BDD sur `animaux` insère déjà une ligne UPDATE dans
+ * `audit_log` ; on ajoute en plus une entrée explicite action='STADE_CHANGE'
+ * pour rendre l'historique métier facilement requêtable + porter le motif.
+ */
+const schemaChangerStade = z.object({
+  animal_id: z.string().uuid('Animal invalide'),
+  nouveau_stade: z.enum(TOUS_LES_STADES as [StadeAnimal, ...StadeAnimal[]]),
+  motif: z
+    .string()
+    .max(500, 'Motif trop long (500 caractères max)')
+    .optional()
+    .or(z.literal('')),
+})
+
+export async function changerStade(input: {
+  animal_id: string
+  nouveau_stade: string
+  motif?: string
+}): Promise<
+  | { ok: true; ancien_stade: string; nouveau_stade: string }
+  | { ok: false; error: string }
+> {
+  const parsed = schemaChangerStade.safeParse(input)
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? 'Validation échouée'
+    console.error('[changerStade] Validation échouée', parsed.error.issues)
+    return { ok: false, error: msg }
+  }
+  const { animal_id, nouveau_stade, motif } = parsed.data
+  const supabase = await createClient()
+
+  const { data: animal, error: fetchErr } = await supabase
+    .from('animaux')
+    .select('id, ferme_id, tag, categorie, stade')
+    .eq('id', animal_id)
+    .maybeSingle()
+
+  if (fetchErr || !animal) {
+    console.error('[changerStade] Animal introuvable', fetchErr)
+    return { ok: false, error: 'Animal introuvable' }
+  }
+
+  if (animal.categorie === 'verrat') {
+    return {
+      ok: false,
+      error: 'Le stade d’un verrat n’est pas modifiable',
+    }
+  }
+
+  const ancien_stade = String(animal.stade ?? '')
+  if (ancien_stade === nouveau_stade) {
+    return { ok: false, error: 'Le nouveau stade est identique à l’actuel' }
+  }
+
+  const bascule = nouvelleCategoriePourStade(
+    animal.categorie as string,
+    nouveau_stade as StadeAnimal,
+  )
+
+  const updatePayload: Record<string, unknown> = { stade: nouveau_stade }
+  if (bascule) updatePayload.categorie = bascule
+
+  const { error: updErr } = await supabase
+    .from('animaux')
+    .update(updatePayload)
+    .eq('id', animal_id)
+
+  if (updErr) {
+    console.error('[changerStade] UPDATE animaux échoué', updErr)
+    return { ok: false, error: `Échec mise à jour : ${updErr.message}` }
+  }
+
+  // Entrée audit_log explicite (motif + ancien/nouveau stade)
+  const { error: auditErr } = await supabase.from('audit_log').insert({
+    table_name: 'animaux',
+    row_id: animal_id,
+    action: 'STADE_CHANGE',
+    ferme_id: animal.ferme_id,
+    before_data: { stade: ancien_stade, categorie: animal.categorie },
+    after_data: {
+      stade: nouveau_stade,
+      categorie: bascule ?? animal.categorie,
+      motif: motif && motif.length > 0 ? motif : null,
+    },
+  })
+  if (auditErr) {
+    // Non bloquant — le trigger BDD a déjà tracé l'UPDATE
+    console.error('[changerStade] audit_log insert (non bloquant)', auditErr)
+  }
+
+  revalidatePath('/cheptel')
+  revalidatePath(`/cheptel/${animal_id}`)
+  revalidatePath('/dashboard')
+
+  return { ok: true, ancien_stade, nouveau_stade }
+}
 
 /**
  * PROD-B — Saisie BCS rapide 1-tap depuis la fiche /cheptel/[id].

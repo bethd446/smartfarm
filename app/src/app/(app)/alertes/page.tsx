@@ -6,6 +6,7 @@ import { PageTitle } from '@/components/ui/page-title'
 import { EmptyState } from '@/components/ui/empty-state'
 import { getAlertesActives, compteParGravite } from '@/lib/alertes-engine'
 import { AlertesList } from './_components/alertes-list'
+import { DialogAlerteManuelle } from './_components/dialog-alerte-manuelle'
 
 export const metadata: Metadata = {
   title: 'Alertes — Smart Farm',
@@ -30,9 +31,22 @@ export default async function AlertesPage() {
   const compte = compteParGravite(alertes)
   const total = alertes.length
 
+  // Fetch animaux + bâtiments pour cible dialog "nouvelle alerte"
+  const [{ data: animaux }, { data: batiments }] = await Promise.all([
+    sb.from('animaux')
+      .select('id, tag, categorie')
+      .eq('statut', 'actif')
+      .is('deleted_at', null)
+      .order('tag'),
+    sb.from('batiments')
+      .select('id, nom, type')
+      .is('deleted_at', null)
+      .order('nom'),
+  ])
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <PageTitle
             eyebrow="PILOTAGE"
@@ -46,6 +60,10 @@ export default async function AlertesPage() {
             le sanitaire et le stock
           </p>
         </div>
+        <DialogAlerteManuelle
+          animaux={animaux ?? []}
+          batiments={batiments ?? []}
+        />
       </div>
 
       {/* KPI Cards */}

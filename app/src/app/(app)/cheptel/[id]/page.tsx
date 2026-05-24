@@ -7,6 +7,7 @@ import { PiggyBank, ArrowLeft, Scale, Heart, Stethoscope, ArrowRightLeft, Clock,
 import Link from 'next/link'
 import { AnimalTabs } from './_tabs'
 import { saisirBcsRapide, uploadPhotoAnimal } from './_actions'
+import { DialogChangerStade } from './_dialog-changer-stade'
 import { AnimalPhotoUpload } from '@/components/animal-photo-upload'
 import { QrCode } from 'lucide-react'
 import {
@@ -180,6 +181,32 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
     .select('*', { count: 'exact', head: true })
     .eq('animal_id', animalId)
 
+  // === F3 : Bâtiments ferme + mouvements de l'animal + bâtiment courant ===
+  const [{ data: batiments }, { data: mouvements }, { data: batimentCourant }] =
+    await Promise.all([
+      sb
+        .from('batiments')
+        .select('id, nom, type')
+        .is('deleted_at', null)
+        .order('nom'),
+      sb
+        .from('mouvements')
+        .select(
+          'id, type, date_mouvement, batiment_source_id, batiment_dest_id, motif, effectif'
+        )
+        .eq('animal_id', animalId)
+        .order('date_mouvement', { ascending: false })
+        .limit(50),
+      animal.batiment_id
+        ? sb
+            .from('batiments')
+            .select('id, nom')
+            .eq('id', animal.batiment_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null as any }),
+    ])
+  const batimentSourceNom: string | null = (batimentCourant as any)?.nom ?? null
+
   // === H1 : Score reproducteur composite (truie active) ===
   type ScoreRow = {
     score_global: number | null
@@ -291,6 +318,11 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
           </div>
           {/* Actions rapides */}
           <div className="flex gap-2 flex-wrap">
+            <DialogChangerStade
+              animalId={animalId}
+              categorie={String(animal.categorie ?? '')}
+              stadeActuel={String(animal.stade ?? '')}
+            />
             {isFemelle ? (
               <Link href={`/cheptel/${animalId}/genealogie`}>
                 <Button variant="outline" size="sm">
@@ -725,9 +757,14 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
       {/* === ONGLETS : Pesées, Reproduction, Santé, Mouvements === */}
       <AnimalTabs
         animalId={animalId}
+        animalTag={animal.tag}
         isFemelle={isFemelle}
         nbVaccinations={nbVaccinations ?? 0}
         nbTraitements={nbTraitements ?? 0}
+        batimentSourceId={animal.batiment_id ?? null}
+        batimentSourceNom={batimentSourceNom}
+        batiments={(batiments ?? []) as any}
+        mouvements={(mouvements ?? []) as any}
       />
     </div>
   )
