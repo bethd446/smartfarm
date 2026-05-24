@@ -215,3 +215,40 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 - Cause : JOIN sur table `cases` vide → query retournait []
 - Fix commit `fbc033f` : 2 queries séparées (batiments + animaux), groupBy côté serveur
 - Résultat attendu : 7 bâtiments visibles avec taux d'occupation
+
+## LEÇONS 2026-05-23 (compte démo + audit fonctionnel)
+
+### Bug pattern : submit silencieux
+- Payload front contient colonnes absentes en BDD prod → PGRST204
+- Dialog se ferme, aucun toast erreur
+- Fix : aligner payload sur schéma réel + console.error server + return {error} client
+- Cas vus : saillies (rang_porte/bcs_truie/idempotency_key), mouvements_stock (quantite vs qte_kg, date_mvt vs date)
+
+### Catégorisation alertes
+- View `v_alertes_actives` expose `type` métier (`retour_chaleurs_surveillance`, `sevrage_*`)
+- PAS un code `Rxx-…` → mapping `type → categorie UI` nécessaire dans `alertes-list.tsx`
+
+### KPI vue
+- `v_kpi_techniques_ferme` renvoie `portee_moyenne_12m` (nés vivants moyens) PAS `nes_vivants_par_portee_moyen`
+- Normaliser au lecture (alias)
+- Taux fertilité = positifs/total `diagnostics_gestation` (à calculer direct, pas dans la vue)
+
+### Bug schéma multi-tenant
+- `portees.code_portee UNIQUE` global au lieu de `UNIQUE(ferme_id, code_portee)` → conflits cross-fermes
+- RLS sur `mises_bas` masque parfois les MB côté anon malgré ownership → policies à auditer
+- Migration future : ajouter colonnes `rang_porte`, `bcs_truie`, `idempotency_key` à `saillies` + RLS `mises_bas/portees` ownership
+
+### Compte démo
+- demo@smartfarm.group / Demo6734N0xUHH1I
+- ferme_id réel : `3ed3960d-39e4-4b1b-8a12-bb28aff92fdf` (NOT cf7e-...)
+- 59 animaux + 20 saillies + 17 diagnostics + 4 MB + 78 alertes (auto)
+- Isolation RLS confirmée (tentative cross-ferme bloquée)
+
+### Audit mobile 2026-05-23 (faux positifs)
+- 9 "404" reportés sont des URLs INVENTÉES par l'auditeur (`/cheptel/truies`, `/sevrages`, etc.)
+- Vraie architecture : `/cheptel?tab=truies|verrats|porcelets`, sevrages dans `/mises-bas`, `/reproduction` tout-en-un
+- Sidebar n'expose AUCUN lien vers ces URLs imaginaires
+- Vrais problèmes mobile : /alertes monstrueuse (244 boutons, 22k px), touch targets < 44px (82% sur /cheptel), tables forcées (besoin pattern card)
+
+### Commit récent
+- `f668daa` : fix 5 bugs P0/P1 démo (saillies/stock/alertes/KPI/fiche truie) - 4 fixés, BUG-5 fiche truie skippé (RLS mises_bas à investiguer)
