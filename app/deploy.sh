@@ -42,14 +42,36 @@ echo "▶  Server PID: $!"
 
 sleep 4
 echo "▶  Healthcheck…"
-HTTP=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://127.0.0.1:3000/)
-ASSET=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://127.0.0.1:3000/logo-smartfarm.svg)
+# 1) Liveness Node sur :3000 — HTML uniquement
+#    Les assets statiques (_next/static, public/) sont servis par LiteSpeed en prod,
+#    PAS par Node. Tester localhost:3000/asset.svg donne un faux 404 même quand
+#    la prod fonctionne. On vérifie donc :
+#      a) Node bind :3000 (HTML 200)
+#      b) Présence physique des assets clés sur disque (standalone + public/_next/static)
+#      c) URL publique smartfarm.group OK (HTML + 1 asset CSS référencé)
+HTTP_LOCAL=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://127.0.0.1:3000/)
 
-if [ "$HTTP" = "200" ] && [ "$ASSET" = "200" ]; then
-  echo "✓  Smart Farm UP  ·  HTML=$HTTP  ·  Assets=$ASSET"
-  echo "✓  https://smartfarm.187-127-225-24.nip.io"
+# Vérif présence assets sur disque
+STATIC_OK=0
+[ -d "$STANDALONE_DIR/.next/static" ] && [ -d "$APP_DIR/public/_next/static" ] && STATIC_OK=1
+
+# Vérif prod externe (HTML + 1 asset CSS référencé par le HTML)
+HTTP_PROD=$(curl -s -o /dev/null -w "%{http_code}" --max-time 8 https://smartfarm.group/connexion || echo "000")
+ASSET_URL=$(curl -s --max-time 5 https://smartfarm.group/connexion 2>/dev/null | grep -oE '/_next/static/chunks/[^"]+\.css' | head -1)
+ASSET_PROD="skip"
+if [ -n "$ASSET_URL" ]; then
+  ASSET_PROD=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "https://smartfarm.group$ASSET_URL" || echo "000")
+fi
+
+echo "  · Node local  : HTML=$HTTP_LOCAL"
+echo "  · Assets disk : $([ $STATIC_OK = 1 ] && echo OK || echo MISSING)"
+echo "  · Prod HTTPS  : HTML=$HTTP_PROD  CSS=$ASSET_PROD"
+
+if [ "$HTTP_LOCAL" = "200" ] && [ "$STATIC_OK" = "1" ] && [ "$HTTP_PROD" = "200" ] && { [ "$ASSET_PROD" = "200" ] || [ "$ASSET_PROD" = "skip" ]; }; then
+  echo "✓  Smart Farm UP  ·  Node=$HTTP_LOCAL  ·  Prod=$HTTP_PROD  ·  CSS=$ASSET_PROD"
+  echo "✓  https://smartfarm.group"
 else
-  echo "✗  Deploy FAILED  ·  HTML=$HTTP  ·  Assets=$ASSET"
+  echo "✗  Deploy FAILED  ·  Node=$HTTP_LOCAL  ·  Disk=$STATIC_OK  ·  Prod=$HTTP_PROD  ·  CSS=$ASSET_PROD"
   tail -20 /tmp/sf-standalone.log
   exit 1
 fi
