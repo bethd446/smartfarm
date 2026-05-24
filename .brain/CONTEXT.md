@@ -275,3 +275,27 @@ GRANT USAGE ON ALL SEQUENCES IN SCHEMA public TO authenticated;
 - `SUPABASE_SERVICE_ROLE_KEY` : `/root/projects/smartfarm/app/.env.local`
 - `SUPABASE_ACCESS_TOKEN` : env shell (`echo $SUPABASE_ACCESS_TOKEN`)
 - Password ferme réelle : Bitwarden / 1Password (jamais commit)
+
+## LEÇONS 2026-05-24 (Phase 2 mobile + rotation modèles)
+
+### Rotation Hermes auxiliary models
+- vision → google/gemini-2.5-pro ($0.011/audit vs $0.40 Opus, 40× cheaper)
+- compression/web_extract/session_search → gemini-2.5-flash ($0.30/M)
+- title_gen/triage/approval/mcp/skills_hub/profile → gpt-5-mini ($0.25/M)
+- kanban_decomposer/delegation → claude-sonnet-4.5
+- curator → claude-haiku-4.5
+- conversation principale ↔ user → claude-opus-4.7 (inchangé)
+- Restart gateway requis après modif config (systemctl --user restart hermes-gateway)
+
+### Phase 2 mobile livraisons
+- Commits : f3298a3 (touch targets) → daeb85f (ResponsiveTable) → 44f604a (FAB) → c4cf2e3 (skeletons) → 0a53a12 (PWA) → c96ea95 (pagination) → 26c7ea4 (tests smoke)
+- ResponsiveTable migré : /cheptel + /alimentation/consommations seulement (5 autres à migrer)
+- FAB sur 5 routes critiques (Cheptel/Repro/MB/Conso/Alertes)
+- PWA : manifest + sw.js custom sans deps (offline-first sauf API Supabase)
+- Pagination 10/page sur /alertes + filtres sticky
+
+### KNOWN ISSUE 24/05 PM
+- Login démo Supabase échoue : "Invalid API key" sur sb_publishable_VdYNHQZS-1ZMMSO4tpiVlg_bETYXHIT
+- Tests Playwright qui nécessitent login : 1 skip
+- À investiguer : Hostinger env NEXT_PUBLIC_SUPABASE_ANON_KEY, peut-être key rotated ou not deployed
+- L'app prod tourne, juste impossible de nouveau login démo
