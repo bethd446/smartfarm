@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 
 import { NutritionStats } from './_components/nutrition-stats'
+import { AlimentationFab } from './_fab'
 
 /* -------------------------------------------------------------------------- */
 /*  Hub Alimentation — refonte C6                                              */
@@ -121,6 +122,7 @@ export default async function AlimentationPage() {
           )
         })}
       </div>
+      <AlimentationFab />
     </div>
   )
 }

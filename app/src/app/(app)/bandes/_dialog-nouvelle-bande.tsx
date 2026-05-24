@@ -22,8 +22,18 @@ const SELECT_CLASS =
   'focus:outline-none focus-visible:outline-none rounded-none ' +
   'text-[var(--sf-ink,#1a1a1a)]'
 
-export function DialogNouvelleBande({ trigger }: { trigger: React.ReactNode }) {
-  const [open, setOpen] = useState(false)
+export function DialogNouvelleBande({ 
+  trigger, 
+  open: controlledOpen, 
+  onOpenChange: controlledOnOpenChange 
+}: { 
+  trigger?: React.ReactNode
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+}) {
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = controlledOnOpenChange ?? setInternalOpen
   const [isPending, startTransition] = useTransition()
   const today = new Date().toISOString().slice(0, 10)
 
@@ -41,7 +51,7 @@ export function DialogNouvelleBande({ trigger }: { trigger: React.ReactNode }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      {trigger && <DialogTrigger render={trigger as any} />}
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

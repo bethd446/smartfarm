@@ -52,12 +52,18 @@ export function DialogPeser({
   trigger,
   animaux,
   bandes,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   animaux: { id: string; tag: string; nom: string | null }[]
   bandes: { id: string; nom: string; code: string | null }[]
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = controlledOnOpenChange ?? setInternalOpen
   const [mode, setMode] = useState<'individuelle' | 'bande'>('individuelle')
 
   const {
@@ -118,7 +124,7 @@ export function DialogPeser({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      {trigger && <DialogTrigger render={trigger as any} />}
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle
