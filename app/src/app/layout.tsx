@@ -26,11 +26,16 @@ export const viewport: Viewport = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const isProd = process.env.NODE_ENV === "production"
+
   return (
     <html lang="fr-FR">
       <body className="antialiased bg-[var(--sf-surface-0)] text-[var(--sf-ink)]">
         {children}
         <Toaster richColors position="top-right" />
+        {isProd && (
+          <script src="/sw-register.js" defer />
+        )}
       </body>
     </html>
   )
