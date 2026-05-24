@@ -81,6 +81,25 @@ export async function connexionAction(_prev: AuthResult | null, formData: FormDa
 }
 
 // ---------------------------------------------------------------------------
+// Connexion compte démo (one-click) — credentials côté serveur uniquement
+// ---------------------------------------------------------------------------
+export async function connexionDemoAction(): Promise<void> {
+  const email = process.env.SMARTFARM_DEMO_EMAIL || 'demo@smartfarm.group'
+  const password = process.env.SMARTFARM_DEMO_PASSWORD
+  if (!password) {
+    // Pas configuré côté serveur : on redirige vers /connexion avec un flag
+    redirect('/connexion?demo_error=not_configured')
+  }
+  const sb = await createAuthClient()
+  const { error } = await sb.auth.signInWithPassword({ email, password })
+  if (error) {
+    redirect('/connexion?demo_error=login_failed')
+  }
+  try { await sb.rpc('touch_derniere_connexion') } catch { /* ignore */ }
+  redirect('/dashboard')
+}
+
+// ---------------------------------------------------------------------------
 // Magic Link (passwordless) — utilisé pour le login alternatif ET la reset
 // ---------------------------------------------------------------------------
 export async function magicLinkAction(_prev: AuthResult | null, formData: FormData): Promise<AuthResult> {

@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
-import { connexionAction, magicLinkAction, type AuthResult } from '../_actions'
+import { connexionAction, magicLinkAction, connexionDemoAction, type AuthResult } from '../_actions'
 
 /**
  * Smart Farm — Page connexion v1.0 (design system)
@@ -181,6 +181,21 @@ export default function ConnexionPage() {
           <Link href="/inscription" className="toggle-link">
             Créer un compte
           </Link>
+        </div>
+
+        <div className="auth-demo-row" style={{ marginTop: 20, paddingTop: 20, borderTop: '1px solid var(--sf-border, rgba(0,0,0,0.08))' }}>
+          <form action={connexionDemoAction}>
+            <button
+              type="submit"
+              className="btn btn--ghost btn--lg btn--full"
+              style={{ minHeight: 48 }}
+            >
+              👁  Tester en mode démo
+            </button>
+          </form>
+          <p style={{ marginTop: 8, fontSize: 12, color: 'var(--sf-subtle)', textAlign: 'center' }}>
+            Aperçu lecture + écriture sur des données fictives. Aucune inscription nécessaire.
+          </p>
         </div>
       </div>
 

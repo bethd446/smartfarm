@@ -127,9 +127,9 @@ export default async function DashboardPage() {
   const eyebrowCls =
     "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
 
-  // Link "Voir tout" réutilisable
+  // Link "Voir tout" réutilisable — min-h 44 px mobile pour touch target
   const seeAllCls =
-    "text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
 
   return (
     <div className="space-y-8">

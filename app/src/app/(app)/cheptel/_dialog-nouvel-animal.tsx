@@ -61,11 +61,20 @@ const CATEGORIES_ORDER: Array<FormData['categorie']> = [
 export function DialogNouvelAnimal({
   trigger,
   races,
+  open: openProp,
+  onOpenChange,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.JSX.Element
   races: { id: string; nom: string }[]
+  open?: boolean
+  onOpenChange?: (next: boolean) => void
 }) {
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = openProp ?? internalOpen
+  const setOpen = (next: boolean) => {
+    if (onOpenChange) onOpenChange(next)
+    else setInternalOpen(next)
+  }
   const {
     register,
     handleSubmit,
@@ -105,18 +114,10 @@ export function DialogNouvelAnimal({
   }
 
   return (
-    <Dialog>
-      <DialogTrigger
-        render={
-          <button
-            type="button"
-            className="group/button inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap border border-transparent select-none outline-none transition-[transform,box-shadow,background-color,color] rounded-[4px] font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sf-primary)] active:translate-y-px bg-[var(--sf-primary)] text-white shadow-[var(--sf-stamp-ring)] hover:bg-[color-mix(in_srgb,var(--sf-primary)_90%,black)] active:shadow-[var(--sf-stamp-ring),var(--sf-stamp-press)] min-h-14 px-6 h-12 text-base"
-          >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Nouvel animal
-          </button>
-        }
-      />
+    <Dialog open={open} onOpenChange={setOpen}>
+      {trigger ? (
+        <DialogTrigger asChild>{trigger}</DialogTrigger>
+      ) : null}
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle

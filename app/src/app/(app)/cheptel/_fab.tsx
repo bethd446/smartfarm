@@ -1,41 +1,53 @@
 'use client'
 
+import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import { DialogNouvelAnimal } from './_dialog-nouvel-animal'
 
+/**
+ * Smart Farm — FAB Cheptel (Floating Action Button)
+ * ============================================================================
+ * Le bouton flottant est rendu HORS du Dialog (sinon Radix asChild clone et
+ * écrase le `position: fixed`). L'état d'ouverture du dialog est lifté ici.
+ * ============================================================================
+ */
 export function CheptelFab({
   races = [],
 }: {
   races?: { id: string; nom: string }[]
 }) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <DialogNouvelAnimal
-      races={races}
-      trigger={
-        <button
-          type="button"
-          aria-label="Nouvel animal"
-          className={[
-            // Position : bottom-right, au-dessus du bottom-nav mobile (h-16 = 64px + margin = 88px)
-            'fixed right-5 bottom-[5.5rem] z-40',
-            // Visible mobile uniquement
-            'lg:hidden',
-            // Forme : pastille 56×56 (FAB Material comfort touch)
-            'h-14 w-14 rounded-full',
-            // Style charte Terrain Vivant : vert sahel + stamp shadow
-            'bg-[var(--sf-primary)] text-[var(--sf-warm)]',
-            'shadow-[0_8px_24px_-4px_rgba(45,74,31,0.45),0_4px_8px_-2px_rgba(0,0,0,0.2)]',
-            'ring-2 ring-[var(--sf-warm)]/40',
-            // Interaction
-            'flex items-center justify-center',
-            'transition-transform duration-150 ease-out',
-            'hover:scale-105 active:scale-95',
-            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--sf-accent-warm,#A16207)]/60',
-          ].join(' ')}
-        >
-          <Plus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
-        </button>
-      }
-    />
+    <>
+      <button
+        type="button"
+        aria-label="Nouvel animal"
+        onClick={() => setOpen(true)}
+        style={{
+          position: 'fixed',
+          right: '20px',
+          bottom: '88px',
+          zIndex: 40,
+          width: '56px',
+          height: '56px',
+          borderRadius: '9999px',
+          background: 'var(--sf-primary)',
+          color: 'var(--sf-warm, #fffbeb)',
+          boxShadow:
+            '0 8px 24px -4px rgba(45,74,31,0.45), 0 4px 8px -2px rgba(0,0,0,0.2), inset 0 0 0 2px rgba(255,251,235,0.4)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'transform 150ms ease-out',
+          border: 0,
+          cursor: 'pointer',
+        }}
+        className="lg:hidden"
+      >
+        <Plus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
+      </button>
+      <DialogNouvelAnimal races={races} open={open} onOpenChange={setOpen} />
+    </>
   )
 }
