@@ -151,6 +151,7 @@ export default async function ParametresPage() {
             href="/api/registre"
             target="_blank"
             rel="noopener noreferrer"
+            className="inline-flex"
           >
             <Button variant="default">
               <Download className="h-4 w-4 mr-2" />

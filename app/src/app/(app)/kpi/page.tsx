@@ -339,7 +339,7 @@ export default async function KpiPageV2() {
             </h2>
             <Link
               href="/performances/croissance"
-              className="text-sm text-[var(--sf-primary)] hover:underline flex items-center gap-1"
+              className="inline-flex items-center min-h-[44px] py-2 gap-1 text-sm text-[var(--sf-primary)] hover:underline"
             >
               Détail croissance <ArrowRight className="h-4 w-4" />
             </Link>

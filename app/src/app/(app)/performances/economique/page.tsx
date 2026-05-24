@@ -253,7 +253,7 @@ export default async function EconomiquePage({
       <div>
         <Link
           href="/kpi"
-          className="inline-flex items-center gap-2 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-primary)] mb-3"
+          className="inline-flex items-center gap-2 min-h-[44px] py-2 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-primary)] mb-3"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour aux indicateurs
