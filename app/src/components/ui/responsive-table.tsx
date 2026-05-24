@@ -1,15 +1,5 @@
-'use client'
-
 import * as React from 'react'
 import { cn } from '@/lib/utils'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 
 export interface ResponsiveTableColumn<T> {
   /** Clé de la propriété dans l'objet data */
@@ -33,8 +23,6 @@ export interface ResponsiveTableProps<T> {
   columns: ResponsiveTableColumn<T>[]
   /** Fonction pour extraire la clé unique de chaque ligne */
   getRowKey: (item: T) => string | number
-  /** Callback au clic sur une ligne (optionnel) */
-  onRowClick?: (item: T) => void
   /** ClassName custom pour le conteneur */
   className?: string
   /** Message si vide */
@@ -42,31 +30,20 @@ export interface ResponsiveTableProps<T> {
 }
 
 /**
- * ResponsiveTable — Table HTML sur desktop (≥768px), cards verticales sur mobile
- * 
- * Usage:
- * ```tsx
- * <ResponsiveTable
- *   data={items}
- *   columns={[
- *     { key: 'tag', label: 'TAG', primary: true },
- *     { key: 'nom', label: 'NOM' },
- *     { key: 'statut', label: 'STATUT', render: (v) => <Badge>{v}</Badge> },
- *   ]}
- *   getRowKey={(item) => item.id}
- *   onRowClick={(item) => router.push(`/cheptel/${item.id}`)}
- * />
- * ```
+ * ResponsiveTable — Server Component
+ * Desktop (≥768px) : table HTML
+ * Mobile (<768px) : cards verticales
+ *
+ * 100% CSS responsive, sans JS, sans hooks → utilisable depuis Server Components.
+ * Pour click handlers, wrappe ResponsiveTable dans un Link ou utilise un wrapper Client.
  */
 export function ResponsiveTable<T extends Record<string, any>>({
   data,
   columns,
   getRowKey,
-  onRowClick,
   className,
   emptyMessage = 'Aucune donnée à afficher',
 }: ResponsiveTableProps<T>) {
-  // Déterminer colonne primaire (première par défaut)
   const primaryCol = columns.find((c) => c.primary) ?? columns[0]
 
   if (data.length === 0) {
@@ -81,14 +58,14 @@ export function ResponsiveTable<T extends Record<string, any>>({
     <>
       {/* ===== DESKTOP : Table HTML (≥768px) ===== */}
       <div className="hidden md:block overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
+        <table className="w-full caption-bottom text-sm">
+          <thead className="[&_tr]:border-b border-[var(--sf-line)]">
+            <tr className="border-b border-[var(--sf-line)] transition-colors">
               {columns.map((col, idx) => (
-                <TableHead
+                <th
                   key={`h-${idx}`}
                   className={cn(
-                    'text-left text-[var(--sf-muted)]',
+                    'h-10 px-2 text-left align-middle text-[var(--sf-muted)] font-semibold',
                     col.headerClassName,
                   )}
                   style={{
@@ -99,36 +76,32 @@ export function ResponsiveTable<T extends Record<string, any>>({
                   }}
                 >
                   {col.label}
-                </TableHead>
+                </th>
               ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
+            </tr>
+          </thead>
+          <tbody className="[&_tr:last-child]:border-0">
             {data.map((item) => (
-              <TableRow
+              <tr
                 key={getRowKey(item)}
-                onClick={onRowClick ? () => onRowClick(item) : undefined}
-                className={cn(
-                  onRowClick &&
-                    'cursor-pointer hover:bg-[var(--sf-surface-2)]/40 transition-colors',
-                )}
+                className="border-b border-[var(--sf-line)] transition-colors hover:bg-[var(--sf-surface-2)]/40"
               >
                 {columns.map((col, idx) => {
                   const value = item[col.key as keyof T]
                   const rendered = col.render ? col.render(value, item) : value
                   return (
-                    <TableCell
+                    <td
                       key={`c-${idx}`}
-                      className={cn('text-sm', col.className)}
+                      className={cn('p-2 align-middle text-sm', col.className)}
                     >
                       {rendered ?? '—'}
-                    </TableCell>
+                    </td>
                   )
                 })}
-              </TableRow>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
+          </tbody>
+        </table>
       </div>
 
       {/* ===== MOBILE : Cards verticales (<768px) ===== */}
@@ -142,11 +115,7 @@ export function ResponsiveTable<T extends Record<string, any>>({
           return (
             <div
               key={getRowKey(item)}
-              onClick={onRowClick ? () => onRowClick(item) : undefined}
-              className={cn(
-                'rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] p-4 space-y-2',
-                onRowClick && 'cursor-pointer hover:bg-[var(--sf-surface-2)]/40 transition-colors',
-              )}
+              className="rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] p-4 space-y-2"
             >
               {/* Titre card = colonne primary */}
               <div

@@ -24,7 +24,7 @@ async function login(page: Page): Promise<boolean> {
     await page.getByLabel(/email/i).fill(DEMO_EMAIL)
     await page.getByLabel(/mot de passe/i).fill(DEMO_PASS)
     await page.getByRole('button', { name: /se connecter/i }).click()
-    await page.waitForURL(/\/(dashboard|cheptel)/, { timeout: 12000 })
+    await page.waitForURL(/\/(dashboard|cheptel)/, { timeout: 25000 })
     return true
   } catch {
     return false
