@@ -168,6 +168,10 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
   const [snoozeTick, setSnoozeTick] = useState(0)
   const [showSnoozed, setShowSnoozed] = useState(false)
 
+  // Pagination client-side : 10 alertes par page
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+
   // Initial mount : on déclenche un re-render pour lire le localStorage côté client
   useEffect(() => {
     setSnoozeTick((t) => t + 1)
@@ -221,9 +225,20 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
     )
   }, [filtrees])
 
+  // Reset pagination quand les filtres changent
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [gravite, categorie, showSnoozed])
+
+  // Pagination : calcul des groupes paginés
+  const totalPages = Math.ceil(triees.length / itemsPerPage)
+  const startIdx = (currentPage - 1) * itemsPerPage
+  const endIdx = startIdx + itemsPerPage
+  const alertesPaginees = triees.slice(startIdx, endIdx)
+
   const groupes = useMemo(() => {
     const map = new Map<string, Alerte[]>()
-    for (const a of triees) {
+    for (const a of alertesPaginees) {
       const key =
         groupement === 'categorie'
           ? (getCategorie(a.regle_id) as string)
@@ -246,7 +261,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
       entries.sort(([a], [b]) => rank(a) - rank(b))
     }
     return entries
-  }, [triees, groupement])
+  }, [alertesPaginees, groupement])
 
   const groupLabel = (key: string) => {
     if (groupement === 'categorie') {
@@ -259,8 +274,15 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
 
   return (
     <div className="space-y-4">
-      {/* Barre de filtres */}
-      <Card>
+      {/* Barre de filtres - sticky en haut */}
+      <Card 
+        style={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 40,
+          background: 'var(--sf-surface-1, #fff)',
+        }}
+      >
         <CardContent className="p-4">
           <div className="flex flex-wrap items-end gap-3">
             <div className="flex items-center gap-1.5 text-[var(--sf-muted,#5C5346)]">
@@ -362,6 +384,31 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
         </CardContent>
       </Card>
 
+      {/* Pagination controls - au-dessus de la liste */}
+      {triees.length > itemsPerPage && (
+        <div className="flex items-center justify-between px-2 py-3 bg-[var(--sf-surface-2,#F5F1ED)] rounded-lg">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Précédent
+          </Button>
+          <span className="text-sm text-[var(--sf-muted,#5C5346)]">
+            Page <span className="font-semibold text-[var(--sf-ink,#1a1a1a)]">{currentPage}</span> / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Suivant
+          </Button>
+        </div>
+      )}
+
       {/* Liste */}
       {triees.length === 0 ? (
         <Card>
@@ -432,6 +479,31 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
               </div>
             </section>
           ))}
+        </div>
+      )}
+
+      {/* Pagination controls - en bas de la liste */}
+      {triees.length > itemsPerPage && (
+        <div className="flex items-center justify-between px-2 py-3 bg-[var(--sf-surface-2,#F5F1ED)] rounded-lg">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+          >
+            Précédent
+          </Button>
+          <span className="text-sm text-[var(--sf-muted,#5C5346)]">
+            Page <span className="font-semibold text-[var(--sf-ink,#1a1a1a)]">{currentPage}</span> / {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+          >
+            Suivant
+          </Button>
         </div>
       )}
     </div>
