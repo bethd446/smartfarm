@@ -82,7 +82,7 @@ export default async function CalendrierPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-[var(--sf-ink,#1a1a1a)] flex items-center gap-2">
+          <h1 className="text-4xl font-bold tracking-tight text-[var(--sf-ink,#1a1a1a)] flex items-center gap-2">
             <Calendar className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
             Calendrier de reproduction
           </h1>

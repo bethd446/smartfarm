@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
 import { Layers, Plus } from 'lucide-react'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
+import { BandesFab } from './_fab'
 
 export default async function BandesPage() {
   const sb = await createClient()
@@ -30,7 +31,7 @@ export default async function BandesPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-amber-600" />Bandes</h1>
+          <h1 className="text-4xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-amber-600" />Bandes</h1>
           <p className="text-sm text-slate-500 mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -74,6 +75,7 @@ export default async function BandesPage() {
           ))}
         </div>
       )}
+      <BandesFab />
     </div>
   )
 }

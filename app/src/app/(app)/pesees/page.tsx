@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Scale } from 'lucide-react'
 import { ActionsPeser } from './_actions-peser'
+import { PeseesFab } from './_fab'
 
 export default async function PeseesPage() {
   const sb = await createClient()
@@ -21,8 +22,8 @@ export default async function PeseesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-            <Scale className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />Peser
+          <h1 className="text-4xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
+            <Scale className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />Pesées
           </h1>
           <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">Gain par jour · Courbes de poids</p>
         </div>
@@ -33,7 +34,7 @@ export default async function PeseesPage() {
         <Card>
           <CardContent className="py-12 text-center">
             <Scale className="h-12 w-12 mx-auto text-[var(--sf-line,rgba(0,0,0,0.2))] mb-3" />
-            <p className="eyebrow text-[12px] text-[var(--sf-muted,#5C5346)]">Aucune pesée pour l’instant</p>
+            <p className="eyebrow text-[12px] text-[var(--sf-muted,#5C5346)]">Aucune pesée pour l'instant</p>
             <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-2">
               Commence par peser une bande.
             </p>
@@ -78,6 +79,7 @@ export default async function PeseesPage() {
           </CardContent>
         </Card>
       )}
+      <PeseesFab animaux={animaux ?? []} bandes={bandes ?? []} />
     </div>
   )
 }
