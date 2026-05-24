@@ -41,8 +41,10 @@ export function AnimalTabs({
   batiments: Batiment[]
   mouvements: Mouvement[]
 }) {
+  // NOTE : l'onglet "Pesées" a été retiré — l'historique des pesées est rendu
+  // en pleine page (composant <HistoriquePoids/> avant les onglets) car c'est
+  // le cœur du suivi de l'animal et doit être immédiatement visible.
   const allTabs = [
-    { id: 'pesees', label: 'Pesées' },
     ...(isFemelle ? [{ id: 'repro', label: 'Reproduction' }] : []),
     { id: 'sante', label: 'Santé' },
     { id: 'mouvements', label: 'Mouvements' },
@@ -161,11 +163,6 @@ export function AnimalTabs({
             <div className={eyebrowCls}>{allTabs.find((t) => t.id === active)?.label}</div>
           </CardHeader>
           <CardContent>
-            {active === 'pesees' && (
-              <p className="text-sm text-[var(--sf-muted)]">
-                Historique des pesées — à venir (animal {animalId.slice(0, 8)}…).
-              </p>
-            )}
             {active === 'repro' && (
               <p className="text-sm text-[var(--sf-muted)]">
                 Saillies, diagnostics, mises-bas — à venir.
