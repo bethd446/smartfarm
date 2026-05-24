@@ -37,7 +37,7 @@ export type RegleAlerte = {
 }
 
 // ---------------------------------------------------------------------------
-// Catalogue des 26 règles (R01 → R26)
+// Catalogue des 30 règles (R01 → R30)
 // ---------------------------------------------------------------------------
 
 export const REGLES_ALERTES: Record<string, RegleAlerte> = {
@@ -227,6 +227,27 @@ export const REGLES_ALERTES: Record<string, RegleAlerte> = {
     nom: 'Porcelets prêts pour Croissance',
     description:
       'Porcelets en démarrage avec poids ≥ 24 kg — transfert vers bâtiment Croissance requis (référentiel zootechnique CI).',
+    gravite_default: 'info',
+    categorie: 'reproduction',
+  },
+  'R28-truies-vides-post-sevrage': {
+    nom: 'Truies vides sans diagnostic chaleur',
+    description:
+      'Truie vide depuis ≥ 8 jours post-sevrage sans diagnostic de chaleur enregistré — détection retour en chaleur requis (référentiel IFIP).',
+    gravite_default: 'moyenne',
+    categorie: 'reproduction',
+  },
+  'R29-portees-zombies': {
+    nom: 'Portées sans effectif',
+    description:
+      'Portée enregistrée avec effectif naissance = 0 — données à compléter ou nettoyer pour cohérence du cheptel.',
+    gravite_default: 'info',
+    categorie: 'observations',
+  },
+  'R30-porcelets-anticipation-croissance': {
+    nom: 'Porcelets proche seuil Croissance',
+    description:
+      'Porcelets en démarrage avec poids entre 22 et 24 kg — anticipation transfert Croissance à planifier (référentiel zootechnique CI).',
     gravite_default: 'info',
     categorie: 'reproduction',
   },
