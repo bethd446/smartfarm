@@ -245,6 +245,7 @@ export default async function KpiPage() {
     { data: kpiMca },
     { data: kpiIc },
     { data: kpiGmq },
+    { data: diags },
   ] = await Promise.all([
     sb.from('mv_kpi_truie').select('*').order('tag'),
     sb.from('mv_kpi_bande').select('*').order('bande_nom'),
@@ -254,16 +255,47 @@ export default async function KpiPage() {
     sb.from('v_kpi_mca_ferme').select('*').limit(1),
     sb.from('v_kpi_ic_ferme').select('*').limit(1),
     sb.from('v_kpi_gmq_par_stade').select('*'),
+    // FIX 2026-05-23 BUG-4 : calculer taux de fertilité ferme directement
+    // depuis diagnostics_gestation (la vue v_kpi_techniques_ferme n'expose
+    // pas ce KPI). Affichage dès 1 diagnostic enregistré.
+    sb.from('diagnostics_gestation').select('resultat'),
   ])
 
   const tList = (truies ?? []) as TruieKpi[]
   const bList = (bandes ?? []) as BandeKpi[]
   const fList = (fermes ?? []) as FermeKpi[]
-  const kpiFerme = ((kpiTechFerme ?? [])[0] ?? null) as KpiTechFerme | null
+  const kpiFermeRaw = ((kpiTechFerme ?? [])[0] ?? null) as
+    | (KpiTechFerme & { portee_moyenne_12m?: number | null })
+    | null
+  // FIX BUG-4 : la view v_kpi_techniques_ferme expose `portee_moyenne_12m`
+  // (et non `nes_vivants_par_portee_moyen`). On normalise ici pour que la
+  // carte "Nés vivants/portée" affiche la valeur dès 1 portée enregistrée.
+  const kpiFerme: KpiTechFerme | null = kpiFermeRaw
+    ? {
+        ...kpiFermeRaw,
+        nes_vivants_par_portee_moyen:
+          kpiFermeRaw.nes_vivants_par_portee_moyen ??
+          kpiFermeRaw.portee_moyenne_12m ??
+          null,
+      }
+    : null
   const techTruies = (kpiTechTruies ?? []) as KpiTechTruie[]
   const mcaRow = ((kpiMca ?? [])[0] ?? null) as KpiMcaFerme | null
   const icRow = ((kpiIc ?? [])[0] ?? null) as KpiIcFerme | null
   const gmqList = (kpiGmq ?? []) as KpiGmqStade[]
+
+  // FIX BUG-4 : taux de fertilité ferme = % diagnostics positifs.
+  // Calculable dès 1 diagnostic enregistré (PAS de seuil cycle complet).
+  const diagList = (diags ?? []) as Array<{ resultat: string | null }>
+  const diagsValides = diagList.filter(
+    (d) => d.resultat === 'positif' || d.resultat === 'negatif',
+  )
+  const tauxFertilite: number | null =
+    diagsValides.length > 0
+      ? (diagsValides.filter((d) => d.resultat === 'positif').length /
+          diagsValides.length) *
+        100
+      : null
 
   // Agrégation GMQ par stade (moyenne pondérée par nb_pesees si plusieurs bandes)
   const gmqStades = ['porcelet', 'sevrage', 'engraissement'].map(stade => {
@@ -354,7 +386,25 @@ export default async function KpiPage() {
             KPI techniques métier
           </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <KpiTechCard
+              icon={Activity}
+              label="Taux fertilité"
+              sub="diagnostics positifs / total"
+              value={tauxFertilite}
+              unit="%"
+              target="cible ≥ 85 %"
+              tone={
+                tauxFertilite === null
+                  ? 'muted'
+                  : tauxFertilite >= 85
+                    ? 'good'
+                    : tauxFertilite >= 70
+                      ? 'warn'
+                      : 'bad'
+              }
+              digits={0}
+            />
             <KpiTechCard
               icon={Clock}
               label="ISSF moyen"

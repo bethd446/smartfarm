@@ -66,9 +66,43 @@ const ORDRE_CATEGORIES: readonly string[] = [
 
 function getCategorie(regle_id: string): CategorieAlerte | typeof CATEGORIE_FALLBACK {
   const meta = REGLES_ALERTES?.[regle_id]
-  return (meta?.categorie ?? CATEGORIE_FALLBACK) as
-    | CategorieAlerte
-    | typeof CATEGORIE_FALLBACK
+  if (meta) {
+    return meta.categorie
+  }
+  // FIX 2026-05-23 BUG-3 : mapping des `type` exposés par la view
+  // `v_alertes_actives` (qui ne correspondent pas aux clés Rxx-…) vers
+  // les catégories fonctionnelles. Sans ça tout tombait sous "Autres".
+  const t = (regle_id ?? '').toLowerCase()
+  // Reproduction
+  if (
+    t.startsWith('retour_chaleurs') ||
+    t.startsWith('chaleurs') ||
+    t.startsWith('diag_gestation') ||
+    t.startsWith('saillie') ||
+    t.startsWith('mise_bas') ||
+    t.startsWith('surveillance_mb') ||
+    t.startsWith('preparation_maternite') ||
+    t.startsWith('transfert_maternite') ||
+    t.startsWith('sevrage') ||
+    t.startsWith('colostrum')
+  ) {
+    return 'reproduction'
+  }
+  // Sanitaire
+  if (
+    t.startsWith('soins_porcelets') ||
+    t.startsWith('vaccination') ||
+    t.startsWith('traitement') ||
+    t.startsWith('vermifuge') ||
+    t.startsWith('fer_porcelet')
+  ) {
+    return 'sanitaire'
+  }
+  // Stock / nutrition
+  if (t.startsWith('stock')) return 'stock'
+  if (t.startsWith('aliment') || t.startsWith('eau')) return 'nutrition'
+  if (t.startsWith('transition')) return 'reproduction'
+  return CATEGORIE_FALLBACK
 }
 
 /* ────────────────────────────────────────────────────────────────────────── */

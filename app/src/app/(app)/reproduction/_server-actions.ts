@@ -22,30 +22,35 @@ export async function creerSaillie(
       d.idempotency_key && d.idempotency_key !== '' ? d.idempotency_key : null
 
     const supabase = await createClient()
-    const { error } = await supabase.from('saillies').insert({
+    // FIX 2026-05-23 : colonnes rang_porte / bcs_truie / idempotency_key
+    // n'existent PAS dans la table saillies en prod → on les ignore côté insert
+    // (suivi métier dans observations si nécessaire). Idempotence gérée par
+    // unique index métier (truie+date).
+    const obsExtras: string[] = []
+    if (d.rang_porte !== '' && d.rang_porte !== undefined && d.rang_porte !== null) {
+      obsExtras.push(`Rang portée: ${d.rang_porte}`)
+    }
+    if (d.bcs_truie !== '' && d.bcs_truie !== undefined && d.bcs_truie !== null) {
+      obsExtras.push(`BCS truie: ${d.bcs_truie}`)
+    }
+    const observationsFinal = [d.observations || '', ...obsExtras]
+      .filter(Boolean)
+      .join(' · ') || null
+    void idempotencyKey // conservé pour debug, non envoyé (col absente)
+
+    const insertPayload = {
       ferme_id: await getFermeId(),
       truie_id: d.truie_id,
       verrat_id: d.verrat_id || null,
       bande_id: d.bande_id || null,
       date_saillie: d.date_saillie,
       methode: d.methode,
-      rang_porte:
-        d.rang_porte === '' || d.rang_porte === undefined ? null : d.rang_porte,
-      bcs_truie:
-        d.bcs_truie === '' || d.bcs_truie === undefined ? null : d.bcs_truie,
-      observations: d.observations || null,
-      idempotency_key: idempotencyKey,
-    })
+      observations: observationsFinal,
+    }
+    const { error } = await supabase.from('saillies').insert(insertPayload)
     // trigger SQL auto crée diagnostics_gestation J+15 et J+28 dans evenements_prevus
     if (error) {
-      // F2 P0-9 : idempotency replay → succès silencieux
-      if (
-        error.code === '23505' &&
-        (error.message.includes('idempotency') ||
-          error.message.includes('idempotency_key'))
-      ) {
-        return { ok: true, dedup: true }
-      }
+      console.error('[creerSaillie] supabase insert error:', error)
       // F2 P0-1 : doublon métier (même truie, même jour)
       if (
         error.code === '23505' &&

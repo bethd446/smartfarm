@@ -55,18 +55,24 @@ export async function creerEntreeStock(data: EntreeStockData) {
   const cu = data.cout_unitaire != null ? Number(data.cout_unitaire) : null
 
   // 1) INSERT mouvement
-  const { error: e1 } = await supabase.from('mouvements_stock').insert({
-    matiere_id: data.matiere_id,
-    type: 'entree',
-    date_mvt: data.date_mvt,
-    quantite: qte,
-    cout_unitaire: cu,
-    cout_total: cu != null ? cu * qte : null,
-    fournisseur_id: data.fournisseur_id || null,
-    reference: data.reference || null,
-    observations: data.observations || null,
-  })
-  if (e1) return { ok: false, error: e1.message }
+    const { error: e1 } = await supabase.from('mouvements_stock').insert({
+      ferme_id: await getFermeId(),
+      matiere_id: data.matiere_id,
+      type: 'entree',
+      date: data.date_mvt,
+      qte_kg: qte,
+      raison:
+        data.reference ||
+        (data.fournisseur_id ? `Livraison ${data.fournisseur_id}` : 'Entrée stock'),
+      observations:
+        [data.observations, cu != null ? `Coût unitaire: ${cu}` : null]
+          .filter(Boolean)
+          .join(' · ') || null,
+    })
+    if (e1) {
+      console.error('[creerEntreeStock] insert mouvements_stock error:', e1)
+      return { ok: false, error: e1.message }
+    }
 
   // 2) UPDATE stock_actuel manuel (SELECT + UPDATE — pas de trigger auto)
   const { data: mat, error: eRead } = await supabase
@@ -111,18 +117,20 @@ export async function creerSortieStock(data: SortieStockData) {
     return { ok: false, error: 'Stock insuffisant' }
   }
 
-  // 2) INSERT mouvement (quantité négative côté mouvement pour bilan, valeur absolue pour la table cf. check ≠ 0)
-  // On stocke quantite positive et type='sortie' (lecture standard du dataset)
+  // 2) INSERT mouvement (quantite positive, type='sortie')
   const { error: e1 } = await supabase.from('mouvements_stock').insert({
+    ferme_id: await getFermeId(),
     matiere_id: data.matiere_id,
     type: 'sortie',
-    date_mvt: data.date_mvt,
-    quantite: qte,
-    bande_id: data.bande_id || null,
-    reference: data.reference || null,
+    date: data.date_mvt,
+    qte_kg: qte,
+    raison: data.reference || (data.bande_id ? `Bande ${data.bande_id}` : 'Sortie stock'),
     observations: data.observations || null,
   })
-  if (e1) return { ok: false, error: e1.message }
+  if (e1) {
+    console.error('[creerSortieStock] insert mouvements_stock error:', e1)
+    return { ok: false, error: e1.message }
+  }
 
   // 3) UPDATE stock_actuel manuel
   const { error: eUpd } = await supabase
