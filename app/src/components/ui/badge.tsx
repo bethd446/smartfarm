@@ -17,8 +17,9 @@ const badgeVariants = cva(
   [
     "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1",
     "rounded-full whitespace-nowrap transition-colors",
-    // padding 4/10
+    // padding 4/10 + touch target ≥44px si clickable (via data-clickable)
     "px-[10px] py-[4px]",
+    "has-[[data-clickable]]:min-h-[var(--sf-touch-min)] has-[[data-clickable]]:min-w-[var(--sf-touch-min)]",
     // typo carnet
     "font-[family-name:var(--sf-font-display)] uppercase tracking-[0.1em] text-[11px] leading-none font-semibold",
     // états

@@ -346,7 +346,6 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
               <Button
                 variant={showSnoozed ? 'default' : 'outline'}
                 size="sm"
-                className="min-h-[36px]"
                 onClick={() => setShowSnoozed((v) => !v)}
               >
                 {showSnoozed ? (
@@ -405,7 +404,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="min-h-[36px] bg-[var(--sf-surface-1,#fff)]"
+                            className="bg-[var(--sf-surface-1,#fff)]"
                             onClick={() => handleUnsnooze(a)}
                             title="Réactiver"
                             aria-label={`Réactiver l'alerte ${a.cible_label}`}
@@ -417,7 +416,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="min-h-[36px] bg-[var(--sf-surface-1,#fff)]"
+                            className="bg-[var(--sf-surface-1,#fff)]"
                             onClick={() => handleSnooze(a)}
                             title="Masquer pendant 24 heures"
                             aria-label={`Masquer l'alerte ${a.cible_label} pendant 24 heures`}

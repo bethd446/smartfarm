@@ -155,8 +155,8 @@ function SelectItem({
       className={cn(
         // Layout (inchangé)
         "relative flex w-full cursor-default items-center gap-2 rounded-md outline-none select-none focus:bg-[var(--sf-primary)]/10 focus:text-[var(--sf-ink)] data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        // C1 — tactile : ≥40px par item, padding confort, texte 16px mobile (anti-zoom)
-        "min-h-10 py-3 pr-8 pl-4 text-base md:py-2 md:pl-3 md:text-sm",
+        // C1 — tactile : ≥44px par item (WCAG 2.5.5), padding confort, texte 16px mobile (anti-zoom)
+        "min-h-11 py-3 pr-8 pl-4 text-base md:py-2 md:pl-3 md:text-sm",
         className
       )}
       {...props}
