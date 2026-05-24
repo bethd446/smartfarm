@@ -160,7 +160,7 @@ export default async function CheptelPage({
               href={`/cheptel?tab=${key}`}
               aria-current={active ? 'page' : undefined}
               className={[
-                'inline-flex items-center gap-2 px-4 py-2.5 text-sm font-semibold whitespace-nowrap',
+                'inline-flex items-center gap-2 px-4 py-2.5 min-h-11 text-sm font-semibold whitespace-nowrap',
                 'border-b-2 -mb-px transition-colors',
                 active
                   ? 'border-[var(--sf-primary)] text-[var(--sf-primary)]'
@@ -169,13 +169,7 @@ export default async function CheptelPage({
               style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
             >
               <Icon className="h-4 w-4" />
-              <span className="uppercase tracking-wide">{label}</span>
-              <Badge
-                variant={active ? 'secondary' : 'outline'}
-                className="ml-1 tabular-nums"
-              >
-                {c ?? '—'}
-              </Badge>
+              <span className="uppercase tracking-wide">{label} ({c ?? '—'})</span>
             </Link>
           )
         })}

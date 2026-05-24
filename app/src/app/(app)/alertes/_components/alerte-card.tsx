@@ -10,8 +10,32 @@ import { REGLES_ALERTES } from '@/lib/alertes-regles'
 
 /**
  * Smart Farm — Carte d'alerte individuelle
- * Affiche : badge gravité + titre + description + cible (lien) + date détection + CTA "Aller voir".
+ * Affiche : badge gravité + titre + description + cible (lien) + date détection + CTA contextuel.
  */
+
+/**
+ * Retourne un libellé de CTA contextuel selon le type d'alerte.
+ * Remplace le générique "Aller voir" par une action métier précise.
+ */
+function getCtaLabel(type: string): string {
+  const t = type.toLowerCase()
+  
+  // Patterns spécifiques (ordre d'importance décroissant)
+  if (t.includes('porcelets_pret_croissance')) return 'Voir liste à transférer'
+  if (t.includes('porcelets_22_24kg')) return 'Voir liste'
+  if (t.includes('portees_zombies')) return 'Nettoyer portées'
+  if (t.includes('truies_vides_8j')) return 'Surveiller truies'
+  if (t.includes('colostrum')) return 'Vérifier colostrum'
+  if (t.includes('sevrage')) return 'Traiter sevrage'
+  if (t.includes('gestation') || t.includes('echo')) return 'Faire diag gestation'
+  if (t.includes('chaleur')) return 'Vérifier chaleurs'
+  if (t.includes('soins_porcelets') || t.includes('j3')) return 'Soins J3 porcelets'
+  if (t.includes('transition')) return 'Transférer'
+  if (t.includes('vaccin')) return 'Vacciner'
+  
+  // Fallback générique
+  return 'Ouvrir alerte'
+}
 
 const GRAVITE_VARIANT: Record<
   Alerte['gravite'],
@@ -121,7 +145,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
           <div className="shrink-0 sm:self-center">
             <Link href={alerte.lien_suggere}>
               <Button variant="outline" size="sm">
-                Aller voir
+                {getCtaLabel(alerte.regle_id)}
                 <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>
             </Link>

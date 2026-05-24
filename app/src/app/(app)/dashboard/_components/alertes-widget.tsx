@@ -64,8 +64,15 @@ export async function AlertesWidget() {
     alertes = []
   }
 
-  const total = alertes.length
-  const top = trierParGravite(alertes).slice(0, 5)
+  // Filtrer les alertes de test (titre contenant "test" case-insensitive)
+  // pour éviter d'afficher les alertes manuelles de test sur le dashboard
+  const alertesFiltrees = alertes.filter((a) => {
+    const titre = a.titre?.toLowerCase() || ''
+    return !titre.includes('test')
+  })
+
+  const total = alertesFiltrees.length
+  const top = trierParGravite(alertesFiltrees).slice(0, 5)
 
   const eyebrowCls =
     "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
@@ -123,7 +130,7 @@ export async function AlertesWidget() {
                     <div className="min-w-0">
                       <Link
                         href={a.lien_suggere}
-                        className="text-sm font-medium text-[var(--sf-ink)] truncate hover:underline block"
+                        className="min-h-[44px] inline-flex items-center py-2 text-sm font-medium text-[var(--sf-ink)] truncate hover:underline"
                       >
                         {a.titre}
                       </Link>

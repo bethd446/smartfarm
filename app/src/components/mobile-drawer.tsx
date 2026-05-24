@@ -115,7 +115,7 @@ export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: 
               <div className="sidebar__id numeric truncate">{subline}</div>
             </div>
             <DialogPrimitive.Close
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]"
               aria-label="Fermer le menu"
             >
               <X className="h-5 w-5" />
