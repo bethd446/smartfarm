@@ -18,6 +18,7 @@ import {
   toneNesVivants,
 } from '@/components/kpi/kpi-tech-card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { HistoriquePoids } from './_historique-poids'
 
 /**
  * Page fiche détail d'un animal.
@@ -378,6 +379,9 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
           </CardContent>
         </Card>
       </div>
+
+      {/* === HISTORIQUE PESÉES (Phase 4.D) === */}
+      <HistoriquePoids animalId={animalId} animalTag={animal.tag} />
 
       {/* === REPRODUCTION SUMMARY (truie) === */}
       {isFemelle ? (
