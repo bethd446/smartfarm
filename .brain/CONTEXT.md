@@ -35,7 +35,7 @@ Email : 13smartfarm@gmail.com
 Password : SmartFarm2026!
 Profil : SF-000001
 Ferme : "Smart Farm" id=fdba3bb2-85dd-4ac1-9ab3-713c750980dc, Yamoussoukro CI
-Cheptel : 17 truies (10 gestantes / 5 vides / 2 allaitantes) + 2 verrats (B.89 BOBI + B.100 ALIGATOR boucles à renouveler) + 117 porcelets démarrage_2 + saillies/MB/sevrages à jour suite retour technicien 2026-05-24
+Cheptel : 17 truies (10 gestantes / 5 vides / 2 allaitantes) + 2 verrats (B.89 BOBI + B.100 ALIGATOR boucles à renouveler) + 129 porcelets actifs (95 sevré + 34 croissance, post-fix S2 filtre statut=actif/deleted_at) — saillies/MB/sevrages à jour suite retour technicien 2026-05-24
 Pesées : 117 (B1-M -18.8% sévère, B1-F -2.6% normal, B3-M -38.3% sévère, B3-F +7.1%)
 Alertes auto : 54+ (sevrages retard, saillies non-diag, etc.)
 
