@@ -65,6 +65,8 @@ export const sevrageSchema = z.object({
     .or(z.literal('')),
   observations: z.string().optional().or(z.literal('')),
   idempotency_key: z.string().uuid().optional().or(z.literal('')),
+  // NOUVEAU : bâtiment destination porcelets
+  batiment_destination_id: z.string().uuid('Choisir un bâtiment de destination'),
 })
 
 export type CreerSevrageInput = z.input<typeof sevrageSchema>

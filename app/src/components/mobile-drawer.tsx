@@ -13,7 +13,7 @@ import {
   getRoleLabel,
 } from '@/components/sidebar'
 import {
-  LayoutDashboard, PiggyBank, Layers, Heart, Baby,
+  LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
   Sparkles, AlertTriangle,
   X, LogOut,
@@ -33,14 +33,12 @@ const nav = [
 
   // Élevage
   { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
-  { href: '/bandes',                label: 'Bandes',                icon: Layers,          group: 'Élevage' },
   { href: '/batiments',             label: 'Bâtiments',             icon: Building2,       group: 'Élevage' },
   { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
   { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
 
   // Santé
   { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Santé' },
-  { href: '/sanitaire/ppa',         label: 'PPA',                   icon: AlertTriangle,   group: 'Santé' },
 
   // Alimentation
   { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Alimentation' },

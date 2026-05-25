@@ -125,6 +125,22 @@ export default async function MisesBasPage() {
       nes_vivants: Number(m.nes_vivants ?? 0),
     }))
 
+  // Bâtiments disponibles pour sevrage (type = démarrage ou fallback permissif)
+  const { data: batiments } = await sb
+    .from('batiments')
+    .select('id, nom, type, capacite_max, occupation_actuelle')
+    .in('type', ['demarrage', 'croissance', 'porcin'])
+    .is('deleted_at', null)
+    .order('nom')
+
+  const batimentsDisponibles = (batiments ?? []).map((b) => ({
+    id: b.id as string,
+    nom: b.nom as string,
+    type: b.type as string,
+    capacite_max: Number(b.capacite_max ?? 0),
+    occupation_actuelle: Number(b.occupation_actuelle ?? 0),
+  }))
+
   return (
     <div className="space-y-6">
       {/* === Header de page : PageTitle unifié === */}
@@ -148,6 +164,7 @@ export default async function MisesBasPage() {
           <ExportButton table="mises_bas" />
           <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
+            batiments_disponibles={batimentsDisponibles}
             trigger={
               <Button variant="outline" size="lg" className="h-12 text-base">
                 <Scissors className="h-5 w-5 mr-2" />

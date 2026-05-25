@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { deconnexionAction } from '@/app/(auth)/_actions'
+import { GlobalSearch } from '@/components/global-search'
 import {
-  LayoutDashboard, PiggyBank, Layers, Heart, Baby,
+  LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
   Sparkles, AlertTriangle, LogOut,
 } from 'lucide-react'
@@ -23,14 +24,12 @@ const nav = [
 
   // Élevage
   { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
-  { href: '/bandes',                label: 'Bandes',                icon: Layers,          group: 'Élevage' },
   { href: '/batiments',             label: 'Bâtiments',             icon: Building2,       group: 'Élevage' },
   { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
   { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
 
   // Santé
   { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Santé' },
-  { href: '/sanitaire/ppa',         label: 'PPA',                   icon: AlertTriangle,   group: 'Santé' },
 
   // Alimentation
   { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Alimentation' },
@@ -164,6 +163,11 @@ export function Sidebar({ user, ferme }: SidebarProps) {
           </span>
         </Link>
       )}
+
+      {/* GlobalSearch desktop (sticky position) */}
+      <div className="px-3 py-2">
+        <GlobalSearch />
+      </div>
 
       <nav className="sidebar__nav">
         {groups.map(group => (

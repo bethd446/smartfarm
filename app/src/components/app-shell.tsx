@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Sidebar, type SidebarUser, type SidebarFerme } from '@/components/sidebar'
 import { BottomNav } from '@/components/bottom-nav'
 import { MobileDrawer } from '@/components/mobile-drawer'
+import { GlobalSearch } from '@/components/global-search'
 import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -62,7 +63,7 @@ export function AppShell({
           >
             <Menu className="h-5 w-5" />
           </button>
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <div className="h-8 w-8 rounded-md bg-[#FFFBEB] flex items-center justify-center shrink-0 overflow-hidden">
               <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-7 w-7" />
             </div>
@@ -70,6 +71,7 @@ export function AppShell({
               {ferme?.nom ?? 'Smart Farm'}
             </div>
           </div>
+          <GlobalSearch />
         </header>
 
         <main className="flex-1 min-w-0 overflow-x-hidden bg-[var(--sf-surface-1)] pb-20 lg:pb-0">

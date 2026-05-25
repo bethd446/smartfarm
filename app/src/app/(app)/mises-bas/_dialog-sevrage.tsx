@@ -30,6 +30,14 @@ export type MiseBasOption = {
   nes_vivants: number
 }
 
+export type BatimentOption = {
+  id: string
+  nom: string
+  type: string
+  capacite_max: number
+  occupation_actuelle: number
+}
+
 const SELECT_CLASS =
   'w-full h-12 min-h-12 px-0 py-2 text-base bg-transparent border-0 border-b-2 ' +
   'border-[var(--sf-ink,#1a1a1a)] focus:border-b-[var(--sf-primary,#2D4A1F)] ' +
@@ -49,11 +57,14 @@ function diffDays(a: string, b: string): number | null {
 export function DialogSevrage({
   trigger,
   mises_bas_sans_sevrage,
+  batiments_disponibles,
 }: {
   trigger: React.ReactNode
   mises_bas_sans_sevrage: MiseBasOption[]
+  batiments_disponibles: BatimentOption[]
 }) {
   const [open, setOpen] = useState(false)
+  const [step, setStep] = useState(1)
   const today = new Date().toISOString().slice(0, 10)
 
   const {
@@ -73,12 +84,15 @@ export function DialogSevrage({
       age_jours: '',
       bcs_truie: '',
       observations: '',
+      batiment_destination_id: '',
     },
   })
 
   const miseBasId = watch('mise_bas_id')
   const dateSevrage = watch('date_sevrage')
   const bcsValue = watch('bcs_truie')
+  const nbSevres = watch('nb_sevres')
+  const batimentId = watch('batiment_destination_id')
 
   // Auto-pré-remplir nb_sevres = nes_vivants quand on choisit une mise-bas
   // et calculer age_jours preview
@@ -106,14 +120,28 @@ export function DialogSevrage({
     if (res.ok) {
       toast.success('Sevrage enregistré')
       reset()
+      setStep(1)
       setOpen(false)
     } else {
       toast.error('Erreur', { description: res.error })
     }
   }
 
+  const selectedBat = batiments_disponibles.find((b) => b.id === batimentId)
+  const capaciteRestante = selectedBat
+    ? selectedBat.capacite_max - selectedBat.occupation_actuelle
+    : 0
+  const capaciteInsuffisante =
+    selectedBat && Number(nbSevres) > capaciteRestante
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o)
+        if (!o) setStep(1)
+      }}
+    >
       <DialogTrigger render={trigger as any} />
       <DialogContent className="max-w-md">
         <DialogHeader>
@@ -124,7 +152,7 @@ export function DialogSevrage({
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             }}
           >
-            Sevrage
+            Sevrage {step === 2 ? '— Destination' : ''}
           </DialogTitle>
         </DialogHeader>
 
@@ -132,163 +160,289 @@ export function DialogSevrage({
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 max-h-[70vh] overflow-y-auto pr-1"
         >
-          <div>
-            <Label htmlFor="mise_bas_id">La portée *</Label>
-            <select
-              id="mise_bas_id"
-              {...register('mise_bas_id')}
-              className={SELECT_CLASS}
-            >
-              <option value="">— Choisir —</option>
-              {mises_bas_sans_sevrage.map((m) => {
-                const date = new Date(m.date_mise_bas).toLocaleDateString(
-                  'fr-FR'
-                )
-                const label = m.truie_nom
-                  ? `${m.truie_nom} (${m.truie_tag})`
-                  : m.truie_tag
-                return (
-                  <option key={m.id} value={m.id}>
-                    {label} — {date} ({m.nes_vivants} vivants)
-                  </option>
-                )
-              })}
-            </select>
-            {errors.mise_bas_id && (
-              <p className={ERR_CLASS}>{errors.mise_bas_id.message}</p>
-            )}
-          </div>
+          {/* ========== STEP 1 : Formulaire sevrage ========== */}
+          {step === 1 && (
+            <>
+              <div>
+                <Label htmlFor="mise_bas_id">La portée *</Label>
+                <select
+                  id="mise_bas_id"
+                  {...register('mise_bas_id')}
+                  className={SELECT_CLASS}
+                >
+                  <option value="">— Choisir —</option>
+                  {mises_bas_sans_sevrage.map((m) => {
+                    const date = new Date(m.date_mise_bas).toLocaleDateString(
+                      'fr-FR'
+                    )
+                    const label = m.truie_nom
+                      ? `${m.truie_nom} (${m.truie_tag})`
+                      : m.truie_tag
+                    return (
+                      <option key={m.id} value={m.id}>
+                        {label} — {date} ({m.nes_vivants} vivants)
+                      </option>
+                    )
+                  })}
+                </select>
+                {errors.mise_bas_id && (
+                  <p className={ERR_CLASS}>{errors.mise_bas_id.message}</p>
+                )}
+              </div>
 
-          <div>
-            <Label htmlFor="date_sevrage">Date *</Label>
-            <Input
-              id="date_sevrage"
-              type="date"
-              {...register('date_sevrage')}
-            />
-            {errors.date_sevrage && (
-              <p className={ERR_CLASS}>{errors.date_sevrage.message}</p>
-            )}
-          </div>
+              <div>
+                <Label htmlFor="date_sevrage">Date *</Label>
+                <Input
+                  id="date_sevrage"
+                  type="date"
+                  {...register('date_sevrage')}
+                />
+                {errors.date_sevrage && (
+                  <p className={ERR_CLASS}>{errors.date_sevrage.message}</p>
+                )}
+              </div>
 
-          {agePreview !== null && agePreview >= 0 && (
-            <div
-              className="text-xs px-3 py-2 border border-[var(--sf-line)]"
-              style={{
-                background: 'var(--sf-surface-2, #F1ECE0)',
-                color: 'var(--sf-ink,#1a1a1a)',
-              }}
-            >
-              Âge au sevrage : <b>{agePreview} jours</b>
-            </div>
+              {agePreview !== null && agePreview >= 0 && (
+                <div
+                  className="text-xs px-3 py-2 border border-[var(--sf-line)]"
+                  style={{
+                    background: 'var(--sf-surface-2, #F1ECE0)',
+                    color: 'var(--sf-ink,#1a1a1a)',
+                  }}
+                >
+                  Âge au sevrage : <b>{agePreview} jours</b>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="nb_sevres">Nombre sevrés *</Label>
+                  <Input
+                    id="nb_sevres"
+                    type="number"
+                    min={0}
+                    {...register('nb_sevres')}
+                  />
+                  {errors.nb_sevres && (
+                    <p className={ERR_CLASS}>{errors.nb_sevres.message}</p>
+                  )}
+                </div>
+                <div>
+                  <Label htmlFor="poids_total_kg">Poids total (kg)</Label>
+                  <Input
+                    id="poids_total_kg"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    {...register('poids_total_kg')}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="age_jours">Âge en jours</Label>
+                <Input
+                  id="age_jours"
+                  type="number"
+                  min={0}
+                  {...register('age_jours')}
+                />
+              </div>
+
+              {/* === BCS truie (Body Condition Score 1..5) — optionnel === */}
+              <div>
+                <Label htmlFor="bcs_truie">BCS truie (1-5)</Label>
+                <div
+                  role="radiogroup"
+                  aria-label="BCS truie"
+                  className="flex gap-2 mt-1"
+                >
+                  {[1, 2, 3, 4, 5].map((n) => {
+                    const selected = Number(bcsValue) === n
+                    const isIdeal = n === 3
+                    return (
+                      <button
+                        key={n}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() =>
+                          setValue('bcs_truie', selected ? '' : n, {
+                            shouldValidate: true,
+                          })
+                        }
+                        className="flex-1 h-12 border-2 text-base font-bold tabular-nums transition-colors"
+                        style={{
+                          borderColor: selected
+                            ? 'var(--sf-primary, #2D4A1F)'
+                            : isIdeal
+                              ? 'var(--sf-success-ink, #1F3414)'
+                              : 'var(--sf-line, #d4cfc1)',
+                          background: selected
+                            ? 'var(--sf-primary, #2D4A1F)'
+                            : isIdeal
+                              ? 'var(--sf-success-bg, #DCE9CB)'
+                              : 'transparent',
+                          color: selected
+                            ? '#fff'
+                            : isIdeal
+                              ? 'var(--sf-success-ink, #1F3414)'
+                              : 'var(--sf-ink, #1a1a1a)',
+                        }}
+                      >
+                        {n}
+                      </button>
+                    )
+                  })}
+                </div>
+                <p className="text-xs text-[var(--sf-muted)] mt-1">
+                  1 = très maigre, 3 = optimal, 5 = grasse
+                </p>
+                {errors.bcs_truie && (
+                  <p className={ERR_CLASS}>
+                    {errors.bcs_truie.message as string}
+                  </p>
+                )}
+                <input type="hidden" {...register('bcs_truie')} />
+              </div>
+
+              <div>
+                <Label htmlFor="observations">Observations</Label>
+                <Textarea
+                  id="observations"
+                  rows={2}
+                  {...register('observations')}
+                />
+              </div>
+            </>
           )}
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="nb_sevres">Nombre sevrés *</Label>
-              <Input
-                id="nb_sevres"
-                type="number"
-                min={0}
-                {...register('nb_sevres')}
-              />
-              {errors.nb_sevres && (
-                <p className={ERR_CLASS}>{errors.nb_sevres.message}</p>
+          {/* ========== STEP 2 : Destination ========== */}
+          {step === 2 && (
+            <>
+              <div>
+                <Label htmlFor="batiment_destination_id">
+                  Bâtiment de destination *
+                </Label>
+                <select
+                  id="batiment_destination_id"
+                  {...register('batiment_destination_id')}
+                  className={SELECT_CLASS}
+                >
+                  <option value="">— Choisir —</option>
+                  {batiments_disponibles.map((b) => {
+                    const restant = b.capacite_max - b.occupation_actuelle
+                    const libelle = `${b.nom} (${b.type}) — ${restant} places libres`
+                    return (
+                      <option key={b.id} value={b.id}>
+                        {libelle}
+                      </option>
+                    )
+                  })}
+                </select>
+                {errors.batiment_destination_id && (
+                  <p className={ERR_CLASS}>
+                    {errors.batiment_destination_id.message}
+                  </p>
+                )}
+              </div>
+
+              {selectedBat && (
+                <div
+                  className="text-xs px-3 py-2 border border-[var(--sf-line)]"
+                  style={{
+                    background: capaciteInsuffisante
+                      ? 'var(--sf-danger-bg, #FEE2E2)'
+                      : 'var(--sf-surface-2, #F1ECE0)',
+                    color: capaciteInsuffisante
+                      ? 'var(--sf-danger-ink, #7A2A1F)'
+                      : 'var(--sf-ink,#1a1a1a)',
+                  }}
+                >
+                  {capaciteInsuffisante ? (
+                    <>
+                      ⚠️ <b>Capacité insuffisante</b> : {nbSevres} porcelets à
+                      loger mais seulement {capaciteRestante} places disponibles
+                    </>
+                  ) : (
+                    <>
+                      ✓ Capacité restante après sevrage :{' '}
+                      <b>{capaciteRestante - Number(nbSevres)} places</b>
+                    </>
+                  )}
+                </div>
               )}
-            </div>
-            <div>
-              <Label htmlFor="poids_total_kg">Poids total (kg)</Label>
-              <Input
-                id="poids_total_kg"
-                type="number"
-                step="0.01"
-                min="0"
-                {...register('poids_total_kg')}
-              />
-            </div>
-          </div>
 
-          <div>
-            <Label htmlFor="age_jours">Âge en jours</Label>
-            <Input
-              id="age_jours"
-              type="number"
-              min={0}
-              {...register('age_jours')}
-            />
-          </div>
-
-          {/* === BCS truie (Body Condition Score 1..5) — optionnel === */}
-          <div>
-            <Label htmlFor="bcs_truie">BCS truie (1-5)</Label>
-            <div
-              role="radiogroup"
-              aria-label="BCS truie"
-              className="flex gap-2 mt-1"
-            >
-              {[1, 2, 3, 4, 5].map((n) => {
-                const selected = Number(bcsValue) === n
-                const isIdeal = n === 3
-                return (
-                  <button
-                    key={n}
-                    type="button"
-                    role="radio"
-                    aria-checked={selected}
-                    onClick={() =>
-                      setValue('bcs_truie', selected ? '' : n, {
-                        shouldValidate: true,
-                      })
-                    }
-                    className="flex-1 h-12 border-2 text-base font-bold tabular-nums transition-colors"
-                    style={{
-                      borderColor: selected
-                        ? 'var(--sf-primary, #2D4A1F)'
-                        : isIdeal
-                          ? 'var(--sf-success-ink, #1F3414)'
-                          : 'var(--sf-line, #d4cfc1)',
-                      background: selected
-                        ? 'var(--sf-primary, #2D4A1F)'
-                        : isIdeal
-                          ? 'var(--sf-success-bg, #DCE9CB)'
-                          : 'transparent',
-                      color: selected
-                        ? '#fff'
-                        : isIdeal
-                          ? 'var(--sf-success-ink, #1F3414)'
-                          : 'var(--sf-ink, #1a1a1a)',
-                    }}
-                  >
-                    {n}
-                  </button>
-                )
-              })}
-            </div>
-            <p className="text-xs text-[var(--sf-muted)] mt-1">
-              1 = très maigre, 3 = optimal, 5 = grasse
-            </p>
-            {errors.bcs_truie && (
-              <p className={ERR_CLASS}>{errors.bcs_truie.message as string}</p>
-            )}
-            <input type="hidden" {...register('bcs_truie')} />
-          </div>
-
-          <div>
-            <Label htmlFor="observations">Observations</Label>
-            <Textarea id="observations" rows={2} {...register('observations')} />
-          </div>
+              <div
+                className="text-xs px-3 py-2 border border-[var(--sf-line)]"
+                style={{
+                  background: 'var(--sf-surface-1, #F8F6F0)',
+                  color: 'var(--sf-ink-secondary)',
+                }}
+              >
+                <p className="font-bold mb-1">Récapitulatif</p>
+                <p>
+                  Portée :{' '}
+                  {selected
+                    ? `${selected.truie_nom || selected.truie_tag} — ${new Date(
+                        selected.date_mise_bas
+                      ).toLocaleDateString('fr-FR')}`
+                    : '—'}
+                </p>
+                <p>Porcelets sevrés : {String(nbSevres)}</p>
+                <p>Date : {new Date(dateSevrage).toLocaleDateString('fr-FR')}</p>
+              </div>
+            </>
+          )}
 
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setOpen(false)}
-            >
-              Annuler
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Enregistrement…' : 'Enregistrer'}
-            </Button>
+            {step === 2 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setStep(1)}
+              >
+                Précédent
+              </Button>
+            )}
+            {step === 1 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
+                Annuler
+              </Button>
+            )}
+            {step === 1 && (
+              <Button
+                type="button"
+                onClick={() => {
+                  // Valider step 1 avant de passer à step 2
+                  const step1Fields: Array<keyof FormData> = [
+                    'mise_bas_id',
+                    'date_sevrage',
+                    'nb_sevres',
+                  ]
+                  const hasErrors = step1Fields.some((f) => errors[f])
+                  if (hasErrors || !miseBasId || !nbSevres) {
+                    toast.error('Veuillez remplir les champs obligatoires')
+                    return
+                  }
+                  setStep(2)
+                }}
+              >
+                Suivant
+              </Button>
+            )}
+            {step === 2 && (
+              <Button
+                type="submit"
+                disabled={isSubmitting || capaciteInsuffisante}
+              >
+                {isSubmitting ? 'Enregistrement…' : 'Valider sevrage'}
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

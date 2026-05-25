@@ -86,7 +86,10 @@ export async function creerMiseBas(
 
 export async function creerSevrage(
   data: CreerSevrageInput
-): Promise<{ ok: true; dedup?: boolean } | { ok: false; error: string }> {
+): Promise<
+  | { ok: true; dedup?: boolean; sevrageId?: string; porceletsCreated?: number }
+  | { ok: false; error: string }
+> {
   try {
     const parsed = sevrageSchema.safeParse(data)
     if (!parsed.success) {
@@ -101,10 +104,10 @@ export async function creerSevrage(
 
     const supabase = await createClient()
 
-    // Récupérer truie_id + bande_id depuis la mise-bas
+    // Récupérer truie_id + bande_id + ferme_id depuis la mise-bas
     const { data: mb, error: errMb } = await supabase
       .from('mises_bas')
-      .select('truie_id, bande_id')
+      .select('truie_id, bande_id, ferme_id, date_mb')
       .eq('id', d.mise_bas_id)
       .single()
 
@@ -128,23 +131,71 @@ export async function creerSevrage(
       payload.bcs_truie = d.bcs_truie
     if (d.observations) payload.observations = d.observations
 
-    const { error } = await supabase.from('sevrages').insert(payload)
+    // 1. INSERT sevrage
+    const { data: sevrage, error: e1 } = await supabase
+      .from('sevrages')
+      .insert(payload)
+      .select()
+      .single()
     // trigger SQL : marque sevrage_prevu + tarissement comme realises
-    if (error) {
+    if (e1) {
       if (
-        error.code === '23505' &&
-        (error.message.includes('idempotency') ||
-          error.message.includes('idempotency_key'))
+        e1.code === '23505' &&
+        (e1.message.includes('idempotency') ||
+          e1.message.includes('idempotency_key'))
       ) {
         return { ok: true, dedup: true }
       }
-      return { ok: false, error: error.message }
+      return { ok: false, error: e1.message }
+    }
+
+    if (!sevrage?.id) {
+      return { ok: false, error: 'Sevrage créé mais ID manquant' }
+    }
+
+    // 2. Créer N porcelets en batch
+    const porceletsToCreate = Array.from(
+      { length: d.nb_sevres },
+      (_, i) => ({
+        ferme_id: mb.ferme_id,
+        tag: `P-${sevrage.id.slice(0, 8)}-${i + 1}`,
+        nom: null,
+        sexe: i % 2 === 0 ? 'F' : 'M', // Répartition 50/50 F/M
+        categorie: 'porcelet',
+        stade: 'demarrage_1',
+        statut: 'actif',
+        batiment_id: d.batiment_destination_id,
+        date_naissance: mb.date_mb,
+        portee_id: d.mise_bas_id,
+        date_entree: d.date_sevrage,
+        observations: `Sevrage ${sevrage.id.slice(0, 8)}`,
+      })
+    )
+
+    const { error: e2 } = await supabase
+      .from('animaux')
+      .insert(porceletsToCreate)
+
+    if (e2) {
+      // ROLLBACK : supprimer le sevrage créé
+      console.error('[creerSevrage] rollback sevrage après échec porcelets:', e2)
+      await supabase.from('sevrages').delete().eq('id', sevrage.id)
+      return {
+        ok: false,
+        error: `Échec création porcelets : ${e2.message}`,
+      }
     }
 
     revalidatePath('/mises-bas')
     revalidatePath('/calendrier')
     revalidatePath('/dashboard')
-    return { ok: true }
+    revalidatePath('/cheptel')
+    revalidatePath(`/batiments/${d.batiment_destination_id}`)
+    return {
+      ok: true,
+      sevrageId: sevrage.id,
+      porceletsCreated: d.nb_sevres,
+    }
   } catch (e) {
     console.error('[creerSevrage] unexpected error:', e)
     const msg = e instanceof Error ? e.message : 'Erreur inattendue'
