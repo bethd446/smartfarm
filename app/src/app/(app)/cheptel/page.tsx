@@ -203,7 +203,7 @@ export default async function CheptelPage({
           type="submit"
           className="h-11 rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface-2)]/40 px-4 text-sm font-semibold text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]"
         >
-          Filtrer
+          Rechercher
         </button>
         {q ? (
           <Link

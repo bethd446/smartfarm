@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { toast } from 'sonner'
 import { ListFilter, LayoutList, Group, Filter, BellOff, Eye, EyeOff } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -192,11 +193,22 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
   function handleSnooze(a: Alerte) {
     snoozeAlerte(a, 24)
     setSnoozeTick((t) => t + 1)
+    toast.success('Alerte masquée 24 h', {
+      description: a.titre,
+      action: {
+        label: 'Annuler',
+        onClick: () => {
+          unsnoozeAlerte(a)
+          setSnoozeTick((t) => t + 1)
+        },
+      },
+    })
   }
 
   function handleUnsnooze(a: Alerte) {
     unsnoozeAlerte(a)
     setSnoozeTick((t) => t + 1)
+    toast.success('Alerte réactivée', { description: a.titre })
   }
 
   const apresSnooze = useMemo(() => {
