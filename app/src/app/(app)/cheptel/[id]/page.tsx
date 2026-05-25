@@ -59,15 +59,14 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
   }
 
   // === Fetch last pesée + nb pesées ===
-  const [{ data: pesees }, { data: peseeCount }] = await Promise.all([
+  // Note: avec { count: 'exact', head: true }, supabase-js renvoie { data: null, count: <n> }
+  // donc on déstructure 'count' (pas 'data') sur la 2e requête.
+  const [{ data: pesees }, { count: peseeCount }] = await Promise.all([
     sb.from('pesees').select('*').eq('animal_id', animalId).order('date_pesee', { ascending: false }).limit(1),
     sb.from('pesees').select('*', { count: 'exact', head: true }).eq('animal_id', animalId),
   ])
   const dernierePesee = pesees?.[0] ?? null
-  const nbPesees: number =
-    typeof peseeCount === 'number'
-      ? peseeCount
-      : ((peseeCount as any)?.count ?? 0)
+  const nbPesees: number = peseeCount ?? 0
 
   // === GMQ (si ≥2 pesées) ===
   let gmq: number | null = null
