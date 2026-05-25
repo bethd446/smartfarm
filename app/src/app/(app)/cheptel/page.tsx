@@ -60,9 +60,9 @@ export default async function CheptelPage({
 
   // === Compteurs en parallèle (head:true → uniquement count, payload minimal) ===
   const countsSettled = await Promise.allSettled([
-    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F'),
-    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_VERRATS as unknown as string[]),
-    sb.from('animaux').select('*', { count: 'exact', head: true }).in('categorie', CAT_PORCELETS as unknown as string[]),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F'),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_VERRATS as unknown as string[]),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_PORCELETS as unknown as string[]),
     sb.from('portees').select('*', { count: 'exact', head: true }),
   ])
   const counts: Record<TabKey, number | null> = {
@@ -95,7 +95,7 @@ export default async function CheptelPage({
       })
     }
   } else {
-    let aq = sb.from('animaux').select('*, races(nom)').order('tag')
+    let aq = sb.from('animaux').select('*, races(nom)').eq('statut', 'actif').is('deleted_at', null).order('tag')
     if (tab === 'truies') {
       aq = aq.in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F')
     } else if (tab === 'verrats') {
@@ -196,7 +196,7 @@ export default async function CheptelPage({
             placeholder={
               tab === 'portees' ? 'Code portée, tag ou nom truie…' : 'Tag (ex : B.22)…'
             }
-            className="h-10 w-full rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] px-3 text-sm text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]/30"
+            className="h-11 w-full rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] px-3 text-sm text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]/30"
           />
         </label>
         <button

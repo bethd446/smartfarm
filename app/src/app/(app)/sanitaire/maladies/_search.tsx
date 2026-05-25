@@ -59,6 +59,7 @@ export function MaladiesSearch() {
           <Input
             type="search"
             placeholder="Rechercher par nom, symptôme, catégorie…"
+            aria-label="Rechercher maladie"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="pl-9"

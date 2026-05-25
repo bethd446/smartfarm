@@ -25,7 +25,7 @@ export default function MaladiesPage() {
         <div>
           <Link
             href="/sanitaire"
-            className="inline-flex items-center gap-1 text-sm text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary,#2D4A1F)] transition-colors mb-2"
+            className="inline-flex items-center gap-1 min-h-11 py-2 text-sm text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary,#2D4A1F)] transition-colors mb-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour Soins

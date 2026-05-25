@@ -1,12 +1,11 @@
 import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import { fr } from 'date-fns/locale'
 import { AlertCircle, AlertTriangle, Info, Siren, ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import type { Alerte } from '@/lib/alertes-engine'
 import { REGLES_ALERTES } from '@/lib/alertes-regles'
+import { RelativeTime } from './relative-time'
 
 /**
  * Smart Farm — Carte d'alerte individuelle
@@ -115,7 +114,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
                 </Badge>
               )}
               <span className="text-xs text-[var(--sf-muted,#5C5346)] eyebrow">
-                il y a {formatDistanceToNow(detecteLe, { locale: fr })}
+                <RelativeTime date={detecteLe} />
               </span>
             </div>
 
