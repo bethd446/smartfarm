@@ -18,6 +18,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { EmptyState } from '@/components/ui/empty-state'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import {
   Shield,
   Plus,
@@ -91,20 +92,6 @@ const LABEL_CATEGORIE: Record<string, string> = {
   maternite: 'Maternité',
   engraissement: 'Engraissement',
   transport: 'Transport',
-}
-
-function formatDate(s: string) {
-  try {
-    return new Date(s).toLocaleString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch {
-    return s
-  }
 }
 
 export default async function BiosecuritePage() {
@@ -384,7 +371,7 @@ export default async function BiosecuritePage() {
                 {visites.map((v) => (
                   <TableRow key={v.id}>
                     <TableCell className="tabular-nums whitespace-nowrap">
-                      {formatDate(v.date_visite)}
+                      <FormattedDateTime date={v.date_visite} format="short" />
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">

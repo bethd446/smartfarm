@@ -7,6 +7,15 @@ import { fr } from 'date-fns/locale'
  * - Hier → "Hier · HH:mm"
  * - < 7 jours → "Il y a X jours"
  * - Sinon → "d MMM yyyy"
+ * 
+ * ⚠️ HYDRATION WARNING (B2-EXT S3) :
+ * Cette fonction utilise Date.now() / isToday() → valeur différente client vs serveur.
+ * NE PAS utiliser directement dans JSX Server Component (risque hydration mismatch).
+ * 
+ * Solutions :
+ * - Utiliser <RelativeTime> ou <FormattedDateTime> (composants client-only)
+ * - OU appeler uniquement côté client ('use client' component)
+ * - OU en utilitaire server-only (logs, calculs internes, pas de render)
  */
 export function formatDateContextuel(d: Date | string): string {
   const date = typeof d === 'string' ? new Date(d) : d

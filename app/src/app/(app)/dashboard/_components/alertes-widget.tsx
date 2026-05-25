@@ -1,11 +1,10 @@
 import Link from 'next/link'
-import { formatDistanceToNow } from 'date-fns'
-import { fr } from 'date-fns/locale'
 import { AlertOctagon, AlertTriangle, Info, Bell, CheckCircle2 } from 'lucide-react'
 
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
+import { RelativeTime } from '@/components/ui/relative-time'
 import { createClient } from '@/lib/supabase/server'
 import { getAlertesActives, type Alerte } from '@/lib/alertes-engine'
 import { ORDRE_GRAVITE } from '@/lib/alertes-regles'
@@ -113,10 +112,6 @@ export async function AlertesWidget() {
               const meta = graviteMeta(a.gravite)
               const Icon = meta.Icon
               const detecte = new Date(a.detecte_le)
-              const ilYA = formatDistanceToNow(detecte, {
-                locale: fr,
-                addSuffix: true,
-              })
               return (
                 <li
                   key={`${a.regle_id}-${a.cible_id}`}
@@ -141,7 +136,7 @@ export async function AlertesWidget() {
                   </div>
                   <div className="text-right shrink-0">
                     <div className="text-[10px] uppercase tracking-[0.1em] text-[var(--sf-subtle)] tabular-nums">
-                      {ilYA}
+                      <RelativeTime date={detecte} prefix="" addSuffix />
                     </div>
                   </div>
                 </li>
