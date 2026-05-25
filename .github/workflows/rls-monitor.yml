@@ -1,0 +1,46 @@
+# Smart Farm — Monitoring RLS multi-tenant
+#
+# Test de sécurité automatisé : vérifie qu'un user ne voit QUE sa ferme.
+# Triggers :
+#   - quotidien à 06:00 UTC (cron)
+#   - sur push main (gating déploiement)
+#   - manuel (workflow_dispatch)
+#
+# Une leak détectée = P0 SÉCURITÉ = job FAIL = notification automatique.
+
+name: rls-monitor
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # daily 06:00 UTC = 06:00 Abidjan (UTC+0)
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  rls-check:
+    name: RLS multi-tenant check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install jq (déjà sur runner mais safe)
+        run: which jq || sudo apt-get install -y jq
+
+      - name: Wait for prod deploy (180s on push)
+        if: github.event_name == 'push'
+        run: sleep 180
+
+      - name: Run RLS audit
+        env:
+          SUPABASE_URL: https://tpzhxjzwlxwujboboyit.supabase.co
+          SUPABASE_ANON_KEY: sb_publishable_VdYNHQZS-1ZMMSO4tpiVIg_bETYXHIT
+          SMOKE_EMAIL: ${{ secrets.SMOKE_EMAIL }}
+          SMOKE_PASS: ${{ secrets.SMOKE_PASS }}
+        run: bash tests/rls-cross-farm.sh
+
+      - name: Alert on leak
+        if: failure()
+        run: |
+          echo "::error title=RLS LEAK::Audit RLS échoué — vérifier RLS policies Supabase"
