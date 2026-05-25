@@ -14,7 +14,7 @@ Start cmd : `npm start` = node .next/standalone/projects/smartfarm/app/server.js
 
 ## SECRETS HOSTINGER (env vars actives, 8 vars)
 NEXT_PUBLIC_SUPABASE_URL=https://tpzhxjzwlxwujboboyit.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_VdYNHQZS-1ZMMSO4tpiVlg_bETYXHIT
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_VdYNHQZS-1ZMMSO4tpiVIg_bETYXHIT
 NEXT_PUBLIC_APP_URL=https://smartfarm.group
 NODE_ENV=production
 SMARTFARM_DEMO_MODE=false
@@ -32,7 +32,7 @@ Management API SQL via SUPABASE_ACCESS_TOKEN env (jamais commiter)
 
 ## COMPTE TEST PROD
 Email : 13smartfarm@gmail.com
-Password : Fermebio13
+Password : SmartFarm2026!
 Profil : SF-000001
 Ferme : "Smart Farm" id=fdba3bb2-85dd-4ac1-9ab3-713c750980dc, Yamoussoukro CI
 Cheptel : 17 truies (10 gestantes / 5 vides / 2 allaitantes) + 2 verrats (B.89 BOBI + B.100 ALIGATOR boucles à renouveler) + 117 porcelets démarrage_2 + saillies/MB/sevrages à jour suite retour technicien 2026-05-24

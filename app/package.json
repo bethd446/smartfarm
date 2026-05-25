@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "typecheck": "tsc --noEmit",
     "build": "rm -rf public/_next && next build && node scripts/patch-server-passenger.js && bash deploy-static-copy.sh",
     "start": "node .next/standalone/projects/smartfarm/app/server.js",
     "build:next-only": "next build",
