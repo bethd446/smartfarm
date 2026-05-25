@@ -304,3 +304,68 @@ Si un Server Component passe une **fonction** (callback, render prop) à un Clie
 2. Wrapper le composant Client dans un autre composant Client qui définit les callbacks
 
 Et : `shadcn/ui` Table a `'use client'` baked-in → ne pas wrapper directement depuis un Server Component avec des callbacks. Utiliser `<table>` HTML natif.
+
+## Session 2026-05-24 — UX Fixes 1/3 + Audit Nutrition
+### Commits prod
+- `1ae2b99` — fix UX critique 3 lots (FAB sanitaire/alim/stock, empty state /alertes, dates contextuelles, kg, touch params, mise bas sans tiret)
+- `af73d1a` — fix deploy.sh healthcheck (faux échec sur prod externe corrigé)
+
+### Anomalies nutrition découvertes (Ferme Démo SF100001)
+- 4/5 bâtiments ont `ration_kg_jour_par_sujet = 0` (Engraissement, Gestation, Maternité, Verraterie)
+- Total théorique calculé = 19.2 kg/j vs réel enregistré 80-100 kg/j (×5)
+- Stock Tourteau coton SOUS seuil (50<80) — alerte attendue
+- 4/5 formules ont composants vides → projections faussées
+- Tables `plans_alimentation` et `rations` vides (système utilise batiments.ration_kg_jour_par_sujet)
+
+### Top 3 actions backlog
+1. Widget "Health Check Nutrition" sur hub /alimentation
+2. Validation ration obligatoire + alerte écart conso théorique vs réel
+3. Alerte stock rouge agressive avec card pleine largeur + badge menu
+
+### En attente Christophe
+- Nouveaux poids ferme (à insérer via PAT Supabase)
+- Plan alimentaire matières administrées par stade
+
+## Session 2026-05-24 (suite) — Prix matières premières
+
+### 🟢 Prix RÉELS confirmés Christophe
+**Vitalac (concentrés industriels, distribution E3CIT CI)** :
+- Ecolac (sevrage) : 22 890 FCFA / sac 25 kg = **915 FCFA/kg**
+- Vitafaf 1,5% porc : 33 790 / sac 20 kg = **1 690 FCFA/kg**
+- Vitafaf 1,5% truie : 33 245 / sac 20 kg = **1 662 FCFA/kg**
+- Concentré 5% sécurisé : 37 060 / sac 25 kg = **1 482 FCFA/kg**
+- Concentré 2,5% sécurisé : 63 220 / sac 25 kg = **2 529 FCFA/kg**
+
+### 🟡 Prix EN ATTENTE confirmation Christophe (DB tient seed CI 2024)
+Romelko (Koudijs) · KPC 5% (Koudijs) · Lysine · Méthionine · Enzymes
++ Maïs/Soja/Son blé/Coton/Drêche/Coquillage/Prémix (à valider vs seed)
+
+### Fournisseurs cartographiés (seed_donnees_metier.py)
+- **De Heus/Koudijs CI** (Attinguié PK24) → Romelko, KPC, aliments complets
+- **Vitalac/E3CIT** (Abidjan) → Lactarine, Ecolac, Zenilac, Vitafaf
+- **Maridav CI** (Marcory) → Concentrés Hendrix
+- **Nutrika** (intérieur CI) → Premix, 1er âge
+- **Kenz** (Abidjan) → MP brutes pour FAF
+- **AfricAgri** (Abidjan) → Additifs spécialisés
+
+### Documents alim référence
+- `RATION_ALIMENTAIRE_PORCS.docx` : table par âge/poids + règles dynamiques verrat/truie
+- `formule_aliment_porcin_optimisee.pdf` : 5 formules type Koudijs (Romelko+KPC base)
+
+### Bâtiments cycle complet désormais (8/8) — Ferme Démo
+Cycle réordonné : Verraterie→Truies vides→Gestation→Maternité→Démarrage→Démarrage 2→Croissance→Engraissement.
+Enum DB étendu : `gestation_vide` ajouté.
+
+### En attente Christophe (séquence)
+1. Prix Koudijs (Romelko + KPC) + acides aminés
+2. Formules Vitalac (5 stades) pour multi-fournisseur
+3. **Nouveaux poids** (dernière pesée 2 mai 2026) → format `tag / kg / date`
+4. Ferme cible pesées : démo / 13smart / les 2 ?
+
+### Décisions terrain pesées (25/05/2026)
+- **Bande Démarrage 2 (13smart)** : baseline officielle = **02/05/2026** (1ʳᵉ pesée réelle).
+  Sevrage manqué assumé, PAS de pesée rétroactive inventée. Validé par Christophe (opt B).
+- **Doublons 24/05** (B7-F, B12-F, B48-F, B55-F) : 2 animaux distincts en DB, flag
+  `doublon_pesee_a_clarifier`, à résoudre prochaine pesée terrain.
+- **Composant HistoriquePoids** : OK en prod (commit cd86cad), affiche courbe + table
+  + GMQ par animal + référentiel Lavalier-Toulze.
