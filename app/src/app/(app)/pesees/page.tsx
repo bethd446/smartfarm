@@ -14,7 +14,7 @@ export default async function PeseesPage() {
         .select(`*, animal:animal_id(tag,nom), bande:bande_id(nom,code)`)
         .order('date_pesee', { ascending: false })
         .limit(50),
-      sb.from('animaux').select('id, tag, nom').order('tag'),
+      sb.from('animaux').select('id, tag, nom').in('statut', ['actif', 'malade']).is('deleted_at', null).order('tag'),
       sb.from('bandes').select('id, nom, code').order('nom'),
     ])
 

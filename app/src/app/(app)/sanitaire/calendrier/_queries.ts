@@ -114,7 +114,8 @@ export async function getCalendrierSanitaire(): Promise<CalendrierData> {
       .eq('actif', true),
     sb.from('animaux')
       .select('id, tag, nom, categorie, date_naissance, statut')
-      .neq('statut', 'mort'),
+      .in('statut', ['actif', 'malade'])
+      .is('deleted_at', null),
     sb.from('bandes')
       .select('id, code, nom, date_debut, statut'),
     sb.from('vaccinations')
@@ -408,7 +409,8 @@ export async function getSanitaireStats(): Promise<SanitaireStatsData> {
       .lte('date_mort', isoToday),
     sb.from('animaux')
       .select('id', { count: 'exact', head: true })
-      .neq('statut', 'mort'),
+      .in('statut', ['actif', 'malade'])
+      .is('deleted_at', null),
     sb.from('mortalites')
       .select('id', { count: 'exact', head: true })
       .gte('date_mort', isoIlYa30)

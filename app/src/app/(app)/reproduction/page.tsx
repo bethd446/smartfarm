@@ -61,6 +61,7 @@ export default async function ReproductionPage() {
     .eq('sexe', 'F')
     .in('categorie', ['truie', 'cochette'])
     .eq('statut', 'actif')
+    .is('deleted_at', null)
     .order('tag', { ascending: true })
 
   // Verrats actifs M catégorie verrat
@@ -70,6 +71,7 @@ export default async function ReproductionPage() {
     .eq('sexe', 'M')
     .eq('categorie', 'verrat')
     .eq('statut', 'actif')
+    .is('deleted_at', null)
     .order('tag', { ascending: true })
 
   // Bandes (optionnel)

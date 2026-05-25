@@ -89,9 +89,9 @@ export default async function DashboardPage() {
     { data: prochainsEvts },
     { data: kpiTechFerme },
   ] = await Promise.all([
-    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif'),
-    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'truie').eq('statut', 'actif'),
-    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'verrat').eq('statut', 'actif'),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).in('statut', ['actif', 'malade']).is('deleted_at', null),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'truie').in('statut', ['actif', 'malade']).is('deleted_at', null),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('categorie', 'verrat').in('statut', ['actif', 'malade']).is('deleted_at', null),
     // « Portées en cours » = mises_bas avec porcelets encore non sevrés.
     // La table `bandes` étant vide (concept non utilisé pour l'instant),
     // on remonte le nombre de portées récentes des 8 dernières semaines
