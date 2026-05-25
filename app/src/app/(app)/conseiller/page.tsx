@@ -145,9 +145,9 @@ export default async function ConseillerPage({
     return s ? `/conseiller?${s}` : '/conseiller'
   }
 
-  // Pill class helper
+  // Pill class helper — touch target ≥ 44px (audit mobile 2026-05-25)
   const pillCls = (active: boolean) =>
-    'rounded-full px-3 py-1 text-xs font-medium transition-colors border ' +
+    'inline-flex items-center min-h-[44px] rounded-full px-4 py-2 text-sm font-medium transition-colors border ' +
     (active
       ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-[var(--sf-primary,#2D4A1F)]'
       : 'bg-transparent text-[var(--sf-ink,#1a1a1a)] border-[var(--sf-muted,#5C5346)]/30 hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]')

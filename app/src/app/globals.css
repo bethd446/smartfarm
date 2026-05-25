@@ -371,6 +371,22 @@ body {
 }
 h1, h2, h3 { font-family: var(--sf-font-display, 'Big Shoulders Display', sans-serif); }
 
+/* === Audit mobile 2026-05-25 — Uniformisation H1 ===
+ * Doctrine DS Smart Farm : tous les H1 page = MAJUSCULES + letter-spaced (tampon imprimerie).
+ * Avant fix : moitié des pages en Title Case (`Pesées`, `Réglages`, `Bandes`, `Calendrier`, etc.),
+ * moitié en MAJUSCULES (`CHEPTEL`, `ALERTES`, `TABLEAU DE BORD`).
+ * Override CSS au lieu de toucher 26 fichiers — opt-out via classe `.no-uppercase` ou
+ * lang="en" sur les H1 d'auth (ex : "Connecte-toi").
+ *
+ * Exceptions sciemment exclues :
+ *  - .auth-form__h1 (page connexion, casing prononcé)
+ *  - .hero__title (landing publique)
+ */
+main h1:not(.auth-form__h1):not(.hero__title):not(.no-uppercase) {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
 /* === FIX-B #4 — Hiérarchie typographique H2/H3 (audit V2 R2) ===
  * H1 = 30px (text-3xl) / H2 affiché jusqu'ici 11px (eyebrow par défaut Tailwind) → cassé.
  * On rétablit une échelle saine : H1 30px → H2 20px → H3 ~17px → body 14px.

@@ -26,7 +26,7 @@ type Slot = {
 const SLOTS: Slot[] = [
   { href: '/dashboard',    label: 'Accueil',      icon: LayoutDashboard },
   { href: '/cheptel',      label: 'Cheptel',      icon: PiggyBank },
-  { href: '/reproduction', label: 'Reproduction', icon: Heart },
+  { href: '/reproduction', label: 'Repro',       icon: Heart },
   { href: '/alertes',      label: 'Alertes',      icon: Bell, withAlertesBadge: true },
   { label: 'Plus',         icon: MoreHorizontal, action: 'more' },
 ]
@@ -77,7 +77,7 @@ export function BottomNav({ onOpenMore, alertesCount = 0 }: BottomNavProps) {
               )}
             >
               <slot.icon className="h-5 w-5" />
-              <span className="text-[10px] leading-none uppercase tracking-wider">{slot.label}</span>
+              <span className="text-[11px] leading-none uppercase tracking-wider">{slot.label}</span>
             </button>
           )
         }
@@ -137,7 +137,7 @@ function SlotLink({
               'pointer-events-none absolute -top-1.5 -right-2 z-10',
               'min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center',
               'rounded-full bg-red-600 text-white',
-              'text-[10px] font-bold leading-none tabular-nums',
+              'text-[11px] font-bold leading-none tabular-nums',
               'ring-2 ring-[var(--sf-surface-0)]',
             )}
           >
@@ -146,7 +146,7 @@ function SlotLink({
         )}
       </span>
       <span className={cn(
-        'text-[10px] leading-none uppercase tracking-wider truncate max-w-full px-1',
+        'text-[11px] leading-none uppercase tracking-wider truncate max-w-full px-1',
         active && 'font-semibold',
       )}>
         {slot.label}

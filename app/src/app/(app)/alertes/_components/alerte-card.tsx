@@ -114,7 +114,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
                   {regle.categorie}
                 </Badge>
               )}
-              <span className="text-[11px] text-[var(--sf-muted,#5C5346)] eyebrow">
+              <span className="text-xs text-[var(--sf-muted,#5C5346)] eyebrow">
                 il y a {formatDistanceToNow(detecteLe, { locale: fr })}
               </span>
             </div>
@@ -129,7 +129,7 @@ export function AlerteCard({ alerte }: { alerte: Alerte }) {
             </div>
 
             <div className="text-xs text-[var(--sf-muted,#5C5346)]">
-              <span className="eyebrow text-[10px]">
+              <span className="eyebrow text-[11px]">
                 {CIBLE_LABEL[alerte.cible_type]} ·
               </span>{' '}
               <Link

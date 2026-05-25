@@ -16,7 +16,8 @@ export function ActionsPeser({
       animaux={animaux}
       bandes={bandes}
       trigger={
-        <Button>
+        // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
+        <Button className="hidden lg:inline-flex">
           <Plus className="h-4 w-4 mr-2" />
           Peser maintenant
         </Button>

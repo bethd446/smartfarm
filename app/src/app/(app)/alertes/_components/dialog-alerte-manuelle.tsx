@@ -107,7 +107,8 @@ export function DialogAlerteManuelle({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button>
+          // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
+          <Button className="hidden lg:inline-flex">
             <Plus className="h-4 w-4 mr-2" />
             Nouvelle alerte
           </Button>

@@ -82,13 +82,22 @@ export const SEXE_LABEL: Record<string, string> = {
 }
 
 export const TYPE_LABELS: Record<string, string> = {
+  // Mise bas / lactation
   mise_bas_prevue: 'Mise bas prévue',
+  preparation_maternite: 'Préparation maternité',
   transfert_maternite: 'Transfert maternité',
   sevrage_prevu: 'Sevrage prévu',
+  sevrage: 'Sevrage',
+  // Reproduction — gestation
   diagnostic_gestation_15j: 'Diagnostic gestation (J+15)',
   diagnostic_gestation_28j: 'Diagnostic gestation (J+28)',
+  diag_gestation_echo: 'Diag. gestation (écho)',
+  // Reproduction — cycle
+  retour_chaleurs_surveillance: 'Surveillance retour chaleurs',
   tarissement: 'Tarissement',
+  // Sanitaire
   rappel_vaccinal: 'Rappel vaccinal',
+  // Croissance / sortie
   depart_engraissement: 'Départ engraissement',
 }
 

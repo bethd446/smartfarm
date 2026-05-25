@@ -76,7 +76,8 @@ export default async function StockPage() {
           />
           <DialogNouvelleMatiere
             trigger={
-              <Button variant="accent" size="lg">
+              // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
+              <Button variant="accent" size="lg" className="hidden lg:inline-flex">
                 <Plus className="h-5 w-5 mr-2" />
                 Nouveau matériel
               </Button>
