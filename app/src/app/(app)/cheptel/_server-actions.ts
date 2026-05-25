@@ -2,9 +2,15 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
 import { animalSchema } from './_schemas'
 import type { CreerAnimalInput } from './_schemas'
 import { getFermeId } from '@/lib/supabase/ferme-context'
+import {
+  TOUS_LES_STADES,
+  stadesAutorisesPour,
+  type StadeAnimal,
+} from '@/lib/stades-animaux'
 
 export async function creerAnimal(
   data: CreerAnimalInput
@@ -301,4 +307,121 @@ export async function transfererUnVersCroissance(
   if (a.batiment_id) revalidatePath(`/batiments/${a.batiment_id}`)
 
   return { ok: true }
+}
+
+/**
+ * S5 Lane 1 — Bulk transition stade pour N animaux.
+ *
+ * Pattern : SELECT animaux par IDs → valide stade cible ∈ stadesAutorisesPour(categorie)
+ * pour chaque → UPDATE batch → INSERT audit_log batch (1 ligne/animal + batch_id commun).
+ *
+ * Filtres charte §10 règle 9 : statut='actif' AND deleted_at IS NULL.
+ * Exclusion verrat (categorie='verrat' immutable, cf [id]/_actions.ts:61).
+ * Bascule catégorie auto NON gérée ici (out of scope, cf nouvelleCategoriePourStade).
+ */
+const schemaChangerStadeBatch = z.object({
+  ids: z.array(z.string().uuid()).min(1, 'Au moins 1 animal').max(100, 'Max 100 par batch'),
+  nouveau_stade: z.enum(TOUS_LES_STADES as [StadeAnimal, ...StadeAnimal[]]),
+  motif: z.string().max(500, 'Motif trop long (500 max)').optional().or(z.literal('')),
+})
+
+export async function changerStadeBatch(input: {
+  ids: string[]
+  nouveau_stade: string
+  motif?: string
+}): Promise<
+  | { ok: true; count: number; batch_id: string }
+  | { ok: false; error: string }
+> {
+  const parsed = schemaChangerStadeBatch.safeParse(input)
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? 'Validation échouée' }
+  }
+  const { ids, nouveau_stade, motif } = parsed.data
+  const supabase = await createClient()
+
+  // 1. SELECT animaux ciblés (filtre charte §10 règle 9)
+  const { data: animaux, error: errSelect } = await supabase
+    .from('animaux')
+    .select('id, tag, categorie, stade, ferme_id')
+    .in('id', ids)
+    .eq('statut', 'actif')
+    .is('deleted_at', null)
+
+  if (errSelect) {
+    return { ok: false, error: `SELECT échoué : ${errSelect.message}` }
+  }
+  if (!animaux || animaux.length === 0) {
+    return { ok: false, error: 'Aucun animal accessible (réformé, supprimé, ou hors ferme)' }
+  }
+  if (animaux.length !== ids.length) {
+    return {
+      ok: false,
+      error: `${animaux.length}/${ids.length} animaux accessibles (réformés, supprimés, ou hors ferme)`,
+    }
+  }
+
+  // 2. Validation cross-catégorie : nouveau_stade ∈ stadesAutorisesPour(cat) pour chaque.
+  //    Skip silencieux idempotent : si déjà au stade cible, on n'inclut pas dans l'UPDATE.
+  const animauxAUpdater: typeof animaux = []
+  for (const a of animaux as Array<{ id: string; tag: string; categorie: string; stade: string; ferme_id: string }>) {
+    if (a.categorie === 'verrat') {
+      return { ok: false, error: `Animal ${a.tag} (verrat) — stade immutable, retirer de la sélection` }
+    }
+    if (a.stade === nouveau_stade) {
+      continue // idempotent : déjà au bon stade, skip silencieux
+    }
+    const autorises = stadesAutorisesPour(a.categorie)
+    if (!autorises.includes(nouveau_stade as StadeAnimal)) {
+      return {
+        ok: false,
+        error: `Animal ${a.tag} (${a.categorie}) ne peut transitionner vers ${nouveau_stade}`,
+      }
+    }
+    animauxAUpdater.push(a)
+  }
+
+  if (animauxAUpdater.length === 0) {
+    return { ok: false, error: `Tous les animaux sélectionnés sont déjà en ${nouveau_stade}` }
+  }
+
+  // 3. UPDATE batch (seulement ceux à updater)
+  const idsAUpdater = animauxAUpdater.map((a) => (a as { id: string }).id)
+  const { error: errUpdate } = await supabase
+    .from('animaux')
+    .update({ stade: nouveau_stade })
+    .in('id', idsAUpdater)
+
+  if (errUpdate) {
+    return { ok: false, error: `UPDATE échoué : ${errUpdate.message}` }
+  }
+
+  // 4. INSERT audit_log batch (1 ligne/animal updaté + batch_id commun)
+  //    Nécessite migration 'STADE_CHANGE_BATCH' dans enum action_audit (cf migration 20260525*)
+  const batch_id = crypto.randomUUID()
+  const auditRows = (animauxAUpdater as Array<{ id: string; categorie: string; stade: string; ferme_id: string }>).map((a) => ({
+    table_name: 'animaux',
+    row_id: a.id,
+    action: 'STADE_CHANGE_BATCH',
+    ferme_id: a.ferme_id,
+    before_data: { stade: a.stade, categorie: a.categorie, batch_id },
+    after_data: {
+      stade: nouveau_stade,
+      categorie: a.categorie,
+      batch_id,
+      motif: motif && motif.length > 0 ? motif : null,
+    },
+  }))
+
+  const { error: errAudit } = await supabase.from('audit_log').insert(auditRows)
+  if (errAudit) {
+    // Non bloquant — UPDATE déjà passé, trigger BDD a tracé l'event UPDATE générique
+    console.error('[changerStadeBatch] audit_log batch (non bloquant)', errAudit)
+  }
+
+  revalidatePath('/cheptel')
+  revalidatePath('/dashboard')
+  revalidatePath('/batiments')
+
+  return { ok: true, count: animauxAUpdater.length, batch_id }
 }

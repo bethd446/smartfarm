@@ -11,6 +11,7 @@ import { CheptelRowActions } from './_row-actions'
 import { CheptelFab } from './_fab'
 import { toneTruie } from '@/lib/colors'
 import { BannerTransfertCroissance } from './_banner-transfert-croissance'
+import { PorceletsTableBulk } from './_porcelets-table-bulk'
 
 export const metadata: Metadata = {
   title: 'Cheptel — Smart Farm',
@@ -240,6 +241,8 @@ export default async function CheptelPage({
       {/* === Contenu onglet === */}
       {tab === 'portees' ? (
         <PorteesTable rows={portees} />
+      ) : tab === 'porcelets' ? (
+        <PorceletsTableBulk rows={animaux as never} />
       ) : (
         <AnimauxTable rows={animaux} tab={tab} stadeReproById={stadeReproById} />
       )}

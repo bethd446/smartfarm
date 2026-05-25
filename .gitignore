@@ -50,3 +50,9 @@ coverage
 
 # Données privées EasyFarm — jamais en public
 .brain/import-data/
+
+# ---- Claude Code / agents ----
+# Notes éphémères de transition entre sessions (locale only)
+.claude-memory/
+# Worktrees Git internes (Claude Code dispatch d'agents isolés)
+.claude/worktrees/
