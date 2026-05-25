@@ -52,9 +52,33 @@ type Groupement = 'categorie' | 'regle'
 const CATEGORIE_FALLBACK = 'autres' as const
 
 /**
+ * FIX S5-L3 Fix #4 : seuil de péremption colostrum.
+ * Le colostrum est utile dans les 12h post-naissance ; au-delà de 48h
+ * la "vérif colostrum" n'a plus de sens opérationnel. On range alors
+ * l'alerte dans un groupe "colostrum_expire" affiché en bas de page,
+ * gris/replié — l'info reste consultable pour traçabilité mais ne
+ * pollue plus la to-do quotidienne.
+ */
+const COLOSTRUM_EXPIRE_HEURES = 48
+const GROUPE_COLOSTRUM_EXPIRE = 'colostrum_expire' as const
+
+function isAlerteColostrum(a: Alerte): boolean {
+  return (a.regle_id ?? '').toLowerCase().includes('colostrum')
+}
+
+function isColostrumExpire(a: Alerte): boolean {
+  if (!isAlerteColostrum(a)) return false
+  const d = a.detecte_le instanceof Date ? a.detecte_le : new Date(a.detecte_le)
+  if (Number.isNaN(d.getTime())) return false
+  const ageHeures = (Date.now() - d.getTime()) / 3_600_000
+  return ageHeures > COLOSTRUM_EXPIRE_HEURES
+}
+
+/**
  * Ordre canonique d'affichage des sections quand on groupe par catégorie.
  * Sanitaire en haut (priorité métier ferme), `autres` en queue pour ne
- * jamais reléguer une vraie catégorie sous le fourre-tout.
+ * jamais reléguer une vraie catégorie sous le fourre-tout. Le bucket
+ * `colostrum_expire` (Fix #4) reste tout en bas après `autres`.
  */
 const ORDRE_CATEGORIES: readonly string[] = [
   'sanitaire',
@@ -64,6 +88,7 @@ const ORDRE_CATEGORIES: readonly string[] = [
   'nutrition',
   'observations',
   CATEGORIE_FALLBACK,
+  GROUPE_COLOSTRUM_EXPIRE,
 ] as const
 
 function getCategorie(regle_id: string): CategorieAlerte | typeof CATEGORIE_FALLBACK {
@@ -169,6 +194,9 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
   const [snoozeTick, setSnoozeTick] = useState(0)
   const [showSnoozed, setShowSnoozed] = useState(false)
 
+  // FIX S5-L3 #4 : bucket "colostrum expiré" replié par défaut
+  const [showColostrumExpire, setShowColostrumExpire] = useState(false)
+
   // Pagination client-side : 10 alertes par page
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 10
@@ -251,10 +279,15 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
   const groupes = useMemo(() => {
     const map = new Map<string, Alerte[]>()
     for (const a of alertesPaginees) {
-      const key =
-        groupement === 'categorie'
-          ? (getCategorie(a.regle_id) as string)
-          : a.regle_id
+      // FIX S5-L3 #4 : colostrum >48h → bucket dédié (peu importe le mode)
+      let key: string
+      if (isColostrumExpire(a)) {
+        key = GROUPE_COLOSTRUM_EXPIRE
+      } else if (groupement === 'categorie') {
+        key = getCategorie(a.regle_id) as string
+      } else {
+        key = a.regle_id
+      }
       const arr = map.get(key) ?? []
       arr.push(a)
       map.set(key, arr)
@@ -262,20 +295,22 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
     const entries = Array.from(map.entries())
 
     // En mode catégorie, on applique l'ordre canonique
-    // (sanitaire → reproduction → pertes → stock → nutrition → autres).
-    // Les clés inconnues (ne devrait pas arriver) sont rangées juste avant
-    // `autres` pour rester visibles.
-    if (groupement === 'categorie') {
-      const rank = (key: string) => {
-        const i = ORDRE_CATEGORIES.indexOf(key)
-        return i === -1 ? ORDRE_CATEGORIES.length - 1 : i
-      }
-      entries.sort(([a], [b]) => rank(a) - rank(b))
+    // (sanitaire → reproduction → pertes → stock → nutrition → autres → colostrum_expire).
+    // En mode règle on garde aussi le bucket `colostrum_expire` en dernier.
+    const rank = (key: string) => {
+      if (key === GROUPE_COLOSTRUM_EXPIRE) return Number.MAX_SAFE_INTEGER
+      if (groupement !== 'categorie') return 0
+      const i = ORDRE_CATEGORIES.indexOf(key)
+      return i === -1 ? ORDRE_CATEGORIES.length - 2 : i
     }
+    entries.sort(([a], [b]) => rank(a) - rank(b))
     return entries
   }, [alertesPaginees, groupement])
 
   const groupLabel = (key: string) => {
+    if (key === GROUPE_COLOSTRUM_EXPIRE) {
+      return 'Colostrum non vérifié (expiré >48 h)'
+    }
     if (groupement === 'categorie') {
       // `LABEL_CATEGORIE` ne couvre que les 5 catégories typées —
       // pour `'autres'` (et toute clé inconnue) on retombe sur 'Autres'.
@@ -348,11 +383,24 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
 
             <div className="flex-1" />
 
+            {/*
+              FIX S5-L3 #5 : on force le `outline` à expliciter
+              `bg-[var(--sf-surface-1)]` + `text-[var(--sf-primary)]` pour
+              garantir le contraste si un parent injecte du `color: white`.
+              Le `default` reste vert + texte blanc (contraste AAA).
+              `min-h-11` sécurise le tap target sur mobile gants.
+            */}
             <div className="flex items-center gap-1">
               <Button
                 variant={groupement === 'categorie' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setGroupement('categorie')}
+                aria-pressed={groupement === 'categorie'}
+                className={
+                  groupement === 'categorie'
+                    ? 'min-h-11'
+                    : 'min-h-11 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white'
+                }
               >
                 <Group className="h-4 w-4 mr-1" />
                 Par catégorie
@@ -361,6 +409,12 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                 variant={groupement === 'regle' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setGroupement('regle')}
+                aria-pressed={groupement === 'regle'}
+                className={
+                  groupement === 'regle'
+                    ? 'min-h-11'
+                    : 'min-h-11 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white'
+                }
               >
                 <LayoutList className="h-4 w-4 mr-1" />
                 Par règle
@@ -381,6 +435,8 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                 variant={showSnoozed ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setShowSnoozed((v) => !v)}
+                aria-pressed={showSnoozed}
+                className="min-h-11 px-3"
               >
                 {showSnoozed ? (
                   <EyeOff className="h-4 w-4 mr-1" />
@@ -404,10 +460,12 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
             size="sm"
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
+            aria-label="Page précédente"
+            className="min-h-11 px-4 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white"
           >
             Précédent
           </Button>
-          <span className="text-sm text-[var(--sf-muted,#5C5346)]">
+          <span className="text-sm text-[var(--sf-muted,#5C5346)]" aria-live="polite">
             Page <span className="font-semibold text-[var(--sf-ink,#1a1a1a)]">{currentPage}</span> / {totalPages}
           </span>
           <Button
@@ -415,6 +473,8 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
             size="sm"
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
+            aria-label="Page suivante"
+            className="min-h-11 px-4 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white"
           >
             Suivant
           </Button>
@@ -435,16 +495,45 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
         </Card>
       ) : (
         <div className="space-y-6">
-          {groupes.map(([key, items]) => (
-            <section key={key} className="space-y-2">
-              <div className="flex items-baseline gap-2">
-                <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--sf-ink,#1a1a1a)]">
-                  {groupLabel(key)}
-                </h2>
-                <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">
-                  ({items.length})
-                </span>
-              </div>
+          {groupes.map(([key, items]) => {
+            // FIX S5-L3 #4 : bucket colostrum expiré → header repliable
+            const isExpireBucket = key === GROUPE_COLOSTRUM_EXPIRE
+            const isCollapsed = isExpireBucket && !showColostrumExpire
+            return (
+            <section
+              key={key}
+              className={
+                isExpireBucket
+                  ? 'space-y-2 opacity-80'
+                  : 'space-y-2'
+              }
+              aria-label={isExpireBucket ? 'Alertes colostrum expirées' : undefined}
+            >
+              {isExpireBucket ? (
+                <button
+                  type="button"
+                  onClick={() => setShowColostrumExpire((v) => !v)}
+                  aria-expanded={showColostrumExpire}
+                  className="flex items-baseline gap-2 w-full text-left min-h-11 py-2 hover:bg-[var(--sf-surface-2,#F5F1ED)] rounded px-2 -mx-2"
+                >
+                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--sf-muted,#5C5346)]">
+                    {showColostrumExpire ? '▾' : '▸'} {groupLabel(key)}
+                  </h2>
+                  <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">
+                    ({items.length})
+                  </span>
+                </button>
+              ) : (
+                <div className="flex items-baseline gap-2">
+                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--sf-ink,#1a1a1a)]">
+                    {groupLabel(key)}
+                  </h2>
+                  <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">
+                    ({items.length})
+                  </span>
+                </div>
+              )}
+              {!isCollapsed && (
               <div className="space-y-2">
                 {items.map((a) => {
                   const snoozed = isAlerteSnoozed(a)
@@ -463,7 +552,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="bg-[var(--sf-surface-1,#fff)]"
+                            className="min-h-11 px-3 bg-[var(--sf-surface-1,#fff)]"
                             onClick={() => handleUnsnooze(a)}
                             title="Réactiver"
                             aria-label={`Réactiver l'alerte ${a.cible_label}`}
@@ -475,7 +564,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="bg-[var(--sf-surface-1,#fff)]"
+                            className="min-h-11 px-3 bg-[var(--sf-surface-1,#fff)]"
                             onClick={() => handleSnooze(a)}
                             title="Masquer pendant 24 heures"
                             aria-label={`Masquer l'alerte ${a.cible_label} pendant 24 heures`}
@@ -489,8 +578,10 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                   )
                 })}
               </div>
+              )}
             </section>
-          ))}
+            )
+          })}
         </div>
       )}
 
@@ -502,10 +593,12 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
             size="sm"
             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
             disabled={currentPage === 1}
+            aria-label="Page précédente"
+            className="min-h-11 px-4 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white"
           >
             Précédent
           </Button>
-          <span className="text-sm text-[var(--sf-muted,#5C5346)]">
+          <span className="text-sm text-[var(--sf-muted,#5C5346)]" aria-live="polite">
             Page <span className="font-semibold text-[var(--sf-ink,#1a1a1a)]">{currentPage}</span> / {totalPages}
           </span>
           <Button
@@ -513,6 +606,8 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
             size="sm"
             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
+            aria-label="Page suivante"
+            className="min-h-11 px-4 bg-[var(--sf-surface-1,#fff)] !text-[var(--sf-primary,#2D4A1F)] hover:!text-white"
           >
             Suivant
           </Button>

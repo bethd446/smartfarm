@@ -58,6 +58,19 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
     return notFound()
   }
 
+  // === Fetch stade reproducteur (vue v_animaux_stade_repro, fallback graceful si absente) ===
+  let stadeRepro: { stade_repro: string; jours_stade: number | null } | null = null
+  {
+    const { data: stadeRow, error: stadeErr } = await sb
+      .from('v_animaux_stade_repro')
+      .select('stade_repro, jours_stade')
+      .eq('id', animalId)
+      .maybeSingle()
+    if (!stadeErr && stadeRow) {
+      stadeRepro = stadeRow as { stade_repro: string; jours_stade: number | null }
+    }
+  }
+
   // === Fetch last pesée + nb pesées ===
   // Note: avec { count: 'exact', head: true }, supabase-js renvoie { data: null, count: <n> }
   // donc on déstructure 'count' (pas 'data') sur la 2e requête.
@@ -238,6 +251,27 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
   const age = computeAge(animal.date_naissance)
   const raceNom = (animal.races as any)?.nom ?? '—'
 
+  // Stade repro → variante Badge + texte (cf vue v_animaux_stade_repro).
+  // Fallback : si vue absente OU stade inconnu OU animal non-truie → badge statut classique.
+  const STADE_REPRO_CFG: Record<
+    string,
+    { variant: 'success' | 'warning' | 'outline' | 'secondary'; label: string; withJours: boolean }
+  > = {
+    gestante: { variant: 'success', label: 'GESTANTE', withJours: true },
+    allaitante: { variant: 'warning', label: 'ALLAITANTE', withJours: true },
+    vide: { variant: 'outline', label: 'VIDE', withJours: false },
+    'pré-saillie': { variant: 'secondary', label: 'PRÉ-SAILLIE', withJours: false },
+  }
+  const stadeReproBadge = (() => {
+    if (!isFemelle || !stadeRepro) return null
+    const cfg = STADE_REPRO_CFG[stadeRepro.stade_repro]
+    if (!cfg) return null
+    const txt = cfg.withJours && stadeRepro.jours_stade != null
+      ? `${cfg.label} J${stadeRepro.jours_stade}`
+      : cfg.label
+    return { variant: cfg.variant, text: txt }
+  })()
+
   const eyebrowCls =
     "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
 
@@ -293,9 +327,13 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               <Badge variant="outline" className="capitalize">
                 {animal.categorie}
               </Badge>
-              <Badge variant={animal.statut === 'actif' ? 'success' : 'secondary'}>
-                {animal.statut}
-              </Badge>
+              {stadeReproBadge ? (
+                <Badge variant={stadeReproBadge.variant}>{stadeReproBadge.text}</Badge>
+              ) : (
+                <Badge variant={animal.statut === 'actif' ? 'success' : 'secondary'}>
+                  {animal.statut}
+                </Badge>
+              )}
               {scoreTruie && scoreTruie.classement ? (
                 <Link
                   href="/cheptel/classement-truies"
@@ -741,16 +779,10 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               </code>
             </div>
             <div className="flex-1 min-w-[200px]">
-              <p className="text-sm text-[var(--sf-ink)] font-medium">
-                Tag&nbsp;: <code className="font-mono">{animal.tag}</code>
-              </p>
-              <p className="text-xs text-[var(--sf-muted)] mt-1">
+              <p className="text-xs text-[var(--sf-muted)]">
                 Scanner cette boucle d&apos;oreille avec un lecteur code-barres
                 (ou QR) pour identifier l&apos;animal lors d&apos;une
-                intervention terrain. Le scanner intégré
-                <code className="font-mono"> &lt;BarcodeScanner&gt;</code> peut
-                être branché sur les écrans de saisie pour ouvrir cette fiche
-                automatiquement.
+                intervention terrain et ouvrir cette fiche automatiquement.
               </p>
             </div>
           </div>

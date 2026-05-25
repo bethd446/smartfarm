@@ -16,13 +16,32 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Calendar, Plus, ChevronLeft, TrendingDown, AlertTriangle } from 'lucide-react'
+import {
+  Calendar,
+  Plus,
+  ChevronLeft,
+  TrendingDown,
+  AlertTriangle,
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 import { DialogPlan, type PlanRow } from './_dialog-plan'
 import { supprimerPlan } from './_actions'
 import { calculerStatutPlan, type StatutPlan } from './_schemas'
+
+/* -------------------------------------------------------------------------- */
+/*  FIX S5 LANE4 (2026-05-25)                                                  */
+/*  Bug : page exposait stack trace PostgREST                                  */
+/*        "Could not find a relationship between 'plans_alimentation' and     */
+/*        'type_aliment_id' in the schema cache"                              */
+/*  Cause racine : le code référait `type_aliment_id` / `types_aliment` mais  */
+/*  le schéma BDD (genesis 2026-05-23) utilise `formule_id REFERENCES         */
+/*  formules(id)` — colonne `type_aliment_id` inexistante.                    */
+/*  Fix Option B (propre) : alignement complet du code sur le schéma réel.    */
+/*  Fix Option A (safety net) : try/catch global + EmptyState métier au       */
+/*  lieu d'exposer un message d'erreur technique brut à l'utilisateur.        */
+/* -------------------------------------------------------------------------- */
 
 /* -------------------------------------------------------------------------- */
 /*  PROJECTION STOCK — feature nutrition prédictive (2026-05-24)              */
@@ -132,8 +151,130 @@ function fmtDate(d: string | null) {
 }
 
 /* -------------------------------------------------------------------------- */
+/*  Composant erreur métier (EmptyState a11y)                                  */
+/* -------------------------------------------------------------------------- */
+
+function ChargementImpossible({ details }: { details?: string }) {
+  return (
+    <div
+      role="alert"
+      aria-live="polite"
+      className="p-8 text-center space-y-3 border border-dashed border-[var(--sf-border,#E5DDD0)] rounded-md"
+    >
+      <AlertTriangle
+        className="h-8 w-8 mx-auto text-[var(--sf-warning-ink,#5A3E0E)]"
+        aria-hidden="true"
+      />
+      <p className="text-sm font-medium text-[var(--sf-ink,#1a1a1a)]">
+        Plans d’alimentation : configuration en cours
+      </p>
+      <p className="text-xs text-[var(--sf-muted,#5C5346)] max-w-md mx-auto">
+        Le module est temporairement indisponible. Contactez votre administrateur
+        si le problème persiste.
+      </p>
+      {process.env.NODE_ENV !== 'production' && details ? (
+        <pre className="text-[10px] text-[var(--sf-muted,#5C5346)] bg-[var(--sf-surface-1,rgba(0,0,0,0.02))] p-2 rounded mt-2 overflow-x-auto text-left">
+          {details}
+        </pre>
+      ) : null}
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------------------- */
 /*  PAGE                                                                       */
 /* -------------------------------------------------------------------------- */
+
+type PageData =
+  | {
+      ok: true
+      plans: Array<
+        PlanRow & {
+          bande: { id: string; code: string; nom: string; statut: string } | null
+          formule: { id: string; nom: string } | null
+        }
+      >
+      bandes: Array<{ id: string; code: string; nom: string; statut: string }>
+      formules: Array<{ id: string; nom: string }>
+      projections: ProjectionRow[]
+    }
+  | { ok: false; error: string }
+
+async function loadPageData(): Promise<PageData> {
+  try {
+    const sb = await createClient()
+
+    const [
+      { data: plansData, error: errPlans },
+      { data: bandesData, error: errBandes },
+      { data: formulesData, error: errFormules },
+      { data: projectionData },
+    ] = await Promise.all([
+      sb
+        .from('plans_alimentation')
+        .select(
+          'id, bande_id, formule_id, date_debut, date_fin, ration_kg_jour, bande:bande_id(id, code, nom, statut), formule:formule_id(id, nom)',
+        )
+        .is('deleted_at', null)
+        .order('date_debut', { ascending: false }),
+      sb
+        .from('bandes')
+        .select('id, code, nom, statut')
+        .is('deleted_at', null)
+        .order('code', { ascending: false }),
+      sb
+        .from('formules')
+        .select('id, nom')
+        .is('deleted_at', null)
+        .order('nom'),
+      sb
+        .from('v_stock_projection_ferme')
+        .select(
+          'formule_id, formule_nom, formule_stade, conso_quotidienne_kg, stock_kg_actuel, jours_restants, date_epuisement',
+        )
+        .order('jours_restants', { ascending: true, nullsFirst: false }),
+    ])
+
+    // Si une des 3 queries critiques échoue → renvoyer l'erreur la + parlante
+    const blockingError = errPlans ?? errBandes ?? errFormules
+    if (blockingError) {
+      console.error('[alimentation/plans] supabase error:', blockingError)
+      return { ok: false, error: blockingError.message }
+    }
+
+    type Row = PlanRow & {
+      bande: { id: string; code: string; nom: string; statut: string } | null
+      formule: { id: string; nom: string } | null
+    }
+
+    const plans = ((plansData ?? []) as unknown) as Row[]
+
+    const projections = (((projectionData ?? []) as unknown) as ProjectionRow[]).map(
+      (p) => ({
+        ...p,
+        conso_quotidienne_kg: Number(p.conso_quotidienne_kg ?? 0),
+        stock_kg_actuel: Number(p.stock_kg_actuel ?? 0),
+      }),
+    )
+
+    return {
+      ok: true,
+      plans,
+      bandes: (bandesData ?? []) as Array<{
+        id: string
+        code: string
+        nom: string
+        statut: string
+      }>,
+      formules: (formulesData ?? []) as Array<{ id: string; nom: string }>,
+      projections,
+    }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'Erreur inattendue'
+    console.error('[alimentation/plans] unexpected error:', e)
+    return { ok: false, error: msg }
+  }
+}
 
 export default async function PlansAlimentationPage(props: {
   searchParams?: Promise<{ statut?: string; bande?: string }>
@@ -142,46 +283,32 @@ export default async function PlansAlimentationPage(props: {
   const filtreStatut = sp.statut as StatutPlan | undefined
   const filtreBande = sp.bande
 
-  const sb = await createClient()
+  const result = await loadPageData()
 
-  const [
-    { data: plansData, error },
-    { data: bandesData },
-    { data: typesData },
-    { data: projectionData },
-  ] = await Promise.all([
-    sb
-      .from('plans_alimentation')
-      .select(
-        'id, bande_id, type_aliment_id, date_debut, date_fin, ration_kg_jour, bande:bande_id(id, code, nom, statut), type_aliment:type_aliment_id(id, nom)',
-      )
-      .order('date_debut', { ascending: false }),
-    sb
-      .from('bandes')
-      .select('id, code, nom, statut')
-      .is('deleted_at', null)
-      .order('code', { ascending: false }),
-    sb.from('types_aliment').select('id, nom').order('nom'),
-    sb
-      .from('v_stock_projection_ferme')
-      .select(
-        'formule_id, formule_nom, formule_stade, conso_quotidienne_kg, stock_kg_actuel, jours_restants, date_epuisement',
-      )
-      .order('jours_restants', { ascending: true, nullsFirst: false }),
-  ])
-
-  const projections = ((projectionData ?? []) as unknown as ProjectionRow[]).map((p) => ({
-    ...p,
-    conso_quotidienne_kg: Number(p.conso_quotidienne_kg ?? 0),
-    stock_kg_actuel: Number(p.stock_kg_actuel ?? 0),
-  }))
-
-  type Row = PlanRow & {
-    bande: { id: string; code: string; nom: string; statut: string } | null
-    type_aliment: { id: string; nom: string } | null
+  // === Cas erreur globale : EmptyState métier (pas de stack SQL exposée) ===
+  if (!result.ok) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Link
+            href="/alimentation"
+            className="text-xs uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
+          >
+            <ChevronLeft className="h-3 w-3" />
+            Retour à l’alimentation
+          </Link>
+          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)] mt-1">
+            <Calendar className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+            Plans d’alimentation
+          </h1>
+        </div>
+        <ChargementImpossible details={result.error} />
+      </div>
+    )
   }
 
-  const rowsAll = (plansData ?? []) as unknown as Row[]
+  const { plans: rowsAll, bandes, formules, projections } = result
+
   const rowsWithStatut = rowsAll.map((r) => ({
     ...r,
     _statut: calculerStatutPlan(r.date_debut, r.date_fin),
@@ -196,14 +323,6 @@ export default async function PlansAlimentationPage(props: {
   const totalEnCours = rowsWithStatut.filter((r) => r._statut === 'en_cours').length
   const totalAVenir = rowsWithStatut.filter((r) => r._statut === 'a_venir').length
   const totalTermine = rowsWithStatut.filter((r) => r._statut === 'termine').length
-
-  const bandes = (bandesData ?? []) as Array<{
-    id: string
-    code: string
-    nom: string
-    statut: string
-  }>
-  const typesAliment = (typesData ?? []) as Array<{ id: string; nom: string }>
 
   return (
     <div className="space-y-6">
@@ -228,7 +347,7 @@ export default async function PlansAlimentationPage(props: {
           <DialogPlan
             mode="create"
             bandes={bandes}
-            typesAliment={typesAliment}
+            formules={formules}
             trigger={
               <Button variant="default" size="sm">
                 <Plus className="h-4 w-4 mr-1" />
@@ -420,11 +539,7 @@ export default async function PlansAlimentationPage(props: {
           <CardTitle className="text-lg">Liste des plans</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          {error ? (
-            <p className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-              Erreur de chargement : {error.message}
-            </p>
-          ) : rows.length === 0 ? (
+          {rows.length === 0 ? (
             <div className="p-8 text-center space-y-3">
               <p className="text-sm text-[var(--sf-muted,#5C5346)]">
                 Aucun plan d’alimentation enregistré pour ce filtre.
@@ -432,7 +547,7 @@ export default async function PlansAlimentationPage(props: {
               <DialogPlan
                 mode="create"
                 bandes={bandes}
-                typesAliment={typesAliment}
+                formules={formules}
                 trigger={
                   <Button variant="default" size="sm">
                     <Plus className="h-4 w-4 mr-1" />
@@ -446,7 +561,7 @@ export default async function PlansAlimentationPage(props: {
               <TableHeader>
                 <TableRow>
                   <TableHead>Bande</TableHead>
-                  <TableHead>Aliment</TableHead>
+                  <TableHead>Formule</TableHead>
                   <TableHead>Début</TableHead>
                   <TableHead>Fin</TableHead>
                   <TableHead className="text-right">Ration (kg/j)</TableHead>
@@ -466,7 +581,7 @@ export default async function PlansAlimentationPage(props: {
                       ) : null}
                     </TableCell>
                     <TableCell className="text-sm">
-                      {p.type_aliment?.nom ?? '—'}
+                      {p.formule?.nom ?? '—'}
                     </TableCell>
                     <TableCell className="text-sm tabular-nums">
                       {fmtDate(p.date_debut)}
@@ -485,13 +600,13 @@ export default async function PlansAlimentationPage(props: {
                           initial={{
                             id: p.id,
                             bande_id: p.bande_id,
-                            type_aliment_id: p.type_aliment_id,
+                            formule_id: p.formule_id,
                             date_debut: p.date_debut,
                             date_fin: p.date_fin,
                             ration_kg_jour: p.ration_kg_jour,
                           }}
                           bandes={bandes}
-                          typesAliment={typesAliment}
+                          formules={formules}
                           trigger={
                             <Button variant="ghost" size="sm">
                               Modifier

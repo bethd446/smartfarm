@@ -77,6 +77,9 @@ export default async function CheptelPage({
 
   let animaux: any[] = []
   let portees: any[] = []
+  // Map id → { stade_repro, jours_stade } (rempli pour onglet truies uniquement,
+  // vide si la vue v_animaux_stade_repro n'existe pas encore — fallback graceful).
+  const stadeReproById = new Map<string, { stade_repro: string; jours_stade: number | null }>()
 
   if (tab === 'portees') {
     let pq = sb
@@ -114,6 +117,25 @@ export default async function CheptelPage({
     }
     const { data } = await aq
     animaux = data ?? []
+
+    // === Onglet truies : enrichir avec stade reproducteur (vue v_animaux_stade_repro) ===
+    // Fallback graceful : si la vue n'existe pas (404) ou query échoue, on garde
+    // le badge statut classique (cf colonne STATUT REPRO render).
+    if (tab === 'truies' && animaux.length > 0) {
+      const ids = animaux.map((a) => a.id)
+      const { data: stadeRows, error: stadeErr } = await sb
+        .from('v_animaux_stade_repro')
+        .select('id, stade_repro, jours_stade')
+        .in('id', ids)
+      if (!stadeErr && stadeRows) {
+        for (const row of stadeRows as Array<{ id: string; stade_repro: string; jours_stade: number | null }>) {
+          stadeReproById.set(row.id, {
+            stade_repro: row.stade_repro,
+            jours_stade: row.jours_stade,
+          })
+        }
+      }
+    }
   }
 
   const { data: races } = await racesP
@@ -219,7 +241,7 @@ export default async function CheptelPage({
       {tab === 'portees' ? (
         <PorteesTable rows={portees} />
       ) : (
-        <AnimauxTable rows={animaux} tab={tab} />
+        <AnimauxTable rows={animaux} tab={tab} stadeReproById={stadeReproById} />
       )}
 
       {/* === FAB mobile === */}
@@ -232,7 +254,26 @@ export default async function CheptelPage({
 // Sous-composants
 // ─────────────────────────────────────────────────────────────────────────────
 
-function AnimauxTable({ rows, tab }: { rows: any[]; tab: TabKey }) {
+/** Mapping stade reproducteur (v_animaux_stade_repro) → variante Badge + label. */
+const STADE_REPRO_MAP: Record<
+  string,
+  { variant: 'success' | 'warning' | 'outline' | 'secondary'; label: string; withJours: boolean }
+> = {
+  gestante: { variant: 'success', label: 'GESTANTE', withJours: true },
+  allaitante: { variant: 'warning', label: 'ALLAITANTE', withJours: true },
+  vide: { variant: 'outline', label: 'VIDE', withJours: false },
+  'pré-saillie': { variant: 'secondary', label: 'PRÉ-SAILLIE', withJours: false },
+}
+
+function AnimauxTable({
+  rows,
+  tab,
+  stadeReproById,
+}: {
+  rows: any[]
+  tab: TabKey
+  stadeReproById: Map<string, { stade_repro: string; jours_stade: number | null }>
+}) {
   if (rows.length === 0) {
     return (
       <EmptyState
@@ -299,8 +340,22 @@ function AnimauxTable({ rows, tab }: { rows: any[]; tab: TabKey }) {
           },
           {
             key: 'statut',
-            label: 'STATUT',
+            label: tab === 'truies' ? 'STADE REPRO' : 'STATUT',
             render: (v: string, item: any) => {
+              // Onglet truies → afficher stade reproducteur (vue v_animaux_stade_repro)
+              if (tab === 'truies') {
+                const stade = stadeReproById.get(item.id)
+                if (stade) {
+                  const cfg = STADE_REPRO_MAP[stade.stade_repro]
+                  if (cfg) {
+                    const txt = cfg.withJours && stade.jours_stade != null
+                      ? `${cfg.label} J${stade.jours_stade}`
+                      : cfg.label
+                    return <Badge variant={cfg.variant}>{txt}</Badge>
+                  }
+                }
+                // Fallback : vue absente ou stade inconnu → badge statut classique
+              }
               const tone = toneTruie(item.rang_porte, item.statut)
               const aSortir = tone === 'attendu' && item.statut === 'actif'
               const statutVariant = aSortir ? 'warning' : TONE_TO_VARIANT[tone]

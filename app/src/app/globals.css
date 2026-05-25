@@ -192,7 +192,9 @@
 
   /* === MUTED / SURFACE aliases === */
   --sf-muted:          #5C5346;
-  --sf-subtle:         #8A7E6E;
+  /* LANE5 S5 a11y : #8A7E6E sur mil-50 = 3.4:1 (FAIL WCAG AA texte normal).
+     Assombri à #6B6354 → ~5.4:1 AA solide. Reste plus clair que --sf-muted. */
+  --sf-subtle:         #6B6354;
   --sf-line:           #E7E5E4;
 
   /* === TYPOGRAPHY tokens === */
@@ -346,7 +348,9 @@ html[data-contrast="high"] * { font-weight: 600; }
   --sf-neutral-border: rgba(255,251,235,0.18);
 
   --sf-muted:          #B5A992;
-  --sf-subtle:         #847866;
+  /* LANE5 S5 a11y dark : #847866 sur surface-0 #14110F = ~4.2:1 (borderline FAIL).
+     Eclairci à #9A8E78 → ~5.5:1 AA solide. */
+  --sf-subtle:         #9A8E78;
 }
 
 @layer base {
