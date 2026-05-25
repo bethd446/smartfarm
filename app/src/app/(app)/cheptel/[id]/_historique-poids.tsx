@@ -98,7 +98,7 @@ export async function HistoriquePoids({ animalId, animalTag }: HistoriquePoidsPr
   const [{ data: animal }, { data: pesees }] = await Promise.all([
     sb
       .from('animaux')
-      .select('date_naissance, portee_id, portees(poids_moyen_sevrage_kg, date_sevrage_reelle)')
+      .select('date_naissance, portee_id, portees!fk_animaux_portee(poids_moyen_sevrage_kg, date_sevrage_reelle)')
       .eq('id', animalId)
       .maybeSingle(),
     sb
