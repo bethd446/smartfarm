@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   RotateCcw,
   Factory,
+  AlertTriangle,
 } from 'lucide-react'
 
 import { DialogMatiere, type MatiereRow } from '../matieres/_dialog-matiere'
@@ -311,8 +312,27 @@ export default async function ConcentresPage({
       {/* Cards concentrés -------------------------------------------------- */}
       {error ? (
         <Card>
-          <CardContent className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-            Erreur de chargement : {error.message}
+          <CardContent
+            role="alert"
+            aria-live="polite"
+            className="p-8 text-center space-y-3"
+          >
+            <AlertTriangle
+              className="h-8 w-8 mx-auto text-[var(--sf-warning-ink,#5A3E0E)]"
+              aria-hidden="true"
+            />
+            <p className="text-sm font-medium text-[var(--sf-ink,#1a1a1a)]">
+              Concentrés industriels : chargement impossible
+            </p>
+            <p className="text-xs text-[var(--sf-muted,#5C5346)] max-w-md mx-auto">
+              Le module est temporairement indisponible. Contactez votre administrateur
+              si le problème persiste.
+            </p>
+            {process.env.NODE_ENV !== 'production' ? (
+              <pre className="text-[10px] text-[var(--sf-muted,#5C5346)] bg-[var(--sf-surface-1,rgba(0,0,0,0.02))] p-2 rounded mt-2 overflow-x-auto text-left">
+                {error.message}
+              </pre>
+            ) : null}
           </CardContent>
         </Card>
       ) : rows.length === 0 ? (

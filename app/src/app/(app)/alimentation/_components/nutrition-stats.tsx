@@ -5,6 +5,7 @@ import {
   Coins,
   TrendingDown,
   Package2,
+  AlertTriangle,
 } from 'lucide-react'
 
 /* -------------------------------------------------------------------------- */
@@ -105,6 +106,7 @@ export async function NutritionStats() {
   /* ---------- 4 : Stock j restants matière + utilisée ---------- */
   let stockJours: string = '—'
   let stockMatiereNom: string = ''
+  let stockJoursNum: number | null = null
   try {
     // On approxime : matière la + utilisée = type_aliment_id dominant
     // (en l'absence d'un lien direct conso → matière première).
@@ -140,12 +142,17 @@ export async function NutritionStats() {
         }
       }
       if (bestId && Number.isFinite(bestJours)) {
-        stockJours = `${Math.round(bestJours)} j`
+        stockJoursNum = Math.round(bestJours)
+        stockJours = `${stockJoursNum} j`
       }
     }
   } catch {
     stockJours = '—'
+    stockJoursNum = null
   }
+
+  /* ---------- Seuil critique stock : < 7 j ---------- */
+  const stockCritique = stockJoursNum !== null && stockJoursNum < 7
 
   /* ---------- Rendu ---------- */
   const cards = [
@@ -156,6 +163,7 @@ export async function NutritionStats() {
       hint: 'Total distribué sur la période',
       bg: 'var(--sf-success-bg, #D6E3CC)',
       ink: 'var(--sf-success-ink, #1F3B12)',
+      critical: false,
     },
     {
       icon: Coins,
@@ -164,6 +172,7 @@ export async function NutritionStats() {
       hint: 'Dépenses cumulées (FCFA)',
       bg: 'var(--sf-warning-bg, #F5E0B8)',
       ink: 'var(--sf-warning-ink, #5A3E0E)',
+      critical: false,
     },
     {
       icon: TrendingDown,
@@ -172,6 +181,7 @@ export async function NutritionStats() {
       hint: 'kg aliment / kg vif produit',
       bg: 'var(--sf-bg, #F5F1E8)',
       ink: 'var(--sf-ink, #1a1a1a)',
+      critical: false,
     },
     {
       icon: Package2,
@@ -180,8 +190,13 @@ export async function NutritionStats() {
       hint: stockMatiereNom
         ? `${stockMatiereNom} — au rythme actuel`
         : 'Matière la + critique',
-      bg: 'var(--sf-bg, #F5F1E8)',
-      ink: 'var(--sf-ink, #1a1a1a)',
+      bg: stockCritique
+        ? 'var(--sf-danger-bg, #F5D9D2)'
+        : 'var(--sf-bg, #F5F1E8)',
+      ink: stockCritique
+        ? 'var(--sf-danger-ink, #7A2A1F)'
+        : 'var(--sf-ink, #1a1a1a)',
+      critical: stockCritique,
     },
   ]
 
@@ -193,14 +208,23 @@ export async function NutritionStats() {
           <Card
             key={i}
             style={{ background: c.bg, color: c.ink }}
+            // a11y : la card stock critique signale une alerte
+            {...(c.critical ? { role: 'alert', 'aria-live': 'polite' as const } : {})}
           >
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div
-                    className="text-2xl font-bold tabular-nums"
+                    className="text-2xl font-bold tabular-nums flex items-center gap-2"
                     style={{ color: c.ink }}
                   >
+                    {c.critical ? (
+                      <AlertTriangle
+                        className="h-5 w-5"
+                        style={{ color: c.ink }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
                     {c.value}
                   </div>
                   <div
@@ -208,6 +232,11 @@ export async function NutritionStats() {
                     style={{ color: c.ink }}
                   >
                     {c.label}
+                    {c.critical ? (
+                      <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--sf-danger-ink,#7A2A1F)] text-white">
+                        Stock critique
+                      </span>
+                    ) : null}
                   </div>
                   <div
                     className="text-[11px] mt-2 opacity-70"

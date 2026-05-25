@@ -69,12 +69,15 @@ export default async function AlertesPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Total */}
+        {/* Total — FIX S5-L3 #3 : cap visuel à 99+ pour ne pas désensibiliser */}
         <Card>
           <CardContent className="p-5">
             <Bell className="h-5 w-5 mb-2 text-[var(--sf-primary,#2D4A1F)]" />
-            <div className="text-3xl font-bold tabular-nums text-[var(--sf-ink,#1a1a1a)]">
-              {total}
+            <div
+              className="text-3xl font-bold tabular-nums text-[var(--sf-ink,#1a1a1a)]"
+              aria-label={`${total} alertes actives`}
+            >
+              {total > 99 ? '99+' : total}
             </div>
             <div className="eyebrow text-[11px] mt-1 text-[var(--sf-muted,#5C5346)]">
               Alertes actives

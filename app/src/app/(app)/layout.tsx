@@ -1,5 +1,18 @@
+import type { Metadata } from 'next'
 import { AppShell } from '@/components/app-shell'
 import { createClient } from '@/lib/supabase/server'
+
+// LANE5 S5 — pose le template `<title>` pour toutes les routes (app).
+// Sans ça, les pages internes héritaient du title racine ("Smart Farm —
+// Gestion d'élevage · Côte d'Ivoire") même quand l'utilisateur naviguait
+// sur /cheptel, /mises-bas, etc. Les routes qui définissent leur propre
+// `metadata.title` (string) verront "%s — Smart Farm" appliqué automatiquement.
+export const metadata: Metadata = {
+  title: {
+    template: '%s — Smart Farm',
+    default: 'Smart Farm',
+  },
+}
 
 // L2 Sprint 1 — bug cache sidebar :
 // Après l'onboarding, le RSC du layout restait servi depuis le cache Next 16

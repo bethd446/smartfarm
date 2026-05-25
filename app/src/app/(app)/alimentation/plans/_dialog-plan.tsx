@@ -30,7 +30,7 @@ import { creerPlan, modifierPlan } from './_actions'
 export type PlanRow = {
   id: string
   bande_id: string | null
-  type_aliment_id: string | null
+  formule_id: string | null
   date_debut: string
   date_fin: string | null
   ration_kg_jour: number | null
@@ -39,14 +39,14 @@ export type PlanRow = {
 type Mode = 'create' | 'edit'
 
 type BandeOption = { id: string; nom: string; code: string }
-type TypeAlimentOption = { id: string; nom: string }
+type FormuleOption = { id: string; nom: string }
 
 type Props = {
   trigger: React.ReactNode
   mode?: Mode
   initial?: PlanRow | null
   bandes: BandeOption[]
-  typesAliment: TypeAlimentOption[]
+  formules: FormuleOption[]
 }
 
 const titleClass =
@@ -64,14 +64,14 @@ export function DialogPlan({
   mode = 'create',
   initial = null,
   bandes,
-  typesAliment,
+  formules,
 }: Props) {
   const [open, setOpen] = useState(false)
 
   const defaultValues: PlanInput = {
     id: initial?.id ?? '',
     bande_id: initial?.bande_id ?? '',
-    type_aliment_id: initial?.type_aliment_id ?? '',
+    formule_id: initial?.formule_id ?? '',
     date_debut: initial?.date_debut ?? new Date().toISOString().slice(0, 10),
     date_fin: initial?.date_fin ?? '',
     ration_kg_jour: initial?.ration_kg_jour ?? '',
@@ -95,7 +95,7 @@ export function DialogPlan({
   }, [open, initial?.id])
 
   const bande_id = watch('bande_id')
-  const type_aliment_id = watch('type_aliment_id')
+  const formule_id = watch('formule_id')
 
   async function onSubmit(data: PlanInput) {
     const res =
@@ -145,27 +145,27 @@ export function DialogPlan({
           </div>
 
           <div>
-            <Label htmlFor="plan-type">Type d’aliment</Label>
+            <Label htmlFor="plan-formule">Formule d’aliment</Label>
             <Select
-              value={type_aliment_id || ''}
+              value={formule_id || ''}
               onValueChange={(v) =>
-                setValue('type_aliment_id', (v as string) || '', {
+                setValue('formule_id', (v as string) || '', {
                   shouldDirty: true,
                 })
               }
             >
-              <SelectTrigger id="plan-type" className="w-full">
-                <SelectValue placeholder="Choisir un aliment" />
+              <SelectTrigger id="plan-formule" className="w-full">
+                <SelectValue placeholder="Choisir une formule" />
               </SelectTrigger>
               <SelectContent>
-                {typesAliment.map((t) => (
-                  <SelectItem key={t.id} value={t.id}>
-                    {t.nom}
+                {formules.map((f) => (
+                  <SelectItem key={f.id} value={f.id}>
+                    {f.nom}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <FieldError message={errors.type_aliment_id?.message as string} />
+            <FieldError message={errors.formule_id?.message as string} />
           </div>
 
           <div className="grid grid-cols-2 gap-3">

@@ -2,14 +2,18 @@ import { z } from 'zod'
 
 /* -------------------------------------------------------------------------- */
 /*  SCHEMA Plan d'alimentation                                                 */
-/*  Référence DB : public.plans_alimentation                                   */
-/*  Colonnes : bande_id, type_aliment_id, date_debut, date_fin, ration_kg_jour */
+/*  Référence DB (genesis 2026-05-23) : public.plans_alimentation              */
+/*  Colonnes réelles : ferme_id, bande_id, animal_id, formule_id,              */
+/*                     date_debut, date_fin, ration_kg_jour, observations      */
+/*                                                                             */
+/*  FIX S5 LANE4 : ancien code référait `type_aliment_id` (n'existe pas dans  */
+/*  ce schéma). Alignement sur `formule_id REFERENCES formules(id)`.          */
 /* -------------------------------------------------------------------------- */
 
 export const schemaPlan = z.object({
   id: z.string().uuid().optional().or(z.literal('')),
   bande_id: z.string().uuid({ message: 'Bande requise' }),
-  type_aliment_id: z.string().uuid({ message: 'Type d’aliment requis' }),
+  formule_id: z.string().uuid({ message: 'Formule d’aliment requise' }),
   date_debut: z.string().min(1, 'Date de début requise'),
   date_fin: z.string().optional().or(z.literal('')),
   ration_kg_jour: z.union([

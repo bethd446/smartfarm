@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ExportButton } from '@/components/export-button'
-import { Activity, Plus, ChevronLeft } from 'lucide-react'
+import { Activity, Plus, ChevronLeft, AlertTriangle } from 'lucide-react'
 import { formatDateContextuel } from '@/lib/format/dates'
 
 import { DialogConsommation, type ConsoRow } from './_dialog-conso'
@@ -207,9 +207,28 @@ export default async function ConsommationsPage() {
         </CardHeader>
         <CardContent className="p-0">
           {error ? (
-            <p className="p-6 text-sm text-[var(--sf-danger-ink,#7A2A1F)]">
-              Erreur de chargement : {error.message}
-            </p>
+            <div
+              role="alert"
+              aria-live="polite"
+              className="p-8 text-center space-y-3 border border-dashed border-[var(--sf-border,#E5DDD0)] rounded-md mx-4 my-4"
+            >
+              <AlertTriangle
+                className="h-8 w-8 mx-auto text-[var(--sf-warning-ink,#5A3E0E)]"
+                aria-hidden="true"
+              />
+              <p className="text-sm font-medium text-[var(--sf-ink,#1a1a1a)]">
+                Consommations : chargement impossible
+              </p>
+              <p className="text-xs text-[var(--sf-muted,#5C5346)] max-w-md mx-auto">
+                Le module est temporairement indisponible. Contactez votre administrateur
+                si le problème persiste.
+              </p>
+              {process.env.NODE_ENV !== 'production' ? (
+                <pre className="text-[10px] text-[var(--sf-muted,#5C5346)] bg-[var(--sf-surface-1,rgba(0,0,0,0.02))] p-2 rounded mt-2 overflow-x-auto text-left">
+                  {error.message}
+                </pre>
+              ) : null}
+            </div>
           ) : rows.length === 0 ? (
             <div className="p-8 text-center space-y-3">
               <p className="text-sm text-[var(--sf-muted,#5C5346)]">
