@@ -105,6 +105,8 @@ Dark mode + html[data-contrast="high"] couverts.
    - Mutations (INSERT/UPDATE) : pas de filtre statut (l'ID identifie l'animal)
 10. **Hydration dates** (post B2-EXT S3 2026-05-25) : tout rendu de date côté JSX Server Component PASSE par les composants client `<RelativeTime>` ou `<FormattedDate>` (dans `components/ui/`). Bannir `formatDistanceToNow` / `toLocaleString` / `Intl.DateTimeFormat` dans du JSX serveur — risque erreur React #418.
 11. **Multi-agent orchestration** : pour tout sprint complexe (≥3 fichiers, doute scope), charger skill `multi-agent-prof-review` (software-development/). Pattern : auditeur read-only → orchestrateur décide → N producteurs parallèles → prof reviewer. Mesuré 0 régression sur S2/B1-EXT/S3.
+12. **Migration SQL Supabase Cloud** : appliquer via Management API avec PAT (`/root/.hermes-memory/credentials.md`). Endpoint : `POST https://api.supabase.com/v1/projects/<ref>/database/query` body `{"query":"..."}`. Réponse `[]` = succès (CREATE/UPDATE) ou rows JSON pour SELECT. Bcp plus rapide que Studio UI. Ne JAMAIS commiter le PAT.
+13. **Navigation harmonisée S4** : 12 entrées sidebar/drawer (vs 14 avant). Retirés : `/bandes` (purgé) et `/sanitaire/ppa` top-level (sous-page conservée). Si tu ajoutes un menu, considère d'abord s'il peut être absorbé en sous-page.
 
 ## ARCHITECTURE FICHIERS CLÉS
 app/
