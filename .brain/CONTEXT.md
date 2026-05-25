@@ -103,6 +103,8 @@ Dark mode + html[data-contrast="high"] couverts.
    - `.eq('statut', 'actif').is('deleted_at', null)` STRICT pour reproduction (pas saillir un malade)
    - **Exceptions volontaires** : fiches détail (`cheptel/[id]/*`), généalogie, chatbot RAG, registre réglementaire → garder accès animaux réformés (traçabilité)
    - Mutations (INSERT/UPDATE) : pas de filtre statut (l'ID identifie l'animal)
+10. **Hydration dates** (post B2-EXT S3 2026-05-25) : tout rendu de date côté JSX Server Component PASSE par les composants client `<RelativeTime>` ou `<FormattedDate>` (dans `components/ui/`). Bannir `formatDistanceToNow` / `toLocaleString` / `Intl.DateTimeFormat` dans du JSX serveur — risque erreur React #418.
+11. **Multi-agent orchestration** : pour tout sprint complexe (≥3 fichiers, doute scope), charger skill `multi-agent-prof-review` (software-development/). Pattern : auditeur read-only → orchestrateur décide → N producteurs parallèles → prof reviewer. Mesuré 0 régression sur S2/B1-EXT/S3.
 
 ## ARCHITECTURE FICHIERS CLÉS
 app/
