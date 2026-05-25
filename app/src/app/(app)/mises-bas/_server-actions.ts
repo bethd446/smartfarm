@@ -161,7 +161,7 @@ export async function creerSevrage(
         tag: `P-${sevrage.id.slice(0, 8)}-${i + 1}`,
         nom: null,
         sexe: i % 2 === 0 ? 'F' : 'M', // Répartition 50/50 F/M
-        categorie: 'porcelet',
+        categorie: 'porcelet_sevre',
         stade: 'demarrage_1',
         statut: 'actif',
         batiment_id: d.batiment_destination_id,
