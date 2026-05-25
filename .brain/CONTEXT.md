@@ -369,3 +369,12 @@ Enum DB étendu : `gestation_vide` ajouté.
   `doublon_pesee_a_clarifier`, à résoudre prochaine pesée terrain.
 - **Composant HistoriquePoids** : OK en prod (commit cd86cad), affiche courbe + table
   + GMQ par animal + référentiel Lavalier-Toulze.
+
+## PITFALL build standalone (audit 2026-05-25)
+- /root/package-lock.json (résidu install hors-projet) provoque warning Turbopack
+  "multiple lockfiles" — **NE PAS supprimer** car détermine où Next met server.js :
+  - AVEC lockfile root → .next/standalone/projects/smartfarm/app/server.js (attendu)
+  - SANS lockfile root → .next/standalone/server.js (casse npm start + deploy-static-copy.sh)
+- Warning cosmétique à laisser tel quel. turbopack.root dans next.config.ts a le même
+  effet de bord. Solution propre = adapter deploy-static-copy.sh + npm start + Hostinger
+  start cmd avant de purger — risque vs bénéfice = négatif, laisser dormir.
