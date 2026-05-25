@@ -97,6 +97,12 @@ Dark mode + html[data-contrast="high"] couverts.
 7. Cible UI : éleveur Android 4G, plein soleil 1500lx, mains sales, lecture 3s
 8. Validation visuelle OBLIGATOIRE : browser_console computed styles + playwright screenshot
    PAS de "HTTP 200 = livré" — vérifier rendu réel
+9. **Filtres animaux "vivants"** (post B1-EXT S2 2026-05-25) : RLS filtre par ferme MAIS PAS par statut.
+   Toute query SELECT-list/count `from('animaux')` DOIT inclure :
+   - `.in('statut', ['actif', 'malade']).is('deleted_at', null)` pour vue cheptel/KPI/calendrier sanitaire/pesées
+   - `.eq('statut', 'actif').is('deleted_at', null)` STRICT pour reproduction (pas saillir un malade)
+   - **Exceptions volontaires** : fiches détail (`cheptel/[id]/*`), généalogie, chatbot RAG, registre réglementaire → garder accès animaux réformés (traçabilité)
+   - Mutations (INSERT/UPDATE) : pas de filtre statut (l'ID identifie l'animal)
 
 ## ARCHITECTURE FICHIERS CLÉS
 app/
