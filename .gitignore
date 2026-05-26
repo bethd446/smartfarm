@@ -56,3 +56,7 @@ coverage
 .claude-memory/
 # Worktrees Git internes (Claude Code dispatch d'agents isolés)
 .claude/worktrees/
+
+# ---- Playwright auth storageState ----
+# storageState contient JWT démo, ne jamais commiter
+**/playwright/.auth/

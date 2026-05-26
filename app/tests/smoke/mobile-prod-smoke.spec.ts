@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 /**
  * Smoke prod Mobile — Phase 2 (Pixel 7).
@@ -11,31 +11,10 @@ import { test, expect, type Page } from '@playwright/test'
  * - Pagination alertes (boutons Précédent/Suivant si ≥11 alertes)
  * - Touch targets min 44px (sample 5 boutons par route)
  *
- * Credentials démo (publics côté équipe) :
- *   demo@smartfarm.group / Demo6734N0xUHH1I
+ * Auth : session partagée via storageState (cf auth.setup.ts + playwright.smoke.config.ts).
  */
 
-const DEMO_EMAIL = process.env.SMOKE_EMAIL ?? 'demo@smartfarm.group'
-const DEMO_PASS = process.env.SMOKE_PASS ?? 'Demo6734N0xUHH1I'
-
-async function login(page: Page): Promise<boolean> {
-  try {
-    await page.goto('/connexion', { waitUntil: 'networkidle', timeout: 30000 })
-    await page.getByLabel(/email/i).fill(DEMO_EMAIL)
-    await page.getByLabel(/mot de passe/i).fill(DEMO_PASS)
-    await page.getByRole('button', { name: /se connecter/i }).click()
-    await page.waitForURL(/\/(dashboard|cheptel)/, { timeout: 25000 })
-    return true
-  } catch {
-    return false
-  }
-}
-
 test.describe('Mobile Phase 2 — smartfarm.group', () => {
-  test.beforeEach(async ({ page }) => {
-    const ok = await login(page)
-    test.skip(!ok, 'Login démo indisponible (auth Supabase à investiguer côté Hostinger)')
-  })
 
   test('PWA : manifest.json renvoie 200 + JSON valide', async ({ page, request }) => {
     const response = await request.get('/manifest.json')
@@ -160,11 +139,6 @@ test.describe('Mobile Phase 2 — smartfarm.group', () => {
 })
 
 test.describe('Mobile Phase 2 — Features à venir (SKIP si absentes)', () => {
-  test.beforeEach(async ({ page }) => {
-    const ok = await login(page)
-    test.skip(!ok, 'Login démo indisponible (auth Supabase à investiguer côté Hostinger)')
-  })
-
   test('bottom-nav présent sur 5 routes', async ({ page }) => {
     const routes = ['/dashboard', '/cheptel', '/reproduction', '/alertes', '/mises-bas']
     

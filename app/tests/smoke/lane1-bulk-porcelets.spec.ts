@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
 /**
  * S5 Lane 1 — Bulk transition stade porcelets
@@ -10,24 +10,11 @@ import { test, expect, type Page } from '@playwright/test'
  * - Annulation sans mutation BDD
  * - Mobile : sticky bar offset au-dessus BottomNav (h-16 = 64px)
  * - 0 erreur console React #418 hydration
+ *
+ * Auth : session partagée via storageState (cf auth.setup.ts + playwright.smoke.config.ts).
  */
 
-const DEMO_EMAIL = process.env.SMOKE_EMAIL ?? 'demo@smartfarm.group'
-const DEMO_PASS = process.env.SMOKE_PASS ?? 'Demo6734N0xUHH1I'
-
-async function login(page: Page) {
-  await page.goto('/connexion')
-  await page.getByLabel(/email/i).fill(DEMO_EMAIL)
-  await page.getByLabel(/mot de passe/i).fill(DEMO_PASS)
-  await page.getByRole('button', { name: /se connecter/i }).click()
-  await page.waitForURL(/\/(dashboard|cheptel)/, { timeout: 15000 })
-}
-
 test.describe('S5 Lane 1 — Bulk transition stade porcelets', () => {
-  test.beforeEach(async ({ page }) => {
-    await login(page)
-  })
-
   test('onglet porcelets affiche table custom avec checkboxes', async ({ page }) => {
     await page.goto('/cheptel?tab=porcelets')
     // Header checkbox "Tout sélectionner"
