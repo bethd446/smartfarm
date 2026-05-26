@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { EconomiqueCharts } from './_charts'
 
 export const metadata: Metadata = {
-  title: 'Indicateurs économiques — Smart Farm',
+  title: 'Indicateurs économiques',
   description: 'Coût aliment par kg vif produit, marge brute, répartition des coûts en XOF.',
 }
 

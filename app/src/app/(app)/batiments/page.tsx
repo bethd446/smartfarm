@@ -7,7 +7,7 @@ import { Building2, Plus } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Bâtiments — Smart Farm',
+  title: 'Bâtiments',
 }
 
 /**

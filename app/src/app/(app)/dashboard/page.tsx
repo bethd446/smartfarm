@@ -20,7 +20,7 @@ import {
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Tableau de bord — Smart Farm',
+  title: 'Tableau de bord',
 }
 
 /** Map priorité (numérique 1/2/3 OU sémantique critique/elevee/normale) → Badge. */

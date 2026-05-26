@@ -6,7 +6,7 @@ import { SearchTips } from './_components/search-tips'
 import { TipCard, CATEGORIE_LABELS, NIVEAU_LABELS } from './_components/tip-card'
 
 export const metadata = {
-  title: 'Conseiller — Smart Farm',
+  title: 'Conseiller',
   description:
     '300 conseils agritech pour gérer ton élevage porcin : reproduction, sanitaire, nutrition, conduite, économique, installation.',
 }

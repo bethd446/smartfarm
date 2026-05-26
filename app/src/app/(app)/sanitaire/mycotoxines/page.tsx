@@ -32,7 +32,7 @@ import {
 import { DialogEnregistrerLot } from './_dialog-lot'
 
 export const metadata: Metadata = {
-  title: 'Mycotoxines — Smart Farm',
+  title: 'Mycotoxines',
 }
 
 type LotRow = {

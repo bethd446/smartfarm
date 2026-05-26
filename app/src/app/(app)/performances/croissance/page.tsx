@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { CroissanceChart } from './_chart'
 
 export const metadata: Metadata = {
-  title: 'Courbes de croissance — Smart Farm',
+  title: 'Courbes de croissance',
   description: 'Analyse des courbes de croissance réelles vs référentiel Lavalier-Toulze, GMQ par stade.',
 }
 

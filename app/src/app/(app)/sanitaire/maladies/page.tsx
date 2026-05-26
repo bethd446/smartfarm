@@ -4,7 +4,7 @@ import { MaladiesSearch } from './_search'
 import { MALADIES_PORCINES } from '@/lib/maladies-porcines'
 
 export const metadata = {
-  title: 'Catalogue maladies porcines — Smart Farm',
+  title: 'Catalogue maladies porcines',
   description:
     'Catalogue des 15 maladies porcines prioritaires en Côte d\'Ivoire : symptômes, diagnostic, traitement et prévention.',
 }

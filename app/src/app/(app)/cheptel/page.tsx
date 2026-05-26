@@ -14,7 +14,7 @@ import { BannerTransfertCroissance } from './_banner-transfert-croissance'
 import { PorceletsTableBulk } from './_porcelets-table-bulk'
 
 export const metadata: Metadata = {
-  title: 'Cheptel — Smart Farm',
+  title: 'Cheptel',
 }
 
 /** Mapping ton sémantique → variante Badge atome carnet. */

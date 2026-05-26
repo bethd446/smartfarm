@@ -31,7 +31,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params
   const m = getMaladieBySlug(slug)
-  if (!m) return { title: 'Maladie inconnue — Smart Farm' }
+  if (!m) return { title: 'Maladie inconnue' }
   return {
     title: `${m.nom} — Catalogue maladies`,
     description: `Symptômes, diagnostic, traitement et prévention de ${m.nom} chez le porc.`,

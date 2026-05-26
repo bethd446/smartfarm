@@ -9,7 +9,7 @@ import Link from 'next/link'
 import { BoutonPdfMensuel } from './_bouton-pdf-mensuel'
 
 export const metadata: Metadata = {
-  title: 'Indicateurs zootechniques — Smart Farm',
+  title: 'Indicateurs zootechniques',
   description: 'Pilotage IFIP : productivité numérique, IC, GMQ, performance par bande et classement truies.',
 }
 

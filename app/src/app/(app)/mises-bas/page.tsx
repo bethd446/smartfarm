@@ -14,7 +14,7 @@ import { DialogSevrage } from './_dialog-sevrage'
 import { MisesBasFab } from './_fab'
 
 export const metadata: Metadata = {
-  title: 'Mises bas & Sevrages — Smart Farm',
+  title: 'Mises bas & Sevrages',
 }
 
 /** Mapping ton sémantique → variante Badge atome carnet. */

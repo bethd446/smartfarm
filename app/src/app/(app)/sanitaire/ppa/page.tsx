@@ -24,7 +24,7 @@ import {
 import { DialogObservationPPA } from './_dialog-observation'
 
 export const metadata: Metadata = {
-  title: 'PPA — Surveillance — Smart Farm',
+  title: 'PPA — Surveillance',
 }
 
 type Surveillance = {

@@ -4,7 +4,7 @@ import { Chatbot } from './_components/chatbot'
 import { signSessionToken } from '@/lib/chatbot/session-token'
 
 export const metadata: Metadata = {
-  title: 'Assistant — Smart Farm',
+  title: 'Assistant',
 }
 
 /**

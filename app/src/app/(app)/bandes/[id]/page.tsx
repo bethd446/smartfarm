@@ -275,6 +275,6 @@ export async function generateMetadata({
   return {
     title: data?.nom
       ? `${data.nom} — Bande — Smart Farm`
-      : 'Bande — Smart Farm',
+      : 'Bande',
   }
 }

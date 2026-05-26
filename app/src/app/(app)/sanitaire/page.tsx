@@ -16,7 +16,7 @@ import type { Metadata } from 'next'
 import { MALADIES_PORCINES } from '@/lib/maladies-porcines'
 import { SanitaireFab } from './_fab'
 
-export const metadata: Metadata = { title: 'Sanitaire — Smart Farm' }
+export const metadata: Metadata = { title: 'Sanitaire' }
 
 /**
  * V2-HARMONIE (HARM-A) — Hub sanitaire à 6 cards

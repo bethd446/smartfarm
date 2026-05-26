@@ -505,6 +505,6 @@ export async function generateMetadata({
   const sb = await createClient()
   const { data } = await sb.from('batiments').select('nom').eq('id', id).maybeSingle()
   return {
-    title: data?.nom ? `${data.nom} — Bâtiment — Smart Farm` : 'Bâtiment — Smart Farm',
+    title: data?.nom ? `${data.nom} — Bâtiment — Smart Farm` : 'Bâtiment',
   }
 }

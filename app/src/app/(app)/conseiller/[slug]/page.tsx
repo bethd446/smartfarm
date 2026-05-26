@@ -26,7 +26,7 @@ export async function generateMetadata({
     .select('titre, resume')
     .eq('slug', slug)
     .maybeSingle()
-  if (!data) return { title: 'Conseil introuvable — Smart Farm' }
+  if (!data) return { title: 'Conseil introuvable' }
   return {
     title: `${data.titre} — Conseiller`,
     description: data.resume,

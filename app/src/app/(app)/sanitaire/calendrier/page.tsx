@@ -14,7 +14,7 @@ import { marquerActePorceletFait } from './_actions-porcelets'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Calendrier sanitaire — Smart Farm',
+  title: 'Calendrier sanitaire',
 }
 
 export const dynamic = 'force-dynamic'

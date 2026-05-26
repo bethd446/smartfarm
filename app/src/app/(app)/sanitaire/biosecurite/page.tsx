@@ -31,7 +31,7 @@ import { DialogNouvelleVisite } from './_dialog-visite'
 import { noterAuditBiosecurite } from './_actions'
 
 export const metadata: Metadata = {
-  title: 'Biosécurité — Smart Farm',
+  title: 'Biosécurité',
 }
 
 type ChecklistRow = {

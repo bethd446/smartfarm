@@ -13,7 +13,7 @@ import { DialogDiagnostic } from './_dialog-diagnostic'
 import { ReproductionFab } from './_fab'
 
 export const metadata: Metadata = {
-  title: 'Reproduction — Smart Farm',
+  title: 'Reproduction',
 }
 
 export default async function ReproductionPage() {

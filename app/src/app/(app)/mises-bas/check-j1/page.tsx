@@ -18,7 +18,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Baby, ChevronLeft, ShieldCheck } from 'lucide-react'
 
 export const metadata: Metadata = {
-  title: 'Check J+1 mises-bas — Smart Farm',
+  title: 'Check J+1 mises-bas',
 }
 
 // ─── Server Action : enregistrer un check post mise-bas ──────────────

@@ -10,7 +10,7 @@ import { DialogAlerteManuelle } from './_components/dialog-alerte-manuelle'
 import { AlertesFab } from './_fab'
 
 export const metadata: Metadata = {
-  title: 'Alertes — Smart Farm',
+  title: 'Alertes',
 }
 
 /**
