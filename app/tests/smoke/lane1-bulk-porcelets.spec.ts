@@ -33,7 +33,7 @@ test.describe('S5 Lane 1 — Bulk transition stade porcelets', () => {
     // Sticky bar avec "2 sélectionné(s)"
     await expect(page.getByText(/^2 sélectionnés?$/)).toBeVisible({ timeout: 5000 })
     await expect(page.getByRole('button', { name: /changer le stade/i })).toBeVisible()
-    await expect(page.getByRole('button', { name: /effacer/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /tout désélectionner/i })).toBeVisible()
   })
 
   test('bouton effacer désélectionne tout', async ({ page }) => {
@@ -42,7 +42,7 @@ test.describe('S5 Lane 1 — Bulk transition stade porcelets', () => {
     await rowCheckboxes.nth(0).check()
     await rowCheckboxes.nth(1).check()
     await expect(page.getByText(/^2 sélectionnés?$/)).toBeVisible()
-    await page.getByRole('button', { name: /effacer/i }).click()
+    await page.getByRole('button', { name: /tout désélectionner/i }).click()
     // Sticky bar doit disparaître (selection.size === 0)
     await expect(page.getByText(/^2 sélectionnés?$/)).not.toBeVisible({ timeout: 3000 })
   })
