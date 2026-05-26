@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
 import { Baby, Plus, Scissors } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
+import { AnimalLabel } from '@/components/ui/animal-label'
 import { TERRAIN } from '@/lib/terrain-labels'
 import { DialogMiseBas } from './_dialog-mise-bas'
 import { DialogSevrage } from './_dialog-sevrage'
@@ -215,11 +216,10 @@ export default async function MisesBasPage() {
               <tbody>
                 {(mb ?? []).map((m: any) => (
                   <tr key={m.id} className="border-b last:border-0 hover:bg-muted/20">
-                    <td className="p-3 font-mono">
-                      {m.truie?.tag ?? '—'}{' '}
-                      {m.truie?.nom && (
-                        <span className="text-muted-foreground">({m.truie.nom})</span>
-                      )}
+                    <td className="p-3">
+                      {m.truie ? (
+                        <AnimalLabel animal={m.truie} format="inline" />
+                      ) : '—'}
                     </td>
                     <td className="p-3">{new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}</td>
                     <td className="p-3 text-right tabular-nums">{m.nes_totaux}</td>

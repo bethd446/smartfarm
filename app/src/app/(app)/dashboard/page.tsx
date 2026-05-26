@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import Link from 'next/link'
 import { PiggyBank, AlertCircle, Clock, Calendar, Baby, CheckCircle2, Zap, Skull, Target } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
+import { AnimalLabel } from '@/components/ui/animal-label'
 import { TYPE_LABELS, cleanDescription } from '@/lib/terrain-labels'
 import { AlertesWidget } from './_components/alertes-widget'
 import { TipDuJour } from './_components/tip-du-jour'
@@ -392,10 +393,9 @@ export default async function DashboardPage() {
                     <li key={mb.id} className="flex items-center justify-between gap-3 py-3 min-h-[48px]">
                       <div className="min-w-0">
                         <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
-                          {mb.animaux?.nom ?? mb.animaux?.tag ?? '—'}
-                          <span className="text-xs text-[var(--sf-subtle)] ml-2">
-                            ({mb.animaux?.tag})
-                          </span>
+                          {mb.animaux ? (
+                            <AnimalLabel animal={mb.animaux} format="full" />
+                          ) : '—'}
                         </div>
                         <div className="text-xs text-[var(--sf-muted)] tabular-nums">
                           {new Date(mb.date_mise_bas).toLocaleDateString('fr-FR')} · {totaux} totaux · {mb.nes_morts ?? 0} morts
