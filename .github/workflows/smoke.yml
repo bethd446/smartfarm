@@ -43,29 +43,6 @@ jobs:
         if: github.event_name == 'push'
         run: sleep 180
 
-      # Probe connectivity GHA runner → prod (diagnostic Playwright failures)
-      - name: Probe prod from runner
-        if: always()
-        run: |
-          set +e
-          echo "===Public IP runner==="
-          curl -s --max-time 5 https://api.ipify.org && echo
-          echo "===HTTP GET /connexion (verbose)==="
-          curl -sv --max-time 15 -o /tmp/connexion.html -w "\nHTTP %{http_code} TIME %{time_total}s SIZE %{size_download}\n" https://smartfarm.group/connexion 2>&1 | tail -40
-          echo "===User-Agent check (Playwright vs curl)==="
-          curl -s --max-time 10 -o /dev/null -w "curl UA: HTTP %{http_code}\n" https://smartfarm.group/connexion
-          curl -s --max-time 10 -A "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/131.0.0.0 Safari/537.36" -o /dev/null -w "HeadlessChrome UA: HTTP %{http_code}\n" https://smartfarm.group/connexion
-          echo "===HTML head /connexion==="
-          head -80 /tmp/connexion.html
-          echo ""
-          echo "===Supabase auth from runner==="
-          curl -s --max-time 10 -X POST "https://tpzhxjzwlxwujboboyit.supabase.co/auth/v1/token?grant_type=password" \
-            -H "apikey: sb_publishable_VdYNHQZS-1ZMMSO4tpiVIg_bETYXHIT" \
-            -H "Content-Type: application/json" \
-            -d '{"email":"demo@smartfarm.group","password":"Demo6734N0xUHH1I"}' \
-            -o /tmp/auth.json -w "HTTP %{http_code} TIME %{time_total}s\n"
-          jq -r '.access_token // .error // "no_token"' /tmp/auth.json | head -c 80; echo
-
       - name: Smoke desktop
         env:
           SMOKE_URL: ${{ github.event.inputs.url || 'https://smartfarm.group' }}
@@ -74,6 +51,7 @@ jobs:
         run: npm run e2e:smoke:desktop
 
       - name: Smoke mobile
+        if: always()
         env:
           SMOKE_URL: ${{ github.event.inputs.url || 'https://smartfarm.group' }}
           SMOKE_EMAIL: ${{ secrets.SMOKE_EMAIL || 'demo@smartfarm.group' }}
