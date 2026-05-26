@@ -92,6 +92,7 @@ export default async function ReproductionPage() {
     truie_id: string
     date_saillie: string
     truie?: { tag: string; nom: string | null } | null
+    verrat?: { tag: string; nom: string | null } | null
     diagnostics_gestation?: Array<{ resultat: string }>
   }
   const saillieRows = (saillies ?? []) as SaillieRow[]
@@ -107,6 +108,8 @@ export default async function ReproductionPage() {
       truie_id: s.truie_id,
       truie_tag: s.truie?.tag ?? '',
       truie_nom: s.truie?.nom ?? null,
+      verrat_tag: s.verrat?.tag ?? null,
+      verrat_nom: s.verrat?.nom ?? null,
       date_saillie: s.date_saillie,
     }))
 

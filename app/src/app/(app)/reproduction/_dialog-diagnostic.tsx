@@ -32,6 +32,8 @@ export type SaillieOption = {
   truie_id?: string
   truie_tag: string
   truie_nom: string | null
+  verrat_tag?: string | null
+  verrat_nom?: string | null
   date_saillie: string
 }
 
@@ -177,12 +179,17 @@ export function DialogDiagnostic({
                   const date = new Date(s.date_saillie).toLocaleDateString(
                     'fr-FR'
                   )
-                  const label = s.truie_nom
+                  const truieLabel = s.truie_nom
                     ? `${s.truie_nom} (${s.truie_tag})`
                     : s.truie_tag
+                  // Désambiguïse 2 saillies même truie/jour : "× Verrat"
+                  const verratLabel =
+                    s.verrat_tag
+                      ? ` × ${s.verrat_nom ?? s.verrat_tag}`
+                      : ''
                   return (
                     <option key={s.id} value={s.id}>
-                      {label} — montée {date}
+                      {truieLabel} — montée {date}{verratLabel}
                     </option>
                   )
                 })}
