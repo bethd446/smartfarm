@@ -37,12 +37,9 @@ export default defineConfig({
 
   projects: [
     // 1. Setup : 1 SEUL login démo → save storageState
-    // retries=2 (au lieu du défaut 1 hérité) : le cold-start Hostinger Passenger
-    // peut nécessiter 2+ tentatives pour warm-up (thunder herd entre 2 jobs //).
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
-      retries: 2,
     },
     // 2. Tests desktop avec session pré-authentifiée
     {
