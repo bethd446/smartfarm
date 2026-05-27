@@ -12,17 +12,18 @@ import {
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
-// V2-HARMONIE (HARM-A) — sidebar 5 groupes / 14 menus
+// V2-HARMONIE (HARM-A) — sidebar 4 groupes / 14 menus
 // Refonte v1.0 (2026-05-23) : structure BEM .sidebar__* conforme au design system
+// S6 (2026-05-27) : rename Pilotage→Aujourd'hui, fusion Santé+Alimentation→Sanitaire & alim
 // ZIP smartfarm-design-v1/components/sidebar.html — CSS dans design-v1.css
 // ---------------------------------------------------------------------------
 const nav = [
-  // Pilotage
-  { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: 'Pilotage' },
-  { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: 'Pilotage' },
-  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: 'Pilotage' },
-  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: 'Pilotage' },
-  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: 'Pilotage' },
+  // Aujourd'hui
+  { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: "Aujourd'hui" },
+  { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: "Aujourd'hui" },
+  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: "Aujourd'hui" },
+  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: "Aujourd'hui" },
+  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: "Aujourd'hui" },
 
   // Élevage
   { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
@@ -30,12 +31,10 @@ const nav = [
   { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
   { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
 
-  // Santé
-  { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Santé' },
-
-  // Alimentation
-  { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Alimentation' },
-  { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Alimentation' },
+  // Sanitaire & alim
+  { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Sanitaire & alim' },
+  { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Sanitaire & alim' },
+  { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Sanitaire & alim' },
 
   // Outils
   { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Outils' },
