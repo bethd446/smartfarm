@@ -46,6 +46,22 @@ jobs:
         if: github.event_name == 'push'
         run: sleep 180
 
+      # Pre-warm Hostinger Passenger : évite le thunder herd cold-start
+      # quand les 2 jobs (desktop + mobile) hit en // sur une instance froide.
+      # Passenger Cloud Hosting ne sert qu'1 cold-start à la fois → l'un des 2
+      # jobs perdait la course. 3 curls espacés de 2s warm-up l'instance avant
+      # que Playwright démarre. ~6s overhead négligeable.
+      - name: Pre-warm Hostinger (anti thunder herd)
+        if: always()
+        run: |
+          set +e
+          echo "Pre-warming Hostinger Passenger before Playwright auth setup..."
+          for i in 1 2 3; do
+            CODE=$(curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://smartfarm.group/connexion)
+            echo "  Hit $i: HTTP $CODE"
+            sleep 2
+          done
+
       - name: Smoke desktop
         env:
           SMOKE_URL: ${{ github.event.inputs.url || 'https://smartfarm.group' }}

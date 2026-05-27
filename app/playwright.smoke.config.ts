@@ -37,9 +37,13 @@ export default defineConfig({
 
   projects: [
     // 1. Setup : 1 SEUL login démo → save storageState
+    // retries=2 (3 tentatives totales) : défense en profondeur post-mitigation
+    // thunder herd côté CI (cf smoke.yml step "Pre-warm Hostinger"). Si malgré
+    // le pre-warm une instance reste froide au moment du auth.setup, retry.
     {
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
+      retries: 2,
     },
     // 2. Tests desktop avec session pré-authentifiée
     {
