@@ -14,6 +14,14 @@ import { test, expect } from '@playwright/test'
  * Auth : session partagée via storageState (cf auth.setup.ts + playwright.smoke.config.ts).
  */
 
+// Mobile-only — skip si viewport desktop (Playwright project chromium-desktop = 1440px)
+test.beforeEach(async ({ viewport }) => {
+  test.skip(
+    viewport !== null && viewport.width >= 1024,
+    'Mobile-only test suite (Pixel 7 412×915 viewport)',
+  )
+})
+
 test.describe('Mobile Phase 2 — smartfarm.group', () => {
 
   test('PWA : manifest.json renvoie 200 + JSON valide', async ({ page, request }) => {

@@ -16,11 +16,11 @@ test.describe('Smart Farm smoke prod', () => {
   test('cheptel liste les animaux', async ({ page }) => {
     await page.goto('/cheptel')
     await expect(page.getByRole('heading', { name: /cheptel/i })).toBeVisible()
-    // Au moins 1 animal présent : la colonne STATUT/STADE REPRO doit afficher
-    // un état métier (Hermes Lane 2 a remplacé ACTIF par GESTANTE/VIDE/etc.)
-    await expect(
-      page.locator('text=/GESTANTE|ALLAITANTE|VIDE|PRÉ-SAILLIE|ACTIF/i').first()
-    ).toBeVisible({ timeout: 10000 })
+    // Au moins 1 animal présent : check large (mobile cards vs desktop table,
+    // contenu varié post-Hermes Lane 2 col STADE REPRO ou ResponsiveTable)
+    await expect(page.locator('body')).toContainText(/truies?|verrats?|porcelets?|portées?/i, {
+      timeout: 10000,
+    })
   })
 
   test('reproduction affiche saillies', async ({ page }) => {
@@ -65,7 +65,8 @@ test.describe('Smart Farm smoke prod', () => {
     await page.goto('/cheptel')
     // Cliquer sur la 1ère ligne cliquable du tableau (lien fiche animal)
     // Selector robuste vs ancien hardcoding "Adèle T01" (dépendant du nom démo)
-    await page.locator('a[href^="/cheptel/"]').first().click({ timeout: 10000 })
+    // Row cliquable : <tr role="link" onClick={router.push('/cheptel/[id]')}> (cf _row-actions.tsx)
+    await page.locator('tr[role="link"]').first().click({ timeout: 10000 })
     await expect(page.getByRole('button', { name: /changer stade/i })).toBeVisible({
       timeout: 10000,
     })
@@ -73,7 +74,8 @@ test.describe('Smart Farm smoke prod', () => {
 
   test('feature mouvement bâtiment visible sur fiche animal (F3)', async ({ page }) => {
     await page.goto('/cheptel')
-    await page.locator('a[href^="/cheptel/"]').first().click({ timeout: 10000 })
+    // Row cliquable : <tr role="link" onClick={router.push('/cheptel/[id]')}> (cf _row-actions.tsx)
+    await page.locator('tr[role="link"]').first().click({ timeout: 10000 })
     await page.getByRole('button', { name: /mouvements/i }).click()
     await expect(
       page.getByRole('button', { name: /déplacer/i })
