@@ -73,12 +73,8 @@ CREATE TABLE IF NOT EXISTS public.actes_sanitaires (
   -- Dates
   date_administration timestamptz NOT NULL DEFAULT now(),
   delai_attente_viande_jours int NULL,
-  date_fin_delai_attente date GENERATED ALWAYS AS (
-    CASE
-      WHEN delai_attente_viande_jours IS NULL THEN NULL
-      ELSE (date_administration::date + delai_attente_viande_jours * INTERVAL '1 day')::date
-    END
-  ) STORED,
+  -- date_fin_delai_attente : calculée via trigger BEFORE INSERT/UPDATE (Postgres refuse les GENERATED non-immutable sur cast date)
+  date_fin_delai_attente date NULL,
 
   created_at timestamptz NOT NULL DEFAULT now(),
 
@@ -133,13 +129,19 @@ BEGIN
     FROM public.veterinaires_standards vs
     WHERE vs.id = NEW.produit_id;
   END IF;
+  -- Calcule aussi date_fin_delai_attente (remplace l'ancienne GENERATED column qui était non-immutable)
+  IF NEW.delai_attente_viande_jours IS NULL THEN
+    NEW.date_fin_delai_attente := NULL;
+  ELSE
+    NEW.date_fin_delai_attente := (NEW.date_administration::date + NEW.delai_attente_viande_jours * INTERVAL '1 day')::date;
+  END IF;
   RETURN NEW;
 END;
 $$;
 
 DROP TRIGGER IF EXISTS trg_actes_sanitaires_copy_delai ON public.actes_sanitaires;
 CREATE TRIGGER trg_actes_sanitaires_copy_delai
-  BEFORE INSERT ON public.actes_sanitaires
+  BEFORE INSERT OR UPDATE ON public.actes_sanitaires
   FOR EACH ROW
   EXECUTE FUNCTION public.actes_sanitaires_copy_delai();
 

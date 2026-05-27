@@ -55,8 +55,9 @@ CREATE TABLE IF NOT EXISTS public.mortalites (
     motif <> 'autre' OR (motif_libre IS NOT NULL AND length(trim(motif_libre)) > 0 AND length(motif_libre) <= 200)
   ),
 
-  -- Date pas dans le futur
-  CONSTRAINT chk_mortalite_date_pas_future CHECK (date_mortalite <= current_date)
+  -- Note : "date pas dans le futur" validé côté Zod (_schemas.ts), pas en CHECK SQL
+  -- car Postgres refuse les CHECK constraints non-immutables (current_date est STABLE).
+  CONSTRAINT chk_mortalite_date_raisonnable CHECK (date_mortalite >= '2020-01-01'::date)
 );
 
 CREATE INDEX IF NOT EXISTS idx_mortalites_ferme_date
