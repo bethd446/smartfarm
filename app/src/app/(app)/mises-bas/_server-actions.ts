@@ -2,8 +2,12 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import { miseBasSchema, sevrageSchema } from './_schemas'
-import type { CreerMiseBasInput, CreerSevrageInput } from './_schemas'
+import { miseBasSchema, sevrageSchema, adoptionSchema } from './_schemas'
+import type {
+  CreerMiseBasInput,
+  CreerSevrageInput,
+  CreerAdoptionInput,
+} from './_schemas'
 
 export async function creerMiseBas(
   data: CreerMiseBasInput
@@ -198,6 +202,120 @@ export async function creerSevrage(
     }
   } catch (e) {
     console.error('[creerSevrage] unexpected error:', e)
+    const msg = e instanceof Error ? e.message : 'Erreur inattendue'
+    return { ok: false, error: msg }
+  }
+}
+
+// ─── C9 — Adoption / egalisation portees ──────────────────────────────────
+// Transfert N porcelets d'une MB source vers une MB destination, meme ferme.
+// Verifie : source ≠ destination, capacite source, motif valide.
+// Le trigger BDD ajuste mises_bas.nes_vivants source/destination + valide
+// la coherence ferme (anti cross-ferme malgre RLS).
+export async function creerAdoption(
+  data: CreerAdoptionInput
+): Promise<{ ok: true; adoptionId: string } | { ok: false; error: string }> {
+  try {
+    const parsed = adoptionSchema.safeParse(data)
+    if (!parsed.success) {
+      return {
+        ok: false,
+        error: parsed.error.issues[0]?.message ?? 'Données invalides',
+      }
+    }
+    const d = parsed.data
+
+    const supabase = await createClient()
+
+    // 1. Auth + ferme courante
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (!user) {
+      return { ok: false, error: 'Non authentifié' }
+    }
+    const { data: fermeId, error: errFerme } = await supabase.rpc(
+      'current_farm_id'
+    )
+    if (errFerme || !fermeId) {
+      return {
+        ok: false,
+        error: errFerme?.message ?? 'Ferme courante introuvable',
+      }
+    }
+
+    // 2. Verif metier coherente avant INSERT (UI plus parlante qu'erreur trigger)
+    const [{ data: mbSource, error: e1 }, { data: mbDest, error: e2 }] =
+      await Promise.all([
+        supabase
+          .from('mises_bas')
+          .select('id, ferme_id, nes_vivants, date_mb')
+          .eq('id', d.mb_source_id)
+          .single(),
+        supabase
+          .from('mises_bas')
+          .select('id, ferme_id, nes_vivants, date_mb')
+          .eq('id', d.mb_destination_id)
+          .single(),
+      ])
+
+    if (e1 || !mbSource) {
+      return { ok: false, error: e1?.message ?? 'Portée source introuvable' }
+    }
+    if (e2 || !mbDest) {
+      return {
+        ok: false,
+        error: e2?.message ?? 'Portée destination introuvable',
+      }
+    }
+    if (mbSource.ferme_id !== mbDest.ferme_id) {
+      return {
+        ok: false,
+        error: 'Les deux portées doivent appartenir à la même ferme',
+      }
+    }
+    if (d.nb_porcelets > (mbSource.nes_vivants ?? 0)) {
+      return {
+        ok: false,
+        error: `Source n'a que ${mbSource.nes_vivants ?? 0} porcelets vivants`,
+      }
+    }
+
+    // 3. INSERT adoption (triggers BDD : valide ferme + ajuste compteurs)
+    const payload: Record<string, unknown> = {
+      ferme_id: fermeId,
+      mb_source_id: d.mb_source_id,
+      mb_destination_id: d.mb_destination_id,
+      nb_porcelets: d.nb_porcelets,
+      motif_adoption: d.motif_adoption,
+      date_adoption: d.date_adoption,
+      operateur_user_id: user.id,
+    }
+    if (d.motif_libre && d.motif_libre !== '')
+      payload.motif_libre = d.motif_libre
+    if (d.observations && d.observations !== '')
+      payload.observations = d.observations
+
+    const { data: ins, error } = await supabase
+      .from('adoptions')
+      .insert(payload)
+      .select('id')
+      .single()
+
+    if (error || !ins) {
+      console.error('[creerAdoption] insert error:', error)
+      return {
+        ok: false,
+        error: error?.message ?? 'Échec création adoption',
+      }
+    }
+
+    revalidatePath('/mises-bas')
+    revalidatePath('/cheptel')
+    revalidatePath('/dashboard')
+    return { ok: true, adoptionId: ins.id }
+  } catch (e) {
+    console.error('[creerAdoption] unexpected error:', e)
     const msg = e instanceof Error ? e.message : 'Erreur inattendue'
     return { ok: false, error: msg }
   }

@@ -6,13 +6,17 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Baby, Plus, Scissors } from 'lucide-react'
+import { Baby, Plus, Scissors, ArrowLeftRight } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { TERRAIN } from '@/lib/terrain-labels'
 import { DialogMiseBas } from './_dialog-mise-bas'
 import { DialogSevrage } from './_dialog-sevrage'
+import { DialogAdoption } from './_dialog-adoption'
 import { MisesBasFab } from './_fab'
+
+// Fenetre allaitement standard porc CI : 28j (max realiste 35j si retard sevrage)
+const FENETRE_ADOPTION_JOURS = 35
 
 export const metadata: Metadata = {
   title: 'Mises bas & Sevrages',
@@ -148,6 +152,59 @@ export default async function MisesBasPage({
     occupation_actuelle: Number(b.occupation_actuelle ?? 0),
   }))
 
+  // === C9 — Adoptions : portees en allaitement actuel (<=35j post-MB,
+  //    non sevrees) et historique 30j ===
+  const today = new Date()
+  const limAllaitementMs =
+    today.getTime() - FENETRE_ADOPTION_JOURS * 24 * 60 * 60 * 1000
+
+  const misesBasAllaitantes = ((mb ?? []) as any[])
+    .filter((m) => {
+      // Pas encore sevree
+      if (m.sevrages && m.sevrages.length > 0) return false
+      // Dans la fenetre allaitement
+      const dMb = new Date(m.date_mb).getTime()
+      if (Number.isNaN(dMb)) return false
+      return dMb >= limAllaitementMs && (Number(m.nes_vivants) || 0) >= 0
+    })
+    .map((m) => ({
+      id: m.id as string,
+      truie_tag: (m.truie?.tag ?? '') as string,
+      truie_nom: (m.truie?.nom ?? null) as string | null,
+      date_mb: m.date_mb as string,
+      nes_vivants: Number(m.nes_vivants ?? 0),
+    }))
+
+  // Adoptions recentes (30j) — best-effort, table peut etre absente avant migration
+  const lim30j = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10)
+  let adoptionsRecentes: any[] = []
+  try {
+    const { data: adoptions } = await sb
+      .from('adoptions')
+      .select(
+        `id, date_adoption, nb_porcelets, motif_adoption, motif_libre, observations,
+         source:mb_source_id(id, truie:truie_id(tag, nom)),
+         destination:mb_destination_id(id, truie:truie_id(tag, nom))`
+      )
+      .gte('date_adoption', lim30j)
+      .order('date_adoption', { ascending: false })
+      .limit(50)
+    adoptionsRecentes = (adoptions ?? []) as any[]
+  } catch {
+    // Table absente (migration pas encore appliquee) — section masquee
+    adoptionsRecentes = []
+  }
+
+  const MOTIF_LABELS: Record<string, string> = {
+    surcharge_donneuse: 'Surcharge donneuse',
+    perte_receveuse: 'Perte receveuse',
+    egalisation_taille: 'Égalisation',
+    sante_porcelet: 'Santé porcelet',
+    autre: 'Autre',
+  }
+
   return (
     <div className="space-y-6">
       {/* === Header de page : PageTitle unifié === */}
@@ -169,6 +226,25 @@ export default async function MisesBasPage({
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="mises_bas" />
+          <DialogAdoption
+            mises_bas_allaitantes={misesBasAllaitantes}
+            trigger={
+              <Button
+                variant="outline"
+                size="lg"
+                className="h-12 text-base"
+                disabled={misesBasAllaitantes.length < 2}
+                title={
+                  misesBasAllaitantes.length < 2
+                    ? 'Il faut au moins 2 portées en allaitement (≤35j)'
+                    : undefined
+                }
+              >
+                <ArrowLeftRight className="h-5 w-5 mr-2" />
+                Adoption
+              </Button>
+            }
+          />
           <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
             batiments_disponibles={batimentsDisponibles}
@@ -401,12 +477,99 @@ export default async function MisesBasPage({
                     </div>
                   </div>
                 )}
+                {/* C9 — bouton inline "Adopter depuis cette portee" si
+                    portee allaitante (<=35j, non sevree) ET au moins une
+                    autre portee allaitante disponible comme destination */}
+                {misesBasAllaitantes.find((a) => a.id === m.id) &&
+                  misesBasAllaitantes.length >= 2 && (
+                    <div className="mt-3 pt-2 border-t border-[var(--sf-line)]">
+                      <DialogAdoption
+                        mises_bas_allaitantes={misesBasAllaitantes}
+                        source_id_prefill={m.id}
+                        trigger={
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="w-full h-10 text-xs uppercase tracking-wider"
+                          >
+                            <ArrowLeftRight className="h-4 w-4 mr-2" />
+                            Adopter depuis cette portée
+                          </Button>
+                        }
+                      />
+                    </div>
+                  )}
               </CardContent>
             </Card>
           )
         })}
       </div>
       </>
+      )}
+
+      {/* === C9 — ADOPTIONS RÉCENTES (30j) === */}
+      {adoptionsRecentes.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              Adoptions récentes — 30 jours ({adoptionsRecentes.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
+              <table className="w-full min-w-[720px] text-sm">
+                <thead className="bg-muted/40 border-b">
+                  <tr>
+                    <th className="text-left p-3 font-medium">Date</th>
+                    <th className="text-left p-3 font-medium">Source</th>
+                    <th className="text-left p-3 font-medium">Destination</th>
+                    <th className="text-right p-3 font-medium">Porcelets</th>
+                    <th className="text-left p-3 font-medium">Motif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {adoptionsRecentes.map((a: any) => (
+                    <tr key={a.id} className="border-b last:border-0 hover:bg-muted/20">
+                      <td className="p-3 tabular-nums">
+                        {new Date(a.date_adoption).toLocaleDateString('fr-FR')}
+                      </td>
+                      <td className="p-3">
+                        {a.source?.truie ? (
+                          <AnimalLabel animal={a.source.truie} format="inline" />
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td className="p-3">
+                        {a.destination?.truie ? (
+                          <AnimalLabel
+                            animal={a.destination.truie}
+                            format="inline"
+                          />
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td className="p-3 text-right font-bold tabular-nums">
+                        {a.nb_porcelets}
+                      </td>
+                      <td className="p-3 text-xs">
+                        {MOTIF_LABELS[a.motif_adoption] ?? a.motif_adoption}
+                        {a.motif_adoption === 'autre' && a.motif_libre ? (
+                          <span className="text-[var(--sf-muted)]">
+                            {' '}
+                            — {a.motif_libre}
+                          </span>
+                        ) : null}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* === FAB mobile === */}
