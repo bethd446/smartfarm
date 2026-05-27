@@ -4,11 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import Link from 'next/link'
-import { PiggyBank, AlertCircle, Clock, Calendar, Baby, CheckCircle2, Zap, Skull, Target } from 'lucide-react'
+import { PiggyBank, AlertCircle, Clock, Calendar, Baby, CheckCircle2, Zap, Skull, Target, Hourglass } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { TYPE_LABELS, cleanDescription } from '@/lib/terrain-labels'
 import { AlertesWidget } from './_components/alertes-widget'
+import { isAlerte } from '@/lib/stock-helpers'
 import { TipDuJour } from './_components/tip-du-jour'
 import {
   KpiTechCard,
@@ -116,12 +117,8 @@ export default async function DashboardPage() {
 
   const today = dateFrShort(new Date())
 
-  // Compteur stocks en alerte (stock < seuil_alerte)
-  const nbStocksAlerte = (stockAlertes ?? []).filter((s: any) => {
-    const seuil = s.seuil_alerte ?? 0
-    const stock = s.stock_actuel ?? 0
-    return seuil > 0 && stock < seuil
-  }).length
+  // Compteur stocks en alerte (stock < seuil_alerte) — helper centralisé
+  const nbStocksAlerte = (stockAlertes ?? []).filter(isAlerte).length
 
   // Eyebrow réutilisable : Big Shoulders 11 px uppercase tracking 0.18em muted
   const eyebrowCls =
@@ -230,56 +227,135 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      {/* === KPI TECHNIQUES MÉTIER — 4 cards (V2-E) === */}
-      <section>
-        <div className={`${eyebrowCls} mb-3`}>KPI techniques · Performances métier</div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {/* ISSF — Intervalle Sevrage-Saillie Fécondante */}
-          <KpiTechCard
-            icon={Clock}
-            label="ISSF"
-            sub="jours sevrage → saillie fécondante"
-            value={kpiTech?.issf_moyen}
-            unit="j"
-            target="cible 5-7 j"
-            tone={toneIssf(kpiTech?.issf_moyen)}
-            digits={1}
-          />
-          {/* Productivité numérique = porcelets sevrés/truie/an */}
-          <KpiTechCard
-            icon={Zap}
-            label="Productivité numérique"
-            sub="porcelets sevrés / truie / an"
-            value={kpiTech?.productivite_moyenne}
-            unit=""
-            target="cible ≥ 22"
-            tone={toneProductivite(kpiTech?.productivite_moyenne)}
-            digits={1}
-          />
-          {/* TMM */}
-          <KpiTechCard
-            icon={Skull}
-            label="TMM"
-            sub="taux mortalité maternité"
-            value={kpiTech?.tmm_moyen_pct}
-            unit="%"
-            target="cible ≤ 8 %"
-            tone={toneTmm(kpiTech?.tmm_moyen_pct)}
-            digits={1}
-          />
-          {/* Nés vivants moyens/portée */}
-          <KpiTechCard
-            icon={Target}
-            label="Nés vivants / portée"
-            sub="moyenne ferme"
-            value={kpiTech?.nes_vivants_par_portee_moyen}
-            unit=""
-            target="cible ≥ 12"
-            tone={toneNesVivants(kpiTech?.nes_vivants_par_portee_moyen)}
-            digits={1}
-          />
-        </div>
-      </section>
+      {/* === KPI TECHNIQUES MÉTIER — 4 cards (V2-E) ===
+          A9 : repli des cartes "muted" (données insuffisantes) en 1 bandeau compact.
+          - Tous muted → affiche 1 bandeau, pas de cartes
+          - Mix       → cartes actives + bandeau récapitulant les manquantes
+          - Tous OK   → 4 cartes, pas de bandeau */}
+      {(() => {
+        const kpiDefs = [
+          {
+            key: 'issf' as const,
+            icon: Clock,
+            label: 'ISSF',
+            sub: 'jours sevrage → saillie fécondante',
+            value: kpiTech?.issf_moyen,
+            unit: 'j',
+            target: 'cible 5-7 j',
+            tone: toneIssf(kpiTech?.issf_moyen),
+          },
+          {
+            key: 'productivite' as const,
+            icon: Zap,
+            label: 'Productivité numérique',
+            sub: 'porcelets sevrés / truie / an',
+            value: kpiTech?.productivite_moyenne,
+            unit: '',
+            target: 'cible ≥ 22',
+            tone: toneProductivite(kpiTech?.productivite_moyenne),
+          },
+          {
+            key: 'tmm' as const,
+            icon: Skull,
+            label: 'TMM',
+            sub: 'taux mortalité maternité',
+            value: kpiTech?.tmm_moyen_pct,
+            unit: '%',
+            target: 'cible ≤ 8 %',
+            tone: toneTmm(kpiTech?.tmm_moyen_pct),
+          },
+          {
+            key: 'nes_vivants' as const,
+            icon: Target,
+            label: 'Nés vivants / portée',
+            sub: 'moyenne ferme',
+            value: kpiTech?.nes_vivants_par_portee_moyen,
+            unit: '',
+            target: 'cible ≥ 12',
+            tone: toneNesVivants(kpiTech?.nes_vivants_par_portee_moyen),
+          },
+        ]
+
+        const active = kpiDefs.filter((k) => k.tone !== 'muted')
+        const missing = kpiDefs.filter((k) => k.tone === 'muted')
+        const nbMissing = missing.length
+        const missingLabels = missing.map((k) => k.label).join(', ')
+
+        // Bandeau compact "X KPI techniques en attente" — card jaune-pâle, 1 ligne
+        const banner =
+          nbMissing > 0 ? (
+            <div
+              className="flex items-start gap-3 p-4 border border-[var(--sf-line)] rounded-md"
+              style={{ background: 'var(--sf-warm)' }}
+            >
+              <Hourglass
+                aria-hidden
+                className="size-5 mt-0.5 shrink-0"
+                style={{ color: 'var(--sf-accent-deep, #B45309)' }}
+              />
+              <div className="flex-1 min-w-0">
+                <div
+                  className="font-bold text-[var(--sf-ink)]"
+                  style={{
+                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                    fontSize: '13px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.12em',
+                  }}
+                >
+                  {nbMissing} KPI technique{nbMissing > 1 ? 's' : ''} en attente
+                </div>
+                <div className="text-xs text-[var(--sf-muted)] mt-1 leading-snug">
+                  Saisis quelques portées de plus pour activer&nbsp;
+                  <span className="font-medium text-[var(--sf-ink)]">{missingLabels}</span>.
+                  Minimum 1 cycle complet (sevrage → saillie fécondante) requis.
+                </div>
+              </div>
+              <Link
+                href="/kpi"
+                className="shrink-0 inline-flex items-center min-h-[44px] py-2 px-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline whitespace-nowrap"
+              >
+                Voir KPI activables →
+              </Link>
+            </div>
+          ) : null
+
+        // Grille des cartes actives — colonnes adaptées au nb restant pour rester aligné
+        const gridCols =
+          active.length === 1
+            ? 'grid-cols-1'
+            : active.length === 2
+            ? 'grid-cols-2 md:grid-cols-2'
+            : active.length === 3
+            ? 'grid-cols-2 md:grid-cols-3'
+            : 'grid-cols-2 md:grid-cols-4'
+
+        return (
+          <section>
+            <div className={`${eyebrowCls} mb-3`}>KPI techniques · Performances métier</div>
+            <div className="space-y-4">
+              {banner}
+              {active.length > 0 && (
+                <div className={`grid ${gridCols} gap-4`}>
+                  {active.map((k) => (
+                    <KpiTechCard
+                      key={k.key}
+                      icon={k.icon}
+                      label={k.label}
+                      sub={k.sub}
+                      value={k.value}
+                      unit={k.unit}
+                      target={k.target}
+                      tone={k.tone}
+                      digits={1}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )
+      })()}
 
       {/* === WIDGETS ALERTES (C3) + TIP DU JOUR (C2) === */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -287,11 +363,11 @@ export default async function DashboardPage() {
         <TipDuJour />
       </div>
 
-      {/* === PROCHAINS ÉVÉNEMENTS — Card pleine largeur === */}
+      {/* === ÉVÉNEMENTS EN RETARD — Card pleine largeur === */}
       <Card>
         <CardHeader>
           <div className="flex items-baseline justify-between">
-            <h2 className={eyebrowCls}>Prochains événements</h2>
+            <h2 className={eyebrowCls}>Événements en retard</h2>
             <Link href="/calendrier" className={seeAllCls}>
               Voir tout →
             </Link>

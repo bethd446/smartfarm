@@ -8,7 +8,7 @@ import { TipCard, CATEGORIE_LABELS, NIVEAU_LABELS } from './_components/tip-card
 export const metadata = {
   title: 'Conseiller',
   description:
-    '300 conseils agritech pour gérer ton élevage porcin : reproduction, sanitaire, nutrition, conduite, économique, installation.',
+    'Conseils techniques pour gérer ton élevage porcin : reproduction, sanitaire, nutrition, conduite, économique, installation.',
 }
 
 const CATEGORIES = [
@@ -161,7 +161,7 @@ export default async function ConseillerPage({
           Conseiller
         </h1>
         <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-          300 conseils pour gérer ton élevage porcin
+          Conseils techniques pour gérer ton élevage porcin
         </p>
       </header>
 

@@ -9,9 +9,33 @@ import { DialogEntreeStock } from './_dialogs-stock'
  * Bouton flottant mobile qui ouvre le dialog d'ajout d'une entrée stock.
  * Pattern mirror de sanitaire/_fab.tsx adapté au contexte Stock.
  * Utilise DialogEntreeStock avec un trigger personnalisé en FAB.
+ *
+ * NB (fix Phase A4) : matieres + fournisseurs doivent être passés en props
+ * depuis le Server Component parent (stock/page.tsx). Sans données, l'éleveur
+ * mobile ne peut sélectionner aucun article ni fournisseur.
  * ============================================================================
  */
-export function StockFab() {
+
+type FabMatiere = {
+  id: string
+  nom: string
+  unite: string | null
+  stock_actuel: number | null
+  type?: string | null
+}
+
+type FabFournisseur = {
+  id: string
+  nom: string
+}
+
+export function StockFab({
+  matieres,
+  fournisseurs,
+}: {
+  matieres: FabMatiere[]
+  fournisseurs: FabFournisseur[]
+}) {
   return (
     <DialogEntreeStock
       trigger={
@@ -38,8 +62,8 @@ export function StockFab() {
           <Plus className="h-6 w-6" strokeWidth={2.5} aria-hidden />
         </button>
       }
-      matieres={[]}
-      fournisseurs={[]}
+      matieres={matieres}
+      fournisseurs={fournisseurs}
     />
   )
 }
