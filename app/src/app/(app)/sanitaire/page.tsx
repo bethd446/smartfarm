@@ -101,6 +101,13 @@ export default async function SanitairePage() {
       desc: `${nbProtocoles ?? 0} protocoles actifs (cochette, porcelet, truie, verrat)`,
       badge: null,
     },
+    {
+      href: '/sanitaire/actes',
+      icon: Syringe,
+      title: 'Actes sanitaires',
+      desc: 'Enregistrer traitements véto + carnet MIRAH (délais attente viande)',
+      badge: null,
+    },
   ]
 
   return (

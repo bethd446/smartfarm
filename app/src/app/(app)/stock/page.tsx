@@ -10,6 +10,8 @@ import {
   DialogNouvelleMatiere,
 } from './_dialogs-stock'
 import { StockFab } from './_fab'
+import { isAlerte } from '@/lib/stock-helpers'
+import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
 export default async function StockPage() {
   const sb = await createClient()
@@ -189,7 +191,7 @@ export default async function StockPage() {
             </thead>
             <tbody>
               {(stocks ?? []).map((s: any) => {
-                const alerte = s.seuil_alerte && s.stock_actuel < s.seuil_alerte
+                const alerte = isAlerte(s)
                 return (
                   <tr
                     key={s.id}
@@ -211,7 +213,7 @@ export default async function StockPage() {
                     </td>
                     <td className="py-3 px-4">
                       {alerte ? (
-                        <Badge variant="danger">
+                        <Badge variant="danger" className="!normal-case">
                           {s.stock_actuel} {s.unite}
                         </Badge>
                       ) : (
@@ -234,8 +236,18 @@ export default async function StockPage() {
               })}
               {(!stocks || stocks.length === 0) && (
                 <tr>
-                  <td colSpan={6} className="py-6 text-center text-[var(--sf-muted)]">
-                    Aucun article en stock.
+                  <td colSpan={6} className="p-6">
+                    <EmptyOnboarding
+                      icon={<Package className="h-12 w-12" />}
+                      eyebrow="MODULE STOCK"
+                      title="Ton inventaire est vide"
+                      description="Enregistre ta première matière première (maïs, tourteau soja…) pour suivre ton stock en temps réel et recevoir des alertes en cas de rupture."
+                      cta={{ label: 'Ajouter un article', href: '/stock?action=new' }}
+                      ctaSecondary={{
+                        label: 'Voir le référentiel CI',
+                        href: '/alimentation/matieres',
+                      }}
+                    />
                   </td>
                 </tr>
               )}
@@ -245,7 +257,10 @@ export default async function StockPage() {
       </div>
 
       {/* === FAB mobile === */}
-      <StockFab />
+      <StockFab
+        matieres={(stocks ?? []) as any}
+        fournisseurs={(fournisseurs ?? []) as any}
+      />
     </div>
   )
 }

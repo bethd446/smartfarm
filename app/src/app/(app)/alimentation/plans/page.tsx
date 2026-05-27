@@ -22,7 +22,9 @@ import {
   ChevronLeft,
   TrendingDown,
   AlertTriangle,
+  Wheat,
 } from 'lucide-react'
+import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
@@ -540,20 +542,16 @@ export default async function PlansAlimentationPage(props: {
         </CardHeader>
         <CardContent className="p-0">
           {rows.length === 0 ? (
-            <div className="p-8 text-center space-y-3">
-              <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                Aucun plan d’alimentation enregistré pour ce filtre.
-              </p>
-              <DialogPlan
-                mode="create"
-                bandes={bandes}
-                formules={formules}
-                trigger={
-                  <Button variant="default" size="sm">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Créer un premier plan
-                  </Button>
-                }
+            <div className="p-6">
+              <EmptyOnboarding
+                icon={<Wheat className="h-12 w-12" />}
+                eyebrow="PLANS D'ALIMENTATION"
+                title="Aucun plan d’alimentation enregistré pour ce filtre"
+                description="Planifie la ration de chaque bande selon son stade physiologique (gestation, lactation, sevrage…). Smart Farm calcule les quantités et coûts auto."
+                cta={{
+                  label: 'Créer un premier plan',
+                  href: '/alimentation/plans?action=new',
+                }}
               />
             </div>
           ) : (

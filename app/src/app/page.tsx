@@ -93,9 +93,6 @@ export default function HomePage() {
             <span className="nav-top__brand-name">Smart Farm</span>
           </Link>
           <nav className="nav-top__menu">
-            <a href="#features">La plateforme</a>
-            <a href="#metiers">Métiers</a>
-            <a href="#tarifs">Tarifs</a>
             <Link href="/connexion" data-cta>
               <Button variant="outline" size="sm">Se connecter</Button>
             </Link>
@@ -116,7 +113,7 @@ export default function HomePage() {
             </h1>
             <p className="hero__lead">
               Plateforme professionnelle pour <strong>éleveurs et techniciens</strong> ivoiriens.
-              Traçabilité ISO, indicateurs IFIP, conformité sanitaire — sur smartphone, hors-ligne,
+              Traçabilité technique, indicateurs IFIP, conformité sanitaire — sur smartphone,
               4G ou plein soleil.
             </p>
             <div className="hero__cta">
@@ -126,10 +123,13 @@ export default function HomePage() {
               <Link href="/connexion">
                 <Button variant="outline" size="lg">J&apos;ai déjà un compte</Button>
               </Link>
+              <Link href="/connexion?demo=true">
+                <Button variant="ghost" size="lg">👁 Tester la démo</Button>
+              </Link>
             </div>
             <div className="hero__trust">
               <FlagCI />
-              <span>● Conforme ISO 22005</span>
+              <span>● Standards IFIP &amp; NRC</span>
               <span>● Indicateurs IFIP</span>
               <span>● Multi-fermes</span>
             </div>
@@ -207,8 +207,9 @@ export default function HomePage() {
           </div>
           <div className="footer__links">
             <FlagCI />
-            <a href="#mentions">Mentions légales</a>
-            <a href="#confidentialite">Confidentialité</a>
+            <a href="/mentions-legales">Mentions légales</a>
+            <a href="/politique-confidentialite">Confidentialité</a>
+            <a href="/cgu">CGU</a>
           </div>
         </footer>
       </main>

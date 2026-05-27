@@ -25,16 +25,18 @@ const TONE_TO_VARIANT = {
   neutre: 'secondary',
 } as const
 
-type TabKey = 'truies' | 'verrats' | 'porcelets' | 'portees'
+type TabKey = 'truies' | 'cochettes' | 'verrats' | 'porcelets' | 'portees'
 
 const TABS: { key: TabKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
   { key: 'truies', label: 'Truies', icon: PiggyBank },
+  { key: 'cochettes', label: 'Cochettes', icon: PiggyBank },
   { key: 'verrats', label: 'Verrats', icon: Mars },
   { key: 'porcelets', label: 'Porcelets', icon: Baby },
   { key: 'portees', label: 'Portées', icon: Layers },
 ]
 
-const CAT_TRUIES = ['truie', 'cochette'] as const
+const CAT_TRUIES = ['truie'] as const
+const CAT_COCHETTES = ['cochette'] as const
 const CAT_VERRATS = ['verrat'] as const
 const CAT_PORCELETS = [
   'porcelet_lait',
@@ -44,7 +46,13 @@ const CAT_PORCELETS = [
 ] as const
 
 function isTab(v: string | undefined): v is TabKey {
-  return v === 'truies' || v === 'verrats' || v === 'porcelets' || v === 'portees'
+  return (
+    v === 'truies' ||
+    v === 'cochettes' ||
+    v === 'verrats' ||
+    v === 'porcelets' ||
+    v === 'portees'
+  )
 }
 
 export default async function CheptelPage({
@@ -63,15 +71,17 @@ export default async function CheptelPage({
   // === Compteurs en parallèle (head:true → uniquement count, payload minimal) ===
   const countsSettled = await Promise.allSettled([
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F'),
+    sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_COCHETTES as unknown as string[]).eq('sexe', 'F'),
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_VERRATS as unknown as string[]),
     sb.from('animaux').select('*', { count: 'exact', head: true }).eq('statut', 'actif').is('deleted_at', null).in('categorie', CAT_PORCELETS as unknown as string[]),
     sb.from('portees').select('*', { count: 'exact', head: true }),
   ])
   const counts: Record<TabKey, number | null> = {
     truies: countsSettled[0].status === 'fulfilled' ? (countsSettled[0].value.count ?? 0) : null,
-    verrats: countsSettled[1].status === 'fulfilled' ? (countsSettled[1].value.count ?? 0) : null,
-    porcelets: countsSettled[2].status === 'fulfilled' ? (countsSettled[2].value.count ?? 0) : null,
-    portees: countsSettled[3].status === 'fulfilled' ? (countsSettled[3].value.count ?? 0) : null,
+    cochettes: countsSettled[1].status === 'fulfilled' ? (countsSettled[1].value.count ?? 0) : null,
+    verrats: countsSettled[2].status === 'fulfilled' ? (countsSettled[2].value.count ?? 0) : null,
+    porcelets: countsSettled[3].status === 'fulfilled' ? (countsSettled[3].value.count ?? 0) : null,
+    portees: countsSettled[4].status === 'fulfilled' ? (countsSettled[4].value.count ?? 0) : null,
   }
 
   // === Données pour onglet actif ===
@@ -103,6 +113,8 @@ export default async function CheptelPage({
     let aq = sb.from('animaux').select('*, races(nom)').eq('statut', 'actif').is('deleted_at', null).order('tag')
     if (tab === 'truies') {
       aq = aq.in('categorie', CAT_TRUIES as unknown as string[]).eq('sexe', 'F')
+    } else if (tab === 'cochettes') {
+      aq = aq.in('categorie', CAT_COCHETTES as unknown as string[]).eq('sexe', 'F')
     } else if (tab === 'verrats') {
       aq = aq.in('categorie', CAT_VERRATS as unknown as string[])
     } else if (tab === 'porcelets') {
@@ -120,10 +132,10 @@ export default async function CheptelPage({
     const { data } = await aq
     animaux = data ?? []
 
-    // === Onglet truies : enrichir avec stade reproducteur (vue v_animaux_stade_repro) ===
+    // === Onglet truies/cochettes : enrichir avec stade reproducteur (vue v_animaux_stade_repro) ===
     // Fallback graceful : si la vue n'existe pas (404) ou query échoue, on garde
     // le badge statut classique (cf colonne STATUT REPRO render).
-    if (tab === 'truies' && animaux.length > 0) {
+    if ((tab === 'truies' || tab === 'cochettes') && animaux.length > 0) {
       const ids = animaux.map((a) => a.id)
       const { data: stadeRows, error: stadeErr } = await sb
         .from('v_animaux_stade_repro')
@@ -204,8 +216,9 @@ export default async function CheptelPage({
             className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
-            {(counts.truies ?? 0) + (counts.verrats ?? 0)} reproducteurs ·{' '}
-            {counts.porcelets ?? 0} porcelets · {counts.portees ?? 0} portées
+            {counts.truies ?? 0} truies · {counts.cochettes ?? 0} cochettes ·{' '}
+            {counts.verrats ?? 0} verrats · {counts.porcelets ?? 0} porcelets ·{' '}
+            {counts.portees ?? 0} portées
           </p>
         </div>
         <CheptelActions races={races ?? []} />
@@ -325,7 +338,9 @@ function AnimauxTable({
         icon={PiggyBank}
         title={
           tab === 'truies'
-            ? 'Aucune truie ni cochette'
+            ? 'Aucune truie'
+            : tab === 'cochettes'
+            ? 'Aucune cochette'
             : tab === 'verrats'
             ? 'Aucun verrat'
             : 'Aucun porcelet'
@@ -385,10 +400,10 @@ function AnimauxTable({
           },
           {
             key: 'statut',
-            label: tab === 'truies' ? 'STADE REPRO' : 'STATUT',
+            label: tab === 'truies' || tab === 'cochettes' ? 'STADE REPRO' : 'STATUT',
             render: (v: string, item: any) => {
-              // Onglet truies → afficher stade reproducteur (vue v_animaux_stade_repro)
-              if (tab === 'truies') {
+              // Onglet truies/cochettes → afficher stade reproducteur (vue v_animaux_stade_repro)
+              if (tab === 'truies' || tab === 'cochettes') {
                 const stade = stadeReproById.get(item.id)
                 if (stade) {
                   const cfg = STADE_REPRO_MAP[stade.stade_repro]
@@ -428,7 +443,9 @@ function AnimauxTable({
         getRowKey={(item) => item.id}
         emptyMessage={
           tab === 'truies'
-            ? 'Aucune truie ni cochette'
+            ? 'Aucune truie'
+            : tab === 'cochettes'
+            ? 'Aucune cochette'
             : tab === 'verrats'
             ? 'Aucun verrat'
             : 'Aucun porcelet'

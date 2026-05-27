@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/sonner"
 export const metadata: Metadata = {
   title: "Smart Farm — Gestion d'élevage · Côte d'Ivoire",
   description:
-    "Application de gestion technique de troupeau porcin pour éleveurs ivoiriens. Multi-fermes, offline-first, mobile.",
+    "Application de gestion technique de troupeau porcin pour éleveurs ivoiriens. Multi-fermes, mobile, fonctionne en 4G.",
   manifest: "/manifest.json",
   icons: {
     icon: [

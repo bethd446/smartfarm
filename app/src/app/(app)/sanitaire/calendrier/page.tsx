@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CalendarDays, AlertCircle, BellRing, Clock, Syringe } from 'lucide-react'
+import { CalendarDays, AlertCircle, BellRing, Clock, Syringe, Calendar } from 'lucide-react'
+import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
@@ -137,18 +138,13 @@ export default async function CalendrierSanitairePage({
 
       {/* Cas DB vide */}
       {cal.protocolesCount === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center space-y-3">
-            <div className="text-sm text-[var(--sf-muted,#5C5346)]">
-              Aucun protocole vaccinal configuré pour le moment.
-            </div>
-            <Link href="/sanitaire/protocoles">
-              <Button variant="default" size="sm">
-                Configurer les protocoles
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        <EmptyOnboarding
+          icon={<Calendar className="h-12 w-12" />}
+          eyebrow="CALENDRIER SANITAIRE"
+          title="Aucun acte planifié pour ce filtre"
+          description="Les actes attendus (fer J3, vaccins J21, vermifuges) sont auto-générés depuis tes protocoles vaccinaux + bandes en cours."
+          cta={{ label: 'Voir les protocoles', href: '/sanitaire/protocoles' }}
+        />
       ) : totalActes === 0 ? (
         <Card>
           <CardContent className="p-8 text-center text-sm text-[var(--sf-muted,#5C5346)]">
