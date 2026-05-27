@@ -16,7 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Syringe, Plus, ChevronLeft, RotateCcw } from 'lucide-react'
+import { Syringe, Plus, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
+import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
 import { DialogProtocole, type ProtocoleRow } from './_dialog-protocole'
 import {
@@ -263,11 +264,21 @@ export default async function ProtocolesPage() {
               {loadErr}
             </p>
           ) : rows.length === 0 ? (
-            <div className="p-8 text-center space-y-3">
-              <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                Aucun protocole enregistré pour cette ferme.
-              </p>
-              <FormResetStandards />
+            <div className="p-6">
+              <EmptyOnboarding
+                icon={<ShieldCheck className="h-12 w-12" />}
+                eyebrow="PROTOCOLES VACCINAUX"
+                title="0 protocoles actifs"
+                description="Définis tes protocoles standards (cochette pré-saillie, truie gestante, porcelet sevrage). Smart Farm les projette automatiquement sur le calendrier de chaque bande."
+                cta={{
+                  label: 'Créer un premier protocole',
+                  href: '/sanitaire/protocoles?action=new',
+                }}
+                ctaSecondary={{
+                  label: 'Voir les 3 standards IFIP',
+                  href: '/sanitaire/protocoles?seed=ifip',
+                }}
+              />
             </div>
           ) : (
             <Table>

@@ -8,7 +8,7 @@ import { GlobalSearch } from '@/components/global-search'
 import {
   LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle, LogOut, Calendar, Zap,
+  Sparkles, AlertTriangle, LogOut, Calendar, Zap, Skull,
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -30,6 +30,7 @@ const nav = [
   { href: '/batiments',             label: 'Bâtiments',             icon: Building2,       group: 'Élevage' },
   { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
   { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
+  { href: '/mortalites',            label: 'Mortalités',            icon: Skull,           group: 'Élevage' },
 
   // Sanitaire & alim
   { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Sanitaire & alim' },
