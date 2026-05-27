@@ -26,8 +26,14 @@ const TONE_TO_VARIANT = {
   neutre: 'secondary',
 } as const
 
-export default async function MisesBasPage() {
+export default async function MisesBasPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ action?: string }>
+}) {
   const sb = await createClient()
+  const sp = (await searchParams) ?? {}
+  const autoOpenNew = sp.action === 'new'
 
   // 1) Mises-bas — requête CŒUR sans dépendance à `sevrages` (table parfois bloquée
   //    par RLS/GRANT côté authenticated). Si la jointure plantait, on perdait
@@ -175,6 +181,7 @@ export default async function MisesBasPage() {
           />
           <DialogMiseBas
             saillies={saillesPourMb}
+            defaultOpen={autoOpenNew}
             trigger={
               <Button size="lg" className="h-12 text-base">
                 <Plus className="h-5 w-5 mr-2" />

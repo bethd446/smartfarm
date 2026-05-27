@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { PageTitle } from '@/components/ui/page-title'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
-import { PiggyBank, Baby, Mars, Layers } from 'lucide-react'
+import { PiggyBank, Baby, Mars, Layers, Activity, Skull } from 'lucide-react'
 import { CheptelActions } from './_actions'
 import { CheptelRowActions } from './_row-actions'
 import { CheptelFab } from './_fab'
@@ -50,10 +50,11 @@ function isTab(v: string | undefined): v is TabKey {
 export default async function CheptelPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tab?: string; q?: string; filter?: string }>
+  searchParams: Promise<{ tab?: string; q?: string; filter?: string; action?: string }>
 }) {
   const sp = (await searchParams) ?? {}
-  const tab: TabKey = isTab(sp.tab) ? sp.tab : 'truies'
+  const action = sp.action ?? ''
+  const tab: TabKey = action === 'bcs' ? 'truies' : isTab(sp.tab) ? sp.tab : 'truies'
   const q = (sp.q ?? '').trim()
   const filter = sp.filter ?? ''
 
@@ -143,6 +144,47 @@ export default async function CheptelPage({
 
   return (
     <div className="space-y-6">
+      {/* === Banner action=bcs : guide vers picker truie === */}
+      {action === 'bcs' && (
+        <div
+          role="status"
+          className="rounded-lg border px-5 py-4 flex items-start gap-4 flex-wrap"
+          style={{
+            background: 'var(--sf-info-bg, #D6E2EE)',
+            borderColor: 'var(--sf-info-border, #8FA9C8)',
+            color: 'var(--sf-info-ink, #1F3A55)',
+          }}
+        >
+          <Activity className="h-5 w-5 flex-shrink-0" aria-hidden />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-base mb-1">Saisir BCS truie</h3>
+            <p className="text-sm opacity-90">
+              Sélectionne une truie dans la liste ci-dessous, puis utilise « Voir la fiche » pour saisir le BCS du jour.
+            </p>
+          </div>
+        </div>
+      )}
+      {/* === Banner action=mortalite : guide vers picker animal === */}
+      {action === 'mortalite' && (
+        <div
+          role="status"
+          className="rounded-lg border px-5 py-4 flex items-start gap-4 flex-wrap"
+          style={{
+            background: 'var(--sf-warning-bg, #FEF3C7)',
+            borderColor: 'var(--sf-warning-border, #D97706)',
+            color: 'var(--sf-warning-ink, #7C2D12)',
+          }}
+        >
+          <Skull className="h-5 w-5 flex-shrink-0" aria-hidden />
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-base mb-1">Déclarer une mortalité</h3>
+            <p className="text-sm opacity-90">
+              Trouve l'animal mort dans la liste ci-dessous, ouvre sa fiche puis utilise le menu d'actions « Marquer mort ».
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* === Banner Phase 4.A : porcelets prêts pour Croissance === */}
       {filter === 'pret_croissance' && animaux.length > 0 && (
         <BannerTransfertCroissance count={animaux.length} />

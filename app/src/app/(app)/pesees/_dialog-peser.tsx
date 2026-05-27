@@ -54,14 +54,18 @@ export function DialogPeser({
   bandes,
   open: controlledOpen,
   onOpenChange: controlledOnOpenChange,
+  defaultOpen,
+  defaultAnimalId,
 }: {
   trigger?: React.ReactNode
   animaux: { id: string; tag: string; nom: string | null }[]
   bandes: { id: string; nom: string; code: string | null }[]
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  defaultOpen?: boolean
+  defaultAnimalId?: string
 }) {
-  const [internalOpen, setInternalOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(defaultOpen ?? false)
   const open = controlledOpen ?? internalOpen
   const setOpen = controlledOnOpenChange ?? setInternalOpen
   const [mode, setMode] = useState<'individuelle' | 'bande'>('individuelle')
@@ -77,7 +81,7 @@ export function DialogPeser({
     resolver: zodResolver(schema),
     defaultValues: {
       type: 'individuelle',
-      animal_id: '',
+      animal_id: defaultAnimalId ?? '',
       bande_id: '',
       date_pesee: today(),
       poids_kg: '' as unknown as number,

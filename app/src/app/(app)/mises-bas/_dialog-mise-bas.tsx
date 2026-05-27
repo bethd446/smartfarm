@@ -60,11 +60,13 @@ function canProceed(step: number, values: FormData): boolean {
 export function DialogMiseBas({
   trigger,
   saillies,
+  defaultOpen = false,
 }: {
   trigger: React.ReactNode
   saillies: SaillieMBOption[]
+  defaultOpen?: boolean
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   const [step, setStep] = useState(0)
   const today = new Date().toISOString().slice(0, 10)
 

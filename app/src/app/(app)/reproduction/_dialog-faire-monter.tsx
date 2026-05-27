@@ -45,6 +45,7 @@ export function DialogFaireMonter({
   prefillTruieId,
   open: openProp,
   onOpenChange,
+  defaultOpen = false,
 }: {
   trigger?: React.ReactNode
   truies: AnimalOption[]
@@ -55,8 +56,10 @@ export function DialogFaireMonter({
   /** Mode contrôlé : permet d'ouvrir le dialog depuis l'extérieur. */
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  /** Mode non contrôlé : ouvre le dialog au montage (ex. via ?action=new). */
+  defaultOpen?: boolean
 }) {
-  const [internalOpen, setInternalOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
   const open = openProp ?? internalOpen
   const setOpen = onOpenChange ?? setInternalOpen
   const today = new Date().toISOString().slice(0, 10)

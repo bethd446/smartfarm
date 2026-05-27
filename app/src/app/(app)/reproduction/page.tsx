@@ -16,7 +16,12 @@ export const metadata: Metadata = {
   title: 'Reproduction',
 }
 
-export default async function ReproductionPage() {
+export default async function ReproductionPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ action?: string }>
+}) {
+  const sp = (await searchParams) ?? {}
   const sb = await createClient()
 
   // 1) Saillies — requête principale SANS jointure `diagnostics_gestation` (RLS
@@ -175,6 +180,7 @@ export default async function ReproductionPage() {
             truies={truies ?? []}
             verrats={verrats ?? []}
             bandes={bandes ?? []}
+            defaultOpen={sp.action === 'diag'}
             trigger={
               <Button variant="outline" size="lg" className="h-12 text-base">
                 <Stethoscope className="h-5 w-5 mr-2" />
@@ -186,6 +192,7 @@ export default async function ReproductionPage() {
             truies={truies ?? []}
             verrats={verrats ?? []}
             bandes={bandes ?? []}
+            defaultOpen={sp.action === 'new'}
             trigger={
               <Button size="lg" className="h-12 text-base">
                 <Plus className="h-5 w-5 mr-2" />

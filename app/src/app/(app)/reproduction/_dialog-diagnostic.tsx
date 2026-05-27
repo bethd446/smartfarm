@@ -86,6 +86,7 @@ export function DialogDiagnostic({
   verrats = [],
   bandes = [],
   defaultSaillieId,
+  defaultOpen = false,
 }: {
   trigger: React.ReactNode
   saillies: SaillieOption[]
@@ -95,8 +96,10 @@ export function DialogDiagnostic({
   bandes?: BandeOption[]
   /** Optionnel — préselectionne une saillie (depuis section « à diagnostiquer »). */
   defaultSaillieId?: string
+  /** Optionnel — ouvre le dialog au montage (ex. via ?action=diag). */
+  defaultOpen?: boolean
 }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
   const [openNewSaillie, setOpenNewSaillie] = useState(false)
   const today = new Date().toISOString().slice(0, 10)
 

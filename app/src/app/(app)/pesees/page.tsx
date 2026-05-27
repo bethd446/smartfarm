@@ -5,7 +5,14 @@ import { Scale } from 'lucide-react'
 import { ActionsPeser } from './_actions-peser'
 import { PeseesFab } from './_fab'
 
-export default async function PeseesPage() {
+export default async function PeseesPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ action?: string; animal_id?: string }>
+}) {
+  const sp = (await searchParams) ?? {}
+  const defaultOpen = sp.action === 'new'
+  const defaultAnimalId = sp.animal_id
   const sb = await createClient()
   const [{ data: pesees }, { data: animaux }, { data: bandes }] =
     await Promise.all([
@@ -27,7 +34,12 @@ export default async function PeseesPage() {
           </h1>
           <p className="text-sm text-stone-700 mt-1">Gain par jour · Courbes de poids</p>
         </div>
-        <ActionsPeser animaux={animaux ?? []} bandes={bandes ?? []} />
+        <ActionsPeser
+          animaux={animaux ?? []}
+          bandes={bandes ?? []}
+          defaultOpen={defaultOpen}
+          defaultAnimalId={defaultAnimalId}
+        />
       </div>
 
       {(!pesees || pesees.length === 0) ? (
