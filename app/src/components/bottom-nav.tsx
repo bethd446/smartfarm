@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
-  LayoutDashboard, PiggyBank, Heart, Bell, MoreHorizontal,
+  LayoutDashboard, PiggyBank, Baby, Bell, MoreHorizontal,
 } from 'lucide-react'
 
 type Slot = {
@@ -20,13 +20,14 @@ type Slot = {
 
 // ---------------------------------------------------------------------------
 // V2-G : bottom-nav 5 slots
-//   [Accueil] [Cheptel] [Reproduction] [Alertes 🔴] [Plus]
-// Le FAB "Actions rapides" glisse dans le drawer Plus (groupe Pilotage).
+//   [Accueil] [Cheptel] [Maternité] [Alertes 🔴] [Plus]
+// Audit éleveur 20 ans terrain (S6) : slot Repro → Maternité (action quotidienne naisseur).
+// L'entrée Reproduction reste accessible via drawer Plus.
 // ---------------------------------------------------------------------------
 const SLOTS: Slot[] = [
   { href: '/dashboard',    label: 'Accueil',      icon: LayoutDashboard },
   { href: '/cheptel',      label: 'Cheptel',      icon: PiggyBank },
-  { href: '/reproduction', label: 'Repro',       icon: Heart },
+  { href: '/mises-bas',    label: 'Maternité',   icon: Baby },
   { href: '/alertes',      label: 'Alertes',      icon: Bell, withAlertesBadge: true },
   { label: 'Plus',         icon: MoreHorizontal, action: 'more' },
 ]

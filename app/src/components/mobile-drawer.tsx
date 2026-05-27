@@ -15,21 +15,23 @@ import {
 import {
   LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle,
+  Sparkles, AlertTriangle, Calendar, Zap,
   X, LogOut,
 } from 'lucide-react'
 import { deconnexionAction } from '@/app/(auth)/_actions'
 
 // ---------------------------------------------------------------------------
 // V2-HARMONIE (HARM-A) — doit rester aligné 1:1 avec sidebar.tsx
-//   5 groupes / 14 menus — Pilotage/Élevage/Santé/Alimentation/Système
+//   5 groupes / 14 menus — Pilotage/Élevage/Santé/Alimentation/Outils
 // Refonte v1.0 : classes BEM .sidebar__* (styles design-v1.css)
 // ---------------------------------------------------------------------------
 const nav = [
   // Pilotage
   { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: 'Pilotage' },
   { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: 'Pilotage' },
-  { href: '/kpi',                   label: 'Performances',          icon: TrendingUp,      group: 'Pilotage' },
+  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: 'Pilotage' },
+  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: 'Pilotage' },
+  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: 'Pilotage' },
 
   // Élevage
   { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
@@ -45,8 +47,8 @@ const nav = [
   { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Alimentation' },
 
   // Système
-  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Système' },
-  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Système' },
+  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Outils' },
+  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Outils' },
 ]
 
 export interface MobileDrawerProps {

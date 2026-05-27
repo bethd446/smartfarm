@@ -8,7 +8,7 @@ import { GlobalSearch } from '@/components/global-search'
 import {
   LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle, LogOut,
+  Sparkles, AlertTriangle, LogOut, Calendar, Zap,
 } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
@@ -20,7 +20,9 @@ const nav = [
   // Pilotage
   { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: 'Pilotage' },
   { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: 'Pilotage' },
-  { href: '/kpi',                   label: 'Performances',          icon: TrendingUp,      group: 'Pilotage' },
+  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: 'Pilotage' },
+  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: 'Pilotage' },
+  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: 'Pilotage' },
 
   // Élevage
   { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
@@ -35,9 +37,9 @@ const nav = [
   { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Alimentation' },
   { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Alimentation' },
 
-  // Système
-  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Système' },
-  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Système' },
+  // Outils
+  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Outils' },
+  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Outils' },
 ]
 
 // ---------------------------------------------------------------------------
