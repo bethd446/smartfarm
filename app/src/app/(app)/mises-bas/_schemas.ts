@@ -70,3 +70,52 @@ export const sevrageSchema = z.object({
 })
 
 export type CreerSevrageInput = z.input<typeof sevrageSchema>
+
+// ─── Adoption (C9) ────────────────────────────────────────────────────────
+// Transfert de N porcelets d'une portee source vers une portee receveuse.
+// Egalisation tetines = pratique zootech IFIP quotidienne en maternite.
+export const MOTIFS_ADOPTION = [
+  'surcharge_donneuse',
+  'perte_receveuse',
+  'egalisation_taille',
+  'sante_porcelet',
+  'autre',
+] as const
+
+export const MOTIF_ADOPTION_LABELS: Record<(typeof MOTIFS_ADOPTION)[number], string> = {
+  surcharge_donneuse: 'Surcharge donneuse (>tétines)',
+  perte_receveuse: 'Perte portée receveuse',
+  egalisation_taille: 'Égalisation taille',
+  sante_porcelet: 'Santé porcelet (faible)',
+  autre: 'Autre',
+}
+
+export const adoptionSchema = z
+  .object({
+    mb_source_id: z.string().uuid('Choisir une portée source'),
+    mb_destination_id: z.string().uuid('Choisir une portée destination'),
+    nb_porcelets: z.coerce
+      .number()
+      .int()
+      .min(1, 'Au moins 1 porcelet')
+      .max(20, 'Maximum 20 porcelets'),
+    motif_adoption: z.enum(MOTIFS_ADOPTION),
+    motif_libre: z.string().max(200).optional().or(z.literal('')),
+    date_adoption: z.string().min(1, 'Date requise'),
+    observations: z.string().optional().or(z.literal('')),
+  })
+  .refine((d) => d.mb_source_id !== d.mb_destination_id, {
+    message: 'Source et destination doivent être différentes',
+    path: ['mb_destination_id'],
+  })
+  .refine(
+    (d) =>
+      d.motif_adoption !== 'autre' ||
+      (typeof d.motif_libre === 'string' && d.motif_libre.trim().length > 0),
+    {
+      message: "Motif libre obligatoire si 'Autre'",
+      path: ['motif_libre'],
+    }
+  )
+
+export type CreerAdoptionInput = z.input<typeof adoptionSchema>
