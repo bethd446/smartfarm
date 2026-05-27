@@ -10,7 +10,6 @@ import { AnimalLabel } from '@/components/ui/animal-label'
 import { TYPE_LABELS, cleanDescription } from '@/lib/terrain-labels'
 import { AlertesWidget } from './_components/alertes-widget'
 import { TipDuJour } from './_components/tip-du-jour'
-import { QuickActionsFab } from '@/components/quick-actions-fab'
 import {
   KpiTechCard,
   toneIssf,
@@ -483,8 +482,6 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      {/* === FAB Quick Actions (bottom-right) === */}
-      <QuickActionsFab />
     </div>
   )
 }

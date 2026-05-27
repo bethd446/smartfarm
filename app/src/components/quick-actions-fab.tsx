@@ -35,37 +35,37 @@ type QuickAction = {
  */
 const ACTIONS: QuickAction[] = [
   {
-    href: '/reproduction#new',
+    href: '/reproduction?action=new',
     icon: Heart,
     label: 'Saillie',
     sub: "aujourd'hui",
   },
   {
-    href: '/mises-bas#new',
+    href: '/mises-bas?action=new',
     icon: Baby,
     label: 'Mise bas',
     sub: 'confirmer',
   },
   {
-    href: '/cheptel#bcs',
+    href: '/cheptel?tab=truies&action=bcs',
     icon: Activity,
     label: 'BCS truie',
     sub: 'mise à jour',
   },
   {
-    href: '/sanitaire#mortalite',
+    href: '/cheptel?action=mortalite',
     icon: Skull,
     label: 'Mortalité',
     sub: 'déclarer',
   },
   {
-    href: '/reproduction#diag',
+    href: '/reproduction?action=diag',
     icon: Search,
     label: 'Diagnostic',
     sub: 'gestation +',
   },
   {
-    href: '/pesees#new',
+    href: '/pesees?action=new',
     icon: Scale,
     label: 'Pesée',
     sub: 'nouvelle',

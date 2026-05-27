@@ -5,6 +5,7 @@ import { Sidebar, type SidebarUser, type SidebarFerme } from '@/components/sideb
 import { BottomNav } from '@/components/bottom-nav'
 import { MobileDrawer } from '@/components/mobile-drawer'
 import { GlobalSearch } from '@/components/global-search'
+import { QuickActionsFab } from '@/components/quick-actions-fab'
 import { Menu } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -88,6 +89,7 @@ export function AppShell({
         user={user}
         ferme={ferme}
       />
+      <QuickActionsFab />
     </div>
   )
 }
