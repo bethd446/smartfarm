@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
-import { Syringe, Plus, ChevronLeft, AlertTriangle } from 'lucide-react'
+import { Syringe, Plus, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
 import { DialogActe, type ProduitOption } from './_dialog-acte'
 
 export const metadata: Metadata = { title: 'Actes sanitaires' }
@@ -200,18 +200,42 @@ export default async function ActesSanitairesPage({
             traçabilité traitements véto
           </p>
         </div>
-        <DialogActe
-          trigger={
-            <Button size="lg" className="h-12">
-              <Plus className="h-5 w-5 mr-2" />
-              Enregistrer traitement
-            </Button>
-          }
-          animaux={animaux}
-          bandes={bandes}
-          produits={produits}
-          vetoMissing={vetoMissing}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          {total > 0 && (
+            <>
+              <Link
+                href={`/sanitaire/actes/export?format=pdf${filterMois ? `&from=${filterMois}-01&to=${filterMois}-31` : ''}`}
+                prefetch={false}
+              >
+                <Button variant="outline" size="lg" className="h-12">
+                  <FileText className="h-4 w-4 mr-2" />
+                  PDF MIRAH
+                </Button>
+              </Link>
+              <Link
+                href={`/sanitaire/actes/export?format=csv${filterMois ? `&from=${filterMois}-01&to=${filterMois}-31` : ''}`}
+                prefetch={false}
+              >
+                <Button variant="outline" size="lg" className="h-12">
+                  <FileSpreadsheet className="h-4 w-4 mr-2" />
+                  CSV MIRAH
+                </Button>
+              </Link>
+            </>
+          )}
+          <DialogActe
+            trigger={
+              <Button size="lg" className="h-12">
+                <Plus className="h-5 w-5 mr-2" />
+                Enregistrer traitement
+              </Button>
+            }
+            animaux={animaux}
+            bandes={bandes}
+            produits={produits}
+            vetoMissing={vetoMissing}
+          />
+        </div>
       </div>
 
       {vetoMissing && (
