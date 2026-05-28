@@ -45,13 +45,21 @@ export function EmptyOnboarding({
   ctaSecondary,
   className = '',
 }: EmptyOnboardingProps) {
+  // strokeWidth 1.5 harmonisé avec <EmptyState> : on injecte sur l'icône Lucide
+  // passée en ReactNode, sans écraser une valeur explicite côté appelant.
+  const renderedIcon = React.isValidElement<{ strokeWidth?: number }>(icon)
+    ? React.cloneElement(icon, {
+        strokeWidth: icon.props.strokeWidth ?? 1.5,
+      })
+    : icon
+
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center px-6 py-10 sm:py-12 ${className}`}
+      className={`flex flex-col items-center justify-center text-center px-6 py-8 sm:py-12 ${className}`}
       style={{
         background: 'var(--sf-surface-1)',
         border: '1px solid var(--sf-line)',
-        borderRadius: 'var(--sf-radius-lg, 12px)',
+        borderRadius: 'var(--sf-radius-lg)',
       }}
     >
       <div
@@ -59,7 +67,7 @@ export function EmptyOnboarding({
         style={{ color: 'var(--sf-primary)' }}
         aria-hidden
       >
-        {icon}
+        {renderedIcon}
       </div>
 
       {eyebrow ? (
@@ -70,7 +78,7 @@ export function EmptyOnboarding({
             fontSize: '12px',
             letterSpacing: '0.14em',
             textTransform: 'uppercase',
-            color: 'var(--sf-ink-secondary)',
+            color: 'var(--sf-subtle)',
           }}
         >
           {eyebrow}
@@ -78,7 +86,7 @@ export function EmptyOnboarding({
       ) : null}
 
       <h2
-        className="mb-3"
+        className="mb-4"
         style={{
           fontFamily: 'var(--sf-font-display)',
           fontSize: 'clamp(22px, 2.4vw, 28px)',
@@ -101,7 +109,7 @@ export function EmptyOnboarding({
       </p>
 
       {(cta || ctaSecondary) && (
-        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-center w-full sm:w-auto">
+        <div className="flex w-full flex-col items-stretch justify-center gap-3 sm:w-auto sm:flex-row sm:items-center">
           {cta ? (
             <Link href={cta.href} className="inline-flex">
               <Button variant="default" size="default">

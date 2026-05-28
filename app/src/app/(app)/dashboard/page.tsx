@@ -522,7 +522,7 @@ export default async function DashboardPage() {
                   let rowBorder = ''
                   if (seuil && stock < seuil) {
                     variant = 'danger'
-                    rowBorder = 'border-l-4 border-[var(--sf-danger)] pl-3'
+                    rowBorder = 'bg-[var(--sf-danger-bg)]/40 rounded-md px-3'
                   } else if (seuil && stock < seuil * 1.5) {
                     variant = 'warning'
                   }
