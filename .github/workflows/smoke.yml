@@ -90,6 +90,10 @@ jobs:
   smoke-mobile:
     name: Playwright smoke prod (mobile Pixel 7)
     runs-on: ubuntu-latest
+    # Sérialisé APRÈS desktop : élimine le thunder herd POST-login (2 logins
+    # simultanés sur Passenger sous double charge dépassaient le timeout setup).
+    # Quand ce job démarre, desktop a déjà propagé le deploy + réchauffé le serveur.
+    needs: smoke-desktop
     defaults:
       run:
         working-directory: app
@@ -107,10 +111,6 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-
-      - name: Wait for prod deploy (180s)
-        if: github.event_name == 'push'
-        run: sleep 180
 
       # Pre-warm identique au job desktop — ce job en était dépourvu et partait
       # à froid, d'où des faux-négatifs cold-start sur le auth.setup partagé.

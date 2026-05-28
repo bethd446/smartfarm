@@ -44,6 +44,9 @@ export default defineConfig({
       name: 'setup',
       testMatch: /.*\.setup\.ts/,
       retries: 2,
+      // Timeout 90s (> global 45s) : le login cold-start peut dépasser 45s.
+      // Doit rester > waitForURL 60s d'auth.setup.ts sinon le test meurt avant.
+      timeout: 90_000,
     },
     // 2. Tests desktop avec session pré-authentifiée
     {
