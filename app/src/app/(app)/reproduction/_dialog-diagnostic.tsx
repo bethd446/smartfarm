@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -131,6 +131,59 @@ export function DialogDiagnostic({
   const canProgramNewSaillie =
     showRetourChaleurHint && truies.length > 0 && !!prefillTruieId
 
+  // ── Filtre amont par truie ─────────────────────────────────────────────
+  // La liste des truies est déduite des `saillies` (pas de nouvelle prop).
+  const [truieFilter, setTruieFilter] = useState<string>('') // tag truie filtrée
+  const [truieSearch, setTruieSearch] = useState<string>('') // texte input
+
+  const truiesUniques = useMemo(() => {
+    const map = new Map<string, { id: string; tag: string; nom: string | null }>()
+    for (const s of saillies) {
+      const key = s.truie_id ?? s.truie_tag
+      if (!map.has(key)) {
+        map.set(key, {
+          id: s.truie_id ?? '',
+          tag: s.truie_tag,
+          nom: s.truie_nom,
+        })
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => a.tag.localeCompare(b.tag))
+  }, [saillies])
+
+  const saillesFiltrees = useMemo(() => {
+    if (!truieFilter) return saillies
+    return saillies.filter((s) => s.truie_tag === truieFilter)
+  }, [saillies, truieFilter])
+
+  // Auto-select si la truie filtrée n'a qu'une seule saillie en attente
+  useEffect(() => {
+    if (
+      saillesFiltrees.length === 1 &&
+      truieFilter &&
+      selectedSaillieId !== saillesFiltrees[0].id
+    ) {
+      setValue('saillie_id', saillesFiltrees[0].id, {
+        shouldValidate: true,
+        shouldDirty: true,
+      })
+    }
+  }, [saillesFiltrees, truieFilter, selectedSaillieId, setValue])
+
+  // Rétro-compat `defaultSaillieId` : pré-remplir le filtre truie au montage
+  useEffect(() => {
+    if (defaultSaillieId) {
+      const s = saillies.find((s) => s.id === defaultSaillieId)
+      if (s) {
+        setTruieFilter(s.truie_tag)
+        setTruieSearch(
+          s.truie_nom ? `${s.truie_tag} — ${s.truie_nom}` : s.truie_tag
+        )
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultSaillieId])
+
   async function onSubmit(data: FormData) {
     const res = await creerDiagnostic(data)
     if (res.ok) {
@@ -170,6 +223,62 @@ export function DialogDiagnostic({
             onSubmit={handleSubmit(onSubmit)}
             className="space-y-4 max-h-[70vh] overflow-y-auto pr-1"
           >
+            {/* Filtre amont : recherche truie pour pré-filtrer la liste de saillies */}
+            <div>
+              <Label htmlFor="truie-search">
+                Truie (optionnel — filtre la liste ci-dessous)
+              </Label>
+              <div className="relative">
+                <Input
+                  id="truie-search"
+                  type="search"
+                  placeholder="Tag ou nom (ex: SF-T-042 ou Roxane)"
+                  value={truieSearch}
+                  onChange={(e) => {
+                    setTruieSearch(e.target.value)
+                    const q = e.target.value.trim().toLowerCase()
+                    if (!q) {
+                      setTruieFilter('')
+                      return
+                    }
+                    // Match exact tag, ou tag commence par q, ou nom contient q
+                    const match = truiesUniques.find(
+                      (t) =>
+                        t.tag.toLowerCase() === q ||
+                        t.tag.toLowerCase().startsWith(q) ||
+                        (t.nom?.toLowerCase().includes(q) ?? false),
+                    )
+                    if (match) setTruieFilter(match.tag)
+                    else setTruieFilter('')
+                  }}
+                  list="truies-datalist"
+                />
+                <datalist id="truies-datalist">
+                  {truiesUniques.map((t) => (
+                    <option key={t.tag} value={t.tag}>
+                      {t.nom ? `${t.tag} — ${t.nom}` : t.tag}
+                    </option>
+                  ))}
+                </datalist>
+              </div>
+              {truieFilter && (
+                <p className="mt-1 text-xs text-[var(--sf-muted)]">
+                  {saillesFiltrees.length} saillie
+                  {saillesFiltrees.length > 1 ? 's' : ''} pour {truieFilter} —{' '}
+                  <button
+                    type="button"
+                    className="underline text-[var(--sf-primary)] hover:opacity-80"
+                    onClick={() => {
+                      setTruieFilter('')
+                      setTruieSearch('')
+                    }}
+                  >
+                    effacer le filtre
+                  </button>
+                </p>
+              )}
+            </div>
+
             <div>
               <Label htmlFor="saillie_id">La montée *</Label>
               <select
@@ -178,7 +287,7 @@ export function DialogDiagnostic({
                 className={SELECT_CLASS}
               >
                 <option value="">— Choisir —</option>
-                {saillies.map((s) => {
+                {saillesFiltrees.map((s) => {
                   const date = new Date(s.date_saillie).toLocaleDateString(
                     'fr-FR'
                   )

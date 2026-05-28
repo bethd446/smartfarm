@@ -8,6 +8,7 @@ import {
   Calculator,
   Calendar,
   Activity,
+  TrendingUp,
   ChevronRight,
 } from 'lucide-react'
 
@@ -62,6 +63,13 @@ const NAV_CARDS: NavCard[] = [
     description:
       'Saisie quotidienne / hebdomadaire — suivi des distributions et du coût.',
     icon: Activity,
+  },
+  {
+    href: '/alimentation/matieres-prix',
+    title: 'Historique prix matières',
+    description:
+      'Traçabilité des relevés de prix CI dans le temps — sync auto vers prix indicatif.',
+    icon: TrendingUp,
   },
 ]
 

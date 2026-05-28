@@ -89,6 +89,7 @@ export default async function CheptelPage({
 
   let animaux: any[] = []
   let portees: any[] = []
+  let batiments: { id: string; nom: string; type: string }[] = []
   // Map id → { stade_repro, jours_stade } (rempli pour onglet truies uniquement,
   // vide si la vue v_animaux_stade_repro n'existe pas encore — fallback graceful).
   const stadeReproById = new Map<string, { stade_repro: string; jours_stade: number | null }>()
@@ -131,6 +132,16 @@ export default async function CheptelPage({
     }
     const { data } = await aq
     animaux = data ?? []
+
+    // === Onglet porcelets : charger bâtiments pour bulk Transférer ===
+    if (tab === 'porcelets') {
+      const { data: bats } = await sb
+        .from('batiments')
+        .select('id, nom, type')
+        .is('deleted_at', null)
+        .order('nom')
+      batiments = (bats ?? []) as { id: string; nom: string; type: string }[]
+    }
 
     // === Onglet truies/cochettes : enrichir avec stade reproducteur (vue v_animaux_stade_repro) ===
     // Fallback graceful : si la vue n'existe pas (404) ou query échoue, on garde
@@ -297,7 +308,7 @@ export default async function CheptelPage({
       {tab === 'portees' ? (
         <PorteesTable rows={portees} />
       ) : tab === 'porcelets' ? (
-        <PorceletsTableBulk rows={animaux as never} />
+        <PorceletsTableBulk rows={animaux as never} batiments={batiments} />
       ) : (
         <AnimauxTable rows={animaux} tab={tab} stadeReproById={stadeReproById} />
       )}
