@@ -4,13 +4,17 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Baby, X, ArrowRightLeft } from 'lucide-react'
+import { Baby, X, ArrowRightLeft, Truck, Skull } from 'lucide-react'
 import { CheptelRowActions } from './_row-actions'
 import { LIBELLES_STADE, type StadeAnimal } from '@/lib/stades-animaux'
 import {
   DialogChangerStadeBatch,
   type AnimalLite,
 } from './_dialog-changer-stade-batch'
+import { DialogTransfertBatch } from './_dialog-transfert-batch'
+import { DialogMortaliteBatch } from './_dialog-mortalite-batch'
+
+type BatimentLite = { id: string; nom: string; type: string }
 
 type Porcelet = {
   id: string
@@ -25,9 +29,17 @@ type Porcelet = {
   races?: { nom: string | null } | null
 }
 
-export function PorceletsTableBulk({ rows }: { rows: Porcelet[] }) {
+export function PorceletsTableBulk({
+  rows,
+  batiments = [],
+}: {
+  rows: Porcelet[]
+  batiments?: BatimentLite[]
+}) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [dialogTransfertOpen, setDialogTransfertOpen] = useState(false)
+  const [dialogMortaliteOpen, setDialogMortaliteOpen] = useState(false)
 
   const allVisibleIds = useMemo(() => rows.map((r) => r.id), [rows])
 
@@ -213,6 +225,20 @@ export function PorceletsTableBulk({ rows }: { rows: Porcelet[] }) {
               </button>
               <button
                 type="button"
+                onClick={() => setDialogTransfertOpen(true)}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-md border border-[var(--sf-line)] text-sm font-semibold text-[var(--sf-ink)] hover:bg-[var(--sf-surface-2)]/40"
+              >
+                <Truck className="h-4 w-4" /> Transférer
+              </button>
+              <button
+                type="button"
+                onClick={() => setDialogMortaliteOpen(true)}
+                className="inline-flex items-center gap-2 h-10 px-4 rounded-md border border-[var(--sf-danger-border,#D89C92)] text-sm font-semibold text-[var(--sf-danger-ink,#7A2A1F)] hover:bg-[var(--sf-danger-bg,#F1D4CE)]/40"
+              >
+                <Skull className="h-4 w-4" /> Mortalité
+              </button>
+              <button
+                type="button"
                 onClick={() => setDialogOpen(true)}
                 className="inline-flex items-center gap-2 h-10 px-4 rounded-md font-semibold text-sm text-white"
                 style={{ background: 'var(--sf-primary, #2D4A1F)' }}
@@ -228,6 +254,21 @@ export function PorceletsTableBulk({ rows }: { rows: Porcelet[] }) {
       <DialogChangerStadeBatch
         open={dialogOpen}
         onOpenChange={setDialogOpen}
+        animaux={selectedAnimaux}
+        onSuccess={clearSelection}
+      />
+
+      <DialogTransfertBatch
+        open={dialogTransfertOpen}
+        onOpenChange={setDialogTransfertOpen}
+        animaux={selectedAnimaux}
+        batiments={batiments}
+        onSuccess={clearSelection}
+      />
+
+      <DialogMortaliteBatch
+        open={dialogMortaliteOpen}
+        onOpenChange={setDialogMortaliteOpen}
         animaux={selectedAnimaux}
         onSuccess={clearSelection}
       />
