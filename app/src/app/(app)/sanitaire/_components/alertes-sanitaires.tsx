@@ -89,9 +89,13 @@ export async function AlertesSanitaires({ limit = 8 }: { limit?: number }) {
               return (
                 <li
                   key={`${a.regle_id}-${a.cible_id}`}
-                  className="flex items-center justify-between gap-3 py-3 min-h-[48px] border-l-4 border-[var(--sf-danger)] pl-3"
+                  className="flex items-center justify-between gap-3 py-3 min-h-[48px] pl-3"
                 >
                   <div className="flex items-center gap-3 min-w-0">
+                    <span
+                      className="inline-block h-2 w-2 rounded-full bg-[var(--sf-danger)] shrink-0"
+                      aria-hidden
+                    />
                     <Badge variant={meta.variant}>
                       <Icon className="size-3" aria-hidden />
                       {meta.label}

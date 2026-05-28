@@ -38,24 +38,24 @@ export function EmptyState({
   className = '',
 }: EmptyStateProps) {
   const isGood = tone === 'good'
-  // Couleurs aplats — pas de gradient
-  const iconColor = isGood ? 'text-[var(--sf-leaf,var(--sf-primary))]' : 'text-[var(--sf-subtle)]'
-  const titleColor = isGood ? 'text-[var(--sf-leaf,var(--sf-primary))]' : 'text-[var(--sf-ink)]'
+  // Couleurs aplats — pas de gradient. 'good' = bonne nouvelle (vert Sahel primary).
+  const iconColor = isGood ? 'text-[var(--sf-primary)]' : 'text-[var(--sf-subtle)]'
+  const titleColor = isGood ? 'text-[var(--sf-primary)]' : 'text-[var(--sf-ink)]'
 
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center py-8 px-4 ${className}`}
+      className={`flex flex-col items-center justify-center text-center px-4 py-8 ${className}`}
     >
       {Icon ? (
-        <Icon className={`h-8 w-8 mb-3 ${iconColor}`} strokeWidth={1.5} aria-hidden />
+        <Icon className={`mb-4 h-8 w-8 ${iconColor}`} strokeWidth={1.5} aria-hidden />
       ) : null}
       <div
-        className={`font-[family-name:var(--sf-font-display)] uppercase text-[12px] tracking-[0.14em] font-bold ${titleColor}`}
+        className={`font-[family-name:var(--sf-font-display)] text-[12px] font-bold uppercase tracking-[0.14em] ${titleColor}`}
       >
         {title}
       </div>
       {description ? (
-        <p className="text-sm text-[var(--sf-muted)] mt-2 max-w-[36ch]">
+        <p className="mt-2 max-w-[36ch] text-sm text-[var(--sf-ink-secondary)]">
           {description}
         </p>
       ) : null}

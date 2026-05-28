@@ -498,7 +498,7 @@ export default async function MycotoxinesPage() {
               {recosARisque.map((r) => (
                 <li
                   key={r.lot_id}
-                  className="border-l-4 p-3 rounded-r-md bg-muted/20"
+                  className="rounded-md border p-3 bg-muted/20"
                   style={{ borderColor: bordureRisque(r.niveau_risque) }}
                 >
                   <div className="flex items-center justify-between gap-3 flex-wrap">

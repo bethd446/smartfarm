@@ -1,9 +1,14 @@
 import Link from 'next/link'
-import { Lightbulb, AlertTriangle } from 'lucide-react'
+import { Lightbulb, AlertTriangle, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 import { SearchTips } from './_components/search-tips'
-import { TipCard, CATEGORIE_LABELS, NIVEAU_LABELS } from './_components/tip-card'
+import {
+  CATEGORIE_LABELS,
+  CATEGORIE_BADGE_VARIANT,
+  NIVEAU_LABELS,
+} from './_components/tip-card'
 
 export const metadata = {
   title: 'Conseiller',
@@ -284,11 +289,90 @@ export default async function ConseillerPage({
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {tips.map((t) => (
-            <TipCard key={t.slug} tip={t} />
-          ))}
-        </div>
+        <ol
+          className="border-t-2"
+          style={{ borderTopColor: 'var(--sf-primary)' }}
+        >
+          {tips.map((t, i) => {
+            const catVariant =
+              CATEGORIE_BADGE_VARIANT[t.categorie] ?? 'secondary'
+            const visibleTags = t.tags.slice(0, 4)
+            const extraTags = t.tags.length - visibleTags.length
+            const num = (page - 1) * PAGE_SIZE + i + 1
+
+            return (
+              <li
+                key={t.slug}
+                className="border-b border-[var(--sf-line)]"
+              >
+                <Link
+                  href={`/conseiller/${t.slug}`}
+                  className="group flex items-start gap-3 md:gap-4 min-h-[44px] px-2 py-4 transition-colors hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
+                >
+                  {/* Numéro de catalogue */}
+                  <span
+                    className="shrink-0 tabular-nums text-[var(--sf-subtle)] text-sm font-semibold leading-tight pt-0.5 w-7 text-right"
+                    style={{
+                      fontFamily:
+                        "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                    }}
+                  >
+                    {String(num).padStart(2, '0')}
+                  </span>
+
+                  <div className="min-w-0 flex-1">
+                    {/* Titre + badges catégorie/niveau */}
+                    <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                      <h3
+                        className="text-[15px] md:text-base font-semibold leading-tight text-[var(--sf-ink)] tracking-[0.01em]"
+                        style={{
+                          fontFamily:
+                            "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                        }}
+                      >
+                        {t.titre}
+                      </h3>
+                      <span className="inline-flex flex-wrap gap-1.5">
+                        <Badge variant={catVariant}>
+                          {CATEGORIE_LABELS[t.categorie] ?? t.categorie}
+                        </Badge>
+                        <Badge variant="outline">
+                          {NIVEAU_LABELS[t.niveau] ?? t.niveau}
+                        </Badge>
+                      </span>
+                    </div>
+
+                    {/* Résumé */}
+                    <p className="mt-1 text-sm text-[var(--sf-muted)] line-clamp-2">
+                      {t.resume}
+                    </p>
+
+                    {/* Tags */}
+                    {visibleTags.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {visibleTags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="inline-block rounded-md bg-[var(--sf-surface-2)]/60 px-1.5 py-0.5 text-[11px] text-[var(--sf-muted)]"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                        {extraTags > 0 && (
+                          <span className="inline-block px-1 py-0.5 text-[11px] text-[var(--sf-subtle)]">
+                            +{extraTags}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <ChevronRight className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] group-hover:translate-x-0.5 transition-transform" />
+                </Link>
+              </li>
+            )
+          })}
+        </ol>
       )}
 
       {/* Pagination */}

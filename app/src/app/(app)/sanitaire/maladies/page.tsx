@@ -57,7 +57,7 @@ export default function MaladiesPage() {
       </div>
 
       {/* Avertissement */}
-      <div className="rounded-lg border-l-4 border-[var(--sf-warning-ink,#5A3E0E)] bg-[var(--sf-warning-bg,#F5E0B8)] p-3 text-sm text-[var(--sf-warning-ink,#5A3E0E)]">
+      <div className="rounded-lg border border-[var(--sf-warning-ink,#5A3E0E)]/30 bg-[var(--sf-warning-bg,#F5E0B8)] p-3 text-sm text-[var(--sf-warning-ink,#5A3E0E)]">
         Ce catalogue est un outil d&apos;aide à la décision. Toute prescription
         de médicament vétérinaire doit être validée par un vétérinaire agréé en
         Côte d&apos;Ivoire. Les molécules indiquées correspondent aux

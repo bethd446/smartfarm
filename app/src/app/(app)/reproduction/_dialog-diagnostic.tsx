@@ -371,11 +371,11 @@ export function DialogDiagnostic({
             {showRetourChaleurHint && (
               <div
                 role="note"
-                className="border-l-4 p-3 text-sm"
+                className="border rounded-md p-3 text-sm"
                 style={{
                   background: 'var(--sf-warning-bg, #F5E6C5)',
                   color: 'var(--sf-warning-ink, #5C4416)',
-                  borderLeftColor: 'var(--sf-warning-ink, #5C4416)',
+                  borderColor: 'var(--sf-warning-ink, #5C4416)',
                 }}
               >
                 <div className="font-semibold mb-1">
