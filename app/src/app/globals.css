@@ -25,6 +25,28 @@
   src: url("/fonts/InstrumentSans-Bold.woff2") format("woff2");
   font-weight: 600 700; font-style: normal; font-display: swap;
 }
+/* Instrument Serif — registre éditorial (H1 hero, citations, planches). */
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Regular.woff2") format("woff2");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("/fonts/InstrumentSerif-Italic.woff2") format("woff2");
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+/* JetBrains Mono — notation systématique (numerals, metadata, eyebrows mono). */
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
+  font-weight: 400 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-Bold.woff2") format("woff2");
+  font-weight: 600 700; font-style: normal; font-display: swap;
+}
 
 @custom-variant dark (&:is(.dark *));
 
@@ -197,9 +219,16 @@
   --sf-subtle:         #6B6354;
   --sf-line:           #E7E5E4;
 
-  /* === TYPOGRAPHY tokens === */
-  --sf-font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
-  --sf-font-body:    "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* === TYPOGRAPHY tokens ===
+   * Système hybride 3 fonts :
+   *  - display  : Big Shoulders → libellés UPPERCASE robustes (eyebrow, h2/h3, tabs, kpi, alerts, table th)
+   *  - editorial: Instrument Serif → titrages éditoriaux H1/hero/citations (registre marketing + casse naturelle)
+   *  - body     : Instrument Sans → texte courant, formulaires, navigation
+   *  - mono     : JetBrains Mono → numerals, metadata, notation systématique */
+  --sf-font-display:   "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --sf-font-editorial: "Instrument Serif", "EB Garamond", Georgia, serif;
+  --sf-font-body:      "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sf-font-mono:      "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 
   /* === Design System v1.0 — tokens additifs (alias ZIP) ====================
    * Source : Smart Farm Design System v1.0.0 / tokens/tokens.css

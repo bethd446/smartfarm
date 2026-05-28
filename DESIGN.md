@@ -177,12 +177,33 @@ Mode haut contraste (`html[data-contrast='high']`) : noir/blanc purs, bordures f
 
 ## Typography
 
-- **Big Shoulders Display** (display, h1, h2, h3, eyebrow) — sans-serif condensé, robuste, lisible petite taille. Utilisé pour TOUS les titrages et eyebrows.
-- **Instrument Sans** (body, formulaires, navigation, chiffres) — humaniste neutre, excellente lisibilité smartphone, supporte `font-feature-settings: "tnum"` pour les chiffres tabulaires (KPI, tableaux).
+Système **hybride 4 fonts**, deux registres :
 
-Échelle stricte : H1 30px → H2 20px → H3 ~17px → body 16px → body-sm 14px → body-xs 13px (jamais en dessous, lisibilité terrain). Les `.eyebrow` (11px uppercase letter-spacing 0.1em) servent UNIQUEMENT aux étiquettes de section ou de KPI, jamais comme titre.
+- **Big Shoulders Display** (`--sf-font-display`) — sans-serif condensé, robuste. Registre **app interne** : tous les libellés UPPERCASE letter-spaced (eyebrow, h2/h3, tabs, KPI, alerts, table th, field labels). C'est l'identité « presse agricole condensée » des écrans métier.
+- **Instrument Serif** (`--sf-font-editorial`) — serif éditorial. Registre **marketing/éditorial** : titrages H1/hero, citations, planches. Casse naturelle (jamais UPPERCASE — l'italique uppercase serif est laid), italique pour les accents. Utilisé sur la landing publique et les surfaces marketing.
+- **Instrument Sans** (`--sf-font-body`) — humaniste neutre, body/formulaires/navigation. `font-feature-settings: "tnum"` pour les chiffres tabulaires.
+- **JetBrains Mono** (`--sf-font-mono`) — notation systématique : numerals, metadata, volume/édition, latitude, pagination éditoriale, eyebrows mono-style sur la landing.
+
+Toutes les fonts sont **self-hosted** (woff2 dans `/public/fonts/`, `@font-face` dans `globals.css`). Aucun CDN externe.
+
+**Registre app vs marketing** : les écrans internes (cheptel, dashboard, sanitaire…) restent en Big Shoulders pour les titrages — robustesse et continuité. Les surfaces publiques (landing) passent en Instrument Serif éditorial. Ne pas mélanger les deux registres sur une même page.
+
+Échelle stricte app : H1 30px → H2 20px → H3 ~17px → body 16px → body-sm 14px → body-xs 13px (jamais en dessous, lisibilité terrain). Les `.eyebrow` (11px uppercase letter-spacing 0.1em) servent UNIQUEMENT aux étiquettes de section ou de KPI, jamais comme titre. Doctrine H1 app : `main h1` est forcé UPPERCASE via globals.css (opt-out par classe `.no-uppercase` ou `.hero__title`/`.lp-hero__title`).
 
 Tous les nombres (effectifs, poids, dates, KPI MCA/IC/GMQ) utilisent `font-variant-numeric: tabular-nums` pour alignement vertical dans les tables.
+
+## Anti-patterns design (audit impeccable / frontend-design / canvas-design, mai 2026)
+
+Bannis projet-wide (rework si tu es sur le point d'en écrire un) :
+
+- **Side-stripe borders** : `border-left`/`border-right` > 1px comme accent coloré sur cards/alerts. Remplacer par bordure complète, fond teinté, ou numéro/icône en tête. (5 fichiers legacy à migrer : sanitaire/maladies, mycotoxines, dashboard, reproduction/_dialog-diagnostic, alertes-sanitaires.)
+- **Gradient text** (`background-clip: text` + gradient) : jamais. Emphase par poids/taille, couleur solide.
+- **Glassmorphism décoratif** : réservé aux overlays modaux fonctionnels (drawer/sheet/dialog) — jamais décoratif.
+- **Hero-metric template** (gros chiffre + label + stats + accent gradient) : cliché SaaS. Préférer tableau de données dense (cf landing `.lp-data`).
+- **Card grids identiques** (même card icône+titre+texte répétée) : remplacer par composition éditoriale (numérotation, hairlines, asymétrie). Cf manifeste landing.
+- **Modal en premier réflexe** : épuiser inline/progressive d'abord.
+- **Em dash typographique** ` — ` dans le copy marketing : préférer virgule/deux-points/parenthèses. (Audit mai 2026 : 0 occurrence réelle dans le copy, ban respecté de facto.)
+- **Pur `#000`/`#fff`** : tous les neutres sont teintés vers le brun (`--sf-ink` #1C1917, surfaces crème). Jamais de noir/blanc pur.
 
 ## Layout
 
