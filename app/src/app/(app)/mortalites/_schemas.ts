@@ -1,5 +1,10 @@
 import { z } from 'zod'
 
+// ─── Garde-fous métier ────────────────────────────────────────────────────
+// Dates : pas avant 2020 (lancement secteur structuré CI), jamais futur.
+const DATE_MIN = '2020-01-01'
+const todayISO = () => new Date().toISOString().slice(0, 10)
+
 // ─── Motifs codifiés (V2 brief §3.3) ─────────────────────────────────────
 export const MOTIFS_MORTALITE = [
   'asphyxie',
@@ -51,7 +56,7 @@ export const mortaliteSchema = z
       .number()
       .int('Nombre entier requis')
       .min(1, 'Minimum 1 animal')
-      .max(1000, 'Maximum 1000 animaux'),
+      .max(1000, 'Maximum 1000 animaux par déclaration (scinder le lot au-delà)'),
     motif: z.enum(MOTIFS_MORTALITE, {
       message: 'Motif requis',
     }),
@@ -99,12 +104,20 @@ export const mortaliteSchema = z
     }
 
     // Date ≤ today (compare lexicographique YYYY-MM-DD)
-    const today = new Date().toISOString().slice(0, 10)
+    const today = todayISO()
     if (d.date_mortalite > today) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['date_mortalite'],
         message: 'Date ne peut pas être future',
+      })
+    }
+    // Date ≥ DATE_MIN (bloque dates antédiluviennes type 1999)
+    if (d.date_mortalite < DATE_MIN) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['date_mortalite'],
+        message: `Date trop ancienne (minimum ${DATE_MIN})`,
       })
     }
   })
