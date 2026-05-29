@@ -258,7 +258,8 @@ export default async function CheptelPage({
               style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
             >
               <Icon className="h-4 w-4" />
-              <span className="uppercase tracking-wide">{label} ({c ?? '—'})</span>
+              <span className="uppercase tracking-wide">{label}</span>
+              <span className="tabular-nums text-[var(--sf-subtle)] font-normal">{c ?? '—'}</span>
             </Link>
           )
         })}
@@ -362,7 +363,11 @@ function AnimauxTable({
   }
 
   return (
-    <section aria-labelledby="cheptel-liste-titre">
+    <section
+      aria-labelledby="cheptel-liste-titre"
+      className="md:border-t-2"
+      style={{ borderTopColor: 'var(--sf-primary)' }}
+    >
       <ResponsiveTable
         data={rows}
         columns={[
@@ -480,7 +485,10 @@ function PorteesTable({ rows }: { rows: any[] }) {
   return (
     <section aria-labelledby="cheptel-portees-titre">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
+        <table
+          className="w-full text-sm border-b border-[var(--sf-line)] border-t-2"
+          style={{ borderTopColor: 'var(--sf-primary)' }}
+        >
           <thead
             className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
             style={{
