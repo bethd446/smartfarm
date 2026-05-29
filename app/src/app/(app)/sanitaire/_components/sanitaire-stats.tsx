@@ -5,7 +5,7 @@ import { getSanitaireStats } from '../calendrier/_queries'
  * SanitaireStats - bandeau de stats dense (ex-4 KPI cards hero-metric).
  * Server Component : fait ses queries lui-meme via getSanitaireStats().
  *   1. Couverture vaccinale (30j)
- *   2. Taux mortalite (30j)
+ *   2. Taux mortalité (30j)
  *   3. Actes sanitaires en retard
  *   4. Top cause mortalite (90j)
  *
@@ -28,7 +28,7 @@ export async function SanitaireStats() {
       icon: Skull,
       tone: 'var(--sf-danger-ink, #7A2A1F)',
       period: '30 j',
-      label: 'Taux mortalite',
+      label: 'Taux mortalité',
       value: stats.tauxMortalite30jPct == null ? '—' : `${stats.tauxMortalite30jPct} %`,
       sub: `${stats.morts30j} / ${stats.effectifMoyen} animaux`,
     },
