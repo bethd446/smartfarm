@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Bell, AlertTriangle, AlertCircle, Siren, CheckCircle2 } from 'lucide-react'
+import { Bell, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
@@ -67,106 +67,109 @@ export default async function AlertesPage() {
         />
       </div>
 
-      {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Total — FIX S5-L3 #3 : cap visuel à 99+ pour ne pas désensibiliser */}
-        <Card>
-          <CardContent className="p-5">
-            <Bell className="h-5 w-5 mb-2 text-[var(--sf-primary,#2D4A1F)]" />
-            <div
-              className="text-3xl font-bold tabular-nums text-[var(--sf-ink,#1a1a1a)]"
-              aria-label={`${total} alertes actives`}
-            >
-              {total > 99 ? '99+' : total}
+      {/* Bilan gravité — bande dense, sévérité par DOT (forme), pas par fond
+          coloré ni faux-dégradé. Total en tête, puis 3 niveaux décroissants.
+          FIX S5-L3 #3 : cap visuel total à 99+ pour ne pas désensibiliser. */}
+      <Card>
+        <CardContent className="p-0">
+          <div className="grid grid-cols-2 md:grid-cols-4 divide-y divide-x divide-[var(--sf-line)] md:divide-y-0">
+            {/* Total */}
+            <div className="flex items-center gap-3 p-4">
+              <Bell className="h-5 w-5 shrink-0 text-[var(--sf-primary,#2D4A1F)]" />
+              <div className="min-w-0">
+                <div
+                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
+                  style={{
+                    fontFamily:
+                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                  aria-label={`${total} alertes actives`}
+                >
+                  {total > 99 ? '99+' : total}
+                </div>
+                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
+                  Alertes actives
+                </div>
+              </div>
             </div>
-            <div className="eyebrow text-[11px] mt-1 text-[var(--sf-muted,#5C5346)]">
-              Alertes actives
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Critiques */}
-        <Card
-          style={{
-            background: 'var(--sf-danger-bg, #F1D4CE)',
-            color: 'var(--sf-danger-ink, #7A2A1F)',
-          }}
-        >
-          <CardContent className="p-5">
-            <Siren
-              className="h-5 w-5 mb-2"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            />
-            <div
-              className="text-3xl font-bold tabular-nums"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            >
-              {compte.critique ?? 0}
+            {/* Critiques — dot plein rouge */}
+            <div className="flex items-center gap-3 p-4">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{ background: 'var(--sf-danger,#DC2626)' }}
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <div
+                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
+                  style={{
+                    fontFamily:
+                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                >
+                  {compte.critique ?? 0}
+                </div>
+                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
+                  Critiques
+                </div>
+              </div>
             </div>
-            <div
-              className="eyebrow text-[11px] mt-1"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            >
-              Critiques
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Élevées */}
-        <Card
-          style={{
-            background: 'var(--sf-danger-bg, #F1D4CE)',
-            color: 'var(--sf-danger-ink, #7A2A1F)',
-            opacity: 0.85,
-          }}
-        >
-          <CardContent className="p-5">
-            <AlertTriangle
-              className="h-5 w-5 mb-2"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            />
-            <div
-              className="text-3xl font-bold tabular-nums"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            >
-              {compte['élevée'] ?? 0}
+            {/* Élevées — anneau rouge épais */}
+            <div className="flex items-center gap-3 p-4">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{
+                  background: 'transparent',
+                  boxShadow: 'inset 0 0 0 3px var(--sf-danger,#DC2626)',
+                }}
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <div
+                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
+                  style={{
+                    fontFamily:
+                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                >
+                  {compte['élevée'] ?? 0}
+                </div>
+                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
+                  Élevées
+                </div>
+              </div>
             </div>
-            <div
-              className="eyebrow text-[11px] mt-1"
-              style={{ color: 'var(--sf-danger-ink, #7A2A1F)' }}
-            >
-              Élevées
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Moyennes */}
-        <Card
-          style={{
-            background: 'var(--sf-warning-bg, #F5E0B8)',
-            color: 'var(--sf-warning-ink, #5A3E0E)',
-          }}
-        >
-          <CardContent className="p-5">
-            <AlertCircle
-              className="h-5 w-5 mb-2"
-              style={{ color: 'var(--sf-warning-ink, #5A3E0E)' }}
-            />
-            <div
-              className="text-3xl font-bold tabular-nums"
-              style={{ color: 'var(--sf-warning-ink, #5A3E0E)' }}
-            >
-              {compte.moyenne ?? 0}
+            {/* Moyennes — anneau ambre */}
+            <div className="flex items-center gap-3 p-4">
+              <span
+                className="h-2.5 w-2.5 shrink-0 rounded-full"
+                style={{
+                  background: 'transparent',
+                  boxShadow: 'inset 0 0 0 2px var(--sf-warning,#A16207)',
+                }}
+                aria-hidden="true"
+              />
+              <div className="min-w-0">
+                <div
+                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
+                  style={{
+                    fontFamily:
+                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                >
+                  {compte.moyenne ?? 0}
+                </div>
+                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
+                  Moyennes
+                </div>
+              </div>
             </div>
-            <div
-              className="eyebrow text-[11px] mt-1"
-              style={{ color: 'var(--sf-warning-ink, #5A3E0E)' }}
-            >
-              Moyennes
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Liste ou état vide */}
       {total === 0 ? (

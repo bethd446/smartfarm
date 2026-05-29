@@ -244,69 +244,74 @@ export default async function CroissancePage() {
         </CardContent>
       </Card>
 
-      {/* ===== KPI CARDS ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* GMQ moyen ferme */}
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-4">
-            <div style={eyebrowStyle} className="mb-2">
-              GMQ MOYEN FERME
-            </div>
-            <div
-              className="text-4xl font-black tabular-nums text-[var(--sf-ink)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-            >
+      {/* ===== SYNTHÈSE KPI — registre dense tabulaire ===== */}
+      <section className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
+        <div className="mb-2 px-2 pt-3" style={eyebrowStyle}>
+          SYNTHÈSE GMQ · RÉEL VS RÉFÉRENTIEL
+        </div>
+        <dl>
+          {/* GMQ moyen ferme */}
+          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+            <dt className="min-w-0">
+              <span
+                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              >
+                GMQ moyen ferme
+              </span>
+              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
+                Calculé sur {kpiParStade.reduce((s, k) => s + k.n_animaux, 0)} animaux
+              </span>
+            </dt>
+            <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-ink)]">
               {gmqMoyenFerme !== null ? Math.round(gmqMoyenFerme) : '—'}
-              {gmqMoyenFerme !== null && <span className="text-lg ml-1">g/j</span>}
-            </div>
-            <div className="text-xs text-[var(--sf-muted)] mt-1">
-              Calculé sur {kpiParStade.reduce((s, k) => s + k.n_animaux, 0)} animaux
-            </div>
-          </CardContent>
-        </Card>
+              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">g/j</span>
+            </dd>
+          </div>
 
-        {/* GMQ référentiel */}
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-4">
-            <div style={eyebrowStyle} className="mb-2">
-              GMQ RÉFÉRENTIEL LT-CI
-            </div>
-            <div
-              className="text-4xl font-black tabular-nums text-[var(--sf-muted)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-            >
+          {/* GMQ référentiel LT-CI */}
+          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+            <dt className="min-w-0">
+              <span
+                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              >
+                GMQ référentiel LT-CI
+              </span>
+              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">Moyenne J0→J180</span>
+            </dt>
+            <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-muted)]">
               {gmqRefMoyen !== null ? Math.round(gmqRefMoyen) : '—'}
-              {gmqRefMoyen !== null && <span className="text-lg ml-1">g/j</span>}
-            </div>
-            <div className="text-xs text-[var(--sf-muted)] mt-1">Moyenne J0→J180</div>
-          </CardContent>
-        </Card>
+              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">g/j</span>
+            </dd>
+          </div>
 
-        {/* Écart % */}
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-4">
-            <div style={eyebrowStyle} className="mb-2">
-              ÉCART VS RÉFÉRENTIEL
-            </div>
-            <div
-              className="text-4xl font-black tabular-nums"
-              style={{
-                fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                color: getToneColor(ecartTone),
-              }}
+          {/* Écart vs référentiel */}
+          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+            <dt className="min-w-0">
+              <span
+                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              >
+                Écart vs référentiel
+              </span>
+              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
+                {ecartTone === 'good' && 'Performance normale'}
+                {ecartTone === 'warn' && 'Léger retard'}
+                {ecartTone === 'bad' && 'Retard significatif'}
+                {ecartTone === 'muted' && 'Données insuffisantes'}
+              </span>
+            </dt>
+            <dd
+              className="shrink-0 font-mono font-bold tabular-nums text-lg"
+              style={{ color: getToneColor(ecartTone) }}
             >
               {ecartPct !== null ? (ecartPct > 0 ? '+' : '') + fmtNum(ecartPct, 1) : '—'}
-              {ecartPct !== null && <span className="text-lg ml-1">%</span>}
-            </div>
-            <div className="text-xs text-[var(--sf-muted)] mt-1">
-              {ecartTone === 'good' && '✓ Performance normale'}
-              {ecartTone === 'warn' && '⚠ Léger retard'}
-              {ecartTone === 'bad' && '✗ Retard significatif'}
-              {ecartTone === 'muted' && 'Données insuffisantes'}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">%</span>
+            </dd>
+          </div>
+        </dl>
+      </section>
 
       {/* ===== TABLEAU DÉTAIL PAR STADE ===== */}
       <Card className="border-[var(--sf-line)]">
