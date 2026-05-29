@@ -1,12 +1,12 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Baby, Plus, Scissors, ArrowLeftRight } from 'lucide-react'
+import { RelativeTime } from '@/components/ui/relative-time'
+import { Baby, Plus, Scissors, ArrowLeftRight, Heart, Milk, Activity } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { TERRAIN } from '@/lib/terrain-labels'
@@ -205,9 +205,58 @@ export default async function MisesBasPage({
     autre: 'Autre',
   }
 
+  // === KPI bandeau (Pattern A) — agrégats temps réel ============
+  const totalPortees = mb.length
+  const totalNesVivants = mb.reduce((acc, m) => acc + Number(m.nes_vivants ?? 0), 0)
+  const totalNesTotaux = mb.reduce((acc, m) => acc + Number(m.nes_totaux ?? 0), 0)
+  const ratioVivantsGlobal = totalNesTotaux > 0 ? totalNesVivants / totalNesTotaux : 0
+  const allaitantesCount = misesBasAllaitantes.length
+  const sevrees30j = mb.filter((m) => {
+    const sev = m.sevrages?.[0]
+    if (!sev) return false
+    const ds = new Date(sev.date_sevrage).getTime()
+    if (Number.isNaN(ds)) return false
+    return ds >= today.getTime() - 30 * 24 * 60 * 60 * 1000
+  }).length
+
+  const kpiCells = [
+    {
+      icon: Baby,
+      tone: 'var(--sf-ink, #1a1a1a)',
+      period: 'Total',
+      label: 'Portées',
+      value: String(totalPortees),
+      sub: 'Mises bas enregistrées',
+    },
+    {
+      icon: Heart,
+      tone: 'var(--sf-success-ink, #1F3B12)',
+      period: 'cumul',
+      label: 'Nés vivants',
+      value: String(totalNesVivants),
+      sub: `${Math.round(ratioVivantsGlobal * 100)}% sur ${totalNesTotaux} nés`,
+    },
+    {
+      icon: Milk,
+      tone: 'var(--sf-warning-ink, #5A3E0E)',
+      period: '≤35 j',
+      label: 'Allaitement',
+      value: String(allaitantesCount),
+      sub: 'Portées sous la mère',
+    },
+    {
+      icon: Activity,
+      tone: 'var(--sf-ink, #1a1a1a)',
+      period: '30 j',
+      label: 'Sevrages',
+      value: String(sevrees30j),
+      sub: 'Portées sevrées récemment',
+    },
+  ]
+
   return (
     <div className="space-y-6">
-      {/* === Header de page : PageTitle unifié === */}
+      {/* === Header de page : PageTitle unifié (Pattern E) === */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <PageTitle
@@ -218,10 +267,10 @@ export default async function MisesBasPage({
             {TERRAIN.mise_bas.titre} &amp; {TERRAIN.sevrage.titre}
           </PageTitle>
           <p
-            className="text-sm text-[var(--sf-muted)]"
+            className="text-sm font-semibold tabular-nums text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
-            {mb?.length ?? 0} portées enregistrées
+            {totalPortees} portées enregistrées
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -268,7 +317,69 @@ export default async function MisesBasPage({
         </div>
       </div>
 
-      {/* === Historique des mises-bas : table compacte (V2-FIX FIX-B #1) === */}
+      {/* === KPI bandeau dense (Pattern A) === */}
+      <section
+        aria-label="Indicateurs mises bas & sevrages"
+        className="border-t-2 border-b border-[var(--sf-line)]"
+        style={{ borderTopColor: 'var(--sf-primary)' }}
+      >
+        <div className="grid grid-cols-2 lg:grid-cols-4">
+          {kpiCells.map((c, i) => {
+            const Icon = c.icon
+            return (
+              <div
+                key={c.label}
+                className={[
+                  'min-h-[44px] px-3 py-3 sm:px-4',
+                  'border-[var(--sf-line)]',
+                  i % 2 === 1 ? 'border-l' : '',
+                  'lg:border-l',
+                  i % 4 === 0 ? 'lg:border-l-0' : '',
+                  i >= 2 ? 'border-t lg:border-t-0' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <Icon className="h-4 w-4 shrink-0" style={{ color: c.tone }} />
+                  <span
+                    className="text-[10px] uppercase tracking-[0.16em] shrink-0"
+                    style={{
+                      color: 'var(--sf-subtle, #8A7F6D)',
+                      fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                    }}
+                  >
+                    {c.period}
+                  </span>
+                </div>
+                <div
+                  className="mt-1.5 text-2xl font-bold tabular-nums leading-tight"
+                  style={{ color: c.tone }}
+                >
+                  {c.value}
+                </div>
+                <div
+                  className="mt-1 text-[11px] uppercase tracking-[0.12em] leading-tight"
+                  style={{
+                    color: 'var(--sf-muted, #5C5346)',
+                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                >
+                  {c.label}
+                </div>
+                <div
+                  className="mt-0.5 text-[11px] tabular-nums leading-tight line-clamp-1"
+                  style={{ color: 'var(--sf-subtle, #8A7F6D)' }}
+                >
+                  {c.sub}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* === Historique des mises-bas : table dense (Pattern C) === */}
       {(mb ?? []).length === 0 ? (
         <EmptyState
           icon={Baby}
@@ -276,300 +387,222 @@ export default async function MisesBasPage({
           description="Les mises-bas apparaîtront ici après saisie. Cliquez sur 'Nouvelle mise bas' pour démarrer."
         />
       ) : (
-      <>
-      <Card>
-        <CardHeader>
-          <CardTitle>Historique des mises-bas ({mb!.length})</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="w-full min-w-[800px] text-sm">
-              <thead className="bg-muted/40 border-b">
+        <section aria-labelledby="historique-mb-titre">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2
+              id="historique-mb-titre"
+              className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)]"
+            >
+              Historique des portées
+            </h2>
+            <span
+              className="text-[11px] uppercase tracking-[0.14em] tabular-nums text-[var(--sf-muted)]"
+              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+            >
+              {mb!.length} portées
+            </span>
+          </div>
+          <div
+            className="overflow-x-auto -mx-4 sm:mx-0 border-t-2"
+            style={{ borderTopColor: 'var(--sf-primary,#2D4A1F)' }}
+          >
+            <table className="w-full min-w-[960px] text-sm">
+              <thead
+                className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
+                style={{
+                  fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                }}
+              >
                 <tr>
-                  <th className="text-left p-3 font-medium">Truie</th>
-                  <th className="text-left p-3 font-medium">Date MB</th>
-                  <th className="text-right p-3 font-medium">Total nés</th>
-                  <th className="text-right p-3 font-medium">Vivants</th>
-                  <th className="text-right p-3 font-medium">Mort-nés</th>
-                  <th className="text-right p-3 font-medium">Momifiés</th>
-                  <th className="text-right p-3 font-medium">Écrasés</th>
-                  <th className="text-right p-3 font-medium">Sevrage</th>
+                  <th className="py-3 px-4 font-semibold">Truie</th>
+                  <th className="py-3 px-4 font-semibold">Mise bas</th>
+                  <th className="py-3 px-4 font-semibold text-right">Nés</th>
+                  <th className="py-3 px-4 font-semibold text-right">Vivants</th>
+                  <th className="py-3 px-4 font-semibold text-right">Mort-nés</th>
+                  <th className="py-3 px-4 font-semibold text-right">Momifiés</th>
+                  <th className="py-3 px-4 font-semibold text-right">Écrasés</th>
+                  <th className="py-3 px-4 font-semibold text-right">Poids</th>
+                  <th className="py-3 px-4 font-semibold text-right">BCS</th>
+                  <th className="py-3 px-4 font-semibold">Taux</th>
+                  <th className="py-3 px-4 font-semibold">Sevrage</th>
+                  <th className="py-3 px-4 font-semibold text-right">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {(mb ?? []).map((m: any) => (
-                  <tr key={m.id} className="border-b last:border-0 hover:bg-muted/20">
-                    <td className="p-3">
-                      {m.truie ? (
-                        <AnimalLabel animal={m.truie} format="inline" />
-                      ) : '—'}
+                {(mb ?? []).map((m: any) => {
+                  const sev = m.sevrages?.[0]
+                  const ratio = m.nes_totaux > 0 ? m.nes_vivants / m.nes_totaux : 0
+                  const tone = toneTauxPortee(ratio)
+                  const tauxVariant = TONE_TO_VARIANT[tone]
+                  const allaitante = misesBasAllaitantes.find((a) => a.id === m.id)
+                  const peutAdopter = !!allaitante && misesBasAllaitantes.length >= 2
+                  return (
+                    <tr
+                      key={m.id}
+                      className="border-b border-[var(--sf-line)] last:border-0 hover:bg-[var(--sf-surface-2)]/40"
+                    >
+                      <td className="py-3 px-4">
+                        {m.truie ? (
+                          <AnimalLabel animal={m.truie} format="inline" />
+                        ) : (
+                          '—'
+                        )}
+                      </td>
+                      <td className="py-3 px-4 tabular-nums text-[var(--sf-ink)]">
+                        <RelativeTime date={m.date_mise_bas} addSuffix />
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-ink)]">
+                        {m.nes_totaux}
+                      </td>
+                      <td className="py-3 px-4 text-right font-semibold tabular-nums text-[var(--sf-ink)]">
+                        {m.nes_vivants}
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-danger-ink,#7A2A1F)]">
+                        {m.nes_morts ?? 0}
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-warning-ink,#5C4416)]">
+                        {m.momifies ?? 0}
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-danger-ink,#7A2A1F)]">
+                        {m.ecrases ?? 0}
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-ink)]">
+                        {m.poids_portee_kg != null ? `${m.poids_portee_kg} kg` : '—'}
+                      </td>
+                      <td className="py-3 px-4 text-right tabular-nums text-[var(--sf-ink)]">
+                        {m.bcs_truie != null ? Number(m.bcs_truie).toFixed(1) : '—'}
+                      </td>
+                      <td className="py-3 px-4">
+                        <Badge variant={tauxVariant}>{Math.round(ratio * 100)}%</Badge>
+                      </td>
+                      <td className="py-3 px-4">
+                        {sev ? (
+                          <div className="flex flex-col gap-0.5">
+                            <Badge variant="success">{sev.nb_sevres} sevrés</Badge>
+                            <span className="text-[10px] tabular-nums text-[var(--sf-subtle)]">
+                              <RelativeTime date={sev.date_sevrage} addSuffix />
+                            </span>
+                          </div>
+                        ) : (
+                          <Badge variant="secondary">En cours</Badge>
+                        )}
+                      </td>
+                      <td className="py-3 px-4 text-right">
+                        {peutAdopter ? (
+                          <DialogAdoption
+                            mises_bas_allaitantes={misesBasAllaitantes}
+                            source_id_prefill={m.id}
+                            trigger={
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="h-9 text-[11px] uppercase tracking-wider"
+                              >
+                                <ArrowLeftRight className="h-3.5 w-3.5 mr-1.5" />
+                                Adopter
+                              </Button>
+                            }
+                          />
+                        ) : (
+                          <span className="text-[var(--sf-subtle)] text-xs">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
+
+      {/* === C9 — ADOPTIONS RÉCENTES (30j) — table dense (Pattern C) === */}
+      {adoptionsRecentes.length > 0 && (
+        <section aria-labelledby="adoptions-recentes-titre">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2
+              id="adoptions-recentes-titre"
+              className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)]"
+            >
+              Adoptions récentes
+            </h2>
+            <span
+              className="text-[11px] uppercase tracking-[0.14em] tabular-nums text-[var(--sf-muted)]"
+              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+            >
+              30 j · {adoptionsRecentes.length}
+            </span>
+          </div>
+          <div
+            className="overflow-x-auto -mx-4 sm:mx-0 border-t-2"
+            style={{ borderTopColor: 'var(--sf-primary,#2D4A1F)' }}
+          >
+            <table className="w-full min-w-[720px] text-sm">
+              <thead
+                className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
+                style={{
+                  fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  fontSize: '11px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                <tr>
+                  <th className="py-3 px-4 font-semibold">Date</th>
+                  <th className="py-3 px-4 font-semibold">Source</th>
+                  <th className="py-3 px-4 font-semibold">Destination</th>
+                  <th className="py-3 px-4 font-semibold text-right">Porcelets</th>
+                  <th className="py-3 px-4 font-semibold">Motif</th>
+                </tr>
+              </thead>
+              <tbody>
+                {adoptionsRecentes.map((a: any) => (
+                  <tr
+                    key={a.id}
+                    className="border-b border-[var(--sf-line)] last:border-0 hover:bg-[var(--sf-surface-2)]/40"
+                  >
+                    <td className="py-3 px-4 tabular-nums text-[var(--sf-ink)]">
+                      <RelativeTime date={a.date_adoption} addSuffix />
                     </td>
-                    <td className="p-3">{new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}</td>
-                    <td className="p-3 text-right tabular-nums">{m.nes_totaux}</td>
-                    <td className="p-3 text-right font-medium tabular-nums">{m.nes_vivants}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.nes_morts ?? 0}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.momifies ?? 0}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.ecrases ?? 0}</td>
-                    <td className="p-3 text-right">
-                      {m.sevrages?.[0] ? (
-                        <Badge variant="success">{m.sevrages[0].nb_sevres} sevrés</Badge>
+                    <td className="py-3 px-4">
+                      {a.source?.truie ? (
+                        <AnimalLabel animal={a.source.truie} format="inline" />
                       ) : (
-                        <Badge variant="secondary">En cours</Badge>
+                        '—'
                       )}
+                    </td>
+                    <td className="py-3 px-4">
+                      {a.destination?.truie ? (
+                        <AnimalLabel
+                          animal={a.destination.truie}
+                          format="inline"
+                        />
+                      ) : (
+                        '—'
+                      )}
+                    </td>
+                    <td className="py-3 px-4 text-right font-semibold tabular-nums text-[var(--sf-ink)]">
+                      {a.nb_porcelets}
+                    </td>
+                    <td className="py-3 px-4 text-xs text-[var(--sf-ink)]">
+                      {MOTIF_LABELS[a.motif_adoption] ?? a.motif_adoption}
+                      {a.motif_adoption === 'autre' && a.motif_libre ? (
+                        <span className="text-[var(--sf-muted)]">
+                          {' '}
+                          — {a.motif_libre}
+                        </span>
+                      ) : null}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* === Détails par portée : cards riches conservées en vue secondaire === */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {(mb ?? []).map((m: any) => {
-          const sev = m.sevrages?.[0]
-          const ratio = m.nes_totaux > 0 ? m.nes_vivants / m.nes_totaux : 0
-          const tone = toneTauxPortee(ratio)
-          const tauxVariant = TONE_TO_VARIANT[tone]
-          return (
-            <Card key={m.id}>
-              <CardHeader className="pb-3">
-                <div className="flex justify-between items-start gap-2">
-                  <div>
-                    <CardTitle className="text-base">
-                      {m.truie?.nom ?? m.truie?.tag}
-                    </CardTitle>
-                    <div className="text-xs text-[var(--sf-muted)] font-mono tabular-nums mt-1">
-                      {m.truie?.tag} ·{' '}
-                      {new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}
-                    </div>
-                  </div>
-                  <Badge variant={tauxVariant}>
-                    {Math.round(ratio * 100)}% vivants
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent className="text-sm space-y-2">
-                {/* === Totaux : 2 cards (Vivants / Totaux) === */}
-                <div className="grid grid-cols-2 gap-2 mb-2">
-                  <div
-                    className="p-2 text-center border border-[var(--sf-line)]"
-                    style={{ background: 'var(--sf-success-bg, #DCE9CB)' }}
-                  >
-                    <div className="text-xl font-bold text-[var(--sf-success-ink,#1F3414)] tabular-nums">
-                      {m.nes_vivants}
-                    </div>
-                    <div
-                      className="text-[10px] text-[var(--sf-success-ink,#1F3414)] opacity-80 uppercase tracking-[0.1em]"
-                      style={{
-                        fontFamily:
-                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      }}
-                    >
-                      Vivants
-                    </div>
-                  </div>
-                  <div
-                    className="p-2 text-center border border-[var(--sf-line)]"
-                    style={{ background: 'var(--sf-surface-2, #F1ECE0)' }}
-                  >
-                    <div className="text-xl font-bold text-[var(--sf-ink)] tabular-nums">
-                      {m.nes_totaux}
-                    </div>
-                    <div
-                      className="text-[10px] text-[var(--sf-muted)] uppercase tracking-[0.1em]"
-                      style={{
-                        fontFamily:
-                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      }}
-                    >
-                      Totaux
-                    </div>
-                  </div>
-                </div>
-
-                {/* === Décomposition mortalité : Mort-nés / Momifiés / Écrasés === */}
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  <div
-                    className="p-2 text-center border border-[var(--sf-line)]"
-                    style={{ background: 'var(--sf-danger-bg, #F1D4CE)' }}
-                  >
-                    <div className="text-lg font-bold text-[var(--sf-danger-ink,#7A2A1F)] tabular-nums">
-                      {m.nes_morts ?? 0}
-                    </div>
-                    <div
-                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
-                      style={{
-                        fontFamily:
-                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      }}
-                    >
-                      Mort-nés
-                    </div>
-                  </div>
-                  <div
-                    className="p-2 text-center border border-[var(--sf-line)]"
-                    style={{ background: 'var(--sf-warning-bg, #F5E6C5)' }}
-                  >
-                    <div className="text-lg font-bold text-[var(--sf-warning-ink,#5C4416)] tabular-nums">
-                      {m.momifies ?? 0}
-                    </div>
-                    <div
-                      className="text-[10px] text-[var(--sf-warning-ink,#5C4416)] opacity-80 uppercase tracking-[0.1em]"
-                      style={{
-                        fontFamily:
-                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      }}
-                    >
-                      Momifiés
-                    </div>
-                  </div>
-                  <div
-                    className="p-2 text-center border border-[var(--sf-line)]"
-                    style={{ background: 'var(--sf-danger-bg, #F1D4CE)' }}
-                  >
-                    <div className="text-lg font-bold text-[var(--sf-danger-ink,#7A2A1F)] tabular-nums">
-                      {m.ecrases ?? 0}
-                    </div>
-                    <div
-                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
-                      style={{
-                        fontFamily:
-                          "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      }}
-                    >
-                      Écrasés
-                    </div>
-                  </div>
-                </div>
-                {m.bcs_truie != null && (
-                  <div className="flex justify-between text-xs">
-                    <span className="text-[var(--sf-muted)]">BCS truie</span>
-                    <span className="font-mono tabular-nums text-[var(--sf-ink)]">
-                      {Number(m.bcs_truie).toFixed(1)} / 5
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between text-xs">
-                  <span className="text-[var(--sf-muted)]">Poids portée</span>
-                  <span className="font-mono tabular-nums text-[var(--sf-ink)]">
-                    {m.poids_portee_kg ?? '—'} kg
-                  </span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-[var(--sf-muted)]">Durée</span>
-                  <span className="font-mono tabular-nums text-[var(--sf-ink)]">
-                    {m.duree_minutes ?? '—'} min
-                  </span>
-                </div>
-                {sev && (
-                  <div className="mt-2 pt-2 border-t border-[var(--sf-line)] text-xs">
-                    <div className="font-semibold text-[var(--sf-success-ink,#1F3414)] mb-1">
-                      ✓ Sevrage effectué le{' '}
-                      {new Date(sev.date_sevrage).toLocaleDateString('fr-FR')}
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[var(--sf-muted)]">Sevrés</span>
-                      <span className="font-mono font-bold tabular-nums text-[var(--sf-ink)]">
-                        {sev.nb_sevres}
-                      </span>
-                    </div>
-                  </div>
-                )}
-                {/* C9 — bouton inline "Adopter depuis cette portee" si
-                    portee allaitante (<=35j, non sevree) ET au moins une
-                    autre portee allaitante disponible comme destination */}
-                {misesBasAllaitantes.find((a) => a.id === m.id) &&
-                  misesBasAllaitantes.length >= 2 && (
-                    <div className="mt-3 pt-2 border-t border-[var(--sf-line)]">
-                      <DialogAdoption
-                        mises_bas_allaitantes={misesBasAllaitantes}
-                        source_id_prefill={m.id}
-                        trigger={
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-full h-10 text-xs uppercase tracking-wider"
-                          >
-                            <ArrowLeftRight className="h-4 w-4 mr-2" />
-                            Adopter depuis cette portée
-                          </Button>
-                        }
-                      />
-                    </div>
-                  )}
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-      </>
-      )}
-
-      {/* === C9 — ADOPTIONS RÉCENTES (30j) === */}
-      {adoptionsRecentes.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              Adoptions récentes — 30 jours ({adoptionsRecentes.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <table className="w-full min-w-[720px] text-sm">
-                <thead className="bg-muted/40 border-b">
-                  <tr>
-                    <th className="text-left p-3 font-medium">Date</th>
-                    <th className="text-left p-3 font-medium">Source</th>
-                    <th className="text-left p-3 font-medium">Destination</th>
-                    <th className="text-right p-3 font-medium">Porcelets</th>
-                    <th className="text-left p-3 font-medium">Motif</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {adoptionsRecentes.map((a: any) => (
-                    <tr key={a.id} className="border-b last:border-0 hover:bg-muted/20">
-                      <td className="p-3 tabular-nums">
-                        {new Date(a.date_adoption).toLocaleDateString('fr-FR')}
-                      </td>
-                      <td className="p-3">
-                        {a.source?.truie ? (
-                          <AnimalLabel animal={a.source.truie} format="inline" />
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-                      <td className="p-3">
-                        {a.destination?.truie ? (
-                          <AnimalLabel
-                            animal={a.destination.truie}
-                            format="inline"
-                          />
-                        ) : (
-                          '—'
-                        )}
-                      </td>
-                      <td className="p-3 text-right font-bold tabular-nums">
-                        {a.nb_porcelets}
-                      </td>
-                      <td className="p-3 text-xs">
-                        {MOTIF_LABELS[a.motif_adoption] ?? a.motif_adoption}
-                        {a.motif_adoption === 'autre' && a.motif_libre ? (
-                          <span className="text-[var(--sf-muted)]">
-                            {' '}
-                            — {a.motif_libre}
-                          </span>
-                        ) : null}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+        </section>
       )}
 
       {/* === FAB mobile === */}
