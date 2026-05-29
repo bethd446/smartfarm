@@ -25,7 +25,7 @@ import {
   ChevronLeft,
   CheckCircle2,
   Users,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 import { DialogNouvelleVisite } from './_dialog-visite'
 import { noterAuditBiosecurite } from './_actions'

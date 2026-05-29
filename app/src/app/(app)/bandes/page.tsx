@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Layers, Plus } from 'lucide-react'
+import { Layers, Plus } from '@/components/ui/icons'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
 import { BandesFab } from './_fab'
 

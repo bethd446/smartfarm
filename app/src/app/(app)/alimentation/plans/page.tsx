@@ -23,7 +23,7 @@ import {
   TrendingDown,
   AlertTriangle,
   Wheat,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'

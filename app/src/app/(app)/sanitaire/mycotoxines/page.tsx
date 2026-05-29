@@ -27,7 +27,7 @@ import {
   Sparkles,
   CloudRain,
   ShieldCheck,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 import { DialogEnregistrerLot } from './_dialog-lot'
 

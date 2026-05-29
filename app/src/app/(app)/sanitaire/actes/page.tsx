@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
-import { Syringe, Plus, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
+import { Syringe, Plus, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from '@/components/ui/icons'
 import { DialogActe, type ProduitOption } from './_dialog-acte'
 
 export const metadata: Metadata = { title: 'Actes sanitaires' }

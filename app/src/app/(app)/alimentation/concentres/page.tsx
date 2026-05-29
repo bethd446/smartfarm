@@ -16,7 +16,7 @@ import {
   RotateCcw,
   Factory,
   AlertTriangle,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 import { DialogMatiere, type MatiereRow } from '../matieres/_dialog-matiere'
 import {

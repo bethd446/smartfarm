@@ -5,7 +5,7 @@ import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Skull, Plus } from 'lucide-react'
+import { Skull, Plus } from '@/components/ui/icons'
 import { DialogMortalite } from './_dialog-mortalite'
 import type { AnimalOption, BandeOption } from './_dialog-mortalite'
 import {

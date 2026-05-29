@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Wheat, Plus, ChevronLeft, RotateCcw, Search, AlertTriangle } from 'lucide-react'
+import { Wheat, Plus, ChevronLeft, RotateCcw, Search, AlertTriangle } from '@/components/ui/icons'
 
 import { DialogMatiere, type MatiereRow } from './_dialog-matiere'
 import {

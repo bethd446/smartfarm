@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ExportButton } from '@/components/export-button'
-import { Package, Plus, AlertTriangle, ArrowDown, ArrowUp } from 'lucide-react'
+import { Package, Plus, AlertTriangle, ArrowDown, ArrowUp } from '@/components/ui/icons'
 import {
   DialogEntreeStock,
   DialogSortieStock,

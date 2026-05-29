@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ExportButton } from '@/components/export-button'
-import { Activity, Plus, ChevronLeft, AlertTriangle } from 'lucide-react'
+import { Activity, Plus, ChevronLeft, AlertTriangle } from '@/components/ui/icons'
 import { formatDateContextuel } from '@/lib/format/dates'
 
 import { DialogConsommation, type ConsoRow } from './_dialog-conso'

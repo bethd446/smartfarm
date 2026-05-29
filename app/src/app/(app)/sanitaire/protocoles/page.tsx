@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Syringe, Plus, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
+import { Syringe, Plus, ChevronLeft, RotateCcw, ShieldCheck } from '@/components/ui/icons'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
 import { DialogProtocole, type ProtocoleRow } from './_dialog-protocole'

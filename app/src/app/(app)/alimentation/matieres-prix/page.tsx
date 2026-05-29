@@ -20,7 +20,7 @@ import {
   Plus,
   ChevronLeft,
   AlertTriangle,
-} from 'lucide-react'
+} from '@/components/ui/icons'
 
 import { DialogPrix } from './_dialog-prix'
 import { supprimerPrixMatiere } from './_actions'
