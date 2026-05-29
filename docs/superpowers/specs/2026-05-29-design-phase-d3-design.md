@@ -56,7 +56,11 @@ Constats :
 **Exception au principe de densification.** C'est un lanceur de saisie terrain « pensé pour les gants » (règle 7 : Android 4G, plein soleil 1500 lx, mains sales). On **garde les 4 grosses tuiles tactiles** (`h-32`, cibles ≥ 44 px).
 - Fond → `--sf` surface + bordure hairline (fini le fond plein coloré).
 - Label → Big Shoulders.
-- **Icône** porte le ton sémantique via tokens `--sf-*` (fini `bg-violet-600` / `indigo` / `red` / `emerald` bruts).
+- **Icône** porte le ton sémantique via tokens `--sf-*` (fini `bg-violet-600` / `indigo` / `red` / `emerald` bruts). Mapping figé :
+  - Nouvelle mise bas (`/mises-bas`) → `--sf-primary` (vert / naissance)
+  - Peser (`/pesees`) → `--sf-info` (bleu / mesure)
+  - Soin (`/sanitaire`) → `--sf-danger` (rouge / sanitaire)
+  - Déplacer (`/cheptel`) → `--sf-accent` (or / logistique)
 - Header → eyebrow + titre (fini `text-3xl font-bold` + `text-slate-500`).
 - **Préserver** : hrefs `?quick=true`, ergonomie ≥ 44 px.
 
