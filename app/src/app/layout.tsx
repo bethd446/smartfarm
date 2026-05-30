@@ -3,6 +3,7 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://smartfarm.group"),
   title: "Smart Farm — Gestion d'élevage · Côte d'Ivoire",
   description:
     "Application de gestion technique de troupeau porcin pour éleveurs ivoiriens. Multi-fermes, mobile, fonctionne en 4G.",
@@ -16,10 +17,20 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
   },
+  openGraph: {
+    title: "Smart Farm — Gestion d'élevage porcin · Côte d'Ivoire",
+    description:
+      "Application de gestion technique de troupeau porcin pour éleveurs ivoiriens. Multi-fermes, mobile, fonctionne en 4G.",
+    url: "https://smartfarm.group",
+    siteName: "Smart Farm",
+    locale: "fr_FR",
+    type: "website",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Smart Farm" }],
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: "#2D4A1F",
+  themeColor: "#6E9551",
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,

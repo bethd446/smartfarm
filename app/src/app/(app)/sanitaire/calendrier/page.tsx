@@ -90,10 +90,10 @@ export default async function CalendrierSanitairePage({
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <p className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+          <p className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
             CARNET SANITAIRE
           </p>
-          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
             <CalendarDays className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Calendrier sanitaire
           </h1>

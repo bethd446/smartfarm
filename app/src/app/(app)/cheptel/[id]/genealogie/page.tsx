@@ -62,7 +62,7 @@ function AnimalCard({
       <div className="min-w-[148px] max-w-[200px] rounded-[var(--r)] border border-dashed border-[var(--line2)] bg-[var(--card)] px-3 py-3 text-center opacity-80">
         <div className="flex flex-col items-center gap-1">
           <HelpCircle className="h-6 w-6 text-[var(--mut)]" aria-hidden />
-          <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--mut)] font-bold">
+          <span className="text-[10px] text-[var(--mut)] font-bold">
             {role}
           </span>
           <span className="text-xs text-[var(--mut)]">Inconnu</span>
@@ -88,7 +88,7 @@ function AnimalCard({
               <PiggyBank className="h-6 w-6 text-[var(--mut)]" aria-hidden />
             )}
           </div>
-          <span className="text-[10px] uppercase tracking-[0.15em] text-[var(--mut)] font-bold">
+          <span className="text-[10px] text-[var(--mut)] font-bold">
             {role}
           </span>
           <div className="flex items-center gap-1">
@@ -135,7 +135,7 @@ export default async function GenealogiePage({
   ])
 
   const genLvlCls =
-    'text-[11px] font-semibold uppercase tracking-[0.04em] text-[var(--mut)]'
+    'text-[11px] font-semibold text-[var(--mut)]'
   const genLink = <div className="h-[13px] w-[2px] bg-[var(--line2)]" aria-hidden />
 
   return (
@@ -152,7 +152,7 @@ export default async function GenealogiePage({
           </Link>
         </div>
         <h1
-          className="text-4xl font-bold tracking-[0.01em] text-[var(--ink)] uppercase"
+          className="text-4xl font-bold tracking-[0.01em] text-[var(--ink)]"
           style={{ fontFamily: 'var(--disp)' }}
         >
           Généalogie — {animal.tag}

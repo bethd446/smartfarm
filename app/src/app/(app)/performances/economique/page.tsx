@@ -74,8 +74,6 @@ function getToneColor(tone: 'good' | 'warn' | 'bad' | 'muted'): string {
 const eyebrowStyle: React.CSSProperties = {
   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
   fontSize: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
   color: 'var(--sf-muted)',
 }
 
@@ -262,7 +260,7 @@ export default async function EconomiquePage({
           PERFORMANCES · ÉCONOMIE · FRANC CFA XOF
         </div>
         <h1
-          className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
+          className="text-4xl font-black flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
           style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
         >
           <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />

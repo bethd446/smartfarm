@@ -110,8 +110,6 @@ export default async function StockPage() {
               style={{
                 fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
               }}
             >
               Articles en stock
@@ -128,8 +126,6 @@ export default async function StockPage() {
               style={{
                 fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
               }}
             >
               Valeur stock
@@ -147,8 +143,6 @@ export default async function StockPage() {
               style={{
                 fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
               }}
             >
               Fournisseurs
@@ -167,8 +161,6 @@ export default async function StockPage() {
           style={{
             fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             fontSize: '11px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
           }}
         >
           Inventaire
@@ -189,8 +181,6 @@ export default async function StockPage() {
               style={{
                 fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
               }}
             >
               <tr>

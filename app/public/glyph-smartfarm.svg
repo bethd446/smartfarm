@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="Smart Farm — Glyph SF (fallback sub-48px)">
-  <title>Smart Farm — Glyph SF</title>
-  <rect width="240" height="240" rx="22" fill="#FFFBEB"></rect>
-  <text x="120" y="160" text-anchor="middle" font-family="&#39;Big Shoulders Display&#39;, Impact, sans-serif" font-weight="900" font-size="156" fill="#2D4A1F" letter-spacing="2">SF</text>
-</svg>
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Smart Farm"><path d="M10 32A22 22 0 0 0 54 32L49 32A17 17 0 0 1 15 32Z" fill="#6E9551"/><path d="M32 36C31 31 31 26 32 21" fill="none" stroke="#4F7239" stroke-width="3.2" stroke-linecap="round"/><path d="M32 28C34.5 21.5 40 17.5 46 15.5C42.5 21.5 37 25.5 32 29Z" fill="#6E9551"/><path d="M32 30C29.5 24.5 25 21.5 19 19.5C22.5 24.5 27 28 32 31Z" fill="#6E9551"/><circle cx="32" cy="13.5" r="4.3" fill="#E89F62"/></svg>

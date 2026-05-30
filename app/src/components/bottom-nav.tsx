@@ -74,11 +74,11 @@ export function BottomNav({ onOpenMore, alertesCount = 0 }: BottomNavProps) {
               className={cn(
                 'flex-1 flex flex-col items-center justify-center gap-0.5 min-w-0',
                 'text-[var(--sf-muted,#6b6b6b)] hover:text-[var(--sf-ink,#1a1a1a)] active:text-[var(--sf-ink,#1a1a1a)]',
-                'focus:outline-none focus-visible:bg-black/5',
+                'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--focus)]',
               )}
             >
               <slot.icon className="h-5 w-5" />
-              <span className="text-[11px] leading-none uppercase tracking-wider">{slot.label}</span>
+              <span className="text-[11px] leading-none">{slot.label}</span>
             </button>
           )
         }
@@ -117,7 +117,7 @@ function SlotLink({
       }
       className={cn(
         'flex-1 flex flex-col items-center justify-center gap-1 min-w-0',
-        'focus:outline-none focus-visible:bg-black/5',
+        'focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--focus)]',
         active
           ? 'text-[var(--sf-primary,#2D4A1F)]'
           : 'text-[var(--sf-muted,#6b6b6b)] hover:text-[var(--sf-ink,#1a1a1a)]',
@@ -147,7 +147,7 @@ function SlotLink({
         )}
       </span>
       <span className={cn(
-        'text-[11px] leading-none uppercase tracking-wider truncate max-w-full px-1',
+        'text-[11px] leading-none truncate max-w-full px-1',
         active && 'font-semibold',
       )}>
         {slot.label}

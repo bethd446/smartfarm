@@ -74,9 +74,9 @@ export async function AlertesWidget() {
   const top = trierParGravite(alertesFiltrees).slice(0, 5)
 
   const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
+    "font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold"
   const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] font-bold text-[var(--sf-primary)] hover:underline"
 
   return (
     <Card className="h-full min-h-[320px]">
@@ -135,7 +135,7 @@ export async function AlertesWidget() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="text-[10px] uppercase tracking-[0.1em] text-[var(--sf-subtle)] tabular-nums">
+                    <div className="text-[10px] text-[var(--sf-subtle)] tabular-nums">
                       <RelativeTime date={detecte} prefix="" addSuffix />
                     </div>
                   </div>

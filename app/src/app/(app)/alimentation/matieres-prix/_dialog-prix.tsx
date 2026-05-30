@@ -38,7 +38,7 @@ type Props = {
 }
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null

@@ -109,7 +109,7 @@ export default async function ConsommationsPage() {
         <div>
           <Link
             href="/alimentation"
-            className="text-xs uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
+            className="text-xs text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
           >
             <ChevronLeft className="h-3 w-3" />
             Retour à l’alimentation

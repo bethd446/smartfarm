@@ -55,7 +55,7 @@ export default async function ClassementTruiesPage() {
   const totalFerme = truies[0]?.total_truies_ferme ?? truies.length
 
   const eyebrowCls =
-    'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold'
+    'font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold'
 
   return (
     <div className="space-y-6 pb-12">
@@ -73,7 +73,7 @@ export default async function ClassementTruiesPage() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h1
-              className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)] uppercase"
+              className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
               style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
             >
               <Trophy className="h-8 w-8 text-[var(--sf-primary)]" aria-hidden />

@@ -257,7 +257,7 @@ export default async function ActesSanitairesPage({
           <div>
             <label
               htmlFor="filter-mois"
-              className="block text-xs uppercase tracking-wide text-[var(--sf-muted)] mb-1"
+              className="block text-xs tracking-wide text-[var(--sf-muted)] mb-1"
             >
               Mois
             </label>
@@ -272,7 +272,7 @@ export default async function ActesSanitairesPage({
           <div>
             <label
               htmlFor="filter-type"
-              className="block text-xs uppercase tracking-wide text-[var(--sf-muted)] mb-1"
+              className="block text-xs tracking-wide text-[var(--sf-muted)] mb-1"
             >
               Type produit
             </label>
@@ -295,7 +295,7 @@ export default async function ActesSanitairesPage({
           <div>
             <label
               htmlFor="filter-animal"
-              className="block text-xs uppercase tracking-wide text-[var(--sf-muted)] mb-1"
+              className="block text-xs tracking-wide text-[var(--sf-muted)] mb-1"
             >
               Animal
             </label>

@@ -126,8 +126,6 @@ export function KpiTechCard({
         style={{
           fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
           fontSize: '11px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.14em',
         }}
       >
         {label}
@@ -143,8 +141,6 @@ export function KpiTechCard({
           className="mt-2"
           style={{
             fontSize: '10px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
             color: 'var(--sf-subtle, var(--sf-muted))',
           }}
         >

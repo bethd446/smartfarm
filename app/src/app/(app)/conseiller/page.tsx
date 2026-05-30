@@ -161,7 +161,7 @@ export default async function ConseillerPage({
     <div className="space-y-6">
       {/* Header */}
       <header className="space-y-2">
-        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+        <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
           Base de connaissances
         </div>
         <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
@@ -177,7 +177,7 @@ export default async function ConseillerPage({
       <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card>
           <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+            <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
               Total conseils
             </div>
             <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-primary,#2D4A1F)] leading-none tabular-nums text-3xl mt-2">
@@ -187,7 +187,7 @@ export default async function ConseillerPage({
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+            <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
               Reproduction
             </div>
             <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
@@ -197,7 +197,7 @@ export default async function ConseillerPage({
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+            <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
               Sanitaire
             </div>
             <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
@@ -207,7 +207,7 @@ export default async function ConseillerPage({
         </Card>
         <Card>
           <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+            <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
               Nutrition
             </div>
             <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
@@ -222,7 +222,7 @@ export default async function ConseillerPage({
 
       {/* Filtres catégorie */}
       <div className="space-y-2">
-        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted,#5C5346)] font-bold">
+        <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
           Catégorie
         </div>
         <div className="flex flex-wrap gap-2">
@@ -246,7 +246,7 @@ export default async function ConseillerPage({
 
       {/* Filtres niveau */}
       <div className="space-y-2">
-        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted,#5C5346)] font-bold">
+        <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
           Niveau
         </div>
         <div className="flex flex-wrap gap-2">

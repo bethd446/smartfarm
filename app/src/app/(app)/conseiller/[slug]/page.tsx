@@ -178,7 +178,7 @@ export default async function TipDetailPage({
       {/* Tips similaires */}
       {similairesRandom.length > 0 && (
         <section className="space-y-3 pt-2">
-          <h2 className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+          <h2 className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted,#5C5346)] font-bold">
             Conseils similaires · {CATEGORIE_LABELS[tip.categorie] ?? tip.categorie}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -65,7 +65,7 @@ export function AnimalPhotoUpload({ animalId, currentUrl, uploadAction }: Props)
         ) : (
           <div className="flex flex-col items-center text-[var(--sf-muted)]">
             <Camera className="h-10 w-10" aria-hidden />
-            <span className="text-[10px] uppercase tracking-[0.15em] mt-1 font-bold">
+            <span className="text-[10px] mt-1 font-bold">
               Aucune photo
             </span>
           </div>

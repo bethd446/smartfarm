@@ -56,7 +56,7 @@ type Bande = {
 // Style commun du titre Dialog (Big Shoulders uppercase)
 // =====================================================================
 const titleClassName =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-wide text-2xl'
+  'font-[family-name:var(--sf-font-display)] tracking-wide text-2xl'
 
 const errClassName = 'text-xs text-[var(--sf-danger,#7A2A1F)] mt-1'
 

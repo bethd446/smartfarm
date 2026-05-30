@@ -72,7 +72,7 @@ function CibleSwitch({
             aria-checked={active}
             onClick={() => onChange(v)}
             className={[
-              'px-4 h-10 text-[12px] font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] transition-colors',
+              'px-4 h-10 text-[12px] font-[family-name:var(--sf-font-display)] transition-colors',
               active
                 ? 'bg-[var(--sf-primary)] text-white'
                 : 'bg-transparent text-[var(--sf-ink)] hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]',
@@ -99,7 +99,7 @@ function labelBande(b: BandeOption) {
 }
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 /* -------------------------------------------------------------------------- */
 /*  SCHEMAS (client side, alignés sur les Server Actions)                     */

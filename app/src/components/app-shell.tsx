@@ -59,16 +59,16 @@ export function AppShell({
             className={cn(
               'inline-flex h-11 w-11 items-center justify-center rounded-md',
               'text-[var(--sf-ink,#1a1a1a)] hover:bg-black/5',
-              'focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]',
+              'focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--focus)]',
             )}
           >
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <div className="h-8 w-8 rounded-md bg-[#FFFBEB] flex items-center justify-center shrink-0 overflow-hidden">
+            <div className="h-8 w-8 rounded-md bg-[var(--sage-bg)] flex items-center justify-center shrink-0 overflow-hidden">
               <img src="/glyph-smartfarm.svg" alt="Smart Farm" className="h-7 w-7" />
             </div>
-            <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-wide text-base text-[var(--sf-ink,#1a1a1a)] truncate">
+            <div className="font-[family-name:var(--sf-font-display)] text-base text-[var(--sf-ink,#1a1a1a)] truncate">
               {ferme?.nom ?? 'Smart Farm'}
             </div>
           </div>

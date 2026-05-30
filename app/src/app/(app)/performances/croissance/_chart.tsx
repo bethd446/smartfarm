@@ -26,8 +26,6 @@ type CroissanceChartProps = {
 const eyebrowStyle: React.CSSProperties = {
   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
   fontSize: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
   color: 'var(--sf-muted)',
 }
 

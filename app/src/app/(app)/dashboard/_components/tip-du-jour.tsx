@@ -124,9 +124,9 @@ export async function TipDuJour() {
   const tip = tips[0]
 
   const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
+    "font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold"
   const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] font-bold text-[var(--sf-primary)] hover:underline"
 
   // Pas de tip → EmptyState dans une Card simple (pas de héro)
   if (!tip) {

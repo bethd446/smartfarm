@@ -252,12 +252,12 @@ export default async function MycotoxinesPage() {
         <div>
           <Link
             href="/sanitaire"
-            className="text-xs uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
+            className="text-xs text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
           >
             <ChevronLeft className="h-3 w-3" />
             Retour aux soins
           </Link>
-          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
             <Bug className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Mycotoxines
           </h1>

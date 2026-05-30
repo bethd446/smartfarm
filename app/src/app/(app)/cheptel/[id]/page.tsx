@@ -274,7 +274,7 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
   })()
 
   const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
+    "font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold"
 
   const displayKPI = (label: string, value: string | number, unit?: string) => (
     <div className="kpi">

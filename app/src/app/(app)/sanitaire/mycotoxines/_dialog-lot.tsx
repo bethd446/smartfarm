@@ -52,7 +52,7 @@ const schema = z.object({
 type FormValues = z.input<typeof schema>
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
@@ -220,7 +220,7 @@ export function DialogEnregistrerLot({
           </div>
 
           <div className="rounded-[6px] border border-[var(--sf-line,rgba(0,0,0,0.18))] p-3 space-y-3">
-            <Label className="block text-[12px] font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em]">
+            <Label className="block text-[12px] font-[family-name:var(--sf-font-display)]">
               Analyses (ppb / µg·kg⁻¹) — seuils UE porcs
             </Label>
             <div className="grid grid-cols-3 gap-3">

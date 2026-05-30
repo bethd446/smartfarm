@@ -263,7 +263,7 @@ export default async function BatimentDetail({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Ration */}
             <div className="rounded-[14px] border border-[var(--line)] bg-[var(--card)] p-4">
-              <div className="text-xs uppercase tracking-[0.1em] text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
+              <div className="text-xs text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
                 Ration journalière par sujet
               </div>
               <div className="flex items-end justify-between gap-3">
@@ -292,7 +292,7 @@ export default async function BatimentDetail({
 
             {/* Formule */}
             <div className="rounded-[14px] border border-[var(--line)] bg-[var(--card)] p-4">
-              <div className="text-xs uppercase tracking-[0.1em] text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
+              <div className="text-xs text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
                 Formule affectée
               </div>
               {formule ? (
@@ -343,7 +343,7 @@ export default async function BatimentDetail({
             >
               {projVariant === 'danger' && <AlertTriangle className="h-5 w-5 mt-0.5 shrink-0" />}
               <div className="flex-1 min-w-[200px]">
-                <div className="text-xs uppercase tracking-[0.1em] font-[family-name:var(--sf-font-display)]">
+                <div className="text-xs font-[family-name:var(--sf-font-display)]">
                   Projection stock
                 </div>
                 <div className="mt-1 text-sm">

@@ -106,13 +106,13 @@ export default async function MaladieDetailPage({
       <div className="pn bg-[var(--paper-3)]">
         <dl className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
           <div>
-            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+            <dt className="text-[11px] text-[var(--mut)] font-semibold">
               Âge concerné
             </dt>
             <dd className="text-[var(--ink)] mt-1">{m.age_concerne}</dd>
           </div>
           <div>
-            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+            <dt className="text-[11px] text-[var(--mut)] font-semibold">
               Catégorie
             </dt>
             <dd className="text-[var(--ink)] mt-1">
@@ -120,7 +120,7 @@ export default async function MaladieDetailPage({
             </dd>
           </div>
           <div>
-            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+            <dt className="text-[11px] text-[var(--mut)] font-semibold">
               Contagiosité
             </dt>
             <dd className="text-[var(--ink)] capitalize mt-1">

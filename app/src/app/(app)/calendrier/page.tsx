@@ -189,7 +189,7 @@ export default async function CalendrierPage() {
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <div className="text-right">
-            <div className="text-xs text-[var(--mut)] uppercase tracking-wider">
+            <div className="text-xs text-[var(--mut)]">
               30 prochains jours
             </div>
             <div className="text-2xl font-bold tabular-nums text-[var(--sage)] font-[family-name:var(--disp)]">

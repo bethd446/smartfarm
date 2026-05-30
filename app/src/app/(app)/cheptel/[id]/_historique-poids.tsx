@@ -85,8 +85,6 @@ function getToneBgColor(tone: 'good' | 'warn' | 'bad'): string {
 const eyebrowStyle: React.CSSProperties = {
   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
   fontSize: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
   color: 'var(--sf-muted)',
   fontWeight: 'bold',
 }
@@ -219,7 +217,7 @@ export async function HistoriquePoids({ animalId, animalTag }: HistoriquePoidsPr
       {/* === CARD GRAPHIQUE === */}
       <Card className="border-[var(--sf-line)]">
         <CardHeader>
-          <div style={eyebrowStyle}>HISTORIQUE PESÉES — {animalTag.toUpperCase()}</div>
+          <div style={eyebrowStyle}>Historique pesées — {animalTag.toUpperCase()}</div>
           <div className="flex items-center justify-between gap-2 flex-wrap mt-2">
             <h2
               className="text-2xl font-bold text-[var(--sf-ink)]"

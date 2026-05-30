@@ -263,7 +263,7 @@ export default async function MortalitesPage({
           <div>
             <label
               htmlFor="motif"
-              className="block text-[11.5px] uppercase tracking-[0.04em] text-[var(--mut)] font-semibold mb-1"
+              className="block text-[11.5px] text-[var(--mut)] font-semibold mb-1"
             >
               Motif
             </label>
@@ -284,7 +284,7 @@ export default async function MortalitesPage({
           <div>
             <label
               htmlFor="mois"
-              className="block text-[11.5px] uppercase tracking-[0.04em] text-[var(--mut)] font-semibold mb-1"
+              className="block text-[11.5px] text-[var(--mut)] font-semibold mb-1"
             >
               Mois (YYYY-MM)
             </label>
@@ -357,7 +357,7 @@ export default async function MortalitesPage({
                       </td>
                       <td>
                         <div className="font-medium text-[var(--ink)]">{cibleLabel}</div>
-                        <div className="text-[10px] uppercase tracking-[0.08em] text-[var(--mut)]">
+                        <div className="text-[10px] text-[var(--mut)]">
                           {m.animal ? 'Individuel' : 'Masse / bande'}
                         </div>
                       </td>

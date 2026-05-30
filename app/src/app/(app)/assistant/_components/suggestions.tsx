@@ -77,7 +77,7 @@ export function Suggestions({
               <Icon className="h-4 w-4 text-[var(--sf-primary,#2D4A1F)]" />
             </div>
             <div className="min-w-0">
-              <div className="text-[11px] uppercase tracking-wider font-semibold text-[var(--sf-muted,#5C5346)]">
+              <div className="text-[11px] font-semibold text-[var(--sf-muted,#5C5346)]">
                 {s.label}
               </div>
               <div className="text-sm text-[var(--sf-ink,#1a1a1a)] mt-0.5 leading-snug">

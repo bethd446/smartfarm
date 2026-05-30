@@ -91,7 +91,7 @@ export function DialogTransfertBatch({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle
-            className="uppercase tracking-wide text-2xl"
+            className="tracking-wide text-2xl"
             style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
           >
             <Truck className="inline h-5 w-5 mr-2 -mt-1" />

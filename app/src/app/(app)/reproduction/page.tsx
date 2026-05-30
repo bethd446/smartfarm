@@ -215,7 +215,7 @@ export default async function ReproductionPage({
       <section aria-labelledby="repro-cycle-titre">
         <h2
           id="repro-cycle-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-1"
+          className="font-[family-name:var(--sf-font-display)] text-xl text-[var(--sf-ink)] mb-1"
         >
           Le cycle de production
         </h2>
@@ -280,7 +280,7 @@ export default async function ReproductionPage({
           <div className="flex items-baseline gap-2 mb-1">
             <h2
               id="repro-diag-titre"
-              className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)]"
+              className="font-[family-name:var(--sf-font-display)] text-xl text-[var(--sf-ink)]"
             >
               Saillies à diagnostiquer
             </h2>
@@ -355,7 +355,7 @@ export default async function ReproductionPage({
       <section aria-labelledby="repro-historique-titre">
         <h2
           id="repro-historique-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-6 mb-3"
+          className="font-[family-name:var(--sf-font-display)] text-xl text-[var(--sf-ink)] mt-6 mb-3"
         >
           Historique des saillies
         </h2>
@@ -364,8 +364,6 @@ export default async function ReproductionPage({
           style={{
             fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             fontSize: '11px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.1em',
           }}
         >
           Journal chronologique des saillies
@@ -387,8 +385,6 @@ export default async function ReproductionPage({
               style={{
                 fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                 fontSize: '11px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
               }}
             >
               <tr>
