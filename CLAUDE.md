@@ -334,6 +334,10 @@ Après chaque action critique, hook automatique :
 Premier réflexe à chaque nouvelle conversation :
 
 ```bash
+# 0. COORDINATION MULTI-SESSIONS (cf §15) — AVANT tout, pour ne pas refaire un travail déjà pris
+gh issue list --state open          # registre partagé : ce qui est à faire / en cours
+ls -t docs/journal/ | head -3        # ce que les dernières sessions ont fait
+
 # 1. État repo
 cd <smartfarm-clone>
 git status
@@ -378,4 +382,27 @@ Puis tu réponds avec *contexte chargé*, sans le décrire à Christophe.
 
 ---
 
-Version 1.0 — 2026-05-25 · Compatible Claude Code Opus 4.7 Max · Inspiré du système d'orchestration Hermes Agent (VPS Ubuntu) qui a livré S0→S4 avec 0 régression sur Smart Farm.
+## 15. PROTOCOLE MULTI-SESSIONS (anti-doublon, anti-conflit)
+
+Plusieurs sessions Claude (et Christophe) travaillent **en parallèle** sur ce repo. La mémoire interne d'un agent (`~/.claude/.../memory/`) est **privée à sa session** : les autres ne la voient pas. **La seule mémoire partagée, c'est le repo Git (GitHub).** Donc tout ce qui doit être commun y vit.
+
+### Les 3 briques partagées
+| Brique | Où | Rôle |
+|---|---|---|
+| **Registre des tâches** | GitHub Issues (`gh issue list`) | source de vérité : à faire / en cours (assigné) / fait (fermé). Anti-doublon. |
+| **Journal de session** | `docs/journal/AAAA-MM-JJ-sujet.md` (1 fichier/session) | rapport d'actions. 1 fichier par session = **jamais de conflit**. |
+| **Audits** | `docs/audits/` | rapports d'audit complets, lisibles par toutes les sessions. |
+
+### Règles dures
+1. **Démarrage** (cf §12 étape 0) : `gh issue list --state open` + lire les 2-3 derniers `docs/journal/`. **Ne reprends jamais** une issue déjà assignée ou fermée.
+2. **Réserver AVANT de coder** : `gh issue edit <N> --add-assignee @me`. Si déjà assignée à quelqu'un d'autre, prends une autre tâche. Pas de findings nouveaux sans créer l'issue d'abord.
+3. **1 issue = 1 branche** : `fix/<N>-slug` ou `feat/<N>-slug`. Toujours `git pull --rebase origin main` avant de pousser. Jamais deux sessions sur la même branche.
+4. **Avant de supprimer/consolider un worktree ou une branche** : vérifier qu'aucune autre session n'y travaille (`git worktree list`, journaux récents). Une suppression peut casser une session active (incident vécu 2026-05-30).
+5. **Fin de session** : écrire `docs/journal/<date>-<sujet>.md` (fait / branche / fichiers / reste), **fermer l'issue** (`gh issue close <N>`), commit + push. Pas de travail non rapporté.
+
+### Découverte d'un bug / d'un audit
+Crée une issue (`gh issue create --label P0|P1|P2,audit-design|audit-fonctionnel`) au lieu de le garder en mémoire privée. Mets le rapport long dans `docs/audits/`. Ainsi la prochaine session ne le re-découvre pas.
+
+---
+
+Version 1.1 — 2026-05-30 · Ajout §15 coordination multi-sessions · Compatible Claude Code Opus · Base : système d'orchestration Hermes Agent.
