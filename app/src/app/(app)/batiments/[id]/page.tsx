@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { Building2, ArrowLeft, Boxes, Utensils, AlertTriangle } from 'lucide-react'
 import type { Metadata } from 'next'
 import { DialogEditRation } from './_dialog-edit-ration'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 
 /**
  * Page détail d'un bâtiment.
@@ -385,7 +386,7 @@ export default async function BatimentDetail({
                     <>
                       Épuisement le{' '}
                       <span className="tabular-nums">
-                        {new Date(projection.date_epuisement).toLocaleDateString('fr-FR')}
+                        <FormattedDateTime date={projection.date_epuisement} format="date" />
                       </span>{' '}
                       <span className="tabular-nums">({projection.jours_restants} jours)</span>
                     </>

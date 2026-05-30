@@ -175,7 +175,7 @@ export default async function ConseillerPage({
         <Card>
           <CardContent className="p-4">
             <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
-              Total tips
+              Total conseils
             </div>
             <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-primary,#2D4A1F)] leading-none tabular-nums text-3xl mt-2">
               {total}

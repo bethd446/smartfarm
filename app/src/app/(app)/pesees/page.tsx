@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Scale } from 'lucide-react'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { ActionsPeser } from './_actions-peser'
 import { PeseesFab } from './_fab'
 
@@ -72,7 +73,7 @@ export default async function PeseesPage({
                   {pesees.map((p: any) => (
                     <tr key={p.id} className="border-b border-[var(--sf-line,rgba(0,0,0,0.12))]">
                       <td className="py-3 pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
-                        {new Date(p.date_pesee).toLocaleDateString('fr-FR')}
+                        <FormattedDateTime date={p.date_pesee} format="date" />
                       </td>
                       <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
                         {p.animal?.nom ?? p.bande?.nom ?? '—'}

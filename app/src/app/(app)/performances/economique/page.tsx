@@ -111,7 +111,7 @@ export default async function EconomiquePage({
   const dateDebutStr = dateDebut.toISOString().split('T')[0]
 
   // ===== 1. FETCH CONSOMMATIONS ALIMENT + FORMULATIONS =====
-  const { data: consommationsData } = await sb
+  const { data: consommationsData, error: consoErr } = await sb
     .from('consommations_aliment')
     .select(
       `
@@ -119,13 +119,14 @@ export default async function EconomiquePage({
       date,
       bande_id,
       formule_id,
-      formulations!inner(cout_kg_xof),
-      bandes!inner(nom)
+      formule:formule_id(cout_kg_fcfa),
+      bandes(nom)
     `
     )
     .gte('date', dateDebutStr)
     .order('date')
 
+  if (consoErr) console.error('[economique] consommations_aliment:', consoErr.message)
   const consommations = consommationsData ?? []
 
   // Fallback coût si formulation sans prix
@@ -133,7 +134,7 @@ export default async function EconomiquePage({
 
   // Calculer coût total aliment période
   const coutTotalAliment = consommations.reduce((sum, c: any) => {
-    const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+    const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
     return sum + c.qte_kg * coutKg
   }, 0)
 
@@ -179,7 +180,7 @@ export default async function EconomiquePage({
 
   consommations.forEach((c: any) => {
     const bandeNom = c.bandes?.nom ?? 'Inconnue'
-    const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+    const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
     const cout = c.qte_kg * coutKg
 
     if (bandesMap.has(bandeNom)) {
@@ -222,7 +223,7 @@ export default async function EconomiquePage({
       (c: any) => c.date >= moisDebut && c.date <= moisFin
     )
     const coutMois = consoMois.reduce((sum, c: any) => {
-      const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+      const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
       return sum + c.qte_kg * coutKg
     }, 0)
 
@@ -307,76 +308,77 @@ export default async function EconomiquePage({
         </Card>
       ) : (
         <>
-          {/* ===== KPI CARDS ===== */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Coût aliment par kg vif */}
-            <Card className="border-[var(--sf-line)]">
-              <CardContent className="p-4">
-                <div style={eyebrowStyle} className="mb-2">
-                  COÛT ALIMENT PAR KG VIF PRODUIT
-                </div>
-                <div
-                  className="text-4xl font-black tabular-nums"
-                  style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                    color: getToneColor(coutTone),
-                  }}
+          {/* ===== SYNTHÈSE KPI — registre dense tabulaire ===== */}
+          <section className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
+            <div className="mb-2 px-2 pt-3" style={eyebrowStyle}>
+              SYNTHÈSE ÉCONOMIQUE · {periode}
+            </div>
+            <dl>
+              {/* Coût aliment par kg vif produit */}
+              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+                <dt className="min-w-0">
+                  <span
+                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                  >
+                    Coût aliment par kg vif produit
+                  </span>
+                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
+                    {coutTone === 'good' && 'Excellent · cible < 250 XOF/kg'}
+                    {coutTone === 'warn' && 'Acceptable · 250-350 XOF/kg'}
+                    {coutTone === 'bad' && 'Élevé · > 350 XOF/kg'}
+                    {coutTone === 'muted' && 'Données insuffisantes'}
+                  </span>
+                </dt>
+                <dd
+                  className="shrink-0 font-mono font-bold tabular-nums text-lg"
+                  style={{ color: getToneColor(coutTone) }}
                 >
                   {coutAlimentParKgVif !== null ? Math.round(coutAlimentParKgVif) : '—'}
-                  {coutAlimentParKgVif !== null && (
-                    <span className="text-lg ml-1">XOF/kg</span>
-                  )}
-                </div>
-                <div className="text-xs text-[var(--sf-muted)] mt-1">
-                  {coutTone === 'good' && '✓ Excellent (< 250 XOF/kg)'}
-                  {coutTone === 'warn' && '⚠ Acceptable (250-350 XOF/kg)'}
-                  {coutTone === 'bad' && '✗ Élevé (> 350 XOF/kg)'}
-                  {coutTone === 'muted' && 'Données insuffisantes'}
-                </div>
-              </CardContent>
-            </Card>
+                  <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">XOF/kg</span>
+                </dd>
+              </div>
 
-            {/* Coût total aliment */}
-            <Card className="border-[var(--sf-line)]">
-              <CardContent className="p-4">
-                <div style={eyebrowStyle} className="mb-2">
-                  COÛT TOTAL ALIMENT PÉRIODE
-                </div>
-                <div
-                  className="text-3xl font-black tabular-nums text-[var(--sf-ink)]"
-                  style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                  }}
-                >
+              {/* Coût total aliment période */}
+              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+                <dt className="min-w-0">
+                  <span
+                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                  >
+                    Coût total aliment période
+                  </span>
+                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
+                    {consommations.length} consommations enregistrées
+                  </span>
+                </dt>
+                <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-ink)]">
                   {fmtXOF(coutTotalAliment)}
-                </div>
-                <div className="text-xs text-[var(--sf-muted)] mt-1">
-                  {consommations.length} consommations enregistrées
-                </div>
-              </CardContent>
-            </Card>
+                </dd>
+              </div>
 
-            {/* Marge brute estimée */}
-            <Card className="border-[var(--sf-line)]">
-              <CardContent className="p-4">
-                <div style={eyebrowStyle} className="mb-2">
-                  MARGE BRUTE ESTIMÉE
-                </div>
-                <div
-                  className="text-3xl font-black tabular-nums"
-                  style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                    color: margeEstimee > 0 ? 'var(--sf-primary)' : 'var(--sf-danger-ink)',
-                  }}
+              {/* Marge brute estimée */}
+              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
+                <dt className="min-w-0">
+                  <span
+                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
+                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                  >
+                    Marge brute estimée
+                  </span>
+                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
+                    CA {fmtXOF(caTotal)} − coûts {fmtXOF(coutTotalAliment + coutSanitaireEstime)}
+                  </span>
+                </dt>
+                <dd
+                  className="shrink-0 font-mono font-bold tabular-nums text-lg"
+                  style={{ color: margeEstimee > 0 ? 'var(--sf-primary)' : 'var(--sf-danger-ink)' }}
                 >
                   {fmtXOF(margeEstimee)}
-                </div>
-                <div className="text-xs text-[var(--sf-muted)] mt-1">
-                  CA {fmtXOF(caTotal)} - coûts {fmtXOF(coutTotalAliment + coutSanitaireEstime)}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </dd>
+              </div>
+            </dl>
+          </section>
 
           {/* ===== CHARTS ===== */}
           <EconomiqueCharts coutParBande={coutParBande} repartitionCouts={repartitionCouts} />

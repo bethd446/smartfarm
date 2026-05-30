@@ -21,7 +21,7 @@ export function PageTitle({
 }: {
   children: ReactNode
   icon?: ReactNode
-  eyebrow?: string
+  eyebrow?: ReactNode
   className?: string
 }) {
   return (

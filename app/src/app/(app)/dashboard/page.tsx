@@ -1,4 +1,5 @@
 import { PageTitle } from '@/components/ui/page-title'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardHeader, CardContent } from '@/components/ui/card'
@@ -57,11 +58,6 @@ function variantPortee(ratio: number): 'success' | 'warning' | 'danger' {
   return 'danger'
 }
 
-/** Date courte FR : "21 mai" */
-function dateFrShort(d: Date): string {
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' }).toUpperCase()
-}
-
 export default async function DashboardPage() {
   const sb = await createClient()
 
@@ -115,8 +111,6 @@ export default async function DashboardPage() {
       }
     | undefined
 
-  const today = dateFrShort(new Date())
-
   // Compteur stocks en alerte (stock < seuil_alerte) — helper centralisé
   const nbStocksAlerte = (stockAlertes ?? []).filter(isAlerte).length
 
@@ -132,7 +126,12 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       {/* === HEADER PageTitle === */}
       <PageTitle
-        eyebrow={`PILOTAGE · ${today}${fermeNom ? ' · ' + fermeNom.toUpperCase() : ''}`}
+        eyebrow={
+          <>
+            PILOTAGE · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short' }} />
+            {fermeNom ? ` · ${fermeNom.toUpperCase()}` : ''}
+          </>
+        }
         icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
       >
         Tableau de bord
@@ -161,7 +160,7 @@ export default async function DashboardPage() {
           <CardContent className="relative z-10 flex flex-col h-full min-h-[280px]">
             {/* Eyebrow + label en haut */}
             <div>
-              <div className={eyebrowCls}>Cheptel (les animaux) · {today}</div>
+              <div className={eyebrowCls}>Cheptel (les animaux) · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short' }} /></div>
               <div className="font-[family-name:var(--sf-font-display)] uppercase text-xs tracking-[0.14em] text-[var(--sf-ink)] font-bold mt-2">
                 Cheptel total
               </div>
@@ -384,7 +383,6 @@ export default async function DashboardPage() {
           ) : (
             <ul className="divide-y divide-[var(--sf-line)] border-t border-[var(--sf-line)]">
               {(prochainsEvts ?? []).map((e: any) => {
-                const d = new Date(e.date_prevue)
                 const jr = e.jours_restants
                 const urgent = jr < 3
                 const meta = prioMeta(e.priorite)
@@ -416,7 +414,7 @@ export default async function DashboardPage() {
                     </div>
                     <div className="text-right shrink-0">
                       <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold text-[var(--sf-ink)] tabular-nums uppercase">
-                        {d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                        <FormattedDateTime date={e.date_prevue} options={{ day: '2-digit', month: 'short' }} />
                       </div>
                       <div
                         className={`text-[10px] uppercase tracking-[0.1em] tabular-nums ${
@@ -473,7 +471,7 @@ export default async function DashboardPage() {
                           ) : '—'}
                         </div>
                         <div className="text-xs text-[var(--sf-muted)] tabular-nums">
-                          {new Date(mb.date_mise_bas).toLocaleDateString('fr-FR')} · {totaux} totaux · {mb.nes_morts ?? 0} morts
+                          <FormattedDateTime date={mb.date_mise_bas} format="date" /> · {totaux} totaux · {mb.nes_morts ?? 0} morts
                         </div>
                       </div>
                       <Badge variant={variantPortee(ratio)}>

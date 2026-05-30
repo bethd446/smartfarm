@@ -164,7 +164,10 @@ export async function creerSevrage(
         ferme_id: mb.ferme_id,
         tag: `P-${sevrage.id.slice(0, 8)}-${i + 1}`,
         nom: null,
-        sexe: i % 2 === 0 ? 'F' : 'M', // Répartition 50/50 F/M
+        // FIXME(dette) : sexe inconnu au sevrage, mais animaux.sexe = ENUM sexe_animal('M','F') NOT NULL
+        // n'autorise pas 'INCONNU'. Le 50/50 alternant est une valeur fabriquée (non réelle).
+        // Vrai fix = migration `ALTER TYPE sexe_animal ADD VALUE 'INCONNU'` + sexage ultérieur (décision Christophe).
+        sexe: i % 2 === 0 ? 'F' : 'M',
         categorie: 'porcelet_sevre',
         stade: 'demarrage_1',
         statut: 'actif',

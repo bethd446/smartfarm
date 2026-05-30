@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -66,7 +66,6 @@ function FieldError({ message }: { message?: string }) {
 
 export function DialogNouvelleVisite({ trigger }: { trigger: React.ReactNode }) {
   const [open, setOpen] = useState(false)
-  const today = new Date().toISOString().slice(0, 16) // datetime-local
 
   const {
     register,
@@ -78,7 +77,7 @@ export function DialogNouvelleVisite({ trigger }: { trigger: React.ReactNode }) 
   } = useForm<FormValues>({
     resolver: zodResolver(schema) as never,
     defaultValues: {
-      date_visite: today,
+      date_visite: '',
       type_visite: '',
       nom_visiteur: '',
       societe: '',
@@ -96,6 +95,14 @@ export function DialogNouvelleVisite({ trigger }: { trigger: React.ReactNode }) 
   const douche = watch('douche_obligatoire_effectuee')
   const tenue = watch('changement_tenue')
   const pediluve = watch('pediluve_utilise')
+
+  // Hydration-safe : la date courante est posée APRÈS montage (et à chaque
+  // ouverture), jamais au render SSR, pour éviter un mismatch d'hydratation
+  // sur le champ datetime-local (précision minute).
+  useEffect(() => {
+    if (!open) return
+    setValue('date_visite', new Date().toISOString().slice(0, 16))
+  }, [open, setValue])
 
   async function onSubmit(data: FormValues) {
     // Conversion datetime-local → ISO

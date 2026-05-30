@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Skull, Plus } from 'lucide-react'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { DialogMortalite } from './_dialog-mortalite'
 import type { AnimalOption, BandeOption } from './_dialog-mortalite'
 import {
@@ -380,9 +381,6 @@ export default async function MortalitesPage({
                 </thead>
                 <tbody>
                   {mortalites.map((m) => {
-                    const dateFr = new Date(m.date_mortalite).toLocaleDateString(
-                      'fr-FR'
-                    )
                     let cibleLabel: string
                     if (m.animal) {
                       cibleLabel = m.animal.nom
@@ -402,7 +400,7 @@ export default async function MortalitesPage({
                         className="border-b last:border-0 hover:bg-muted/20"
                       >
                         <td className="p-3 tabular-nums whitespace-nowrap">
-                          {dateFr}
+                          <FormattedDateTime date={m.date_mortalite} format="date" />
                         </td>
                         <td className="p-3">
                           <div>{cibleLabel}</div>

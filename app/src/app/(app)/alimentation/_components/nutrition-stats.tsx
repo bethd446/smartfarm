@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
 import {
   Scale,
   Coins,
@@ -16,6 +15,10 @@ import {
 /*   3. IC moyen              — kg aliment / kg vif produit (si pesées dispo) */
 /*   4. Stock j restants      — pour la matière la + utilisée :                */
 /*                              stock_actuel / conso_moyenne_jour              */
+/*                                                                             */
+/*  D2-L2 : grille de cards hero-metric (fonds colorés) → bandeau registre     */
+/*  dense (hairlines + tabular-nums), tons sémantiques portés par l'icône/     */
+/*  valeur, 0 fond de card coloré. Alerte stock critique <7j préservée.        */
 /* -------------------------------------------------------------------------- */
 
 function fmtKg(n: number) {
@@ -154,103 +157,108 @@ export async function NutritionStats() {
   /* ---------- Seuil critique stock : < 7 j ---------- */
   const stockCritique = stockJoursNum !== null && stockJoursNum < 7
 
-  /* ---------- Rendu ---------- */
-  const cards = [
+  /* ---------- Rendu : bandeau registre dense ---------- */
+  const cells = [
     {
       icon: Scale,
-      label: 'Conso 30 j',
+      tone: 'var(--sf-success-ink, #1F3B12)',
+      period: '30 j',
+      label: 'Conso',
       value: `${fmtKg(totalKg)} kg`,
-      hint: 'Total distribué sur la période',
-      bg: 'var(--sf-success-bg, #D6E3CC)',
-      ink: 'var(--sf-success-ink, #1F3B12)',
+      sub: 'Total distribué',
       critical: false,
     },
     {
       icon: Coins,
-      label: 'Coût 30 j',
+      tone: 'var(--sf-warning-ink, #5A3E0E)',
+      period: '30 j',
+      label: 'Coût',
       value: `${fmtXof(totalCout)} FCFA`,
-      hint: 'Dépenses cumulées (FCFA)',
-      bg: 'var(--sf-warning-bg, #F5E0B8)',
-      ink: 'var(--sf-warning-ink, #5A3E0E)',
+      sub: 'Dépenses cumulées',
       critical: false,
     },
     {
       icon: TrendingDown,
-      label: 'IC moyen',
+      tone: 'var(--sf-ink, #1a1a1a)',
+      period: 'moyen',
+      label: 'IC',
       value: ic,
-      hint: 'kg aliment / kg vif produit',
-      bg: 'var(--sf-bg, #F5F1E8)',
-      ink: 'var(--sf-ink, #1a1a1a)',
+      sub: 'kg aliment / kg vif',
       critical: false,
     },
     {
-      icon: Package2,
-      label: 'Stock j restants',
+      icon: stockCritique ? AlertTriangle : Package2,
+      tone: stockCritique ? 'var(--sf-danger-ink, #7A2A1F)' : 'var(--sf-ink, #1a1a1a)',
+      period: stockCritique ? 'critique' : 'restants',
+      label: 'Stock jours',
       value: stockJours,
-      hint: stockMatiereNom
-        ? `${stockMatiereNom} — au rythme actuel`
-        : 'Matière la + critique',
-      bg: stockCritique
-        ? 'var(--sf-danger-bg, #F5D9D2)'
-        : 'var(--sf-bg, #F5F1E8)',
-      ink: stockCritique
-        ? 'var(--sf-danger-ink, #7A2A1F)'
-        : 'var(--sf-ink, #1a1a1a)',
+      sub: stockMatiereNom ? `${stockMatiereNom} — au rythme actuel` : 'Matière la + critique',
       critical: stockCritique,
     },
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((c, i) => {
-        const Icon = c.icon
-        return (
-          <Card
-            key={i}
-            style={{ background: c.bg, color: c.ink }}
-            // a11y : la card stock critique signale une alerte
-            {...(c.critical ? { role: 'alert', 'aria-live': 'polite' as const } : {})}
-          >
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div
-                    className="text-2xl font-bold tabular-nums flex items-center gap-2"
-                    style={{ color: c.ink }}
-                  >
-                    {c.critical ? (
-                      <AlertTriangle
-                        className="h-5 w-5"
-                        style={{ color: c.ink }}
-                        aria-hidden="true"
-                      />
-                    ) : null}
-                    {c.value}
-                  </div>
-                  <div
-                    className="eyebrow text-[11px] mt-1"
-                    style={{ color: c.ink }}
-                  >
-                    {c.label}
-                    {c.critical ? (
-                      <span className="ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[var(--sf-danger-ink,#7A2A1F)] text-white">
-                        Stock critique
-                      </span>
-                    ) : null}
-                  </div>
-                  <div
-                    className="text-[11px] mt-2 opacity-70"
-                    style={{ color: c.ink }}
-                  >
-                    {c.hint}
-                  </div>
-                </div>
-                <Icon className="h-5 w-5 opacity-70" style={{ color: c.ink }} />
+    <section
+      aria-label="Indicateurs alimentation"
+      className="border-t-2 border-b border-[var(--sf-line)]"
+      style={{ borderTopColor: 'var(--sf-primary)' }}
+    >
+      <div className="grid grid-cols-2 lg:grid-cols-4">
+        {cells.map((c, i) => {
+          const Icon = c.icon
+          return (
+            <div
+              key={c.label}
+              className={[
+                'min-h-[44px] px-3 py-3 sm:px-4',
+                'border-[var(--sf-line)]',
+                i % 2 === 1 ? 'border-l' : '',
+                'lg:border-l',
+                i % 4 === 0 ? 'lg:border-l-0' : '',
+                i >= 2 ? 'border-t lg:border-t-0' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+              // a11y : la cellule stock critique signale une alerte
+              {...(c.critical ? { role: 'alert', 'aria-live': 'polite' as const } : {})}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <Icon className="h-4 w-4 shrink-0" style={{ color: c.tone }} />
+                <span
+                  className="text-[10px] uppercase tracking-[0.16em] shrink-0"
+                  style={{
+                    color: c.critical ? c.tone : 'var(--sf-subtle, #8A7F6D)',
+                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                  }}
+                >
+                  {c.period}
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        )
-      })}
-    </div>
+              <div
+                className="mt-1.5 text-2xl font-bold tabular-nums leading-tight"
+                style={{ color: c.tone }}
+              >
+                {c.value}
+              </div>
+              <div
+                className="mt-1 text-[11px] uppercase tracking-[0.12em] leading-tight"
+                style={{
+                  color: 'var(--sf-muted, #5C5346)',
+                  fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                }}
+              >
+                {c.label}
+              </div>
+              <div
+                className="mt-0.5 text-[11px] tabular-nums leading-tight line-clamp-1"
+                style={{ color: 'var(--sf-subtle, #8A7F6D)' }}
+              >
+                {c.sub}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+    </section>
   )
 }

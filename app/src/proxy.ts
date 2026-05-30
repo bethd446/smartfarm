@@ -11,9 +11,10 @@ import { getSupabaseServerEnv } from '@/lib/supabase/env'
  *      vers leur emplacement canonique `/sanitaire/*` (308).
  *   2) (R8) Protéger les routes applicatives (groupe `(app)`) : si pas de
  *      session Supabase, redirect vers `/connexion`.
- *      ⚠️ BYPASS auth-gate si `SMARTFARM_DEMO_MODE != 'false'` ET pas de
- *      session Supabase (mode démo Yamoussoukro : pages accessibles sans
- *      compte). Mais si une session Supabase EST présente, on applique
+ *      ⚠️ BYPASS auth-gate UNIQUEMENT si `SMARTFARM_DEMO_MODE == 'true'`
+ *      (explicite) ET pas de session Supabase (mode démo Yamoussoukro :
+ *      pages accessibles sans compte). Fail-closed : en prod sans cette var,
+ *      l'auth est exigée. Si une session Supabase EST présente, on applique
  *      quand même les gates (auth + onboarding) — sinon la gate F1 Sprint 1
  *      `onboarded_at IS NULL → /onboarding` est court-circuitée en QA.
  *   3) (F1 Sprint 1) Gate onboarding : tout user authentifié sans
@@ -84,9 +85,16 @@ export async function proxy(request: NextRequest) {
     sbUrl = env.url
     sbKey = env.anonKey
   } catch (err) {
-    // En middleware on ne peut pas bloquer toute la prod : log + laisse passer
-    console.error('[mw] supabase env missing — bypass auth check:', err)
-    return response
+    // Fail-closed : sans env Supabase on ne peut pas verifier la session.
+    // En demo explicite on laisse passer (pages demo publiques) ; sinon on
+    // renvoie vers /connexion (route publique, traitee plus haut → pas de
+    // boucle) plutot que d'exposer le groupe (app) sans auth.
+    console.error('[mw] supabase env missing:', err)
+    if (process.env['SMARTFARM_DEMO_MODE'] === 'true') return response
+    const url = request.nextUrl.clone()
+    url.pathname = '/connexion'
+    url.searchParams.set('next', path)
+    return NextResponse.redirect(url)
   }
 
   const sb = createServerClient(sbUrl, sbKey, {
@@ -111,7 +119,7 @@ export async function proxy(request: NextRequest) {
   //    auth, mais dès qu'un user s'est inscrit (= a une session), on doit
   //    appliquer la gate onboarding F1 Sprint 1.
   const demoMode = process.env['SMARTFARM_DEMO_MODE']
-  const demoBypass = demoMode !== 'false'
+  const demoBypass = demoMode === 'true'
 
   if (demoBypass && !user) {
     console.log('[mw] demo-bypass (no session)', { path })

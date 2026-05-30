@@ -18,6 +18,7 @@ import {
   toneNesVivants,
 } from '@/components/kpi/kpi-tech-card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { HistoriquePoids } from './_historique-poids'
 
 /**
@@ -430,7 +431,7 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-[var(--sf-ink)]">
-                  {new Date(derniereSaillie.date_saillie).toLocaleDateString('fr-FR')} · {derniereSaillie.methode}
+                  <FormattedDateTime date={derniereSaillie.date_saillie} format="date" /> · {derniereSaillie.methode}
                 </p>
                 {derniereSaillie.verrat ? (
                   <p className="text-xs text-[var(--sf-muted)] mt-1">
@@ -447,7 +448,7 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-[var(--sf-ink)]">
-                  {new Date(derniereMiseBas.date_mise_bas).toLocaleDateString('fr-FR')} · {derniereMiseBas.nes_vivants}{' '}
+                  <FormattedDateTime date={derniereMiseBas.date_mise_bas} format="date" /> · {derniereMiseBas.nes_vivants}{' '}
                   vivants / {derniereMiseBas.nes_totaux} totaux
                 </p>
               </CardContent>
@@ -653,7 +654,7 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
                         {b.evenement.replace('_', ' ')}
                       </Badge>
                       <span className="text-xs text-[var(--sf-muted)] tabular-nums">
-                        {new Date(b.date_obs).toLocaleDateString('fr-FR')}
+                        <FormattedDateTime date={b.date_obs} format="date" />
                       </span>
                     </li>
                   ))}
@@ -681,7 +682,7 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
                     >
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-mono tabular-nums text-[var(--sf-ink)]">
-                          {new Date(p.date_mise_bas).toLocaleDateString('fr-FR')}
+                          <FormattedDateTime date={p.date_mise_bas} format="date" />
                         </span>
                         {p.bcs_truie != null ? (
                           <Badge variant="secondary">

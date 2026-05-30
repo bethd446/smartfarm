@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import {
   Card,
   CardContent,
@@ -76,19 +77,6 @@ type RecoAntiMyco = {
   niveau_risque: 'eleve' | 'modere' | 'faible' | 'non_analyse'
 }
 
-function formatDate(s: string | null) {
-  if (!s) return '—'
-  try {
-    return new Date(s + 'T00:00:00').toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-    })
-  } catch {
-    return s
-  }
-}
-
 function fmtNum(n: number | null, digits = 2): string {
   if (n === null || n === undefined || !Number.isFinite(n)) return '—'
   return n.toLocaleString('fr-FR', {
@@ -98,8 +86,17 @@ function fmtNum(n: number | null, digits = 2): string {
 }
 
 function ageJours(date: string): number {
-  const d = new Date(date + 'T00:00:00')
-  const ms = Date.now() - d.getTime()
+  // Hydration-safe : comparaison de dates civiles en UTC (pas d'horloge locale
+  // ni de précision sous-journalière), pour que serveur et client calculent le
+  // même nombre de jours et éviter un mismatch React #418 sur le label de statut.
+  const recep = new Date(date + 'T00:00:00Z')
+  const now = new Date()
+  const todayUtc = Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate(),
+  )
+  const ms = todayUtc - recep.getTime()
   return Math.floor(ms / (1000 * 60 * 60 * 24))
 }
 
@@ -507,7 +504,7 @@ export default async function MycotoxinesPage() {
                         {r.matiere_nom} — lot {r.reference_lot}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Reçu {formatDate(r.date_reception)} · Afla{' '}
+                        Reçu {r.date_reception ? <FormattedDateTime date={r.date_reception} options={{ day: '2-digit', month: '2-digit', year: '2-digit' }} /> : '—'} · Afla{' '}
                         {r.analyse_aflatoxine_b1_ppb ?? '?'} · ZEA{' '}
                         {r.analyse_zearalenone_ppb ?? '?'} · DON{' '}
                         {r.analyse_don_ppb ?? '?'}
@@ -617,7 +614,7 @@ export default async function MycotoxinesPage() {
                         {l.matiere_premiere?.nom ?? '—'}
                       </TableCell>
                       <TableCell className="tabular-nums whitespace-nowrap">
-                        {formatDate(l.date_reception)}
+                        {l.date_reception ? <FormattedDateTime date={l.date_reception} options={{ day: '2-digit', month: '2-digit', year: '2-digit' }} /> : '—'}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">
                         {fmtNum(Number(l.quantite_kg), 0)}

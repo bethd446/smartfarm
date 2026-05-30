@@ -7,6 +7,7 @@ import { ExportButton } from '@/components/export-button'
 import { Layers, Plus } from 'lucide-react'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
 import { BandesFab } from './_fab'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 
 export default async function BandesPage() {
   const sb = await createClient()
@@ -67,8 +68,8 @@ export default async function BandesPage() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-slate-500">Début</span><span className="font-mono">{b.date_debut ? new Date(b.date_debut).toLocaleDateString('fr-FR') : '—'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Fin prévue</span><span className="font-mono">{b.date_fin_prevue ? new Date(b.date_fin_prevue).toLocaleDateString('fr-FR') : '—'}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Début</span><span className="font-mono">{b.date_debut ? <FormattedDateTime date={b.date_debut} format="date" /> : '—'}</span></div>
+                <div className="flex justify-between"><span className="text-slate-500">Fin prévue</span><span className="font-mono">{b.date_fin_prevue ? <FormattedDateTime date={b.date_fin_prevue} format="date" /> : '—'}</span></div>
                 <div className="flex justify-between"><span className="text-slate-500">Effectif</span><span className="font-mono font-bold text-emerald-700">{b.bande_animaux?.length ?? 0}</span></div>
               </CardContent>
             </Card>

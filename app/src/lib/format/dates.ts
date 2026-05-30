@@ -35,3 +35,14 @@ export function formatDateContextuel(d: Date | string): string {
   
   return format(date, 'd MMM yyyy', { locale: fr })
 }
+
+/**
+ * Formate une date en date civile pure JJ/MM/AAAA (fr-FR).
+ * Helper déterministe pour événements figés (date de saillie, etc.) — PAS de
+ * temps relatif. À consommer côté client via <FormattedDateTime format="date">
+ * (locale-dépendant → hydration-safe uniquement client, cf règle projet #10).
+ */
+export function formatDateCivile(d: Date | string): string {
+  const date = typeof d === 'string' ? new Date(d) : d
+  return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}

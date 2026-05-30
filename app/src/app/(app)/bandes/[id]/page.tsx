@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 
+import { FormattedDateTime } from '@/components/ui/formatted-date'
+
 import { sexerBande } from './_actions'
 import { DialogTransitPhase } from './_dialog-transit'
 
@@ -201,7 +203,7 @@ export default async function BandeDetail({
                       className="border-b border-[var(--sf-line,rgba(0,0,0,0.06))] last:border-0"
                     >
                       <td className="py-2 pr-3 font-mono">
-                        {new Date(t.date_transit).toLocaleDateString('fr-FR')}
+                        <FormattedDateTime date={t.date_transit} format="date" />
                       </td>
                       <td className="py-2 pr-3">
                         <span className="capitalize">

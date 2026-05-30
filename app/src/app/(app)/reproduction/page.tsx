@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
+import type { CSSProperties } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { PageTitle } from '@/components/ui/page-title'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { ExportButton } from '@/components/export-button'
-import { AlertCircle, Heart, Plus, Stethoscope } from 'lucide-react'
+import { Heart, Plus, Stethoscope } from 'lucide-react'
 import { diagnosticLabel } from '@/lib/terrain-labels'
 import { DialogFaireMonter } from './_dialog-faire-monter'
 import { DialogDiagnostic } from './_dialog-diagnostic'
@@ -153,6 +154,24 @@ export default async function ReproductionPage({
       return 'warning'
     return 'outline'
   }
+  // Sévérité par FORME (dot), pas par fond coloré — registre conseiller
+  // (cf alertes/_components/alerte-card.tsx) :
+  //   retard            → disque plein rouge   (urgence : confirmer/écho)
+  //   fenêtre diag/écho  → anneau ambre         (action recommandée)
+  //   attente           → anneau gris discret  (rien à faire encore)
+  function dotPhase(phase: SaillieADiag['phase_diagnostic']): CSSProperties {
+    if (phase === 'retard') return { background: 'var(--sf-danger,#DC2626)' }
+    if (phase === 'fenetre_diagnostic' || phase === 'fenetre_echographie') {
+      return {
+        background: 'transparent',
+        boxShadow: 'inset 0 0 0 2px var(--sf-warning,#A16207)',
+      }
+    }
+    return {
+      background: 'transparent',
+      boxShadow: 'inset 0 0 0 2px var(--sf-line,rgba(0,0,0,0.25))',
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -170,7 +189,10 @@ export default async function ReproductionPage({
             className="text-sm text-[var(--sf-muted)]"
             style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
           >
-            {saillies?.length ?? 0} montées enregistrées
+            <span className="font-semibold tabular-nums text-[var(--sf-ink)]">
+              {saillies?.length ?? 0}
+            </span>{' '}
+            saillies enregistrées
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -203,84 +225,95 @@ export default async function ReproductionPage({
         </div>
       </div>
 
-      {/* === Section : Saillies à diagnostiquer === */}
+      {/* === Section : Saillies à diagnostiquer — registre dense hairline === */}
       {aDiagRows.length > 0 && (
         <section aria-labelledby="repro-diag-titre">
-        <h2
-          id="repro-diag-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-6 mb-3"
-        >
-          Saillies à diagnostiquer ({aDiagRows.length})
-        </h2>
-        <Card>
-          <CardHeader>
-            <h3
-              data-slot="card-title"
-              className="flex items-center gap-2 text-base leading-snug font-semibold tracking-[0.02em] text-[var(--sf-ink,#1a1a1a)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', system-ui, sans-serif)" }}
+          <div className="flex items-baseline gap-2 mb-1">
+            <h2
+              id="repro-diag-titre"
+              className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)]"
             >
-              <AlertCircle className="h-5 w-5 text-[var(--sf-warning-ink,#5C4416)]" aria-hidden="true" />
-              Fenêtre de diagnostic gestation
-            </h3>
-            <p className="text-xs text-[var(--sf-muted)] mt-1">
-              Fenêtre 18-24 j post-saillie : détecter un retour en chaleur ou
-              confirmer la gestation. Au-delà de 25 j, échographie recommandée.
-            </p>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {aDiagRows.map((s) => (
-                <li
-                  key={s.saillie_id}
-                  className="flex flex-wrap items-center justify-between gap-3 p-3 border border-[var(--sf-line)] rounded-md bg-[var(--sf-surface-1,#FFFFFF)]"
-                >
-                  <div className="flex-1 min-w-[180px]">
-                    <div className="font-mono font-semibold text-[var(--sf-ink)]">
-                      {s.truie_tag}
-                      {s.truie_nom && (
-                        <span className="text-[var(--sf-muted)] font-sans font-normal">
-                          {' '}
-                          ({s.truie_nom})
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-sm text-[var(--sf-muted)]">
-                      Saillie{' '}
-                      {new Date(s.date_saillie).toLocaleDateString('fr-FR')} ·
+              Saillies à diagnostiquer
+            </h2>
+            <span className="text-sm text-[var(--sf-muted)] tabular-nums">
+              ({aDiagRows.length})
+            </span>
+          </div>
+          <p className="text-xs text-[var(--sf-muted)] mb-3">
+            Fenêtre 18-24 j post-saillie : détecter un retour en chaleur ou
+            confirmer la gestation. Au-delà de 25 j, échographie recommandée.
+          </p>
+
+          <ul
+            className="border-t-2"
+            style={{ borderTopColor: 'var(--sf-warning,#A16207)' }}
+          >
+            {aDiagRows.map((s) => (
+              <li
+                key={s.saillie_id}
+                className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-[var(--sf-line)] min-h-[44px] px-2 py-3"
+              >
+                {/* Dot sévérité par forme (plein / anneau ambre / contour) */}
+                <span
+                  className="shrink-0 h-2.5 w-2.5 rounded-full"
+                  style={dotPhase(s.phase_diagnostic)}
+                  aria-hidden="true"
+                />
+
+                {/* Truie : tag mono + nom Big Shoulders */}
+                <div className="min-w-0 flex-1 flex flex-wrap items-baseline gap-x-2">
+                  <span className="font-mono font-semibold tabular-nums text-[var(--sf-ink)]">
+                    {s.truie_tag}
+                  </span>
+                  {s.truie_nom && (
+                    <span
+                      className="truncate text-[15px] font-semibold leading-tight text-[var(--sf-ink)] tracking-[0.01em]"
+                      style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                    >
+                      {s.truie_nom}
+                    </span>
+                  )}
+                  <span className="text-xs text-[var(--sf-subtle)]">
+                    Saillie <FormattedDateTime date={s.date_saillie} format="date" />
+                    {' · '}
+                    <span className="tabular-nums font-medium text-[var(--sf-muted)]">
                       J+{s.jours_post_saillie}
-                    </div>
-                  </div>
-                  <Badge variant={variantPhase(s.phase_diagnostic)}>
-                    {labelPhase(s.phase_diagnostic)}
-                  </Badge>
-                  <DialogDiagnostic
-                    saillies={saillesSansDiagPositif}
-                    truies={truies ?? []}
-                    verrats={verrats ?? []}
-                    bandes={bandes ?? []}
-                    defaultSaillieId={s.saillie_id}
-                    trigger={
-                      <Button size="sm" variant="outline">
-                        <Stethoscope className="h-4 w-4 mr-1" />
-                        Diagnostiquer
-                      </Button>
-                    }
-                  />
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+                    </span>
+                  </span>
+                </div>
+
+                {/* Badge fenêtre — tonalité (warning/danger/outline) */}
+                <Badge variant={variantPhase(s.phase_diagnostic)} className="shrink-0">
+                  {labelPhase(s.phase_diagnostic)}
+                </Badge>
+
+                {/* CTA inline — ouvre le dialog diagnostic inchangé */}
+                <DialogDiagnostic
+                  saillies={saillesSansDiagPositif}
+                  truies={truies ?? []}
+                  verrats={verrats ?? []}
+                  bandes={bandes ?? []}
+                  defaultSaillieId={s.saillie_id}
+                  trigger={
+                    <Button size="sm" variant="outline" className="shrink-0 min-h-11">
+                      <Stethoscope className="h-4 w-4 mr-1" aria-hidden="true" />
+                      Diagnostiquer
+                    </Button>
+                  }
+                />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
-      {/* === Tableau carnet : double-trait top (épais primary) + bottom (hairline) === */}
+      {/* === Historique des saillies : registre dense, trait top primary + lignes hairline === */}
       <section aria-labelledby="repro-historique-titre">
         <h2
           id="repro-historique-titre"
           className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-6 mb-3"
         >
-          Historique des montées
+          Historique des saillies
         </h2>
         <h3
           className="eyebrow text-[var(--sf-muted)] mb-2"
@@ -297,21 +330,12 @@ export default async function ReproductionPage({
           <EmptyState
             icon={Heart}
             title="Aucune saillie enregistrée"
-            description="Dès qu'une truie est saillie par un verrat ou inséminée, enregistre la montée pour suivre la gestation et la performance de reproduction."
+            description="Dès qu'une truie est saillie par un verrat ou inséminée, enregistre la saillie pour suivre la gestation et la performance de reproduction."
           />
         ) : (
         <div
-          className="overflow-x-auto -mx-4 sm:mx-0"
-          style={{
-            borderTop: 'var(--sf-rule-top, 4px solid var(--sf-primary, #2D4A1F))',
-            borderBottom:
-              'var(--sf-rule-bottom, 1px solid var(--sf-border, rgba(0,0,0,0.18)))',
-            borderLeft:
-              'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
-            borderRight:
-              'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
-            background: 'var(--sf-surface-1, #FFFFFF)',
-          }}
+          className="overflow-x-auto -mx-4 sm:mx-0 border-t-2"
+          style={{ borderTopColor: 'var(--sf-primary,#2D4A1F)' }}
         >
           <table className="w-full min-w-[800px] text-sm">
             <thead
@@ -347,8 +371,8 @@ export default async function ReproductionPage({
                     key={s.id}
                     className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
                   >
-                    <td className="py-3 px-4 font-mono tabular-nums text-[var(--sf-ink)]">
-                      {new Date(s.date_saillie).toLocaleDateString('fr-FR')}
+                    <td className="py-3 px-4 tabular-nums text-[var(--sf-ink)]">
+                      <FormattedDateTime date={s.date_saillie} format="date" />
                     </td>
                     <td className="py-3 px-4 font-medium text-[var(--sf-ink)]">
                       {s.truie?.nom}{' '}

@@ -32,7 +32,8 @@ export async function getContexteFerme(
       .from('animaux')
       .select('id', { count: 'exact', head: true })
       .eq('ferme_id', fermeId)
-      .neq('statut', 'mort'),
+      .in('statut', ['actif', 'malade'])
+      .is('deleted_at', null),
     supabase
       .from('bandes')
       .select('id, code, nom')

@@ -96,7 +96,10 @@ export function PorceletsTableBulk({
   return (
     <section aria-labelledby="porcelets-bulk-titre">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border-t border-b border-[var(--sf-line)]">
+        <table
+          className="w-full text-sm border-b border-[var(--sf-line)] border-t-2"
+          style={{ borderTopColor: 'var(--sf-primary)' }}
+        >
           <thead
             className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
             style={{

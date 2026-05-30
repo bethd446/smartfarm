@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Card, CardContent } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import {
   Wheat,
@@ -16,9 +15,9 @@ import { NutritionStats } from './_components/nutrition-stats'
 import { AlimentationFab } from './_fab'
 
 /* -------------------------------------------------------------------------- */
-/*  Hub Alimentation — refonte C6                                              */
-/*  - 4 KPI cards (Conso 30j / Coût 30j / IC / Stock j restants)              */
-/*  - 5 cards de navigation                                                    */
+/*  Hub Alimentation                                                           */
+/*  - Bandeau KPI dense (Conso 30j / Coût 30j / IC / Stock j restants)        */
+/*  - Registre liste dense numéroté des 6 modules (D2-L2, cf hub sanitaire)   */
 /* -------------------------------------------------------------------------- */
 
 type NavCard = {
@@ -94,42 +93,55 @@ export default async function AlimentationPage() {
       {/* KPI ---------------------------------------------------------------- */}
       <NutritionStats />
 
-      {/* Cards de navigation ----------------------------------------------- */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {NAV_CARDS.map((c) => {
-          const Icon = c.icon
-          return (
-            <Link key={c.href} href={c.href} className="group">
-              <Card className="h-full transition-shadow hover:shadow-md cursor-pointer">
-                <CardContent className="p-5">
-                  <div className="flex items-start gap-3">
-                    <div
-                      className="rounded-lg p-2.5 shrink-0"
-                      style={{
-                        background: 'var(--sf-bg, #F5F1E8)',
-                        color: 'var(--sf-primary, #2D4A1F)',
-                      }}
+      {/* Modules : registre liste dense numéroté (cf hub sanitaire) --------- */}
+      <section aria-labelledby="alimentation-modules-titre">
+        <h2
+          id="alimentation-modules-titre"
+          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-2 mb-3"
+        >
+          Modules alimentation
+        </h2>
+        <div className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
+          <ul>
+            {NAV_CARDS.map((c, i) => {
+              const Icon = c.icon
+              return (
+                <li key={c.href} className="border-b border-[var(--sf-line)]">
+                  <Link
+                    href={c.href}
+                    className="group flex items-center gap-3 min-h-[56px] px-2 py-3 transition-colors hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
+                  >
+                    <span
+                      className="tabular-nums text-[var(--sf-subtle)] text-sm font-semibold shrink-0 w-6 text-right"
+                      style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
                     >
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <h3 className="font-semibold text-base text-[var(--sf-ink,#1a1a1a)]">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <Icon className="h-6 w-6 shrink-0 text-[var(--sf-primary)]" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline gap-2">
+                        <h3
+                          className="min-w-0 truncate text-[15px] font-semibold leading-tight tracking-[0.01em] text-[var(--sf-ink)]"
+                          style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                        >
                           {c.title}
                         </h3>
-                        <ChevronRight className="h-4 w-4 text-[var(--sf-muted,#5C5346)] group-hover:text-[var(--sf-primary,#2D4A1F)] transition-colors" />
                       </div>
-                      <p className="text-xs text-[var(--sf-muted,#5C5346)] mt-1 leading-relaxed">
+                      <p
+                        className="mt-0.5 text-xs leading-snug text-[var(--sf-muted)] line-clamp-2 md:line-clamp-1"
+                        style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+                      >
                         {c.description}
                       </p>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          )
-        })}
-      </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[var(--sf-subtle)] group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </section>
       <AlimentationFab />
     </div>
   )

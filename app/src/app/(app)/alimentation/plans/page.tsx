@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import {
   Card,
   CardContent,
@@ -420,11 +421,7 @@ export default async function PlansAlimentationPage(props: {
                       </TableCell>
                       <TableCell className="tabular-nums text-sm">
                         {p.date_epuisement
-                          ? new Date(p.date_epuisement).toLocaleDateString('fr-FR', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric',
-                            })
+                          ? <FormattedDateTime date={p.date_epuisement} options={{ day: '2-digit', month: 'short', year: 'numeric' }} />
                           : '—'}
                       </TableCell>
                       <TableCell className="text-right">

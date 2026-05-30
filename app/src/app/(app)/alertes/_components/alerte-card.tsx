@@ -1,15 +1,24 @@
 import Link from 'next/link'
-import { AlertCircle, AlertTriangle, Info, Siren, ArrowRight } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import type { CSSProperties } from 'react'
+import { ChevronRight } from 'lucide-react'
 import type { Alerte } from '@/lib/alertes-engine'
 import { REGLES_ALERTES } from '@/lib/alertes-regles'
 import { RelativeTime } from './relative-time'
 
 /**
- * Smart Farm — Carte d'alerte individuelle
- * Affiche : badge gravité + titre + description + cible (lien) + date détection + CTA contextuel.
+ * Smart Farm — Ligne d'alerte (registre dense)
+ * Affiche : dot de gravité (sévérité par forme : plein/anneau/contour) +
+ * titre + cible + date détection + description (line-clamp) + chevron si lien.
+ *
+ * Sévérité par FORME (cf DESIGN.md, registre conseiller) :
+ *   critique → dot plein rouge       (urgence absolue)
+ *   élevée   → anneau plein rouge    (contour épais)
+ *   moyenne  → anneau ambre          (contour)
+ *   info     → dot creux bleu        (discret)
+ *
+ * API stable : `{ alerte }` — `alertes-list.tsx` (read-only) superpose un
+ * bouton snooze en absolu top-2/right-2. On garde donc le coin haut-droit
+ * libre (`pr-28` réserve la place du bouton sur la ligne).
  */
 
 /**
@@ -64,13 +73,14 @@ function computeLien(alerte: Alerte): string | null {
   if (t.startsWith('soins_porcelets') || t.includes('j3')) {
     return '/sanitaire/calendrier'
   }
-  // R27 / R30 transfert Croissance
+  // R27 / R30 transfert Croissance → onglet porcelets (le param `stade` n'était
+  // pas lu par /cheptel qui filtre via `tab` ; sous-filtrage fin = évolution future)
   if (t.includes('porcelets_pret_croissance') || t.includes('porcelets_anticipation_croissance')) {
-    return '/cheptel?stade=demarrage'
+    return '/cheptel?tab=porcelets'
   }
-  // R28 truies vides post-sevrage
+  // R28 truies vides post-sevrage → onglet truies
   if (t.includes('truies_vides')) {
-    return '/cheptel?stade=truie_vide'
+    return '/cheptel?tab=truies'
   }
   // R29 portées zombies → liste mises-bas
   if (t.includes('portees_zombies')) {
@@ -78,13 +88,13 @@ function computeLien(alerte: Alerte): string | null {
   }
   // Chaleurs / diag / saillies
   if (t.includes('chaleur') || t.includes('retour_chaleurs')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('gestation') || t.includes('diag_gestation') || t.includes('echo')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('saillie')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('mise_bas') || t.includes('surveillance_mb') || t.includes('transfert_maternite')) {
     return '/mises-bas'
@@ -94,7 +104,7 @@ function computeLien(alerte: Alerte): string | null {
     return '/sanitaire/calendrier'
   }
   // Stock / nutrition
-  if (t.startsWith('stock')) return '/stocks'
+  if (t.startsWith('stock')) return '/stock'
   if (t.startsWith('aliment') || t.includes('transition')) return '/alimentation/plans'
   if (t.startsWith('eau')) return '/sanitaire/eau'
   // Observations manuelles
@@ -108,16 +118,6 @@ function computeLien(alerte: Alerte): string | null {
   return null
 }
 
-const GRAVITE_VARIANT: Record<
-  Alerte['gravite'],
-  'destructive' | 'danger' | 'warning' | 'info'
-> = {
-  critique: 'destructive',
-  'élevée': 'danger',
-  moyenne: 'warning',
-  info: 'info',
-}
-
 const GRAVITE_LABEL: Record<Alerte['gravite'], string> = {
   critique: 'Critique',
   'élevée': 'Élevée',
@@ -125,11 +125,27 @@ const GRAVITE_LABEL: Record<Alerte['gravite'], string> = {
   info: 'Info',
 }
 
-const GRAVITE_ICON: Record<Alerte['gravite'], typeof AlertCircle> = {
-  critique: Siren,
-  'élevée': AlertTriangle,
-  moyenne: AlertCircle,
-  info: Info,
+/**
+ * Sévérité par FORME (pas seulement couleur — DESIGN.md règle alertes).
+ *   critique : disque plein rouge danger
+ *   élevée   : anneau plein rouge (inset box-shadow épais, centre transparent)
+ *   moyenne  : anneau ambre (inset box-shadow, centre transparent)
+ *   info     : anneau bleu discret
+ */
+const GRAVITE_DOT: Record<Alerte['gravite'], CSSProperties> = {
+  critique: { background: 'var(--sf-danger,#DC2626)' },
+  'élevée': {
+    background: 'transparent',
+    boxShadow: 'inset 0 0 0 3px var(--sf-danger,#DC2626)',
+  },
+  moyenne: {
+    background: 'transparent',
+    boxShadow: 'inset 0 0 0 2px var(--sf-warning,#A16207)',
+  },
+  info: {
+    background: 'transparent',
+    boxShadow: 'inset 0 0 0 2px var(--sf-info-ink,#1F3344)',
+  },
 }
 
 const CIBLE_LABEL: Record<Alerte['cible_type'], string> = {
@@ -142,98 +158,92 @@ const CIBLE_LABEL: Record<Alerte['cible_type'], string> = {
 }
 
 export function AlerteCard({ alerte }: { alerte: Alerte }) {
-  const variant = GRAVITE_VARIANT[alerte.gravite]
-  const Icon = GRAVITE_ICON[alerte.gravite]
   const regle = REGLES_ALERTES?.[alerte.regle_id]
+  const categorie = regle?.categorie
   const detecteLe = alerte.detecte_le instanceof Date
     ? alerte.detecte_le
     : new Date(alerte.detecte_le)
 
   // FIX S5-L3 : URL contextuelle (sinon CTA masqué — pas de lien mort)
   const lien = computeLien(alerte)
+  const dotStyle = GRAVITE_DOT[alerte.gravite]
+  const cibleTxt = alerte.cible_label || (lien ? 'Voir' : '—')
 
-  return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4 sm:p-5">
-        <div className="flex flex-col sm:flex-row sm:items-start gap-4">
-          {/* Icône gravité */}
-          <div className="shrink-0">
-            <div
-              className="h-10 w-10 rounded-full flex items-center justify-center"
-              style={{
-                background:
-                  alerte.gravite === 'critique' || alerte.gravite === 'élevée'
-                    ? 'var(--sf-danger-bg, #F1D4CE)'
-                    : alerte.gravite === 'moyenne'
-                    ? 'var(--sf-warning-bg, #F5E0B8)'
-                    : 'var(--sf-info-bg, #D6E2EE)',
-                color:
-                  alerte.gravite === 'critique' || alerte.gravite === 'élevée'
-                    ? 'var(--sf-danger-ink, #7A2A1F)'
-                    : alerte.gravite === 'moyenne'
-                    ? 'var(--sf-warning-ink, #5A3E0E)'
-                    : 'var(--sf-info-ink, #1F3A55)',
-              }}
-            >
-              <Icon className="h-5 w-5" />
-            </div>
-          </div>
+  // Contenu de ligne partagé (lien ↔ statique). `pr-28` réserve la place du
+  // bouton snooze superposé par alertes-list.tsx (absolu top-2/right-2).
+  const ligne = (
+    <div className="flex items-start gap-3 md:gap-4 min-h-[44px] px-2 py-4 pr-28">
+      {/* Dot gravité — sévérité par forme (plein / anneau / contour) */}
+      <span
+        className="shrink-0 mt-1.5 h-2.5 w-2.5 rounded-full"
+        style={dotStyle}
+        aria-hidden="true"
+      />
 
-          {/* Contenu */}
-          <div className="flex-1 min-w-0 space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant={variant}>{GRAVITE_LABEL[alerte.gravite]}</Badge>
-              {regle?.categorie && (
-                <Badge variant="outline" className="capitalize">
-                  {regle.categorie}
-                </Badge>
-              )}
-              <span className="text-xs text-[var(--sf-muted,#5C5346)] eyebrow">
-                <RelativeTime date={detecteLe} />
-              </span>
-            </div>
-
-            <div>
-              <div className="font-semibold text-[var(--sf-ink,#1a1a1a)]">
-                {alerte.titre}
-              </div>
-              <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-0.5">
-                {alerte.description}
-              </p>
-            </div>
-
-            <div className="text-xs text-[var(--sf-muted,#5C5346)]">
-              <span className="eyebrow text-[11px]">
-                {CIBLE_LABEL[alerte.cible_type]} ·
-              </span>{' '}
-              {lien ? (
-                <Link
-                  href={lien}
-                  className="inline-flex items-center min-h-11 py-2 font-medium text-[var(--sf-primary,#2D4A1F)] hover:underline"
-                >
-                  {alerte.cible_label || 'Voir'}
-                </Link>
-              ) : (
-                <span className="inline-flex items-center min-h-11 py-2 font-medium text-[var(--sf-ink,#1a1a1a)]">
-                  {alerte.cible_label || '—'}
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* CTA — masqué si pas de lien crédible (pas de bouton mort) */}
-          {lien && (
-            <div className="shrink-0 sm:self-center">
-              <Link href={lien} className="inline-flex">
-                <Button variant="outline" size="default" className="min-h-11">
-                  {getCtaLabel(alerte.regle_id)}
-                  <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                </Button>
-              </Link>
-            </div>
-          )}
+      <div className="min-w-0 flex-1">
+        {/* Titre + métadonnées inline (gravité · catégorie) */}
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <h3
+            className="text-[15px] md:text-base font-semibold leading-tight text-[var(--sf-ink)] tracking-[0.01em]"
+            style={{
+              fontFamily:
+                "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+            }}
+          >
+            {alerte.titre}
+          </h3>
+          <span className="eyebrow text-[10px] text-[var(--sf-subtle,#6B6354)] capitalize">
+            {GRAVITE_LABEL[alerte.gravite]}
+            {categorie ? ` · ${categorie}` : ''}
+          </span>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* Description */}
+        <p className="mt-1 text-sm text-[var(--sf-muted)] line-clamp-2">
+          {alerte.description}
+        </p>
+
+        {/* Cible + date détection */}
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-[var(--sf-subtle,#6B6354)]">
+          <span className="eyebrow text-[10px]">
+            {CIBLE_LABEL[alerte.cible_type]}
+          </span>
+          <span
+            className={
+              lien
+                ? 'font-medium text-[var(--sf-primary,#2D4A1F)]'
+                : 'font-medium text-[var(--sf-ink,#1a1a1a)]'
+            }
+          >
+            {cibleTxt}
+          </span>
+          <span aria-hidden="true">·</span>
+          <span className="tabular-nums">
+            <RelativeTime date={detecteLe} />
+          </span>
+        </div>
+      </div>
+
+      {/* Chevron — présent si lien (sinon ligne statique sans affordance) */}
+      {lien && (
+        <ChevronRight className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] group-hover:translate-x-0.5 transition-transform" />
+      )}
+    </div>
   )
+
+  // Lien crédible → toute la ligne est cliquable (CTA implicite = getCtaLabel).
+  if (lien) {
+    return (
+      <Link
+        href={lien}
+        aria-label={getCtaLabel(alerte.regle_id)}
+        className="group block border-b border-[var(--sf-line)] transition-colors hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
+      >
+        {ligne}
+      </Link>
+    )
+  }
+
+  // Pas de lien → ligne statique (pas de bouton mort, pas de hover trompeur).
+  return <div className="block border-b border-[var(--sf-line)]">{ligne}</div>
 }

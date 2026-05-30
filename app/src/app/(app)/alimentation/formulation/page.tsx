@@ -28,6 +28,7 @@ import {
 } from '@/lib/nutrition-engine'
 import { LABEL_STADE, STADES_PORC } from './_schemas'
 import { supprimerFormulation } from './_actions'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 
 export const dynamic = 'force-dynamic'
 
@@ -276,7 +277,7 @@ export default async function FormulationListPage() {
                       </TableCell>
                       <TableCell className="text-xs font-mono">
                         {f.date_creation
-                          ? new Date(f.date_creation).toLocaleDateString('fr-FR')
+                          ? <FormattedDateTime date={f.date_creation} format="date" />
                           : '—'}
                       </TableCell>
                       <TableCell>

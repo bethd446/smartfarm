@@ -95,6 +95,7 @@ export function DialogNouvelleBande({
                 type="date"
                 required
                 defaultValue={today}
+                suppressHydrationWarning
               />
             </div>
             <div>

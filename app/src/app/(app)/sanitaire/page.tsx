@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardHeader, CardDescription } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
@@ -11,10 +10,12 @@ import {
   Syringe,
   AlertTriangle,
   Activity,
+  ChevronRight,
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import { MALADIES_PORCINES } from '@/lib/maladies-porcines'
 import { SanitaireFab } from './_fab'
+import { SanitaireStats } from './_components/sanitaire-stats'
 
 export const metadata: Metadata = { title: 'Sanitaire' }
 
@@ -125,6 +126,8 @@ export default async function SanitairePage() {
         </p>
       </div>
 
+      <SanitaireStats />
+
       <section aria-labelledby="sanitaire-modules-titre">
         <h2
           id="sanitaire-modules-titre"
@@ -132,30 +135,51 @@ export default async function SanitairePage() {
         >
           Modules sanitaires
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {modules.map((m) => {
-          const Icon = m.icon
-          return (
-            <Link key={m.href} href={m.href} className="block">
-              <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
-                  <div className="flex items-start justify-between gap-2">
-                    <Icon className="h-8 w-8 text-[var(--sf-primary)]" />
-                    {m.badge && <Badge variant={m.badge.variant}>{m.badge.label}</Badge>}
-                  </div>
-                  <h3
-                    data-slot="card-title"
-                    className="mt-2 text-base leading-snug font-semibold tracking-[0.02em] text-[var(--sf-ink,#1a1a1a)]"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', system-ui, sans-serif)" }}
+        {/* Registre modules : liste dense hairline (ex-grille de cards identiques) */}
+        <div className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
+          <ul>
+            {modules.map((m, i) => {
+              const Icon = m.icon
+              return (
+                <li key={m.href} className="border-b border-[var(--sf-line)]">
+                  <Link
+                    href={m.href}
+                    className="group flex items-center gap-3 min-h-[56px] px-2 py-3 transition-colors hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
                   >
-                    {m.title}
-                  </h3>
-                  <CardDescription>{m.desc}</CardDescription>
-                </CardHeader>
-              </Card>
-            </Link>
-          )
-        })}
+                    <span
+                      className="tabular-nums text-[var(--sf-subtle)] text-sm font-semibold shrink-0 w-6 text-right"
+                      style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <Icon className="h-6 w-6 shrink-0 text-[var(--sf-primary)]" />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-baseline gap-2">
+                        <h3
+                          className="min-w-0 truncate text-[15px] font-semibold leading-tight tracking-[0.01em] text-[var(--sf-ink)]"
+                          style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                        >
+                          {m.title}
+                        </h3>
+                        {m.badge && (
+                          <Badge variant={m.badge.variant} className="shrink-0 ml-auto">
+                            {m.badge.label}
+                          </Badge>
+                        )}
+                      </div>
+                      <p
+                        className="mt-0.5 text-xs leading-snug text-[var(--sf-muted)] line-clamp-2 md:line-clamp-1"
+                        style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+                      >
+                        {m.desc}
+                      </p>
+                    </div>
+                    <ChevronRight className="h-4 w-4 shrink-0 text-[var(--sf-subtle)] group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                </li>
+              )
+            })}
+          </ul>
         </div>
       </section>
       <SanitaireFab />

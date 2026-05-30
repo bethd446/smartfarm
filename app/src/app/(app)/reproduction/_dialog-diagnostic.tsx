@@ -101,7 +101,6 @@ export function DialogDiagnostic({
 }) {
   const [open, setOpen] = useState(defaultOpen)
   const [openNewSaillie, setOpenNewSaillie] = useState(false)
-  const today = new Date().toISOString().slice(0, 10)
 
   const {
     register,
@@ -114,12 +113,21 @@ export function DialogDiagnostic({
     resolver: zodResolver(diagnosticSchema),
     defaultValues: {
       saillie_id: defaultSaillieId ?? '',
-      date_diagnostic: today,
+      // Hydration-safe : laissé vide au SSR, rempli avec la date du jour
+      // après montage (cf. useEffect ci-dessous). new Date() au render
+      // provoquerait un mismatch SSR/hydration sur un Client Component.
+      date_diagnostic: '',
       resultat: undefined as unknown as 'positif',
       methode: '',
       observations: '',
     },
   })
+
+  // Pré-remplit la date du diagnostic avec aujourd'hui après le montage côté
+  // client (post-hydration) pour préserver l'UX sans mismatch SSR.
+  useEffect(() => {
+    setValue('date_diagnostic', new Date().toISOString().slice(0, 10))
+  }, [setValue])
 
   const resultat = watch('resultat')
   const selectedSaillieId = watch('saillie_id')
