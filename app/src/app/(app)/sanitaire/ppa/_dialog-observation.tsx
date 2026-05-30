@@ -35,7 +35,7 @@ import {
 import { enregistrerObservationPPA } from './_actions'
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 type SymptomKey =
   | 'hemorragies'
@@ -147,7 +147,7 @@ export function DialogObservationPPA() {
 
           {/* Bloc 2 : symptômes (checklist) */}
           <div className="rounded-md border border-[var(--sf-border,#e5e5e5)] p-3">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xs font-bold mb-2">
+            <div className="font-[family-name:var(--sf-font-display)] text-xs font-bold mb-2">
               Symptômes observés
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">

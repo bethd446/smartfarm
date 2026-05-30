@@ -119,7 +119,7 @@ export function OnboardingForm() {
             </span>
             <span
               className={[
-                'text-[10px] uppercase tracking-[0.1em] hidden sm:inline',
+                'text-[10px] hidden sm:inline',
                 step === n ? 'text-[var(--ink)] font-semibold' : 'text-[var(--mut)]',
               ].join(' ')}
             >

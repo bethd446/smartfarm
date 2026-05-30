@@ -61,7 +61,7 @@ type Props = {
 }
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 const LABEL_CATEGORIE: Record<CategorieProtocole, string> = {
   verrat: 'Verrat',

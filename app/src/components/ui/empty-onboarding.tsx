@@ -76,8 +76,6 @@ export function EmptyOnboarding({
           style={{
             fontFamily: 'var(--sf-font-display)',
             fontSize: '12px',
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
             color: 'var(--sf-subtle)',
           }}
         >

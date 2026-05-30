@@ -68,7 +68,7 @@ export default async function BatimentsPage() {
         >
           {/* En-tête de colonnes — desktop uniquement */}
           <div
-            className="hidden md:grid md:grid-cols-[2.5rem_minmax(0,1fr)_6rem_5.5rem_4.5rem_9rem_1.25rem] md:gap-3 items-end px-2 pb-2 pt-3 text-[10px] uppercase tracking-[0.16em] text-[var(--sf-subtle)]"
+            className="hidden md:grid md:grid-cols-[2.5rem_minmax(0,1fr)_6rem_5.5rem_4.5rem_9rem_1.25rem] md:gap-3 items-end px-2 pb-2 pt-3 text-[10px] text-[var(--sf-subtle)]"
             style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
           >
             <span aria-hidden="true"></span>

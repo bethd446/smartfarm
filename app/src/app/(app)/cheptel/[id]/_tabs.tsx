@@ -52,7 +52,7 @@ export function AnimalTabs({
   const [active, setActive] = useState(allTabs[0].id)
 
   const eyebrowCls =
-    'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold'
+    'font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold'
 
   const batimentNom = (id: string | null): string => {
     if (!id) return '—'

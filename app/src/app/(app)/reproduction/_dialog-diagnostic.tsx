@@ -242,7 +242,7 @@ export function DialogDiagnostic({
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle
-              className="uppercase tracking-wide text-2xl"
+              className="text-2xl"
               style={{
                 fontFamily:
                   "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -380,7 +380,7 @@ export function DialogDiagnostic({
                       style={{ background: bg, color: ink }}
                     >
                       <div
-                        className="text-sm font-bold uppercase tracking-[0.05em]"
+                        className="text-sm font-bold"
                         style={{
                           fontFamily:
                             "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",

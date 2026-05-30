@@ -199,7 +199,7 @@ export function DialogMortalite({
         />
         <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle className="uppercase tracking-wide text-2xl flex items-center gap-2">
+            <DialogTitle className="tracking-wide text-2xl flex items-center gap-2">
               <AlertTriangle className="h-6 w-6 text-[var(--sf-danger-ink,#7A2A1F)]" />
               Déclarer une mortalité
             </DialogTitle>

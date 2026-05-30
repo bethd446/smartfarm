@@ -131,8 +131,6 @@ type VScoreTruie = {
 const eyebrowStyle: React.CSSProperties = {
   fontFamily: 'var(--disp)',
   fontSize: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
   color: 'var(--mut)',
 }
 
@@ -186,12 +184,12 @@ export default async function KpiPageV2() {
       {/* ===== HEADER : EYEBROW + H1 + BOUTON PDF ===== */}
       <div>
         <div className="mb-2" style={eyebrowStyle}>
-          PILOTAGE · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short', year: 'numeric' }} upper /> · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
+          Pilotage · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short', year: 'numeric' }} /> · {dash?.ferme_nom ?? 'Ferme'}
         </div>
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div>
             <h1
-              className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--ink)]"
+              className="text-4xl font-black flex items-center gap-3 tracking-[0.02em] text-[var(--ink)]"
               style={{ fontFamily: 'var(--disp)' }}
             >
               <PiggyBank className="h-8 w-8 text-[var(--sage)]" />
@@ -328,7 +326,7 @@ export default async function KpiPageV2() {
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--ink)]"
+              className="text-xl tracking-wide text-[var(--ink)]"
               style={{ fontFamily: 'var(--disp)' }}
             >
               Performance par bande
@@ -396,7 +394,7 @@ export default async function KpiPageV2() {
         <Card className="border-[var(--line)]">
           <CardContent className="p-6">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--ink)] mb-4"
+              className="text-xl tracking-wide text-[var(--ink)] mb-4"
               style={{ fontFamily: 'var(--disp)' }}
             >
               Top 5 truies · Score IFIP
@@ -451,7 +449,7 @@ export default async function KpiPageV2() {
         <Card className="border-[var(--line)]">
           <CardContent className="p-6">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--bad-d)] mb-4"
+              className="text-xl tracking-wide text-[var(--bad-d)] mb-4"
               style={{ fontFamily: 'var(--disp)' }}
             >
               À surveiller · Réforme suggérée

@@ -56,7 +56,7 @@ const schema = z.object({
 type FormValues = z.input<typeof schema>
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
@@ -206,7 +206,7 @@ export function DialogNouvelleVisite({ trigger }: { trigger?: React.ReactNode })
           </div>
 
           <div className="space-y-2 rounded-[6px] border border-[var(--sf-line,rgba(0,0,0,0.18))] p-3">
-            <Label className="block text-[12px] font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em]">
+            <Label className="block text-[12px] font-[family-name:var(--sf-font-display)]">
               Biosécurité
             </Label>
             <label className="flex items-center gap-2 text-sm">

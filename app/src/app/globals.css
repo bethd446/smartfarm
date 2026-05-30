@@ -554,7 +554,7 @@ h3 {
   color: var(--sf-ink, #1a1a1a);
 }
 
-.eyebrow { font-family: var(--sf-font-display); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; }
+.eyebrow { font-family: var(--sf-font-display); font-size: 11px; letter-spacing: 0.01em; }
 
 /* === FIX-B #4 — Cibles tactiles WCAG 2.5.5 (≥ 44×44 px sur mobile/tactile) ===
  * Règle ciblée pointer:coarse pour ne pas alourdir le desktop. */

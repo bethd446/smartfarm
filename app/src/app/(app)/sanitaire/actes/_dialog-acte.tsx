@@ -50,7 +50,7 @@ type Props = {
 }
 
 const titleClass =
-  'font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl'
+  'font-[family-name:var(--sf-font-display)] text-xl'
 
 function labelAnimal(a: AnimalOption) {
   return a.nom ? `${a.tag} — ${a.nom}` : a.tag
@@ -206,7 +206,7 @@ export function DialogActe({
                         else setAnimalId('')
                       }}
                       className={[
-                        'px-4 h-10 text-[12px] font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] transition-colors',
+                        'px-4 h-10 text-[12px] font-[family-name:var(--sf-font-display)] transition-colors',
                         active
                           ? 'bg-[var(--sf-primary)] text-white'
                           : 'bg-transparent text-[var(--sf-ink)] hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]',

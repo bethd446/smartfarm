@@ -27,11 +27,11 @@ export function PageTitle({
   return (
     <header className={cn('mb-6 space-y-1', className)}>
       {eyebrow && (
-        <p className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold">
+        <p className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold">
           {eyebrow}
         </p>
       )}
-      <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] text-[var(--sf-ink)] flex items-center gap-3">
+      <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black tracking-[0.02em] text-[var(--sf-ink)] flex items-center gap-3">
         {icon}
         {children}
       </h1>

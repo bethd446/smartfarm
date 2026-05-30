@@ -116,11 +116,11 @@ export default async function DashboardPage() {
 
   // Eyebrow réutilisable : Big Shoulders 11 px uppercase tracking 0.18em muted
   const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
+    "font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold"
 
   // Link "Voir tout" réutilisable — min-h 44 px mobile pour touch target
   const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] font-bold text-[var(--sf-primary)] hover:underline"
 
   return (
     <div className="space-y-8">
@@ -128,8 +128,8 @@ export default async function DashboardPage() {
       <PageTitle
         eyebrow={
           <>
-            PILOTAGE · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short' }} />
-            {fermeNom ? ` · ${fermeNom.toUpperCase()}` : ''}
+            Pilotage · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short' }} />
+            {fermeNom ? ` · ${fermeNom}` : ''}
           </>
         }
         icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
@@ -161,7 +161,7 @@ export default async function DashboardPage() {
             {/* Eyebrow + label en haut */}
             <div>
               <div className={eyebrowCls}>Cheptel (les animaux) · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short' }} /></div>
-              <div className="font-[family-name:var(--sf-font-display)] uppercase text-xs tracking-[0.14em] text-[var(--sf-ink)] font-bold mt-2">
+              <div className="font-[family-name:var(--sf-font-display)] text-xs text-[var(--sf-ink)] font-bold mt-2">
                 Cheptel total
               </div>
               <div className="text-xs italic text-[var(--sf-muted)] mt-1">
@@ -182,7 +182,7 @@ export default async function DashboardPage() {
               </div>
             </div>
             {/* Pied : bandes actives */}
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[10px] tracking-[0.14em] text-[var(--sf-subtle)]">
+            <div className="font-[family-name:var(--sf-font-display)] text-[10px] text-[var(--sf-subtle)]">
               {nbBandesActives ?? 0} portée{(nbBandesActives ?? 0) > 1 ? 's' : ''} (8 dernières sem.)
             </div>
           </CardContent>
@@ -298,8 +298,6 @@ export default async function DashboardPage() {
                   style={{
                     fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                     fontSize: '13px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
                   }}
                 >
                   {nbMissing} KPI technique{nbMissing > 1 ? 's' : ''} en attente
@@ -312,7 +310,7 @@ export default async function DashboardPage() {
               </div>
               <Link
                 href="/kpi"
-                className="shrink-0 inline-flex items-center min-h-[44px] py-2 px-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline whitespace-nowrap"
+                className="shrink-0 inline-flex items-center min-h-[44px] py-2 px-2 text-[11px] font-bold text-[var(--sf-primary)] hover:underline whitespace-nowrap"
               >
                 Voir KPI activables →
               </Link>
@@ -413,11 +411,11 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold text-[var(--sf-ink)] tabular-nums uppercase">
+                      <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold text-[var(--sf-ink)] tabular-nums">
                         <FormattedDateTime date={e.date_prevue} options={{ day: '2-digit', month: 'short' }} />
                       </div>
                       <div
-                        className={`text-[10px] uppercase tracking-[0.1em] tabular-nums ${
+                        className={`text-[10px] tabular-nums ${
                           jr < 0
                             ? 'text-[var(--sf-danger-ink)] font-bold'
                             : urgent
@@ -533,7 +531,7 @@ export default async function DashboardPage() {
                         <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
                           {s.nom}
                         </div>
-                        <div className="text-xs text-[var(--sf-muted)] uppercase tracking-[0.08em]">
+                        <div className="text-xs text-[var(--sf-muted)]">
                           {s.type}
                           {seuil > 0 && (
                             <span className="ml-2 tabular-nums">

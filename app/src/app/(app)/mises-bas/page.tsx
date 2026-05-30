@@ -374,7 +374,7 @@ export default async function MisesBasPage({
                       {m.nes_vivants}
                     </div>
                     <div
-                      className="text-[10px] text-[var(--sf-success-ink,#1F3414)] opacity-80 uppercase tracking-[0.1em]"
+                      className="text-[10px] text-[var(--sf-success-ink,#1F3414)] opacity-80"
                       style={{
                         fontFamily:
                           "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -391,7 +391,7 @@ export default async function MisesBasPage({
                       {m.nes_totaux}
                     </div>
                     <div
-                      className="text-[10px] text-[var(--sf-muted)] uppercase tracking-[0.1em]"
+                      className="text-[10px] text-[var(--sf-muted)]"
                       style={{
                         fontFamily:
                           "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -412,7 +412,7 @@ export default async function MisesBasPage({
                       {m.nes_morts ?? 0}
                     </div>
                     <div
-                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
+                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80"
                       style={{
                         fontFamily:
                           "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -429,7 +429,7 @@ export default async function MisesBasPage({
                       {m.momifies ?? 0}
                     </div>
                     <div
-                      className="text-[10px] text-[var(--sf-warning-ink,#5C4416)] opacity-80 uppercase tracking-[0.1em]"
+                      className="text-[10px] text-[var(--sf-warning-ink,#5C4416)] opacity-80"
                       style={{
                         fontFamily:
                           "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -446,7 +446,7 @@ export default async function MisesBasPage({
                       {m.ecrases ?? 0}
                     </div>
                     <div
-                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80 uppercase tracking-[0.1em]"
+                      className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] opacity-80"
                       style={{
                         fontFamily:
                           "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",

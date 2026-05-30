@@ -130,7 +130,7 @@ export default async function SanitairePage() {
       <section aria-labelledby="sanitaire-modules-titre">
         <h2
           id="sanitaire-modules-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-2 mb-3"
+          className="font-[family-name:var(--sf-font-display)] text-xl tracking-wide text-[var(--sf-ink)] mt-2 mb-3"
         >
           Modules sanitaires
         </h2>

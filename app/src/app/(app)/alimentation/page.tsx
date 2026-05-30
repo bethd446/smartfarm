@@ -96,7 +96,7 @@ export default async function AlimentationPage() {
       <section aria-labelledby="alimentation-modules-titre">
         <h2
           id="alimentation-modules-titre"
-          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-2 mb-3"
+          className="font-[family-name:var(--sf-font-display)] text-xl tracking-wide text-[var(--sf-ink)] mt-2 mb-3"
         >
           Modules alimentation
         </h2>

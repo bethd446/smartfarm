@@ -71,8 +71,6 @@ export function ResponsiveTable<T extends Record<string, any>>({
                   style={{
                     fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                     fontSize: '11px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
                   }}
                 >
                   {col.label}
@@ -138,7 +136,7 @@ export function ResponsiveTable<T extends Record<string, any>>({
                     return (
                       <div key={`m-${idx}`} className="flex justify-between gap-2">
                         <span
-                          className="text-[var(--sf-muted)] uppercase text-xs font-semibold tracking-wider"
+                          className="text-[var(--sf-muted)] text-xs font-semibold"
                           style={{
                             fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
                           }}

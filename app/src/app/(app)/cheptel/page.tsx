@@ -278,7 +278,7 @@ export default async function CheptelPage({
               style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
             >
               <Icon className="h-4 w-4" />
-              <span className="uppercase tracking-wide">{label}</span>
+              <span>{label}</span>
               <span className="tabular-nums text-[var(--sf-subtle)] font-normal">{c ?? '—'}</span>
             </Link>
           )
@@ -294,7 +294,7 @@ export default async function CheptelPage({
         <input type="hidden" name="tab" value={tab} />
         <label className="flex-1 min-w-[200px]">
           <span
-            className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-1"
+            className="block text-[11px] text-[var(--sf-muted)] mb-1"
             style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
           >
             Rechercher

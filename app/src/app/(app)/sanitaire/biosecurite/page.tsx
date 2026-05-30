@@ -212,12 +212,12 @@ export default async function BiosecuritePage() {
         <div>
           <Link
             href="/sanitaire"
-            className="text-xs uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
+            className="text-xs text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary)] inline-flex items-center gap-1"
           >
             <ChevronLeft className="h-3 w-3" />
             Retour aux soins
           </Link>
-          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
             <Shield className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Biosécurité
           </h1>
@@ -245,7 +245,7 @@ export default async function BiosecuritePage() {
           ) : (
             Object.entries(checklistGrouped).map(([cat, items]) => (
               <div key={cat}>
-                <div className="font-[family-name:var(--sf-font-display)] uppercase text-[12px] tracking-[0.14em] text-[var(--sf-muted,#5C5346)] mb-2">
+                <div className="font-[family-name:var(--sf-font-display)] text-[12px] text-[var(--sf-muted,#5C5346)] mb-2">
                   {LABEL_CATEGORIE[cat] ?? cat}
                 </div>
                 <ul className="space-y-1.5">
@@ -267,7 +267,7 @@ export default async function BiosecuritePage() {
                         <span className="flex-1 min-w-[12rem]">
                           {it.item}
                           {it.date_audit ? (
-                            <span className="ml-2 text-[10px] uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)]">
+                            <span className="ml-2 text-[10px] text-[var(--sf-muted,#5C5346)]">
                               audité <FormattedDateTime date={it.date_audit} format="short" />
                             </span>
                           ) : null}

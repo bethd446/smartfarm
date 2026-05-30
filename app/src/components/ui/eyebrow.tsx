@@ -28,7 +28,7 @@ export function Eyebrow({ className, children, ...props }: EyebrowProps) {
       className={cn(
         "eyebrow",
         // Fallbacks si la classe .eyebrow globale n'est pas (encore) chargée :
-        "text-[11px] leading-none font-semibold uppercase tracking-[0.1em]",
+        "text-[11px] leading-none font-semibold",
         "text-[var(--sf-muted,#5C5346)]",
         className
       )}

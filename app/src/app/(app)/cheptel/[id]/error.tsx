@@ -30,7 +30,7 @@ export default function CheptelDetailError({
         <AlertTriangle className="h-9 w-9 shrink-0 text-[var(--sf-danger,#b91c1c)]" />
         <div>
           <h1
-            className="font-[family-name:var(--sf-font-display)] text-2xl uppercase tracking-wide text-[var(--sf-ink)]"
+            className="font-[family-name:var(--sf-font-display)] text-2xl text-[var(--sf-ink)]"
           >
             Impossible de charger la fiche animal
           </h1>

@@ -516,7 +516,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                   aria-expanded={showColostrumExpire}
                   className="flex items-baseline gap-2 w-full text-left min-h-11 py-2 hover:bg-[var(--sf-surface-2,#F5F1ED)] rounded px-2 -mx-2"
                 >
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--sf-muted,#5C5346)]">
+                  <h2 className="text-sm font-semibold text-[var(--sf-muted,#5C5346)]">
                     {showColostrumExpire ? '▾' : '▸'} {groupLabel(key)}
                   </h2>
                   <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">
@@ -525,7 +525,7 @@ export function AlertesList({ alertes }: { alertes: Alerte[] }) {
                 </button>
               ) : (
                 <div className="flex items-baseline gap-2">
-                  <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--sf-ink,#1a1a1a)]">
+                  <h2 className="text-sm font-semibold text-[var(--sf-ink,#1a1a1a)]">
                     {groupLabel(key)}
                   </h2>
                   <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">

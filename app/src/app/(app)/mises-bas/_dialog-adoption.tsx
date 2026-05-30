@@ -161,7 +161,7 @@ export function DialogAdoption({
       type="button"
       variant="outline"
       size="sm"
-      className="w-full h-10 text-xs uppercase tracking-wider"
+      className="w-full h-10 text-xs"
     >
       <ArrowLeftRight className="h-4 w-4 mr-2" aria-hidden="true" />
       Adopter depuis cette portée
@@ -189,7 +189,7 @@ export function DialogAdoption({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle
-            className="uppercase tracking-wide text-2xl"
+            className="tracking-wide text-2xl"
             style={{
               fontFamily:
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -342,7 +342,7 @@ export function DialogAdoption({
                   : 'var(--sf-ink,#1a1a1a)',
               }}
             >
-              <p className="font-bold uppercase tracking-wider mb-1">
+              <p className="font-bold mb-1">
                 Après adoption
               </p>
               <p>

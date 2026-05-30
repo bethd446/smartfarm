@@ -132,7 +132,7 @@ export function DialogPeser({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle
-            className="uppercase tracking-wide text-2xl"
+            className="text-2xl"
             style={{
               fontFamily:
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",

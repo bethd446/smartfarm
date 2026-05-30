@@ -92,7 +92,7 @@ export function DialogAjouterAnimal({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle
-            className="uppercase tracking-wide text-2xl"
+            className="tracking-wide text-2xl"
             style={{
               fontFamily:
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",

@@ -50,7 +50,7 @@ export function EmptyState({
         <Icon className={`mb-4 h-8 w-8 ${iconColor}`} strokeWidth={1.5} aria-hidden />
       ) : null}
       <div
-        className={`font-[family-name:var(--sf-font-display)] text-[12px] font-bold uppercase tracking-[0.14em] ${titleColor}`}
+        className={`font-[family-name:var(--sf-font-display)] text-[12px] font-bold ${titleColor}`}
       >
         {title}
       </div>

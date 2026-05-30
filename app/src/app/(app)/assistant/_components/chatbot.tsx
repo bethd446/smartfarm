@@ -248,7 +248,7 @@ export function Chatbot({ sessionToken }: { sessionToken: string }) {
     <div className="flex-1 flex flex-col min-h-0 rounded-lg border border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-paper,#FBF9F4)] overflow-hidden">
       {/* Toolbar */}
       <div className="shrink-0 flex items-center justify-between px-4 py-2 border-b border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-surface-1)]">
-        <div className="text-[11px] uppercase tracking-wider font-semibold text-[var(--sf-muted,#5C5346)]">
+        <div className="text-[11px] font-semibold text-[var(--sf-muted,#5C5346)]">
           {messages.length === 0
             ? 'Nouvelle conversation'
             : `${messages.length} message${messages.length > 1 ? 's' : ''}`}

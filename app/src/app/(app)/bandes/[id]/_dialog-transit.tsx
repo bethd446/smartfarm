@@ -72,7 +72,7 @@ export function DialogTransitPhase({
       </DialogTrigger>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle className="font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xl">
+          <DialogTitle className="font-[family-name:var(--sf-font-display)] text-xl">
             Transit de phase
           </DialogTitle>
         </DialogHeader>

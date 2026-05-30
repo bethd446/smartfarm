@@ -77,7 +77,7 @@ export async function SanitaireStats() {
               <div className="flex items-center justify-between gap-2">
                 <Icon className="h-4 w-4 shrink-0" style={{ color: c.tone }} />
                 <span
-                  className="text-[10px] uppercase tracking-[0.16em] shrink-0"
+                  className="text-[10px] shrink-0"
                   style={{
                     color: 'var(--sf-subtle, #8A7F6D)',
                     fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
@@ -96,7 +96,7 @@ export async function SanitaireStats() {
                 {c.value}
               </div>
               <div
-                className="mt-1 text-[11px] uppercase tracking-[0.12em] leading-tight"
+                className="mt-1 text-[11px] leading-tight"
                 style={{
                   color: 'var(--sf-muted, #5C5346)',
                   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",

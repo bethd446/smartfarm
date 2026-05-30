@@ -31,8 +31,6 @@ const PIE_COLORS = ['#2D4A1F', '#A16207', '#9A3412', '#78716C']
 const eyebrowStyle: React.CSSProperties = {
   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
   fontSize: '11px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.1em',
   color: 'var(--sf-muted)',
 }
 
@@ -51,7 +49,7 @@ export function EconomiqueCharts({ coutParBande, repartitionCouts }: ChartsProps
       {/* ===== BAR CHART : Coût aliment par bande ===== */}
       <div className="border border-[var(--sf-line)] rounded-lg p-6 bg-[var(--sf-surface)]">
         <h2
-          className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-4"
+          className="text-xl text-[var(--sf-ink)] mb-4"
           style={eyebrowStyle}
         >
           Coût aliment par bande (XOF)
@@ -93,7 +91,7 @@ export function EconomiqueCharts({ coutParBande, repartitionCouts }: ChartsProps
       {/* ===== PIE CHART : Répartition coûts ===== */}
       <div className="border border-[var(--sf-line)] rounded-lg p-6 bg-[var(--sf-surface)]">
         <h2
-          className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-2"
+          className="text-xl text-[var(--sf-ink)] mb-2"
           style={eyebrowStyle}
         >
           Répartition des coûts de production
