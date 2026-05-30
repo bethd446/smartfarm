@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { PageTitle } from '@/components/ui/page-title'
 import { EmptyState } from '@/components/ui/empty-state'
-import { RelativeTime } from '@/components/ui/relative-time'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { ExportButton } from '@/components/export-button'
 import { Heart, Plus, Stethoscope } from 'lucide-react'
 import { diagnosticLabel } from '@/lib/terrain-labels'
@@ -274,7 +274,7 @@ export default async function ReproductionPage({
                     </span>
                   )}
                   <span className="text-xs text-[var(--sf-subtle)]">
-                    Saillie <RelativeTime date={s.date_saillie} addSuffix />
+                    Saillie <FormattedDateTime date={s.date_saillie} format="date" />
                     {' · '}
                     <span className="tabular-nums font-medium text-[var(--sf-muted)]">
                       J+{s.jours_post_saillie}
@@ -372,7 +372,7 @@ export default async function ReproductionPage({
                     className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
                   >
                     <td className="py-3 px-4 tabular-nums text-[var(--sf-ink)]">
-                      <RelativeTime date={s.date_saillie} addSuffix />
+                      <FormattedDateTime date={s.date_saillie} format="date" />
                     </td>
                     <td className="py-3 px-4 font-medium text-[var(--sf-ink)]">
                       {s.truie?.nom}{' '}
