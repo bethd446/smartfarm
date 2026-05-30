@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge'
 import { PiggyBank, TrendingUp, Users, Gauge, AlertTriangle, ArrowRight } from 'lucide-react'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import Link from 'next/link'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { BoutonPdfMensuel } from './_bouton-pdf-mensuel'
 
 export const metadata: Metadata = {
@@ -138,11 +139,6 @@ const eyebrowStyle: React.CSSProperties = {
 export default async function KpiPageV2() {
   const sb = await createClient()
   const fermeId = await getFermeId()
-  const today = new Date().toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'short',
-    year: 'numeric',
-  })
 
   // Fetch data from views
   const [
@@ -190,7 +186,7 @@ export default async function KpiPageV2() {
       {/* ===== HEADER : EYEBROW + H1 + BOUTON PDF ===== */}
       <div>
         <div className="mb-2" style={eyebrowStyle}>
-          PILOTAGE · {today.toUpperCase()} · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
+          PILOTAGE · <FormattedDateTime date={new Date()} options={{ day: '2-digit', month: 'short', year: 'numeric' }} upper /> · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
         </div>
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div>

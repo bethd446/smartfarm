@@ -9,6 +9,7 @@ import { ExportButton } from '@/components/export-button'
 import { Baby, Plus, Scissors, ArrowLeftRight } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
+import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { TERRAIN } from '@/lib/terrain-labels'
 import { DialogMiseBas } from './_dialog-mise-bas'
 import { DialogSevrage } from './_dialog-sevrage'
@@ -304,7 +305,7 @@ export default async function MisesBasPage({
                         <AnimalLabel animal={m.truie} format="inline" />
                       ) : '—'}
                     </td>
-                    <td className="p-3">{new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}</td>
+                    <td className="p-3"><FormattedDateTime date={m.date_mise_bas} format="date" /></td>
                     <td className="p-3 text-right tabular-nums">{m.nes_totaux}</td>
                     <td className="p-3 text-right font-medium tabular-nums">{m.nes_vivants}</td>
                     <td className="p-3 text-right text-red-700 tabular-nums">{m.nes_morts ?? 0}</td>
@@ -342,7 +343,7 @@ export default async function MisesBasPage({
                     </CardTitle>
                     <div className="text-xs text-[var(--sf-muted)] font-mono tabular-nums mt-1">
                       {m.truie?.tag} ·{' '}
-                      {new Date(m.date_mise_bas).toLocaleDateString('fr-FR')}
+                      <FormattedDateTime date={m.date_mise_bas} format="date" />
                     </div>
                   </div>
                   <Badge variant={tauxVariant}>
@@ -467,7 +468,7 @@ export default async function MisesBasPage({
                   <div className="mt-2 pt-2 border-t border-[var(--sf-line)] text-xs">
                     <div className="font-semibold text-[var(--sf-success-ink,#1F3414)] mb-1">
                       ✓ Sevrage effectué le{' '}
-                      {new Date(sev.date_sevrage).toLocaleDateString('fr-FR')}
+                      <FormattedDateTime date={sev.date_sevrage} format="date" />
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[var(--sf-muted)]">Sevrés</span>
@@ -532,7 +533,7 @@ export default async function MisesBasPage({
                   {adoptionsRecentes.map((a: any) => (
                     <tr key={a.id} className="border-b last:border-0 hover:bg-muted/20">
                       <td className="p-3 tabular-nums">
-                        {new Date(a.date_adoption).toLocaleDateString('fr-FR')}
+                        <FormattedDateTime date={a.date_adoption} format="date" />
                       </td>
                       <td className="p-3">
                         {a.source?.truie ? (

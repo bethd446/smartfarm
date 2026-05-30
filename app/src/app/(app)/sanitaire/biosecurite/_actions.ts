@@ -118,11 +118,8 @@ export async function noterAuditBiosecurite(formData: FormData): Promise<void> {
 
   const supabase = await createClient()
 
-  // Ferme cible : par défaut la ferme démo (cohérent avec enregistrerVisite).
-  // En prod multi-fermes, à remplacer par l'ID issu du contexte utilisateur.
-  let ferme_id: string | undefined = (await getFermeId())
-  const { data: fermes } = await supabase.from('fermes').select('id').limit(1)
-  if (fermes?.[0]?.id) ferme_id = fermes[0].id as string
+  // Ferme cible : issue du contexte utilisateur (cohérent avec enregistrerVisite).
+  const ferme_id = await getFermeId()
   if (!ferme_id) return
 
   await supabase.from('biosecurite_audits').insert({

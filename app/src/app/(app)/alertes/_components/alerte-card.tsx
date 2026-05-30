@@ -73,13 +73,14 @@ function computeLien(alerte: Alerte): string | null {
   if (t.startsWith('soins_porcelets') || t.includes('j3')) {
     return '/sanitaire/calendrier'
   }
-  // R27 / R30 transfert Croissance
+  // R27 / R30 transfert Croissance → onglet porcelets (le param `stade` n'était
+  // pas lu par /cheptel qui filtre via `tab` ; sous-filtrage fin = évolution future)
   if (t.includes('porcelets_pret_croissance') || t.includes('porcelets_anticipation_croissance')) {
-    return '/cheptel?stade=demarrage'
+    return '/cheptel?tab=porcelets'
   }
-  // R28 truies vides post-sevrage
+  // R28 truies vides post-sevrage → onglet truies
   if (t.includes('truies_vides')) {
-    return '/cheptel?stade=truie_vide'
+    return '/cheptel?tab=truies'
   }
   // R29 portées zombies → liste mises-bas
   if (t.includes('portees_zombies')) {
@@ -87,13 +88,13 @@ function computeLien(alerte: Alerte): string | null {
   }
   // Chaleurs / diag / saillies
   if (t.includes('chaleur') || t.includes('retour_chaleurs')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('gestation') || t.includes('diag_gestation') || t.includes('echo')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('saillie')) {
-    return '/reproduction/saillies'
+    return '/reproduction'
   }
   if (t.includes('mise_bas') || t.includes('surveillance_mb') || t.includes('transfert_maternite')) {
     return '/mises-bas'
@@ -103,7 +104,7 @@ function computeLien(alerte: Alerte): string | null {
     return '/sanitaire/calendrier'
   }
   // Stock / nutrition
-  if (t.startsWith('stock')) return '/stocks'
+  if (t.startsWith('stock')) return '/stock'
   if (t.startsWith('aliment') || t.includes('transition')) return '/alimentation/plans'
   if (t.startsWith('eau')) return '/sanitaire/eau'
   // Observations manuelles

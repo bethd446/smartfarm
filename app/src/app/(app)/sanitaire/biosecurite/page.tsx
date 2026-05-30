@@ -276,7 +276,7 @@ export default async function BiosecuritePage() {
                           {it.item}
                           {it.date_audit ? (
                             <span className="ml-2 text-[10px] uppercase tracking-[0.08em] text-[var(--sf-muted,#5C5346)]">
-                              audité {new Date(it.date_audit).toLocaleDateString('fr-FR')}
+                              audité <FormattedDateTime date={it.date_audit} format="short" />
                             </span>
                           ) : null}
                         </span>

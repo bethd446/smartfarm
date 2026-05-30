@@ -151,10 +151,10 @@ export default async function CroissancePage() {
   const kpiParStade: KpiGmqStade[] = kpiStadeData ?? []
 
   // Calculer GMQ moyen ferme (moyenne pondérée sur tous stades)
+  const totalNFerme = kpiParStade.reduce((sum, k) => sum + (k.n_animaux ?? 0), 0)
   const gmqMoyenFerme =
-    kpiParStade.length > 0
-      ? kpiParStade.reduce((sum, k) => sum + (k.gmq_moyen ?? 0) * k.n_animaux, 0) /
-        kpiParStade.reduce((sum, k) => sum + k.n_animaux, 0)
+    totalNFerme > 0
+      ? kpiParStade.reduce((sum, k) => sum + (k.gmq_moyen ?? 0) * (k.n_animaux ?? 0), 0) / totalNFerme
       : null
 
   // GMQ référentiel moyen (sur J0→J180, moyenne des gmq_g_j)
@@ -176,10 +176,10 @@ export default async function CroissancePage() {
   const tableauStades = categoriesStades.map((cat) => {
     // GMQ réel ferme pour cette catégorie
     const kpiCat = kpiParStade.filter((k) => mapStadeCategorie(k.stade) === cat)
+    const totalNCat = kpiCat.reduce((sum, k) => sum + (k.n_animaux ?? 0), 0)
     const gmqReelCat =
-      kpiCat.length > 0
-        ? kpiCat.reduce((sum, k) => sum + (k.gmq_moyen ?? 0) * k.n_animaux, 0) /
-          kpiCat.reduce((sum, k) => sum + k.n_animaux, 0)
+      totalNCat > 0
+        ? kpiCat.reduce((sum, k) => sum + (k.gmq_moyen ?? 0) * (k.n_animaux ?? 0), 0) / totalNCat
         : null
 
     // GMQ référentiel pour cette catégorie

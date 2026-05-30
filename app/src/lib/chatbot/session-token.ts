@@ -1,4 +1,4 @@
-import { createHmac, randomBytes } from 'crypto'
+import { createHmac, randomBytes, timingSafeEqual } from 'crypto'
 
 /**
  * Smart Farm — Token de session signé pour /api/chatbot
@@ -35,7 +35,11 @@ export function verifySessionToken(token: string): { valid: boolean; age_ms?: nu
     return { valid: false }
   }
   const expected = createHmac('sha256', SECRET).update(`${ts}.${nonce}`).digest('hex').slice(0, 16)
-  if (sig !== expected) return { valid: false }
+  const sigBuf = Buffer.from(sig)
+  const expectedBuf = Buffer.from(expected)
+  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) {
+    return { valid: false }
+  }
   const age_ms = Date.now() - Number(ts)
   if (age_ms < 0 || age_ms > MAX_AGE_MS) return { valid: false }
   return { valid: true, age_ms }
