@@ -1,15 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ExportButton } from '@/components/export-button'
-import { Package, Plus, AlertTriangle, ArrowDown, ArrowUp } from 'lucide-react'
+import { Package, AlertTriangle } from 'lucide-react'
 import {
   DialogEntreeStock,
   DialogSortieStock,
   DialogNouvelleMatiere,
 } from './_dialogs-stock'
-import { StockFab } from './_fab'
 import { isAlerte } from '@/lib/stock-helpers'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
@@ -36,6 +34,9 @@ export default async function StockPage() {
     0,
   )
 
+  // Présentation only : articles sous le seuil (règle isAlerte inchangée) pour la bannière critique.
+  const enAlerte = (stocks ?? []).filter((s: any) => isAlerte(s))
+
   return (
     <div className="space-y-6">
       {/* === Header de page === */}
@@ -58,35 +59,47 @@ export default async function StockPage() {
         <div className="flex gap-2 flex-wrap">
           <ExportButton table="matieres_premieres" />
           <DialogEntreeStock
-            trigger={
-              <Button variant="outline" size="lg">
-                <ArrowUp className="h-5 w-5 mr-2" />
-                Entrée
-              </Button>
-            }
             matieres={(stocks ?? []) as any}
             fournisseurs={(fournisseurs ?? []) as any}
           />
-          <DialogSortieStock
-            trigger={
-              <Button variant="outline" size="lg">
-                <ArrowDown className="h-5 w-5 mr-2" />
-                Sortie
-              </Button>
-            }
-            matieres={(stocks ?? []) as any}
-          />
-          <DialogNouvelleMatiere
-            trigger={
-              // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
-              <Button variant="accent" size="lg" className="hidden lg:inline-flex">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouveau matériel
-              </Button>
-            }
-          />
+          <DialogSortieStock matieres={(stocks ?? []) as any} />
+          <DialogNouvelleMatiere />
         </div>
       </div>
+
+      {/* === Bannière alerte critique (gabarit Verger .urg.crit) — présentation only === */}
+      {enAlerte.length > 0 && (
+        <div
+          className="flex items-center gap-3.5 rounded-[13px] border px-3.5 py-3"
+          style={{
+            background: 'var(--sf-danger-bg, #F7E4E1)',
+            borderColor: 'rgba(181,72,59,.35)',
+          }}
+        >
+          <span
+            className="grid h-[34px] w-[34px] flex-none place-items-center rounded-[10px]"
+            style={{ background: 'var(--sf-danger, #B5483B)', color: '#fff' }}
+          >
+            <AlertTriangle className="h-[18px] w-[18px]" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <b
+              className="block text-sm font-semibold leading-tight"
+              style={{ color: 'var(--sf-danger-ink, #933329)' }}
+            >
+              {enAlerte.length} article{enAlerte.length > 1 ? 's' : ''} sous le seuil d&apos;alerte
+            </b>
+            <small className="text-xs" style={{ color: 'var(--sf-muted)' }}>
+              Rupture imminente —{' '}
+              {enAlerte
+                .slice(0, 3)
+                .map((s: any) => s.nom)
+                .join(' · ')}
+              {enAlerte.length > 3 ? ` · +${enAlerte.length - 3}` : ''}
+            </small>
+          </div>
+        </div>
+      )}
 
       {/* === KPI Cards : Card patché (double-trait automatique) === */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -192,6 +205,26 @@ export default async function StockPage() {
             <tbody>
               {(stocks ?? []).map((s: any) => {
                 const alerte = isAlerte(s)
+                // Niveau de couverture (présentation only) : bad = sous seuil, warn = proche du seuil, ok = sain.
+                const seuil = s.seuil_alerte
+                const niveau =
+                  alerte
+                    ? 'bad'
+                    : seuil != null && s.stock_actuel != null && s.stock_actuel < seuil * 1.5
+                      ? 'warn'
+                      : 'ok'
+                const couvBg =
+                  niveau === 'bad'
+                    ? 'var(--sf-danger-bg, #F7E4E1)'
+                    : niveau === 'warn'
+                      ? 'var(--sf-warning-bg, #FBEEDF)'
+                      : 'var(--sf-success-bg, #EDF2E6)'
+                const couvInk =
+                  niveau === 'bad'
+                    ? 'var(--sf-danger-ink, #933329)'
+                    : niveau === 'warn'
+                      ? 'var(--sf-warning-ink, #B36E33)'
+                      : 'var(--sf-success-ink, #4F7239)'
                 return (
                   <tr
                     key={s.id}
@@ -212,15 +245,17 @@ export default async function StockPage() {
                       </Badge>
                     </td>
                     <td className="py-3 px-4">
-                      {alerte ? (
-                        <Badge variant="danger" className="!normal-case">
-                          {s.stock_actuel} {s.unite}
-                        </Badge>
-                      ) : (
-                        <span className="font-mono font-bold tabular-nums text-[var(--sf-ink)]">
-                          {s.stock_actuel} {s.unite}
-                        </span>
-                      )}
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-xs font-bold tabular-nums"
+                        style={{ background: couvBg, color: couvInk }}
+                      >
+                        <span
+                          aria-hidden
+                          className="h-1.5 w-1.5 rounded-full"
+                          style={{ background: couvInk }}
+                        />
+                        {s.stock_actuel} {s.unite}
+                      </span>
                     </td>
                     <td className="py-3 px-4 font-mono tabular-nums text-[var(--sf-muted)]">
                       {s.seuil_alerte ?? '—'} {s.unite}
@@ -256,11 +291,6 @@ export default async function StockPage() {
         </div>
       </div>
 
-      {/* === FAB mobile === */}
-      <StockFab
-        matieres={(stocks ?? []) as any}
-        fournisseurs={(fournisseurs ?? []) as any}
-      />
     </div>
   )
 }

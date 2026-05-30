@@ -2,16 +2,14 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { PageTitle } from '@/components/ui/page-title'
 import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { ExportButton } from '@/components/export-button'
-import { Heart, Plus, Stethoscope } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { diagnosticLabel } from '@/lib/terrain-labels'
 import { DialogFaireMonter } from './_dialog-faire-monter'
 import { DialogDiagnostic } from './_dialog-diagnostic'
-import { ReproductionFab } from './_fab'
 
 export const metadata: Metadata = {
   title: 'Reproduction',
@@ -203,27 +201,78 @@ export default async function ReproductionPage({
             verrats={verrats ?? []}
             bandes={bandes ?? []}
             defaultOpen={sp.action === 'diag'}
-            trigger={
-              <Button variant="outline" size="lg" className="h-12 text-base">
-                <Stethoscope className="h-5 w-5 mr-2" />
-                Diagnostic gestation
-              </Button>
-            }
           />
           <DialogFaireMonter
             truies={truies ?? []}
             verrats={verrats ?? []}
             bandes={bandes ?? []}
             defaultOpen={sp.action === 'new'}
-            trigger={
-              <Button size="lg" className="h-12 text-base">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouvelle saillie
-              </Button>
-            }
           />
         </div>
       </div>
+
+      {/* === Frise du cycle de production (168 j) — segments proportionnels, données biologiques constantes === */}
+      <section aria-labelledby="repro-cycle-titre">
+        <h2
+          id="repro-cycle-titre"
+          className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-1"
+        >
+          Le cycle de production
+        </h2>
+        <p className="text-xs text-[var(--sf-muted)] mb-3 tabular-nums">
+          168 jours · de la saillie au sevrage et retour en chaleur
+        </p>
+        <div
+          className="rounded-[20px] border border-[var(--sf-line)] bg-[var(--sf-surface-1)] p-[18px]"
+        >
+          {(() => {
+            const phases = [
+              { label: 'Œstrus', jours: 21, color: 'var(--sf-accent-warm,#A16207)' },
+              { label: 'Gestation', jours: 114, color: 'var(--sf-primary,#2D4A1F)' },
+              { label: 'Lactation', jours: 28, color: 'var(--sf-success,#4F7239)' },
+              { label: 'Anœstrus', jours: 5, color: 'var(--sf-muted,#6E7567)' },
+            ] as const
+            const total = phases.reduce((acc, p) => acc + p.jours, 0)
+            return (
+              <>
+                <div className="flex h-7 w-full overflow-hidden rounded-full" role="img" aria-label="Frise du cycle de production : Œstrus 21 jours, Gestation 114 jours, Lactation 28 jours, Anœstrus 5 jours">
+                  {phases.map((p, i) => (
+                    <div
+                      key={p.label}
+                      className="flex items-center justify-center"
+                      style={{
+                        flexGrow: p.jours,
+                        flexBasis: 0,
+                        background: p.color,
+                        borderLeft: i === 0 ? undefined : '1px solid var(--sf-surface-1,#fff)',
+                      }}
+                    >
+                      {p.jours / total > 0.12 && (
+                        <span className="px-2 text-[11px] font-semibold tabular-nums text-white">
+                          {p.jours} j
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5">
+                  {phases.map((p) => (
+                    <li key={p.label} className="flex items-center gap-2 text-xs text-[var(--sf-ink-secondary)]">
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ background: p.color }}
+                        aria-hidden="true"
+                      />
+                      <span className="font-semibold text-[var(--sf-ink)]">{p.label}</span>
+                      <span className="tabular-nums text-[var(--sf-muted)]">{p.jours} j</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )
+          })()}
+        </div>
+      </section>
 
       {/* === Section : Saillies à diagnostiquer — registre dense hairline === */}
       {aDiagRows.length > 0 && (
@@ -294,12 +343,7 @@ export default async function ReproductionPage({
                   verrats={verrats ?? []}
                   bandes={bandes ?? []}
                   defaultSaillieId={s.saillie_id}
-                  trigger={
-                    <Button size="sm" variant="outline" className="shrink-0 min-h-11">
-                      <Stethoscope className="h-4 w-4 mr-1" aria-hidden="true" />
-                      Diagnostiquer
-                    </Button>
-                  }
+                  triggerKind="inline"
                 />
               </li>
             ))}
@@ -408,8 +452,6 @@ export default async function ReproductionPage({
         )}
       </section>
 
-      {/* === FAB mobile === */}
-      <ReproductionFab truies={truies ?? []} verrats={verrats ?? []} bandes={bandes ?? []} />
     </div>
   )
 }

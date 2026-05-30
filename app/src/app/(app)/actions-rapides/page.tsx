@@ -15,28 +15,32 @@ const ACTIONS: Action[] = [
     href: '/mises-bas?quick=true',
     label: 'Nouvelle mise bas',
     icon: Baby,
-    classes: 'bg-violet-600 hover:bg-violet-700 focus-visible:ring-violet-400',
+    classes:
+      'bg-[var(--apri-bg)] text-[var(--apri-d)] border-[var(--line)] hover:bg-[var(--apri)] hover:text-white focus-visible:ring-[var(--apri)]',
     hint: 'Enregistrer une portée',
   },
   {
     href: '/pesees?quick=true',
     label: 'Peser',
     icon: Scale,
-    classes: 'bg-indigo-600 hover:bg-indigo-700 focus-visible:ring-indigo-400',
+    classes:
+      'bg-[var(--sage-bg)] text-[var(--sage-d)] border-[var(--line)] hover:bg-[var(--sage)] hover:text-white focus-visible:ring-[var(--sage)]',
     hint: 'Saisir un poids',
   },
   {
     href: '/sanitaire?quick=true',
     label: 'Soin',
     icon: Stethoscope,
-    classes: 'bg-red-600 hover:bg-red-700 focus-visible:ring-red-400',
+    classes:
+      'bg-[var(--bad-bg)] text-[var(--bad-d)] border-[var(--line)] hover:bg-[var(--bad)] hover:text-white focus-visible:ring-[var(--bad)]',
     hint: 'Vaccin · Traitement',
   },
   {
     href: '/cheptel?quick=true',
     label: 'Déplacer',
     icon: ArrowRightLeft,
-    classes: 'bg-emerald-600 hover:bg-emerald-700 focus-visible:ring-emerald-400',
+    classes:
+      'bg-[var(--plum-bg)] text-[var(--berry)] border-[var(--line)] hover:bg-[var(--berry)] hover:text-white focus-visible:ring-[var(--berry)]',
     hint: 'Transfert · Sortie',
   },
 ]
@@ -45,10 +49,14 @@ export default function ActionsRapidesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <Zap className="h-8 w-8 text-amber-500" />
+        <span className="flex h-12 w-12 items-center justify-center rounded-[14px] bg-[var(--apri-bg)] text-[var(--apri-d)]">
+          <Zap className="h-7 w-7" />
+        </span>
         <div>
-          <h1 className="text-3xl font-bold">Actions rapides</h1>
-          <p className="text-sm text-slate-500 mt-1">Saisie terrain en un geste — pensé pour les gants.</p>
+          <h1 className="text-3xl font-bold font-[family-name:var(--disp)] tracking-tight text-[var(--ink)]">
+            Actions rapides
+          </h1>
+          <p className="text-sm text-[var(--mut)] mt-1">Saisie terrain en un geste — pensé pour les gants.</p>
         </div>
       </div>
 
@@ -58,18 +66,18 @@ export default function ActionsRapidesPage() {
             key={href}
             href={href}
             className={cn(
-              'h-32 rounded-xl text-white text-xl font-bold flex flex-col items-center justify-center gap-2 shadow-md transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2',
+              'min-h-32 rounded-[var(--rl)] border text-xl font-bold font-[family-name:var(--disp)] flex flex-col items-center justify-center gap-2 text-center transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-offset-2',
               classes,
             )}
           >
             <Icon className="h-8 w-8" />
             <span>{label}</span>
-            <span className="text-xs font-normal opacity-90">{hint}</span>
+            <span className="text-xs font-normal font-[family-name:var(--body)] opacity-80">{hint}</span>
           </Link>
         ))}
       </div>
 
-      <p className="text-xs text-slate-500 text-center pt-4">
+      <p className="text-xs text-[var(--mut)] text-center pt-4">
         Ces 4 boutons s'actionnent avec des gants. Chaque action ouvre le formulaire pré-rempli en mode rapide.
       </p>
     </div>

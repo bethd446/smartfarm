@@ -30,11 +30,11 @@ export default function AssistantPage() {
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] gap-4">
       <header className="shrink-0">
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-          <Sparkles className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--ink)] font-[family-name:var(--disp)] tracking-[-0.02em]">
+          <Sparkles className="h-7 w-7 text-[var(--sage)]" />
           Assistant Smart Farm
         </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+        <p className="text-sm text-[var(--ink-soft)] mt-1">
           Conseil agritech personnalisé pour ta ferme — nutrition, sanitaire,
           reproduction, protocoles vaccinaux.
         </p>

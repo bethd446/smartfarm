@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -42,7 +43,7 @@ type BandeOption = { id: string; nom: string; code: string }
 type FormuleOption = { id: string; nom: string }
 
 type Props = {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   mode?: Mode
   initial?: PlanRow | null
   bandes: BandeOption[]
@@ -111,7 +112,16 @@ export function DialogPlan({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as never} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="default" size="sm">
+              <Plus className="h-4 w-4 mr-1" />
+              Nouveau plan
+            </Button>
+          )) as never
+        }
+      />
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className={titleClass}>

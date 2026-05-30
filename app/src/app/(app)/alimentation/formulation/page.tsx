@@ -150,21 +150,21 @@ export default async function FormulationListPage() {
         <div>
           <Link
             href="/alimentation"
-            className="text-xs text-slate-500 inline-flex items-center gap-1 mb-1 hover:underline"
+            className="text-xs text-[var(--mut)] inline-flex items-center gap-1 mb-1 hover:underline"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             Alimentation
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Beaker className="h-7 w-7 text-amber-600" />
+          <h1 className="text-3xl font-[family-name:var(--disp)] font-extrabold tracking-[-0.02em] flex items-center gap-2 text-[var(--ink)]">
+            <Beaker className="h-7 w-7 text-[var(--sage-d)]" />
             Formulations
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-[var(--mut)] mt-1">
             Catalogue des recettes calculées · besoins NRC 2012 / INRA 2018
           </p>
         </div>
         <Link href="/alimentation/formulation/nouveau">
-          <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700">
+          <Button size="lg" className="h-12 text-base">
             <Plus className="h-5 w-5 mr-2" />
             Nouvelle formulation
           </Button>
@@ -175,18 +175,18 @@ export default async function FormulationListPage() {
         <CardHeader>
           <CardTitle className="text-base">
             Formulations enregistrées
-            <span className="ml-2 text-xs font-normal text-slate-500">
+            <span className="ml-2 text-xs font-normal text-[var(--mut)]">
               {formulations.length} résultat{formulations.length > 1 ? 's' : ''}
             </span>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {formulations.length === 0 ? (
-            <div className="text-sm text-slate-500 py-8 text-center">
+            <div className="text-sm text-[var(--mut)] py-8 text-center">
               Aucune formulation — démarre avec{' '}
               <Link
                 href="/alimentation/formulation/nouveau"
-                className="font-medium text-amber-700 hover:underline"
+                className="font-medium text-[var(--sage-d)] hover:underline"
               >
                 le calculateur
               </Link>

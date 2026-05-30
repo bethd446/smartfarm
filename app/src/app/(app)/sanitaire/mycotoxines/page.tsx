@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
   Table,
@@ -22,7 +21,6 @@ import {
 import { EmptyState } from '@/components/ui/empty-state'
 import {
   Bug,
-  Plus,
   ChevronLeft,
   Info,
   Sparkles,
@@ -259,8 +257,8 @@ export default async function MycotoxinesPage() {
             <ChevronLeft className="h-3 w-3" />
             Retour aux soins
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)] mt-1">
-            <Bug className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+            <Bug className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Mycotoxines
           </h1>
           <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
@@ -268,15 +266,7 @@ export default async function MycotoxinesPage() {
             — alerte R18 si un lot reçu depuis &gt;7 j n&apos;est pas analysé.
           </p>
         </div>
-        <DialogEnregistrerLot
-          trigger={
-            <Button variant="default" size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Enregistrer un lot
-            </Button>
-          }
-          matieres={matieres}
-        />
+        <DialogEnregistrerLot matieres={matieres} />
       </div>
 
       {/* ENCART PÉDAGOGIQUE -------------------------------------------------- */}
@@ -384,45 +374,41 @@ export default async function MycotoxinesPage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-muted/40 border-b">
+              <table className="tbl w-full">
+                <thead>
                   <tr>
-                    <th className="text-left p-2">Produit</th>
-                    <th className="text-left p-2">Fabricant</th>
-                    <th className="text-left p-2">Type</th>
-                    <th className="text-left p-2">Spectre</th>
-                    <th className="text-right p-2 whitespace-nowrap">
-                      Dose (kg/t)
-                    </th>
-                    <th className="text-right p-2 whitespace-nowrap">
-                      Coût (FCFA/kg)
-                    </th>
+                    <th>Produit</th>
+                    <th>Fabricant</th>
+                    <th>Type</th>
+                    <th>Spectre</th>
+                    <th className="num whitespace-nowrap">Dose (kg/t)</th>
+                    <th className="num whitespace-nowrap">Coût (FCFA/kg)</th>
                   </tr>
                 </thead>
                 <tbody>
                   {produits.map((p) => (
-                    <tr key={p.id} className="border-b last:border-b-0">
-                      <td className="p-2 font-semibold">
+                    <tr key={p.id}>
+                      <td className="font-semibold">
                         {p.nom}
                         {p.description ? (
-                          <div className="text-xs font-normal text-muted-foreground mt-0.5">
+                          <div className="text-xs font-normal text-[var(--sf-muted,#5C5346)] mt-0.5">
                             {p.description}
                           </div>
                         ) : null}
                       </td>
-                      <td className="p-2 whitespace-nowrap">{p.fabricant}</td>
-                      <td className="p-2">
+                      <td className="whitespace-nowrap">{p.fabricant}</td>
+                      <td>
                         <Badge variant="secondary">{p.type}</Badge>
                       </td>
-                      <td className="p-2 text-xs">
+                      <td className="text-xs">
                         {(p.spectre ?? []).join(', ')}
                       </td>
-                      <td className="p-2 text-right font-mono tabular-nums">
+                      <td className="num font-mono tabular-nums">
                         {p.dose_kg_par_tonne_aliment !== null
                           ? fmtNum(Number(p.dose_kg_par_tonne_aliment), 1)
                           : '—'}
                       </td>
-                      <td className="p-2 text-right font-mono tabular-nums">
+                      <td className="num font-mono tabular-nums">
                         {p.cout_fcfa_par_kg !== null
                           ? Number(p.cout_fcfa_par_kg).toLocaleString('fr-FR')
                           : '—'}

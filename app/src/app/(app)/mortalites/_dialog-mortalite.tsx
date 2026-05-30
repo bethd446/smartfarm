@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Plus } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -63,7 +63,7 @@ export function DialogMortalite({
   bandesAvailable,
   defaultOpen = false,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   animaux: AnimalOption[]
   bandes: BandeOption[]
   /** Si false → cible "bande" cachée (table absente / vide) */
@@ -180,7 +180,23 @@ export function DialogMortalite({
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger render={trigger as any} />
+        <DialogTrigger
+          render={
+            (trigger ?? (
+              <Button
+                size="lg"
+                className="h-12 text-base"
+                style={{
+                  background: 'var(--sf-danger-ink, #7A2A1F)',
+                  color: '#fff',
+                }}
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Déclarer mortalité
+              </Button>
+            )) as any
+          }
+        />
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="uppercase tracking-wide text-2xl flex items-center gap-2">

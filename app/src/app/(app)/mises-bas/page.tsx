@@ -3,10 +3,9 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Baby, Plus, Scissors, ArrowLeftRight } from 'lucide-react'
+import { Baby } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
@@ -14,7 +13,6 @@ import { TERRAIN } from '@/lib/terrain-labels'
 import { DialogMiseBas } from './_dialog-mise-bas'
 import { DialogSevrage } from './_dialog-sevrage'
 import { DialogAdoption } from './_dialog-adoption'
-import { MisesBasFab } from './_fab'
 
 // Fenetre allaitement standard porc CI : 28j (max realiste 35j si retard sevrage)
 const FENETRE_ADOPTION_JOURS = 35
@@ -206,6 +204,21 @@ export default async function MisesBasPage({
     autre: 'Autre',
   }
 
+  // Récap KPI — agrégats purs sur les données déjà chargées (aucun fetch ajouté)
+  const nbPortees = (mb ?? []).length
+  const nbAllaitantes = misesBasAllaitantes.length
+  const avgNesVivants =
+    nbPortees > 0
+      ? (mb ?? []).reduce((s: number, m: any) => s + (Number(m.nes_vivants) || 0), 0) /
+        nbPortees
+      : 0
+  const sevragesAll = (mb ?? []).flatMap((m: any) => m.sevrages ?? [])
+  const avgSevres =
+    sevragesAll.length > 0
+      ? sevragesAll.reduce((s: number, sv: any) => s + (Number(sv.nb_sevres) || 0), 0) /
+        sevragesAll.length
+      : 0
+
   return (
     <div className="space-y-6">
       {/* === Header de page : PageTitle unifié === */}
@@ -227,47 +240,46 @@ export default async function MisesBasPage({
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="mises_bas" />
-          <DialogAdoption
-            mises_bas_allaitantes={misesBasAllaitantes}
-            trigger={
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 text-base"
-                disabled={misesBasAllaitantes.length < 2}
-                title={
-                  misesBasAllaitantes.length < 2
-                    ? 'Il faut au moins 2 portées en allaitement (≤35j)'
-                    : undefined
-                }
-              >
-                <ArrowLeftRight className="h-5 w-5 mr-2" />
-                Adoption
-              </Button>
-            }
-          />
+          <DialogAdoption mises_bas_allaitantes={misesBasAllaitantes} />
           <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
             batiments_disponibles={batimentsDisponibles}
-            trigger={
-              <Button variant="outline" size="lg" className="h-12 text-base">
-                <Scissors className="h-5 w-5 mr-2" />
-                Sevrage
-              </Button>
-            }
           />
-          <DialogMiseBas
-            saillies={saillesPourMb}
-            defaultOpen={autoOpenNew}
-            trigger={
-              <Button size="lg" className="h-12 text-base">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouvelle mise bas
-              </Button>
-            }
-          />
+          <DialogMiseBas saillies={saillesPourMb} defaultOpen={autoOpenNew} />
         </div>
       </div>
+
+      {/* === Récap KPI — agrégats sur données chargées (gabarit VERGER) === */}
+      {nbPortees > 0 && (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="kpi">
+              <div className="k">Portées en maternité</div>
+              <div className="v tabular-nums">{nbAllaitantes}</div>
+              <div className="d">≤ {FENETRE_ADOPTION_JOURS}j post mise bas</div>
+            </div>
+            <div className="kpi">
+              <div className="k">Nés vivants moy.</div>
+              <div className="v tabular-nums">
+                {avgNesVivants.toFixed(1)} <small>/ portée</small>
+              </div>
+              <div className="d">{nbPortees} portées enregistrées</div>
+            </div>
+            <div className="kpi">
+              <div className="k">Sevrés moy.</div>
+              <div className="v tabular-nums">
+                {sevragesAll.length > 0 ? avgSevres.toFixed(1) : '—'}{' '}
+                <small>/ portée</small>
+              </div>
+              <div className="d">{sevragesAll.length} sevrages enregistrés</div>
+            </div>
+          </div>
+          <div className="bignum">
+            <span className="bl">Total portées enregistrées</span>
+            <span className="bv tabular-nums">{nbPortees}</span>
+          </div>
+        </>
+      )}
 
       {/* === Historique des mises-bas : table compacte (V2-FIX FIX-B #1) === */}
       {(mb ?? []).length === 0 ? (
@@ -283,35 +295,35 @@ export default async function MisesBasPage({
           <CardTitle>Historique des mises-bas ({mb!.length})</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <table className="w-full min-w-[800px] text-sm">
-              <thead className="bg-muted/40 border-b">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-5 pb-2">
+            <table className="tbl min-w-[800px]">
+              <thead>
                 <tr>
-                  <th className="text-left p-3 font-medium">Truie</th>
-                  <th className="text-left p-3 font-medium">Date MB</th>
-                  <th className="text-right p-3 font-medium">Total nés</th>
-                  <th className="text-right p-3 font-medium">Vivants</th>
-                  <th className="text-right p-3 font-medium">Mort-nés</th>
-                  <th className="text-right p-3 font-medium">Momifiés</th>
-                  <th className="text-right p-3 font-medium">Écrasés</th>
-                  <th className="text-right p-3 font-medium">Sevrage</th>
+                  <th>Truie</th>
+                  <th>Date MB</th>
+                  <th className="num">Total nés</th>
+                  <th className="num">Vivants</th>
+                  <th className="num">Mort-nés</th>
+                  <th className="num">Momifiés</th>
+                  <th className="num">Écrasés</th>
+                  <th className="num">Sevrage</th>
                 </tr>
               </thead>
               <tbody>
                 {(mb ?? []).map((m: any) => (
-                  <tr key={m.id} className="border-b last:border-0 hover:bg-muted/20">
-                    <td className="p-3">
+                  <tr key={m.id}>
+                    <td>
                       {m.truie ? (
                         <AnimalLabel animal={m.truie} format="inline" />
                       ) : '—'}
                     </td>
-                    <td className="p-3"><FormattedDateTime date={m.date_mise_bas} format="date" /></td>
-                    <td className="p-3 text-right tabular-nums">{m.nes_totaux}</td>
-                    <td className="p-3 text-right font-medium tabular-nums">{m.nes_vivants}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.nes_morts ?? 0}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.momifies ?? 0}</td>
-                    <td className="p-3 text-right text-red-700 tabular-nums">{m.ecrases ?? 0}</td>
-                    <td className="p-3 text-right">
+                    <td><FormattedDateTime date={m.date_mise_bas} format="date" /></td>
+                    <td className="num tabular-nums">{m.nes_totaux}</td>
+                    <td className="num font-semibold tabular-nums">{m.nes_vivants}</td>
+                    <td className="num tabular-nums" style={{ color: 'var(--bad-d)' }}>{m.nes_morts ?? 0}</td>
+                    <td className="num tabular-nums" style={{ color: 'var(--bad-d)' }}>{m.momifies ?? 0}</td>
+                    <td className="num tabular-nums" style={{ color: 'var(--bad-d)' }}>{m.ecrases ?? 0}</td>
+                    <td className="num">
                       {m.sevrages?.[0] ? (
                         <Badge variant="success">{m.sevrages[0].nb_sevres} sevrés</Badge>
                       ) : (
@@ -487,17 +499,6 @@ export default async function MisesBasPage({
                       <DialogAdoption
                         mises_bas_allaitantes={misesBasAllaitantes}
                         source_id_prefill={m.id}
-                        trigger={
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            className="w-full h-10 text-xs uppercase tracking-wider"
-                          >
-                            <ArrowLeftRight className="h-4 w-4 mr-2" />
-                            Adopter depuis cette portée
-                          </Button>
-                        }
                       />
                     </div>
                   )}
@@ -518,31 +519,31 @@ export default async function MisesBasPage({
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <table className="w-full min-w-[720px] text-sm">
-                <thead className="bg-muted/40 border-b">
+            <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-5 pb-2">
+              <table className="tbl min-w-[720px]">
+                <thead>
                   <tr>
-                    <th className="text-left p-3 font-medium">Date</th>
-                    <th className="text-left p-3 font-medium">Source</th>
-                    <th className="text-left p-3 font-medium">Destination</th>
-                    <th className="text-right p-3 font-medium">Porcelets</th>
-                    <th className="text-left p-3 font-medium">Motif</th>
+                    <th>Date</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th className="num">Porcelets</th>
+                    <th>Motif</th>
                   </tr>
                 </thead>
                 <tbody>
                   {adoptionsRecentes.map((a: any) => (
-                    <tr key={a.id} className="border-b last:border-0 hover:bg-muted/20">
-                      <td className="p-3 tabular-nums">
+                    <tr key={a.id}>
+                      <td className="tabular-nums">
                         <FormattedDateTime date={a.date_adoption} format="date" />
                       </td>
-                      <td className="p-3">
+                      <td>
                         {a.source?.truie ? (
                           <AnimalLabel animal={a.source.truie} format="inline" />
                         ) : (
                           '—'
                         )}
                       </td>
-                      <td className="p-3">
+                      <td>
                         {a.destination?.truie ? (
                           <AnimalLabel
                             animal={a.destination.truie}
@@ -552,10 +553,10 @@ export default async function MisesBasPage({
                           '—'
                         )}
                       </td>
-                      <td className="p-3 text-right font-bold tabular-nums">
+                      <td className="num font-bold tabular-nums">
                         {a.nb_porcelets}
                       </td>
-                      <td className="p-3 text-xs">
+                      <td className="text-xs">
                         {MOTIF_LABELS[a.motif_adoption] ?? a.motif_adoption}
                         {a.motif_adoption === 'autre' && a.motif_libre ? (
                           <span className="text-[var(--sf-muted)]">
@@ -573,8 +574,6 @@ export default async function MisesBasPage({
         </Card>
       )}
 
-      {/* === FAB mobile === */}
-      <MisesBasFab saillies={saillesPourMb} />
     </div>
   )
 }

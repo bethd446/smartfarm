@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { ArrowLeft, Trophy, PiggyBank } from 'lucide-react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -88,30 +87,28 @@ export default async function ClassementTruiesPage() {
       </div>
 
       {/* === Détail pondération === */}
-      <Card>
-        <CardHeader>
+      <div className="pn">
+        <div className="pn-h">
           <div className={eyebrowCls}>Méthodologie du score (total 100 pts)</div>
-        </CardHeader>
-        <CardContent>
-          <ul className="text-xs text-[var(--sf-ink)] space-y-1 grid grid-cols-1 md:grid-cols-2 gap-x-6">
-            <li>
-              <strong>30 pts</strong> — Nés vivants moyens / portée (cible 14)
-            </li>
-            <li>
-              <strong>20 pts</strong> — Vitalité (NV − mort-nés, cible 13)
-            </li>
-            <li>
-              <strong>25 pts</strong> — Survie en maternité hors écrasés
-            </li>
-            <li>
-              <strong>15 pts</strong> — ISSF (sevrage → saillie féc., bonus ≤ 8 j)
-            </li>
-            <li>
-              <strong>10 pts</strong> — Longévité (nb portées, plafond 8)
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
+        </div>
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-[13px] text-[var(--sf-ink)]">
+          <li>
+            <strong>30 pts</strong> — Nés vivants moyens / portée (cible 14)
+          </li>
+          <li>
+            <strong>20 pts</strong> — Vitalité (NV − mort-nés, cible 13)
+          </li>
+          <li>
+            <strong>25 pts</strong> — Survie en maternité hors écrasés
+          </li>
+          <li>
+            <strong>15 pts</strong> — ISSF (sevrage → saillie féc., bonus ≤ 8 j)
+          </li>
+          <li>
+            <strong>10 pts</strong> — Longévité (nb portées, plafond 8)
+          </li>
+        </ul>
+      </div>
 
       {/* === Tableau === */}
       {truies.length === 0 ? (
@@ -121,81 +118,79 @@ export default async function ClassementTruiesPage() {
           description="Le classement nécessite au moins une truie active dans le cheptel."
         />
       ) : (
-        <div className="overflow-x-auto rounded-md border border-[var(--sf-line)]">
-          <table className="w-full text-sm">
-            <thead className="bg-[var(--sf-surface-2)]">
-              <tr className="text-left">
-                <th className={`p-3 ${eyebrowCls}`}>Rang</th>
-                <th className={`p-3 ${eyebrowCls}`}>Truie</th>
-                <th className={`p-3 ${eyebrowCls} text-right`}>NV moy.</th>
-                <th className={`p-3 ${eyebrowCls} text-right`}>Vitalité</th>
-                <th className={`p-3 ${eyebrowCls} text-right`}>Survie</th>
-                <th className={`p-3 ${eyebrowCls} text-right`}>Portées</th>
-                <th className={`p-3 ${eyebrowCls} text-right`}>Score</th>
-                <th className={`p-3 ${eyebrowCls}`}>Fiche</th>
-              </tr>
-            </thead>
-            <tbody>
-              {truies.map((t) => {
-                const m = medal(t.classement)
-                const isTop = t.classement <= 3
-                return (
-                  <tr
-                    key={t.truie_id}
-                    className={
-                      isTop
-                        ? 'bg-[var(--sf-surface-1)] border-t border-[var(--sf-line)]'
-                        : 'border-t border-[var(--sf-line)]'
-                    }
-                  >
-                    <td className="p-3 font-mono tabular-nums font-bold text-[var(--sf-ink)]">
-                      {m ? <span aria-hidden className="mr-1">{m}</span> : null}#{t.classement}
-                    </td>
-                    <td className="p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-md overflow-hidden bg-[var(--sf-surface-2)] border border-[var(--sf-line)] flex items-center justify-center shrink-0">
-                          {t.photo_url ? (
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img src={t.photo_url} alt={t.tag} className="object-cover h-full w-full" />
-                          ) : (
-                            <PiggyBank className="h-4 w-4 text-[var(--sf-muted)]" aria-hidden />
-                          )}
+        <div className="pn">
+          <div className="overflow-x-auto">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Rang</th>
+                  <th>Truie</th>
+                  <th className="num">NV moy.</th>
+                  <th className="num">Vitalité</th>
+                  <th className="num">Survie</th>
+                  <th className="num">Portées</th>
+                  <th className="num">Score</th>
+                  <th className="num">Fiche</th>
+                </tr>
+              </thead>
+              <tbody>
+                {truies.map((t) => {
+                  const m = medal(t.classement)
+                  const isTop = t.classement <= 3
+                  return (
+                    <tr
+                      key={t.truie_id}
+                      className={isTop ? 'bg-[var(--sage-bg)]' : undefined}
+                    >
+                      <td className="font-[family-name:var(--disp)] tabular-nums font-bold text-[var(--sf-ink)] whitespace-nowrap">
+                        {m ? <span aria-hidden className="mr-1">{m}</span> : null}#{t.classement}
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-2.5">
+                          <div className="h-9 w-9 rounded-[10px] overflow-hidden bg-[var(--sf-surface-2)] border border-[var(--line2)] flex items-center justify-center shrink-0">
+                            {t.photo_url ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img src={t.photo_url} alt={t.tag} className="object-cover h-full w-full" />
+                            ) : (
+                              <PiggyBank className="h-4 w-4 text-[var(--sf-muted)]" aria-hidden />
+                            )}
+                          </div>
+                          <div className="flex flex-col leading-tight">
+                            <span className="font-[family-name:var(--disp)] tabular-nums font-bold text-[var(--sf-ink)]">
+                              {t.tag}
+                            </span>
+                            {t.nom ? (
+                              <span className="text-[12px] text-[var(--sf-muted)]">{t.nom}</span>
+                            ) : null}
+                          </div>
                         </div>
-                        <div className="flex flex-col">
-                          <span className="font-mono tabular-nums font-bold text-[var(--sf-ink)]">
-                            {t.tag}
-                          </span>
-                          {t.nom ? (
-                            <span className="text-xs text-[var(--sf-muted)]">{t.nom}</span>
-                          ) : null}
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-3 text-right tabular-nums">{fmt(t.nes_vivants_moyen)}</td>
-                    <td className="p-3 text-right tabular-nums">{fmt(t.vitalite)}</td>
-                    <td className="p-3 text-right tabular-nums">
-                      {t.surv_hors_ecrases !== null
-                        ? `${(Number(t.surv_hors_ecrases) * 100).toFixed(0)} %`
-                        : '—'}
-                    </td>
-                    <td className="p-3 text-right tabular-nums">{t.nb_portees}</td>
-                    <td className="p-3 text-right">
-                      <Badge variant={isTop ? 'success' : 'outline'} className="font-mono tabular-nums">
-                        {fmt(t.score_global)} / 100
-                      </Badge>
-                    </td>
-                    <td className="p-3">
-                      <Link href={`/cheptel/${t.truie_id}`}>
-                        <Button variant="outline" size="sm">
-                          Voir fiche
-                        </Button>
-                      </Link>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
+                      </td>
+                      <td className="num tabular-nums">{fmt(t.nes_vivants_moyen)}</td>
+                      <td className="num tabular-nums">{fmt(t.vitalite)}</td>
+                      <td className="num tabular-nums">
+                        {t.surv_hors_ecrases !== null
+                          ? `${(Number(t.surv_hors_ecrases) * 100).toFixed(0)} %`
+                          : '—'}
+                      </td>
+                      <td className="num tabular-nums">{t.nb_portees}</td>
+                      <td className="num">
+                        <Badge variant={isTop ? 'success' : 'outline'} className="font-mono tabular-nums">
+                          {fmt(t.score_global)} / 100
+                        </Badge>
+                      </td>
+                      <td className="num">
+                        <Link href={`/cheptel/${t.truie_id}`}>
+                          <Button variant="outline" size="sm">
+                            Voir fiche
+                          </Button>
+                        </Link>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

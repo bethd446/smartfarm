@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 /* === Design System v1.0 — composants livrés par Claude Design === */
 @import "./design-v1.css";
+/* === VERGER — overrides shell + catalogue composants (après design-v1.css pour gagner à spécificité égale) === */
+@import "./design-verger-shell.css";
+@import "./design-verger-catalog.css";
 
 /* === Smart Farm — fonts self-hosted === */
 @font-face {
@@ -48,19 +51,28 @@
   font-weight: 600 700; font-style: normal; font-display: swap;
 }
 
+/* === VERGER — fonts self-hosted (Bricolage Grotesque titres + DM Sans corps) === */
+@font-face { font-family:"Bricolage Grotesque"; src:url("/fonts/BricolageGrotesque-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"Bricolage Grotesque"; src:url("/fonts/BricolageGrotesque-SemiBold.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:"Bricolage Grotesque"; src:url("/fonts/BricolageGrotesque-Bold.woff2") format("woff2"); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:"Bricolage Grotesque"; src:url("/fonts/BricolageGrotesque-ExtraBold.woff2") format("woff2"); font-weight:800; font-style:normal; font-display:swap; }
+@font-face { font-family:"DM Sans"; src:url("/fonts/DMSans-Regular.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:"DM Sans"; src:url("/fonts/DMSans-Medium.woff2") format("woff2"); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:"DM Sans"; src:url("/fonts/DMSans-SemiBold.woff2") format("woff2"); font-weight:600; font-style:normal; font-display:swap; }
+
 @custom-variant dark (&:is(.dark *));
 
 /* === Smart Farm — Terrain Vivant : @theme DS-aligned === */
 @theme {
-  --font-family: 'Instrument Sans', system-ui, sans-serif;
-  --font-family-display: 'Big Shoulders Display', system-ui, sans-serif;
-  --color-primary: #2D4A1F;
-  --color-accent: #B8703D;
-  --color-surface: #FAF7F0;
-  --color-ink: #1a1a1a;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 0;
+  --font-family: 'DM Sans', system-ui, sans-serif;
+  --font-family-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --color-primary: #6E9551;
+  --color-accent: #E89F62;
+  --color-surface: #FBFAF5;
+  --color-ink: #262E22;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
 }
 
 @theme inline {
@@ -279,6 +291,99 @@
   --sf-stamp-ring:        inset 0 0 0 2px var(--sf-primary), inset 0 0 0 3px #FFFFFF;
   --sf-stamp-ring-accent: inset 0 0 0 2px var(--sf-accent),  inset 0 0 0 3px #FFFFFF;
   --sf-stamp-press:       inset 0 2px 4px rgba(0,0,0,0.18);
+
+  /* ==========================================================================
+   * VERGER — couche design (source de vérité) + pont de compatibilité.
+   * Déclarée en fin de :root → surcharge "Terre & Mil" ci-dessus.
+   * Re-teinte tout l'app : --sf-* (BEM design-v1.css) + vars shadcn + @theme inline.
+   * Source des valeurs : kit design/tokens.css. Aucune invention.
+   * ======================================================================== */
+
+  /* Primitives VERGER */
+  --paper:#FBFAF5; --paper-3:#F4F1E8; --card:#FFFFFF;
+  --ink:#262E22; --ink-soft:#454D3E; --mut:#6E7567;
+  --sage:#6E9551; --sage-d:#4F7239; --sage-bg:#EDF2E6; --sage-100:#DCE8CF; --sage-200:#C7DAB4;
+  --apri:#E89F62; --apri-bg:#FBEEDF; --apri-d:#B36E33; --plum-bg:#F3E9E2; --berry:#9C5A6B;
+  --ok:#4F7239; --warn:#B36E33; --bad:#B5483B; --bad-bg:#F7E4E1; --bad-d:#933329;
+  --line:rgba(38,46,34,.10); --line2:rgba(38,46,34,.16); --focus:#4F7239;
+  --r:14px; --rl:20px; --rp:999px;
+  --disp:'Bricolage Grotesque', sans-serif;
+  --body:'DM Sans', system-ui, sans-serif;
+  --ease-out:cubic-bezier(.2,.7,.2,1); --ease-in-out:cubic-bezier(.65,0,.35,1);
+  --sh-sm:0 10px 26px -18px rgba(38,46,34,.4);
+  --sh-md:0 22px 48px -28px rgba(38,46,34,.34);
+
+  /* Pont shadcn / Tailwind (@theme inline lit ces vars) */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card-foreground: var(--ink);
+  --popover: var(--card);
+  --popover-foreground: var(--ink);
+  --primary: var(--sage);
+  --primary-foreground: #FFFFFF;
+  --secondary: var(--paper-3);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-3);
+  --muted-foreground: var(--mut);
+  --accent: var(--sage-bg);
+  --accent-foreground: var(--sage-d);
+  --destructive: var(--bad);
+  --border: var(--line);
+  --input: var(--line2);
+  --ring: var(--focus);
+  --radius: 0.875rem;
+  --sidebar: var(--paper-3);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--sage);
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: var(--sage-bg);
+  --sidebar-accent-foreground: var(--sage-d);
+  --sidebar-border: var(--line);
+  --sidebar-ring: var(--focus);
+
+  /* Pont --sf-* → VERGER */
+  --sf-primary: var(--sage);
+  --sf-primary-deep: var(--sage-d);
+  --sf-primary-soft: var(--sage-d);
+  --sf-accent: var(--apri);
+  --sf-accent-warm: var(--apri);
+  --sf-terre: var(--berry);
+  --sf-ink: var(--ink);
+  --sf-ink-secondary: var(--ink-soft);
+  --sf-muted: var(--mut);
+  --sf-subtle: var(--mut);
+  --sf-line: var(--line);
+  --sf-surface-0: var(--card);
+  --sf-surface-1: var(--paper);
+  --sf-surface-2: var(--paper-3);
+  --sf-danger: var(--bad);
+  --sf-warning: var(--warn);
+  --sf-success: var(--ok);
+  --sf-focus: var(--focus);
+
+  /* Paires statut → VERGER */
+  --sf-success-bg: var(--sage-bg);    --sf-success-ink: var(--sage-d);  --sf-success-border: var(--sage-100);
+  --sf-warning-bg: var(--apri-bg);    --sf-warning-ink: var(--apri-d);  --sf-warning-border: var(--apri);
+  --sf-danger-bg:  var(--bad-bg);     --sf-danger-ink:  var(--bad-d);   --sf-danger-border:  var(--bad);
+  --sf-info-bg:    var(--plum-bg);    --sf-info-ink:    var(--berry);   --sf-info-border:    var(--berry);
+  --sf-neutral-bg: var(--paper-3);    --sf-neutral-ink: var(--ink);     --sf-neutral-border: var(--line2);
+
+  /* Alertes 3 niveaux → VERGER */
+  --sf-alert-critical-bg: var(--bad);      --sf-alert-critical-ink: #FFFFFF;
+  --sf-alert-high-bg: var(--apri-bg);      --sf-alert-high-border: var(--apri);    --sf-alert-high-ink: var(--apri-d);
+  --sf-alert-medium-bg: var(--apri-bg);    --sf-alert-medium-border: var(--apri);  --sf-alert-medium-ink: var(--apri-d);
+  --sf-alert-critique-bg: var(--bad);      --sf-alert-critique-ink: #FFFFFF;         --sf-alert-critique-bd: var(--bad-d);
+  --sf-alert-attention-bg: var(--apri-bg); --sf-alert-attention-ink: var(--apri-d);  --sf-alert-attention-bd: var(--apri);
+  --sf-alert-info-bg: var(--sage-bg);      --sf-alert-info-ink: var(--sage-d);       --sf-alert-info-bd: var(--sage);
+
+  /* Fonts VERGER */
+  --sf-font-display: 'Bricolage Grotesque', 'Arial Narrow', sans-serif;
+  --sf-font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* VERGER = formes douces / ombres chaudes → neutralise le cachet imprimerie */
+  --sf-stamp-ring: none;
+  --sf-stamp-ring-accent: none;
+  --sf-stamp-press: none;
 }
 
 /* === Mode haut contraste — tokens v1.0 overrides === */
@@ -290,6 +395,15 @@ html[data-contrast="high"] {
   --sf-alert-info-bd:      #000000;
 }
 html[data-contrast="high"] * { font-weight: 600; }
+
+/* === VERGER — mode plein soleil / haut-contraste (overrides primitives) === */
+html[data-contrast="high"] {
+  --paper:#FFFFFF; --paper-3:#F2EFE6;
+  --ink:#16190F; --ink-soft:#2C3326; --mut:#4A5142;
+  --sage-d:#3D5A2C; --apri-d:#8F5418;
+  --ok:#2F5C1E; --warn:#8F5418; --bad:#9A2D22; --bad-d:#7A2017;
+  --line:rgba(22,25,15,.28); --line2:rgba(22,25,15,.42); --focus:#16190F;
+}
 
 /* === FIX-D2 P0-5 — text-xs base size augmentée pour lisibilité terrain Sahel === */
 @media screen {
@@ -416,8 +530,9 @@ h1, h2, h3 { font-family: var(--sf-font-display, 'Big Shoulders Display', sans-s
  *  - .hero__title (landing publique)
  */
 main h1:not(.auth-form__h1):not(.hero__title):not(.no-uppercase) {
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  /* VERGER : titres en casse naturelle (le prototype abandonne l'UPPERCASE Terre & Mil) */
+  text-transform: none;
+  letter-spacing: -0.01em;
 }
 
 /* === FIX-B #4 — Hiérarchie typographique H2/H3 (audit V2 R2) ===

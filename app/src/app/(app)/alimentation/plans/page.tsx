@@ -8,18 +8,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import {
   Calendar,
-  Plus,
   ChevronLeft,
   TrendingDown,
   AlertTriangle,
@@ -118,30 +108,12 @@ const LABEL_STATUT: Record<StatutPlan, string> = {
 
 function badgeStatut(s: StatutPlan) {
   if (s === 'en_cours') {
-    return (
-      <Badge
-        style={{
-          background: 'var(--sf-success-bg, #D6E3CC)',
-          color: 'var(--sf-success-ink, #1F3B12)',
-        }}
-      >
-        {LABEL_STATUT[s]}
-      </Badge>
-    )
+    return <span className="tag t-sage">{LABEL_STATUT[s]}</span>
   }
   if (s === 'a_venir') {
-    return (
-      <Badge
-        style={{
-          background: 'var(--sf-warning-bg, #F5E0B8)',
-          color: 'var(--sf-warning-ink, #5A3E0E)',
-        }}
-      >
-        {LABEL_STATUT[s]}
-      </Badge>
-    )
+    return <span className="tag t-apri">{LABEL_STATUT[s]}</span>
   }
-  return <Badge variant="outline">{LABEL_STATUT[s]}</Badge>
+  return <span className="tag t-grey">{LABEL_STATUT[s]}</span>
 }
 
 function fmtDate(d: string | null) {
@@ -351,12 +323,6 @@ export default async function PlansAlimentationPage(props: {
             mode="create"
             bandes={bandes}
             formules={formules}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau plan
-              </Button>
-            }
           />
         </div>
       </div>
@@ -376,37 +342,38 @@ export default async function PlansAlimentationPage(props: {
               la projection.
             </p>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Formule</TableHead>
-                  <TableHead className="text-right">Conso (kg/j)</TableHead>
-                  <TableHead className="text-right">Stock (kg)</TableHead>
-                  <TableHead className="text-right">Jours restants</TableHead>
-                  <TableHead>Épuisement</TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="px-6 pb-4">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Formule</th>
+                  <th className="num">Conso (kg/j)</th>
+                  <th className="num">Stock (kg)</th>
+                  <th className="num">Jours restants</th>
+                  <th>Épuisement</th>
+                  <th className="num">Action</th>
+                </tr>
+              </thead>
+              <tbody>
                 {projections.map((p) => {
                   const v = variantPourJours(p.jours_restants)
                   return (
-                    <TableRow key={p.formule_id}>
-                      <TableCell>
+                    <tr key={p.formule_id}>
+                      <td>
                         <div className="font-medium">{p.formule_nom}</div>
                         {p.formule_stade && (
                           <div className="text-xs text-[var(--sf-muted,#5C5346)] capitalize">
                             {p.formule_stade.replace('_', ' ')}
                           </div>
                         )}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums font-mono">
+                      </td>
+                      <td className="num tabular-nums font-mono">
                         {p.conso_quotidienne_kg.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums font-mono">
+                      </td>
+                      <td className="num tabular-nums font-mono">
                         {p.stock_kg_actuel.toFixed(0)}
-                      </TableCell>
-                      <TableCell className="text-right">
+                      </td>
+                      <td className="num">
                         {p.jours_restants !== null ? (
                           <span
                             className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-bold tabular-nums"
@@ -418,13 +385,13 @@ export default async function PlansAlimentationPage(props: {
                         ) : (
                           <span className="text-[var(--sf-muted,#5C5346)] italic">—</span>
                         )}
-                      </TableCell>
-                      <TableCell className="tabular-nums text-sm">
+                      </td>
+                      <td className="tabular-nums text-sm">
                         {p.date_epuisement
                           ? <FormattedDateTime date={p.date_epuisement} options={{ day: '2-digit', month: 'short', year: 'numeric' }} />
                           : '—'}
-                      </TableCell>
-                      <TableCell className="text-right">
+                      </td>
+                      <td className="num">
                         {p.jours_restants !== null && p.jours_restants < 14 ? (
                           <Link
                             href={`/alimentation/formulation?formule=${p.formule_id}`}
@@ -435,12 +402,13 @@ export default async function PlansAlimentationPage(props: {
                         ) : (
                           <span className="text-xs text-[var(--sf-muted,#5C5346)]">OK</span>
                         )}
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   )
                 })}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -552,43 +520,44 @@ export default async function PlansAlimentationPage(props: {
               />
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Bande</TableHead>
-                  <TableHead>Formule</TableHead>
-                  <TableHead>Début</TableHead>
-                  <TableHead>Fin</TableHead>
-                  <TableHead className="text-right">Ration (kg/j)</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="px-6 pb-4">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Bande</th>
+                  <th>Formule</th>
+                  <th>Début</th>
+                  <th>Fin</th>
+                  <th className="num">Ration (kg/j)</th>
+                  <th>Statut</th>
+                  <th className="num">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {rows.map((p) => (
-                  <TableRow key={p.id}>
-                    <TableCell>
+                  <tr key={p.id}>
+                    <td>
                       <div className="font-medium">{p.bande?.code ?? '—'}</div>
                       {p.bande?.nom ? (
                         <div className="text-xs text-[var(--sf-muted,#5C5346)]">
                           {p.bande.nom}
                         </div>
                       ) : null}
-                    </TableCell>
-                    <TableCell className="text-sm">
+                    </td>
+                    <td className="text-sm">
                       {p.formule?.nom ?? '—'}
-                    </TableCell>
-                    <TableCell className="text-sm tabular-nums">
+                    </td>
+                    <td className="text-sm tabular-nums">
                       {fmtDate(p.date_debut)}
-                    </TableCell>
-                    <TableCell className="text-sm tabular-nums">
+                    </td>
+                    <td className="text-sm tabular-nums">
                       {fmtDate(p.date_fin)}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    </td>
+                    <td className="num tabular-nums">
                       {p.ration_kg_jour ?? '—'}
-                    </TableCell>
-                    <TableCell>{badgeStatut(p._statut)}</TableCell>
-                    <TableCell className="text-right">
+                    </td>
+                    <td>{badgeStatut(p._statut)}</td>
+                    <td className="num">
                       <div className="flex justify-end gap-1 flex-wrap">
                         <DialogPlan
                           mode="edit"
@@ -610,11 +579,12 @@ export default async function PlansAlimentationPage(props: {
                         />
                         <FormDelete id={p.id} />
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
+            </div>
           )}
         </CardContent>
       </Card>

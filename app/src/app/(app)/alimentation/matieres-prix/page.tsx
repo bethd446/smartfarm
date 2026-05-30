@@ -8,16 +8,7 @@ import {
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
   Banknote,
-  Plus,
   ChevronLeft,
   AlertTriangle,
 } from 'lucide-react'
@@ -269,15 +260,7 @@ export default async function MatieresPrixPage({
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <DialogPrix
-            matieres={matieres}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau prix
-              </Button>
-            }
-          />
+          <DialogPrix matieres={matieres} />
         </div>
       </div>
 
@@ -340,52 +323,61 @@ export default async function MatieresPrixPage({
               ) : null}
             </div>
           ) : rows.length === 0 ? (
-            <div className="p-8 text-center space-y-3">
-              <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                Aucun relevé. Commencez par ajouter votre premier prix.
-              </p>
+            <div className="p-6">
+              <div className="sf-empty" role="status">
+                <span className="sf-empty-ic">
+                  <Banknote className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3>Aucun relevé de prix</h3>
+                <p>
+                  Commencez par ajouter votre premier prix pour tracer
+                  l&apos;évolution des coûts matières dans le temps.
+                </p>
+              </div>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Matière</TableHead>
-                  <TableHead>Date relevé</TableHead>
-                  <TableHead className="text-right">Prix XOF/kg</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Observations</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="px-6 pb-4">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Matière</th>
+                  <th>Date relevé</th>
+                  <th className="num">Prix XOF/kg</th>
+                  <th>Source</th>
+                  <th>Observations</th>
+                  <th className="num">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {rows.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell>
+                  <tr key={r.id}>
+                    <td>
                       <div className="font-medium">{nomMatiere(r)}</div>
-                    </TableCell>
-                    <TableCell className="text-sm tabular-nums">
+                    </td>
+                    <td className="text-sm tabular-nums">
                       {fmtDate(r.date_releve)}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums font-semibold">
+                    </td>
+                    <td className="num tabular-nums font-semibold">
                       {n(r.prix_xof_kg, 0)}
-                    </TableCell>
-                    <TableCell className="text-xs text-[var(--sf-muted,#5C5346)]">
+                    </td>
+                    <td className="text-xs text-[var(--sf-muted,#5C5346)]">
                       {r.source || '—'}
-                    </TableCell>
-                    <TableCell className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[280px]">
+                    </td>
+                    <td className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[280px]">
                       <span className="line-clamp-2">
                         {r.observations || '—'}
                       </span>
-                    </TableCell>
-                    <TableCell className="text-right">
+                    </td>
+                    <td className="num">
                       <div className="flex justify-end gap-1 flex-wrap">
                         <FormDelete id={r.id} />
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
+            </div>
           )}
         </CardContent>
       </Card>

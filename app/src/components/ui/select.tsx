@@ -77,11 +77,12 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        // Layout + ring focus (inchangé)
-        "flex w-full items-center justify-between gap-1.5 rounded-md border border-[var(--sf-line,rgba(0,0,0,0.12))] bg-[var(--sf-surface-1)] whitespace-nowrap transition-colors outline-none focus-visible:border-[var(--sf-primary)] focus-visible:ring-2 focus-visible:ring-[var(--sf-primary)]/30 disabled:cursor-not-allowed disabled:opacity-50 data-[placeholder]:text-[var(--sf-muted)] [&_svg]:pointer-events-none [&_svg]:shrink-0",
-        // C1 — tactile : 48px mobile (anti-zoom iOS via text-base + padding confort)
-        // Padding tactile : pl-4 pr-3 py-3 (≥ 12px vertical) ; texte 16px mobile, 14px ≥md
-        "h-12 min-h-12 py-3 pl-4 pr-3 text-base md:text-sm",
+        // Box VERGER (audit §3.5) : bordure, surface papier, rayon champ
+        "flex w-full items-center justify-between gap-1.5 rounded-[11px] border border-[var(--line2)] bg-[var(--paper)] whitespace-nowrap text-[var(--ink)] transition-colors outline-none data-[placeholder]:text-[var(--mut)] disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        // Focus : anneau sauge (outline), bordure transparente
+        "focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus)]",
+        // Tactile : 48px mobile (anti-zoom iOS via text-base + padding confort)
+        "h-12 min-h-12 py-3 pl-[13px] pr-3 text-base md:text-sm",
         // Variante sm : 40px (tactile mais compact, ex. cellules tableau)
         size === "sm" && "h-10 min-h-10 py-2 pl-3 pr-2 text-sm md:text-xs",
         className

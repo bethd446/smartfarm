@@ -10,7 +10,6 @@ import {
   Scale,
   Stethoscope,
 } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   MALADIES_PORCINES,
@@ -46,17 +45,15 @@ type SectionProps = {
 
 function Section({ icon, title, children }: SectionProps) {
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base text-[var(--sf-ink,#1a1a1a)]">
-          <span className="text-[var(--sf-primary,#2D4A1F)]">{icon}</span>
+    <div className="pn h-full">
+      <div className="pn-h">
+        <h3 className="flex items-center gap-2 text-[var(--ink)]">
+          <span className="text-[var(--sage-d)]">{icon}</span>
           {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="text-sm text-[var(--sf-ink,#1a1a1a)] space-y-2">
-        {children}
-      </CardContent>
-    </Card>
+        </h3>
+      </div>
+      <div className="text-sm text-[var(--ink)] space-y-2">{children}</div>
+    </div>
   )
 }
 
@@ -78,7 +75,7 @@ export default async function MaladieDetailPage({
       <div>
         <Link
           href="/sanitaire/maladies"
-          className="inline-flex items-center gap-1 text-sm text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary,#2D4A1F)] transition-colors mb-3"
+          className="inline-flex items-center gap-1 text-sm text-[var(--mut)] hover:text-[var(--sage-d)] transition-colors mb-3"
         >
           <ArrowLeft className="h-4 w-4" />
           Retour au catalogue
@@ -86,11 +83,11 @@ export default async function MaladieDetailPage({
 
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--sf-ink,#1a1a1a)] flex items-center gap-2">
-              <Stethoscope className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+            <h1 className="text-3xl font-bold text-[var(--ink)] flex items-center gap-2 font-[family-name:var(--disp)] tracking-[-0.02em]">
+              <Stethoscope className="h-7 w-7 text-[var(--sage-d)]" />
               {m.nom}
             </h1>
-            <p className="text-sm italic text-[var(--sf-muted,#5C5346)] mt-1">
+            <p className="text-sm italic text-[var(--mut)] mt-1">
               {m.nom_scientifique}
             </p>
           </div>
@@ -106,40 +103,38 @@ export default async function MaladieDetailPage({
       </div>
 
       {/* Méta-données */}
-      <Card className="bg-[var(--sf-surface-2,#EFE7D6)]/50">
-        <CardContent className="py-4">
-          <dl className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[var(--sf-muted,#5C5346)] font-semibold">
-                Âge concerné
-              </dt>
-              <dd className="text-[var(--sf-ink,#1a1a1a)]">{m.age_concerne}</dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[var(--sf-muted,#5C5346)] font-semibold">
-                Catégorie
-              </dt>
-              <dd className="text-[var(--sf-ink,#1a1a1a)]">
-                {CATEGORIE_LABELS[m.categorie]}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs uppercase tracking-wide text-[var(--sf-muted,#5C5346)] font-semibold">
-                Contagiosité
-              </dt>
-              <dd className="text-[var(--sf-ink,#1a1a1a)] capitalize">
-                {m.contagiosite}
-              </dd>
-            </div>
-          </dl>
-        </CardContent>
-      </Card>
+      <div className="pn bg-[var(--paper-3)]">
+        <dl className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+          <div>
+            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+              Âge concerné
+            </dt>
+            <dd className="text-[var(--ink)] mt-1">{m.age_concerne}</dd>
+          </div>
+          <div>
+            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+              Catégorie
+            </dt>
+            <dd className="text-[var(--ink)] mt-1">
+              {CATEGORIE_LABELS[m.categorie]}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-[11px] uppercase tracking-[.08em] text-[var(--mut)] font-semibold">
+              Contagiosité
+            </dt>
+            <dd className="text-[var(--ink)] capitalize mt-1">
+              {m.contagiosite}
+            </dd>
+          </div>
+        </dl>
+      </div>
 
       {/* Grille des sections */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Symptômes */}
         <Section icon={<Activity className="h-5 w-5" />} title="Symptômes">
-          <ul className="list-disc list-inside space-y-1 marker:text-[var(--sf-primary,#2D4A1F)]">
+          <ul className="list-disc list-inside space-y-1 marker:text-[var(--sage-d)]">
             {m.symptomes.map((s, i) => (
               <li key={i}>{s}</li>
             ))}
@@ -149,20 +144,20 @@ export default async function MaladieDetailPage({
         {/* Diagnostic */}
         <Section icon={<Microscope className="h-5 w-5" />} title="Diagnostic">
           <div>
-            <p className="font-medium text-[var(--sf-ink,#1a1a1a)] mb-1">
+            <p className="font-medium text-[var(--ink)] mb-1">
               Diagnostic différentiel :
             </p>
-            <ul className="list-disc list-inside space-y-1 marker:text-[var(--sf-primary,#2D4A1F)]">
+            <ul className="list-disc list-inside space-y-1 marker:text-[var(--sage-d)]">
               {m.diagnostic_differentiel.map((d, i) => (
                 <li key={i}>{d}</li>
               ))}
             </ul>
           </div>
           <div className="pt-2">
-            <p className="font-medium text-[var(--sf-ink,#1a1a1a)] mb-1">
+            <p className="font-medium text-[var(--ink)] mb-1">
               Examens recommandés :
             </p>
-            <ul className="list-disc list-inside space-y-1 marker:text-[var(--sf-primary,#2D4A1F)]">
+            <ul className="list-disc list-inside space-y-1 marker:text-[var(--sage-d)]">
               {m.examens_recommandes.map((e, i) => (
                 <li key={i}>{e}</li>
               ))}
@@ -176,15 +171,15 @@ export default async function MaladieDetailPage({
             {m.traitement.map((t, i) => (
               <div
                 key={i}
-                className="rounded-md border border-[var(--sf-muted,#5C5346)]/20 p-3 bg-[var(--sf-bg,white)]"
+                className="rounded-[12px] border border-[var(--line2)] p-3 bg-[var(--paper)]"
               >
-                <p className="font-semibold text-[var(--sf-ink,#1a1a1a)]">
+                <p className="font-semibold text-[var(--ink)]">
                   {t.molecule}
                 </p>
-                <p className="text-xs text-[var(--sf-muted,#5C5346)] mt-1">
+                <p className="text-xs text-[var(--mut)] mt-1">
                   <span className="font-medium">Posologie :</span> {t.posologie}
                 </p>
-                <p className="text-xs text-[var(--sf-muted,#5C5346)]">
+                <p className="text-xs text-[var(--mut)]">
                   <span className="font-medium">Durée :</span> {t.duree}
                 </p>
               </div>
@@ -194,7 +189,7 @@ export default async function MaladieDetailPage({
 
         {/* Prévention */}
         <Section icon={<Shield className="h-5 w-5" />} title="Prévention">
-          <ul className="list-disc list-inside space-y-1 marker:text-[var(--sf-primary,#2D4A1F)]">
+          <ul className="list-disc list-inside space-y-1 marker:text-[var(--sage-d)]">
             {m.prevention.map((p, i) => (
               <li key={i}>{p}</li>
             ))}
@@ -219,7 +214,7 @@ export default async function MaladieDetailPage({
       </Section>
 
       {/* Footer sources */}
-      <p className="text-xs text-[var(--sf-muted,#5C5346)] italic pt-4 border-t border-[var(--sf-muted,#5C5346)]/20">
+      <p className="text-xs text-[var(--mut)] italic pt-4 border-t border-[var(--line)]">
         Sources : OIE/WOAH Manual of Diagnostic Tests, FAO EMPRES Animal
         Health, INRAE/IFIP Mémento de l&apos;éleveur de porc, CIRAD Précis
         de pathologie porcine tropicale. Outil d&apos;aide à la décision —

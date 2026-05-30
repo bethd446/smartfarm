@@ -122,33 +122,28 @@ export function AnimalTabs({
               </p>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="tbl">
                   <thead>
-                    <tr className="border-b border-[var(--sf-line)] text-left text-xs uppercase tracking-wide text-[var(--sf-muted)]">
-                      <th className="py-2 pr-3">Date</th>
-                      <th className="py-2 pr-3">Type</th>
-                      <th className="py-2 pr-3">De</th>
-                      <th className="py-2 pr-3">Vers</th>
-                      <th className="py-2 pr-3">Motif</th>
+                    <tr>
+                      <th>Date</th>
+                      <th>Type</th>
+                      <th>De</th>
+                      <th>Vers</th>
+                      <th>Motif</th>
                     </tr>
                   </thead>
                   <tbody>
                     {mouvements.map((m) => (
-                      <tr
-                        key={m.id}
-                        className="border-b border-[var(--sf-line)] last:border-0"
-                      >
-                        <td className="py-2 pr-3 tabular-nums">
+                      <tr key={m.id}>
+                        <td className="tabular-nums">
                           {new Date(m.date_mouvement).toLocaleDateString('fr-FR')}
                         </td>
-                        <td className="py-2 pr-3">
+                        <td>
                           <Badge variant="outline">{typeLabel(m.type)}</Badge>
                         </td>
-                        <td className="py-2 pr-3">{batimentNom(m.batiment_source_id)}</td>
-                        <td className="py-2 pr-3">{batimentNom(m.batiment_dest_id)}</td>
-                        <td className="py-2 pr-3 text-[var(--sf-muted)]">
-                          {m.motif ?? '—'}
-                        </td>
+                        <td>{batimentNom(m.batiment_source_id)}</td>
+                        <td>{batimentNom(m.batiment_dest_id)}</td>
+                        <td className="text-[var(--sf-muted)]">{m.motif ?? '—'}</td>
                       </tr>
                     ))}
                   </tbody>

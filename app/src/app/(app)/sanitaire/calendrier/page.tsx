@@ -90,8 +90,11 @@ export default async function CalendrierSanitairePage({
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-            <CalendarDays className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <p className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+            CARNET SANITAIRE
+          </p>
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+            <CalendarDays className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Calendrier sanitaire
           </h1>
           <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
@@ -204,36 +207,22 @@ function RecapCard({
   tone: 'danger' | 'warning' | 'info'
   icon: React.ReactNode
 }) {
-  const palette = {
-    danger: {
-      bg: 'var(--sf-danger-bg, #F1D4CE)',
-      ink: 'var(--sf-danger-ink, #7A2A1F)',
-    },
-    warning: {
-      bg: 'var(--sf-warning-bg, #F5E0B8)',
-      ink: 'var(--sf-warning-ink, #5A3E0E)',
-    },
-    info: {
-      bg: 'var(--sf-info-bg, #D6E2EE)',
-      ink: 'var(--sf-info-ink, #1F3A55)',
-    },
-  }[tone]
+  // Gabarit VERGER échéances : danger→late, warning→today, info→soon.
+  const echClass = { danger: 'late', warning: 'today', info: 'soon' }[tone]
 
   return (
-    <Card style={{ background: palette.bg, color: palette.ink }}>
-      <CardContent className="p-5">
-        <div className="flex items-center gap-2" style={{ color: palette.ink }}>
+    <div className={`ech ${echClass}`} style={{ maxWidth: 'none' }}>
+      <span className="ed" />
+      <div className="et flex-1">
+        <small className="flex items-center gap-1.5">
           {icon}
-          <span className="eyebrow text-[11px]">{label}</span>
-        </div>
-        <div
-          className="text-3xl font-bold tabular-nums mt-2"
-          style={{ color: palette.ink }}
-        >
+          {label}
+        </small>
+        <b className="font-[family-name:var(--sf-font-display)] text-2xl tabular-nums">
           {value}
-        </div>
-      </CardContent>
-    </Card>
+        </b>
+      </div>
+    </div>
   )
 }
 
@@ -270,16 +259,16 @@ function SectionActes({
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b border-[var(--sf-ink,#1a1a1a)] text-left">
-                <tr className="eyebrow text-[11px] text-[var(--sf-muted,#5C5346)]">
-                  <th className="pb-3 pr-4 font-semibold">Cible</th>
-                  <th className="pb-3 pr-4 font-semibold">Acte</th>
-                  <th className="pb-3 pr-4 font-semibold">Produit</th>
-                  <th className="pb-3 pr-4 font-semibold">Voie / Dose</th>
-                  <th className="pb-3 pr-4 font-semibold">Date prévue</th>
-                  <th className="pb-3 pr-4 font-semibold">Écart</th>
-                  <th className="pb-3 pl-4 font-semibold text-right">Action</th>
+            <table className="tbl w-full">
+              <thead>
+                <tr>
+                  <th>Cible</th>
+                  <th>Acte</th>
+                  <th>Produit</th>
+                  <th>Voie / Dose</th>
+                  <th>Date prévue</th>
+                  <th>Écart</th>
+                  <th className="num">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -320,8 +309,8 @@ function LigneActe({
   )
 
   return (
-    <tr className="border-b border-[var(--sf-line,rgba(0,0,0,0.12))]">
-      <td className="py-3 pr-4">
+    <tr>
+      <td className="pr-4">
         <div className="flex items-center gap-2">
           <Badge variant={acte.cibleType === 'animal' ? 'outline' : 'secondary'}>
             {acte.cibleType === 'animal' ? 'Animal' : 'Bande'}
@@ -338,7 +327,7 @@ function LigneActe({
           </div>
         </div>
       </td>
-      <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 text-[var(--sf-ink,#1a1a1a)]">
         <div className="flex items-center gap-2">
           <span>{acte.protocoleNom}</span>
           {acte.obligatoire ? (
@@ -352,26 +341,26 @@ function LigneActe({
           {acte.ageJoursActuel}
         </div>
       </td>
-      <td className="py-3 pr-4">
+      <td className="pr-4">
         {acte.produit ? (
           <Badge variant="outline">{acte.produit}</Badge>
         ) : (
           <span className="text-[var(--sf-muted,#5C5346)]">—</span>
         )}
       </td>
-      <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 text-[var(--sf-ink,#1a1a1a)]">
         <span className="font-mono tabular-nums text-[12px]">
           {acte.voie ?? '—'}
           {acte.doseMl != null ? ` · ${acte.doseMl} ml` : ''}
         </span>
       </td>
-      <td className="py-3 pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
         {format(acte.datePrevue, 'dd MMM yyyy', { locale: fr })}
       </td>
-      <td className="py-3 pr-4">
+      <td className="pr-4">
         <Badge variant={badgeForTone(tone)}>{ecartLabel}</Badge>
       </td>
-      <td className="py-3 pl-4 text-right">
+      <td className="num">
         <form action={action}>
           <Button type="submit" variant="default" size="sm">
             Marquer fait
@@ -466,15 +455,15 @@ function BlocPorcelets({
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="border-b border-[var(--sf-ink,#1a1a1a)] text-left">
-            <tr className="eyebrow text-[11px] text-[var(--sf-muted,#5C5346)]">
-              <th className="pb-3 pr-4 font-semibold">Truie</th>
-              <th className="pb-3 pr-4 font-semibold">Acte</th>
-              <th className="pb-3 pr-4 font-semibold">Jour</th>
-              <th className="pb-3 pr-4 font-semibold">Date prévue</th>
-              <th className="pb-3 pr-4 font-semibold">Mise bas</th>
-              <th className="pb-3 pl-4 font-semibold text-right">Action</th>
+        <table className="tbl w-full">
+          <thead>
+            <tr>
+              <th>Truie</th>
+              <th>Acte</th>
+              <th>Jour</th>
+              <th>Date prévue</th>
+              <th>Mise bas</th>
+              <th className="num">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -498,8 +487,8 @@ function LignePorcelet({
   const datePrevue = new Date(acte.datePrevue)
   const dateMb = new Date(acte.dateMiseBas)
   return (
-    <tr className="border-b border-[var(--sf-line,rgba(0,0,0,0.12))]">
-      <td className="py-3 pr-4">
+    <tr>
+      <td className="pr-4">
         <div className="flex items-center gap-2">
           <Badge variant="outline">Truie</Badge>
           <div>
@@ -513,7 +502,7 @@ function LignePorcelet({
           </div>
         </div>
       </td>
-      <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 text-[var(--sf-ink,#1a1a1a)]">
         <div className="flex items-center gap-2 flex-wrap">
           <span>{acte.acte}</span>
           {acte.gravite === 'élevée' ? (
@@ -526,10 +515,10 @@ function LignePorcelet({
           </Badge>
         </div>
       </td>
-      <td className="py-3 pr-4 font-mono tabular-nums text-[12px] text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 font-mono tabular-nums text-[12px] text-[var(--sf-ink,#1a1a1a)]">
         J{acte.jourOffset}
       </td>
-      <td className="py-3 pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
+      <td className="pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
         {format(datePrevue, 'dd MMM yyyy', { locale: fr })}
         <Badge variant={badgeForTone(tone)} className="ml-2 text-[9px]">
           {acte.statutTemporel === 'retard'
@@ -541,10 +530,10 @@ function LignePorcelet({
                 : '30 j'}
         </Badge>
       </td>
-      <td className="py-3 pr-4 font-mono tabular-nums text-[11px] text-[var(--sf-muted,#5C5346)]">
+      <td className="pr-4 font-mono tabular-nums text-[11px] text-[var(--sf-muted,#5C5346)]">
         {format(dateMb, 'dd/MM', { locale: fr })}
       </td>
-      <td className="py-3 pl-4 text-right">
+      <td className="num">
         <form action={marquerActePorceletFait}>
           <input type="hidden" name="mise_bas_id" value={acte.miseBasId} />
           <input type="hidden" name="acte" value={acte.acte} />

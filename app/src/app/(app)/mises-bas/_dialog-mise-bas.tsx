@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -62,7 +63,9 @@ export function DialogMiseBas({
   saillies,
   defaultOpen = false,
 }: {
-  trigger: React.ReactNode
+  // Optionnel : trigger par defaut rendu DANS ce client component pour eviter
+  // le mismatch d'hydratation du passage RSC -> Client + Radix asChild.
+  trigger?: React.ReactNode
   saillies: SaillieMBOption[]
   defaultOpen?: boolean
 }) {
@@ -121,7 +124,16 @@ export function DialogMiseBas({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button size="lg" className="h-12 text-base">
+              <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
+              Nouvelle mise bas
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle

@@ -103,9 +103,9 @@ export default async function TipDetailPage({
       </div>
 
       {/* Résumé en intro */}
-      <Card className="bg-[var(--sf-surface-2,#EFE7D6)]/50">
+      <Card className="bg-[var(--sf-surface-2,#EFE7D6)]/50 border-l-4 border-l-[var(--sf-primary,#2D4A1F)]">
         <CardContent className="py-4">
-          <p className="text-sm text-[var(--sf-ink,#1a1a1a)] leading-relaxed italic">
+          <p className="text-[15px] text-[var(--sf-ink,#1a1a1a)] leading-relaxed italic font-[family-name:var(--sf-font-body)] [text-wrap:pretty]">
             {tip.resume}
           </p>
         </CardContent>
@@ -121,7 +121,7 @@ export default async function TipDetailPage({
               Contenu
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-[var(--sf-ink,#1a1a1a)] leading-relaxed">
+          <CardContent className="text-[15px] text-[var(--sf-ink,#1a1a1a)] leading-relaxed font-[family-name:var(--sf-font-body)] [text-wrap:pretty]">
             <MarkdownLite text={tip.contenu} />
           </CardContent>
         </Card>
@@ -205,7 +205,7 @@ type Block =
 function MarkdownLite({ text }: { text: string }) {
   const blocks = splitBlocks(text)
   return (
-    <div className="space-y-1">
+    <div className="space-y-3">
       {blocks.map((b, i) => (
         <React.Fragment key={i}>{renderBlock(b)}</React.Fragment>
       ))}
@@ -287,10 +287,10 @@ function renderBlock(b: Block): React.ReactNode {
     case 'heading': {
       const sizeCls =
         b.level === 1
-          ? 'text-lg font-bold mt-4 mb-2 text-[var(--sf-ink,#1a1a1a)]'
+          ? 'text-lg font-bold mt-5 mb-2 text-[var(--sf-ink,#1a1a1a)] font-[family-name:var(--sf-font-display)] tracking-tight'
           : b.level === 2
-          ? 'text-base font-bold mt-3 mb-1.5 text-[var(--sf-ink,#1a1a1a)]'
-          : 'text-sm font-semibold mt-2 mb-1 text-[var(--sf-ink,#1a1a1a)]'
+          ? 'text-base font-bold mt-4 mb-1.5 text-[var(--sf-ink,#1a1a1a)] font-[family-name:var(--sf-font-display)] tracking-tight'
+          : 'text-sm font-semibold mt-3 mb-1 text-[var(--sf-ink,#1a1a1a)]'
       return <div className={sizeCls}>{renderInline(b.content)}</div>
     }
     case 'list':
@@ -303,7 +303,7 @@ function renderBlock(b: Block): React.ReactNode {
       )
     case 'paragraph':
       return (
-        <p className="my-1.5 first:mt-0 last:mb-0 leading-relaxed">
+        <p className="first:mt-0 last:mb-0 leading-relaxed [text-wrap:pretty]">
           {renderInline(b.content)}
         </p>
       )

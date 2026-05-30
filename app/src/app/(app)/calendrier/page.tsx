@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
@@ -49,7 +48,10 @@ function priorityBadgeVariant(p: EvenementPrevu['priorite']): 'danger' | 'warnin
   return 'secondary'
 }
 
-function CarteEvenement({ e }: { e: EvenementPrevu }) {
+// État visuel .ech dérivé du bucket temporel (présentation pure)
+type EchState = 'late' | 'today' | 'soon'
+
+function CarteEvenement({ e, etat }: { e: EvenementPrevu; etat: EchState }) {
   const Icon = ICON_BY_TYPE[e.type] ?? Calendar
   const enRetard = e.retard_jours > 0
   const aujourdhui = e.retard_jours === 0
@@ -60,48 +62,32 @@ function CarteEvenement({ e }: { e: EvenementPrevu }) {
       : `dans ${-e.retard_jours}j`
 
   return (
-    <div className="flex items-start gap-3 py-3 px-2 hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.02))] transition-colors rounded-md">
-      <div
-        className="shrink-0 mt-0.5"
-        style={{ color: 'var(--sf-primary)' }}
-        aria-hidden
-      >
-        <Icon className="h-5 w-5" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-sm font-medium text-[var(--sf-ink,#1a1a1a)]">
-            {EVENEMENT_LABEL[e.type]}
-          </span>
-          <Badge variant={priorityBadgeVariant(e.priorite)}>
-            {e.priorite}
-          </Badge>
+    <Link href={e.href} className={`ech ${etat} group no-underline`}>
+      <span className="ed" aria-hidden />
+      <Icon className="h-[18px] w-[18px] shrink-0 text-[var(--ink-soft)]" aria-hidden />
+      <span className="et min-w-0 flex-1">
+        <b className="flex items-center gap-2 flex-wrap">
+          <span className="truncate">{EVENEMENT_LABEL[e.type]}</span>
+          <Badge variant={priorityBadgeVariant(e.priorite)}>{e.priorite}</Badge>
           {enRetard ? (
             <Badge variant="danger">{joursLabel}</Badge>
           ) : (
-            <span className="text-xs text-[var(--sf-muted,#5C5346)] tabular-nums">
+            <span className="text-[11px] font-normal text-[var(--mut)] tabular-nums">
               {joursLabel}
             </span>
           )}
-        </div>
-        <div className="text-xs text-[var(--sf-muted,#5C5346)] mt-1 truncate">
-          <span className="font-medium text-[var(--sf-ink-secondary,#3F362A)]">
-            {e.cible_label}
-          </span>
+        </b>
+        <small className="block truncate">
+          <span className="font-medium text-[var(--ink-soft)]">{e.cible_label}</span>
           {' · '}
           {e.description}
-        </div>
-        <div className="text-[11px] text-[var(--sf-muted,#5C5346)] mt-0.5 font-mono tabular-nums">
+        </small>
+        <small className="block tabular-nums">
           <FormattedDateTime date={e.date.toISOString()} />
-        </div>
-      </div>
-      <Link
-        href={e.href}
-        className="shrink-0 inline-flex items-center text-xs font-medium text-[var(--sf-primary)] hover:underline mt-1"
-      >
-        Voir <ChevronRight className="h-3.5 w-3.5" />
-      </Link>
-    </div>
+        </small>
+      </span>
+      <ChevronRight className="h-4 w-4 shrink-0 self-center text-[var(--mut)] transition-transform group-hover:translate-x-0.5" aria-hidden />
+    </Link>
   )
 }
 
@@ -116,45 +102,27 @@ function SectionEvenements({
 }) {
   if (evts.length === 0) return null
 
-  const styleByVariant: Record<typeof variant, { headerBg: string; cardBorder: string }> = {
-    retard: {
-      headerBg: 'var(--sf-danger-bg,#F1D4CE)',
-      cardBorder: 'var(--sf-danger-border,#7A2A1F)',
-    },
-    semaine: {
-      headerBg: 'var(--sf-warning-bg,#F5E0B8)',
-      cardBorder: 'var(--sf-warning-border,#A16207)',
-    },
-    quinzaine: {
-      headerBg: 'var(--sf-success-bg,#D6E3CC)',
-      cardBorder: 'var(--sf-success-border,#2D4A1F)',
-    },
-    mois: {
-      headerBg: 'var(--sf-info-bg,#D6E2EE)',
-      cardBorder: 'var(--sf-info-border,#1F3A55)',
-    },
+  // Bucket temporel → état visuel .ech (late rouge / today abricot / soon sage)
+  const echByVariant: Record<typeof variant, EchState> = {
+    retard: 'late',
+    semaine: 'today',
+    quinzaine: 'soon',
+    mois: 'soon',
   }
-  const st = styleByVariant[variant]
+  const etat = echByVariant[variant]
 
   return (
-    <Card style={{ borderColor: st.cardBorder, borderWidth: '1px' }}>
-      <CardHeader
-        className="flex flex-row items-center justify-between pb-3"
-        style={{ background: st.headerBg, borderTopLeftRadius: 'inherit', borderTopRightRadius: 'inherit' }}
-      >
-        <CardTitle className="eyebrow text-[13px] uppercase tracking-wider">
-          {title}
-        </CardTitle>
-        <Badge variant="outline">{evts.length}</Badge>
-      </CardHeader>
-      <CardContent className="pt-2">
-        <div className="divide-y divide-[var(--sf-line,rgba(0,0,0,0.08))]">
-          {evts.map((e) => (
-            <CarteEvenement key={e.id} e={e} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <section className="pn">
+      <div className="pn-h">
+        <h3>{title}</h3>
+        <span className="meta tabular-nums">{evts.length}</span>
+      </div>
+      <div className="flex flex-col gap-2">
+        {evts.map((e) => (
+          <CarteEvenement key={e.id} e={e} etat={etat} />
+        ))}
+      </div>
+    </section>
   )
 }
 
@@ -211,22 +179,22 @@ export default async function CalendrierPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-[var(--sf-ink,#1a1a1a)] flex items-center gap-2">
-            <Calendar className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <h1 className="text-4xl font-bold tracking-tight text-[var(--ink)] flex items-center gap-2 font-[family-name:var(--disp)]">
+            <Calendar className="h-7 w-7 text-[var(--sage)]" />
             Calendrier prévisionnel
           </h1>
-          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+          <p className="text-sm text-[var(--mut)] mt-1">
             Diagnostics, échographies, mises bas, sevrages, vaccins — projetés à partir des cycles physiologiques de la ferme.
           </p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           <div className="text-right">
-            <div className="text-xs text-[var(--sf-muted,#5C5346)] uppercase tracking-wider">
+            <div className="text-xs text-[var(--mut)] uppercase tracking-wider">
               30 prochains jours
             </div>
-            <div className="text-2xl font-bold tabular-nums text-[var(--sf-primary,#2D4A1F)]">
+            <div className="text-2xl font-bold tabular-nums text-[var(--sage)] font-[family-name:var(--disp)]">
               {total}
-              <span className="text-sm font-normal text-[var(--sf-muted,#5C5346)] ml-1">
+              <span className="text-sm font-normal text-[var(--mut)] ml-1">
                 évén.
               </span>
             </div>
@@ -256,17 +224,15 @@ export default async function CalendrierPage() {
             ctaSecondary={{ label: 'Voir le cheptel', href: '/cheptel' }}
           />
         ) : (
-          <Card>
-            <CardContent className="py-12 text-center">
-              <div className="text-5xl mb-3">✓</div>
-              <div className="text-lg font-semibold text-[var(--sf-primary,#2D4A1F)]">
-                Tout est à jour
-              </div>
-              <div className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
-                Aucun rendez-vous physiologique dans les 30 prochains jours.
-              </div>
-            </CardContent>
-          </Card>
+          <div className="pn py-12 text-center">
+            <div className="text-5xl mb-3 text-[var(--sage)]">✓</div>
+            <div className="text-lg font-semibold text-[var(--sage)] font-[family-name:var(--disp)]">
+              Tout est à jour
+            </div>
+            <div className="text-sm text-[var(--mut)] mt-1">
+              Aucun rendez-vous physiologique dans les 30 prochains jours.
+            </div>
+          </div>
         )
       ) : (
         <>

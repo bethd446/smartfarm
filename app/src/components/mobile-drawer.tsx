@@ -113,7 +113,7 @@ export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: 
               <div className="sidebar__id numeric truncate">{subline}</div>
             </div>
             <DialogPrimitive.Close
-              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-white/70 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md text-[var(--ink-soft)] hover:bg-[var(--sage-bg)] hover:text-[var(--ink)] focus:outline-none focus-visible:outline-2 focus-visible:outline-[var(--sf-primary,#2D4A1F)]"
               aria-label="Fermer le menu"
             >
               <X className="h-5 w-5" />
@@ -126,15 +126,15 @@ export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: 
               href="/onboarding"
               onClick={() => onOpenChange(false)}
               className={cn(
-                'mx-3 mt-3 rounded-md border border-amber-500/40 bg-amber-500/10',
-                'text-amber-200 hover:bg-amber-500/20 transition-colors',
+                'mx-3 mt-3 rounded-md border border-[var(--apri)] bg-[var(--apri-bg)]',
+                'text-[var(--apri-d)] hover:brightness-95 transition-colors',
                 'flex items-center gap-2 p-3 text-[11px] leading-tight',
               )}
             >
               <AlertTriangle className="h-4 w-4 shrink-0" />
               <span>
                 Aucune ferme.<br />
-                <span className="text-amber-100 underline">Configurer mon exploitation →</span>
+                <span className="text-[var(--apri-d)] underline">Configurer mon exploitation →</span>
               </span>
             </Link>
           )}
@@ -167,7 +167,7 @@ export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: 
 
           <div className="sidebar__user">
             <div
-              className="sidebar__avatar flex items-center justify-center text-[12px] font-bold text-white/90"
+              className="sidebar__avatar flex items-center justify-center text-[12px] font-bold text-[var(--sage-d)]"
               aria-hidden
             >
               {initiales}

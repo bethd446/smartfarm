@@ -277,54 +277,45 @@ export async function HistoriquePoids({ animalId, animalTag }: HistoriquePoidsPr
           <CardContent>
             {/* Desktop : table */}
             <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
+              <table className="tbl">
                 <thead>
-                  <tr
-                    className="border-b border-[var(--sf-line)]"
-                    style={{
-                      fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      fontSize: '11px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.1em',
-                      color: 'var(--sf-muted)',
-                    }}
-                  >
-                    <th className="text-left py-3 px-2">Date</th>
-                    <th className="text-right py-3 px-2">Poids (kg)</th>
-                    <th className="text-right py-3 px-2">Δ kg</th>
-                    <th className="text-right py-3 px-2">Δ jours</th>
-                    <th className="text-right py-3 px-2">GMQ (g/j)</th>
-                    <th className="text-left py-3 px-2">Contexte</th>
-                    <th className="text-left py-3 px-2">Notes</th>
+                  <tr>
+                    <th>Date</th>
+                    <th className="num">Poids (kg)</th>
+                    <th className="num">Δ kg</th>
+                    <th className="num">Δ jours</th>
+                    <th className="num">GMQ (g/j)</th>
+                    <th>Contexte</th>
+                    <th>Notes</th>
                   </tr>
                 </thead>
                 <tbody>
                   {peseesAvecGmq.map((p) => (
                     <tr
                       key={p.id}
-                      className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-1)]"
+                      className="hover:bg-[var(--sf-surface-1)]"
                       style={{
                         backgroundColor: p.isSynthetic
                           ? 'var(--sf-surface-1)'
                           : undefined,
                       }}
                     >
-                      <td className="py-3 px-2 font-mono tabular-nums text-[var(--sf-ink)]">
+                      <td className="font-mono tabular-nums text-[var(--sf-ink)]">
                         {new Date(p.date_pesee).toLocaleDateString('fr-FR')}
                       </td>
-                      <td className="py-3 px-2 font-mono tabular-nums font-bold text-right text-[var(--sf-primary)]">
+                      <td className="num font-mono tabular-nums font-bold text-[var(--sf-primary)]">
                         {p.poids_kg.toFixed(1)}
                       </td>
-                      <td className="py-3 px-2 font-mono tabular-nums text-right text-[var(--sf-muted)]">
+                      <td className="num font-mono tabular-nums text-[var(--sf-muted)]">
                         {p.deltaKg !== null
                           ? (p.deltaKg > 0 ? '+' : '') + p.deltaKg.toFixed(1)
                           : '—'}
                       </td>
-                      <td className="py-3 px-2 font-mono tabular-nums text-right text-[var(--sf-muted)]">
+                      <td className="num font-mono tabular-nums text-[var(--sf-muted)]">
                         {p.deltaJours !== null ? p.deltaJours : '—'}
                       </td>
                       <td
-                        className="py-3 px-2 font-mono tabular-nums font-bold text-right"
+                        className="num font-mono tabular-nums font-bold px-2"
                         style={{
                           color: p.gmqGJ !== null ? getToneColor(p.tone) : 'var(--sf-muted)',
                           backgroundColor:
@@ -333,12 +324,12 @@ export async function HistoriquePoids({ animalId, animalTag }: HistoriquePoidsPr
                       >
                         {p.gmqGJ !== null ? Math.round(p.gmqGJ) : '—'}
                       </td>
-                      <td className="py-3 px-2">
+                      <td>
                         <Badge variant="outline" className="capitalize">
                           {(p.contexte ?? 'contrôle').replace('_', ' ')}
                         </Badge>
                       </td>
-                      <td className="py-3 px-2 text-xs text-[var(--sf-muted)] max-w-xs truncate">
+                      <td className="text-xs text-[var(--sf-muted)] max-w-xs truncate">
                         {p.observations || (p.isSynthetic ? '(synthétique)' : '—')}
                       </td>
                     </tr>

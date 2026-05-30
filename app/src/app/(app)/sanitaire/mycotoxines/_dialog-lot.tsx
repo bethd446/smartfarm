@@ -15,6 +15,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -64,7 +65,10 @@ export function DialogEnregistrerLot({
   trigger,
   matieres,
 }: {
-  trigger: React.ReactNode
+  // Optionnel : si absent, un trigger par défaut est rendu DANS ce client
+  // component (évite le mismatch d'hydratation du passage RSC→Client + Radix
+  // asChild quand le <Button> est créé dans une page Server Component).
+  trigger?: React.ReactNode
   matieres: MpOpt[]
 }) {
   const [open, setOpen] = useState(false)
@@ -128,7 +132,16 @@ export function DialogEnregistrerLot({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as never} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="default" size="sm">
+              <Plus className="h-4 w-4 mr-1" />
+              Enregistrer un lot
+            </Button>
+          )) as never
+        }
+      />
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className={titleClass}>

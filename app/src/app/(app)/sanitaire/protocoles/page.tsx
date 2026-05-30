@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Syringe, Plus, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
+import { Syringe, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
 import { DialogProtocole, type ProtocoleRow } from './_dialog-protocole'
@@ -172,8 +172,8 @@ export default async function ProtocolesPage() {
             <ChevronLeft className="h-3 w-3" />
             Retour aux soins
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)] mt-1">
-            <Syringe className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+            <Syringe className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Protocoles vaccinaux
           </h1>
           <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
@@ -182,15 +182,7 @@ export default async function ProtocolesPage() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <FormResetStandards />
-          <DialogProtocole
-            mode="create"
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau protocole
-              </Button>
-            }
-          />
+          <DialogProtocole mode="create" />
         </div>
       </div>
 
@@ -346,15 +338,7 @@ export default async function ProtocolesPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 flex-wrap">
-                        <DialogProtocole
-                          mode="edit"
-                          initial={p}
-                          trigger={
-                            <Button variant="ghost" size="sm">
-                              Modifier
-                            </Button>
-                          }
-                        />
+                        <DialogProtocole mode="edit" initial={p} />
                         <FormToggleActif id={p.id} actif={p.actif} />
                         <FormDelete id={p.id} />
                       </div>

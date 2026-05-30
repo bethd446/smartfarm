@@ -15,7 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Baby, ChevronLeft, ShieldCheck } from 'lucide-react'
+import { Baby, ChevronLeft, ShieldCheck, Check, Clock } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Check J+1 mises-bas',
@@ -177,7 +177,12 @@ function Section({
   return (
     <section className="space-y-3">
       <header>
-        <h2 className="text-xl font-semibold text-[var(--sf-ink)]">{title}</h2>
+        <h2
+          className="text-xl font-semibold text-[var(--sf-ink)] tracking-[-0.01em]"
+          style={{ fontFamily: 'var(--sf-font-display)' }}
+        >
+          {title}
+        </h2>
         <p className="text-sm text-[var(--sf-muted)]">{description}</p>
       </header>
       <div className="grid gap-4">{children}</div>
@@ -227,6 +232,20 @@ function CheckCard({
                   }${mb.dernier_jour_check !== null ? ` (dernier J+${mb.dernier_jour_check})` : ''}`}
             </CardDescription>
           </div>
+        </div>
+        {/* Récap néonatal — état dérivé (lecture seule), gabarit .bio ok/todo */}
+        <div className={`bio mt-3 ${mb.nb_checks > 0 ? 'ok' : 'todo'}`}>
+          <span className="bk">
+            {mb.nb_checks > 0 ? <Check /> : <Clock />}
+          </span>
+          <span className="bl2">
+            <b>Suivi néonatal {mb.nb_checks > 0 ? 'enregistré' : 'à faire'}</b>
+            <small>
+              {mb.nb_checks > 0
+                ? `Dernier pointage J+${mb.dernier_jour_check ?? 0}`
+                : 'Aucun pointage saisi pour cette portée'}
+            </small>
+          </span>
         </div>
       </CardHeader>
       <CardContent>

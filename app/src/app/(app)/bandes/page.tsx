@@ -1,12 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
-import { Layers, Plus } from 'lucide-react'
+import { Layers } from 'lucide-react'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
-import { BandesFab } from './_fab'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 
 export default async function BandesPage() {
@@ -20,30 +18,33 @@ export default async function BandesPage() {
 
   const bandes = (bandesData ?? []) as any[]
 
-  const statutColors: Record<string, string> = {
-    preparation: 'bg-slate-100 text-slate-700',
-    active: 'bg-emerald-100 text-emerald-700',
-    sevree: 'bg-blue-100 text-blue-700',
-    engraissement: 'bg-amber-100 text-amber-700',
-    finie: 'bg-violet-100 text-violet-700',
+  const statutVariant: Record<string, 'default' | 'secondary' | 'outline' | 'success' | 'warning' | 'info'> = {
+    preparation: 'secondary',
+    active: 'success',
+    sevree: 'outline',
+    engraissement: 'warning',
+    finie: 'info',
+  }
+  const statutLabel: Record<string, string> = {
+    preparation: 'Préparation',
+    active: 'Active',
+    sevree: 'Sevrée',
+    engraissement: 'Engraissement',
+    finie: 'Finie',
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-7">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-amber-600" />Bandes</h1>
-          <p className="text-sm text-slate-500 mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
+          <h1 className="text-4xl font-bold flex items-center gap-3 tracking-[-0.02em] text-[var(--ink)] font-[family-name:var(--disp)]">
+            <Layers className="h-7 w-7 text-[var(--sage)]" />Bandes
+          </h1>
+          <p className="text-sm text-[var(--mut)] mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="bandes" />
-          <DialogNouvelleBande
-            trigger={
-              <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700">
-                <Plus className="h-5 w-5 mr-2" />Nouvelle bande
-              </Button>
-            }
-          />
+          <DialogNouvelleBande />
         </div>
       </div>
 
@@ -57,26 +58,25 @@ export default async function BandesPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {bandes.map((b: any) => (
-            <Card key={b.id} className="hover:shadow-md transition-shadow">
+            <Card key={b.id} className="transition-shadow hover:shadow-[var(--sh-sm)]">
               <CardHeader>
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-3">
                   <div>
-                    <CardTitle className="text-base">{b.nom}</CardTitle>
-                    <div className="text-xs text-slate-500 font-mono mt-1">{b.code}</div>
+                    <CardTitle className="text-base font-[family-name:var(--disp)] tracking-[-0.01em]">{b.nom}</CardTitle>
+                    <div className="text-xs text-[var(--mut)] font-mono mt-1">{b.code}</div>
                   </div>
-                  <Badge className={statutColors[b.statut] ?? 'bg-slate-100'}>{b.statut}</Badge>
+                  <Badge variant={statutVariant[b.statut] ?? 'secondary'}>{statutLabel[b.statut] ?? b.statut}</Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-slate-500">Début</span><span className="font-mono">{b.date_debut ? <FormattedDateTime date={b.date_debut} format="date" /> : '—'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Fin prévue</span><span className="font-mono">{b.date_fin_prevue ? <FormattedDateTime date={b.date_fin_prevue} format="date" /> : '—'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Effectif</span><span className="font-mono font-bold text-emerald-700">{b.bande_animaux?.length ?? 0}</span></div>
+              <CardContent className="space-y-2.5 text-sm">
+                <div className="flex justify-between"><span className="text-[var(--mut)]">Début</span><span className="font-mono text-[var(--ink-soft)]">{b.date_debut ? <FormattedDateTime date={b.date_debut} format="date" /> : '—'}</span></div>
+                <div className="flex justify-between"><span className="text-[var(--mut)]">Fin prévue</span><span className="font-mono text-[var(--ink-soft)]">{b.date_fin_prevue ? <FormattedDateTime date={b.date_fin_prevue} format="date" /> : '—'}</span></div>
+                <div className="flex justify-between items-baseline border-t border-[var(--line)] pt-2.5 mt-1"><span className="text-[var(--mut)]">Effectif</span><span className="font-[family-name:var(--disp)] font-bold tabular-nums text-xl leading-none text-[var(--sage-d)]">{b.bande_animaux?.length ?? 0}</span></div>
               </CardContent>
             </Card>
           ))}
         </div>
       )}
-      <BandesFab />
     </div>
   )
 }

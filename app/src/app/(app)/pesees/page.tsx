@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { EmptyState, ErrorState } from '@/components/ui/states'
 import { Scale } from 'lucide-react'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { ActionsPeser } from './_actions-peser'
-import { PeseesFab } from './_fab'
 
 export default async function PeseesPage({
   searchParams,
@@ -30,10 +30,10 @@ export default async function PeseesPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-4xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-            <Scale className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />Pesées
+          <h1 className="text-4xl font-bold flex items-center gap-2 text-[var(--ink)]">
+            <Scale className="h-7 w-7 text-[var(--sage)]" />Pesées
           </h1>
-          <p className="text-sm text-stone-700 mt-1">Gain par jour · Courbes de poids</p>
+          <p className="text-sm text-[var(--mut)] mt-1">Gain par jour · Courbes de poids</p>
         </div>
         <ActionsPeser
           animaux={animaux ?? []}
@@ -44,23 +44,16 @@ export default async function PeseesPage({
       </div>
 
       {peseesErr ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Scale className="h-12 w-12 mx-auto text-[var(--sf-danger-ink,#7A2A1F)] mb-3" />
-            <p className="eyebrow text-[12px] text-[var(--sf-danger-ink,#7A2A1F)]">Erreur de chargement des pesées</p>
-            <p className="text-sm text-stone-700 mt-2">{peseesErr.message}</p>
-          </CardContent>
-        </Card>
+        <ErrorState
+          title="Erreur de chargement des pesées"
+          message={peseesErr.message}
+        />
       ) : (!pesees || pesees.length === 0) ? (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <Scale className="h-12 w-12 mx-auto text-[var(--sf-line,rgba(0,0,0,0.2))] mb-3" />
-            <p className="eyebrow text-[12px] text-stone-700">Aucune pesée pour l'instant</p>
-            <p className="text-sm text-stone-700 mt-2">
-              Commence par peser un animal.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={<Scale className="h-[22px] w-[22px]" strokeWidth={1.8} />}
+          title="Aucune pesée pour l'instant"
+          message="Commence par peser un animal."
+        />
       ) : (
         <Card>
           <CardHeader>
@@ -68,28 +61,28 @@ export default async function PeseesPage({
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="border-b border-[var(--sf-ink,#1a1a1a)] text-left">
-                  <tr className="eyebrow text-[11px] text-stone-700">
-                    <th className="pb-3 pr-4 font-semibold">Date</th>
-                    <th className="pb-3 pr-4 font-semibold">Sujet</th>
-                    <th className="pb-3 pr-4 font-semibold">Type</th>
-                    <th className="pb-3 pr-4 font-semibold">Poids</th>
+              <table className="tbl">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Sujet</th>
+                    <th>Type</th>
+                    <th className="num">Poids</th>
                   </tr>
                 </thead>
                 <tbody>
                   {pesees.map((p: any) => (
-                    <tr key={p.id} className="border-b border-[var(--sf-line,rgba(0,0,0,0.12))]">
-                      <td className="py-3 pr-4 font-mono tabular-nums text-[var(--sf-ink,#1a1a1a)]">
+                    <tr key={p.id}>
+                      <td className="font-mono tabular-nums text-[var(--mut)]">
                         <FormattedDateTime date={p.date_pesee} format="date" />
                       </td>
-                      <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
+                      <td className="text-[var(--ink)]">
                         {p.animal?.nom ?? '—'}
                       </td>
-                      <td className="py-3 pr-4">
+                      <td>
                         <Badge variant="outline">{p.type}</Badge>
                       </td>
-                      <td className="py-3 pr-4 font-mono tabular-nums font-bold text-[var(--sf-ink,#1a1a1a)]">
+                      <td className="num font-mono tabular-nums font-bold text-[var(--ink)]">
                         {p.poids_kg} kg
                       </td>
                     </tr>
@@ -100,7 +93,6 @@ export default async function PeseesPage({
           </CardContent>
         </Card>
       )}
-      <PeseesFab animaux={animaux ?? []} bandes={bandes ?? []} />
     </div>
   )
 }

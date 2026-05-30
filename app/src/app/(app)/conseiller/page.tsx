@@ -161,11 +161,14 @@ export default async function ConseillerPage({
     <div className="space-y-6">
       {/* Header */}
       <header className="space-y-2">
+        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
+          Base de connaissances
+        </div>
         <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
           <Lightbulb className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
           Conseiller
         </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)]">
+        <p className="text-sm text-[var(--sf-muted,#5C5346)] font-[family-name:var(--sf-font-body)]">
           Conseils techniques pour gérer ton élevage porcin
         </p>
       </header>
@@ -278,9 +281,9 @@ export default async function ConseillerPage({
 
       {/* Grille de tips */}
       {tips.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--sf-muted,#5C5346)]/30 p-10 text-center">
+        <div className="sf-empty">
           <AlertTriangle className="mx-auto h-10 w-10 text-[var(--sf-muted,#5C5346)]" />
-          <p className="mt-3 text-sm text-[var(--sf-muted,#5C5346)]">
+          <p className="mt-3 text-sm text-[var(--sf-muted,#5C5346)] font-[family-name:var(--sf-font-body)]">
             {tableMissing
               ? 'Le catalogue est en cours de construction. Les conseils arriveront bientôt.'
               : total === 0

@@ -152,8 +152,8 @@ export function Sidebar({ user, ferme }: SidebarProps) {
         <Link
           href="/onboarding"
           className={cn(
-            'mx-3 mt-3 rounded-md border border-amber-500/40 bg-amber-500/10',
-            'text-amber-200 hover:bg-amber-500/20 transition-colors',
+            'mx-3 mt-3 rounded-md border border-[var(--apri)] bg-[var(--apri-bg)]',
+            'text-[var(--apri-d)] hover:brightness-95 transition-colors',
             'flex items-center gap-2 p-2 text-[11px] leading-tight',
           )}
           title="Aucune ferme. Configurez votre exploitation."
@@ -161,7 +161,7 @@ export function Sidebar({ user, ferme }: SidebarProps) {
           <AlertTriangle className="h-4 w-4 shrink-0" />
           <span>
             Aucune ferme.<br />
-            <span className="text-amber-100 underline">Configurer mon exploitation →</span>
+            <span className="text-[var(--apri-d)] underline">Configurer mon exploitation →</span>
           </span>
         </Link>
       )}
@@ -198,7 +198,7 @@ export function Sidebar({ user, ferme }: SidebarProps) {
 
       <div className="sidebar__user">
         <div
-          className="sidebar__avatar flex items-center justify-center text-[12px] font-bold text-white/90"
+          className="sidebar__avatar flex items-center justify-center text-[12px] font-bold text-[var(--sage-d)]"
           aria-hidden
         >
           {initiales}
