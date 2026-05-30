@@ -56,6 +56,20 @@ coverage
 .claude-memory/
 # Worktrees Git internes (Claude Code dispatch d'agents isolés)
 .claude/worktrees/
+# Screenshots/binaires lourds des rapports d'agents et d'audits (les rapports .md restent versionnés)
+/agents/**/*.png
+/agents/**/*.jpg
+/agents/**/*.jpeg
+/agents/**/*.webp
+/agents/**/*.gif
+/agents/**/*.pdf
+/agents/**/*.zip
+/.audits/**/*.png
+/.audits/**/*.jpg
+/.audits/**/*.jpeg
+/.audits/**/*.webp
+/.audits/**/*.gif
+/.audits/**/*.zip
 
 # ---- Playwright auth storageState ----
 # storageState contient JWT démo, ne jamais commiter
