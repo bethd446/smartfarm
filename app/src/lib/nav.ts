@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, PiggyBank, Heart, Baby,
   Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, Calendar, Zap, Skull,
+  MessageCircle, Calendar, Zap, Skull,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -39,7 +39,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: '/stock',           label: 'Stock',           icon: Package,         group: 'Sanitaire & alim' },
 
   // Outils
-  { href: '/assistant',       label: 'Assistant',       icon: Sparkles,        group: 'Outils' },
+  { href: '/assistant',       label: 'Assistant',       icon: MessageCircle,        group: 'Outils' },
   { href: '/parametres',      label: 'Paramètres',      icon: Settings,        group: 'Outils' },
 ]
 
