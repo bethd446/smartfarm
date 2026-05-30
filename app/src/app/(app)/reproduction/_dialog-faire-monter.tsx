@@ -168,7 +168,6 @@ export function DialogFaireMonter({
             >
               <option value="naturelle">Naturelle</option>
               <option value="IA">Insémination artificielle</option>
-              <option value="IA_double">IA double</option>
             </select>
           </div>
 
