@@ -192,7 +192,7 @@ export default async function ReproductionPage({
             <span className="font-semibold tabular-nums text-[var(--sf-ink)]">
               {saillies?.length ?? 0}
             </span>{' '}
-            montées enregistrées
+            saillies enregistrées
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -307,13 +307,13 @@ export default async function ReproductionPage({
         </section>
       )}
 
-      {/* === Historique des montées : registre dense, trait top primary + lignes hairline === */}
+      {/* === Historique des saillies : registre dense, trait top primary + lignes hairline === */}
       <section aria-labelledby="repro-historique-titre">
         <h2
           id="repro-historique-titre"
           className="font-[family-name:var(--sf-font-display)] text-xl uppercase tracking-wide text-[var(--sf-ink)] mt-6 mb-3"
         >
-          Historique des montées
+          Historique des saillies
         </h2>
         <h3
           className="eyebrow text-[var(--sf-muted)] mb-2"
@@ -330,7 +330,7 @@ export default async function ReproductionPage({
           <EmptyState
             icon={Heart}
             title="Aucune saillie enregistrée"
-            description="Dès qu'une truie est saillie par un verrat ou inséminée, enregistre la montée pour suivre la gestation et la performance de reproduction."
+            description="Dès qu'une truie est saillie par un verrat ou inséminée, enregistre la saillie pour suivre la gestation et la performance de reproduction."
           />
         ) : (
         <div

@@ -31,8 +31,8 @@ function toneIc(v: number | null | undefined): 'good' | 'warn' | 'bad' | 'muted'
   if (v === null || v === undefined) return 'muted'
   const n = Number(v)
   if (!Number.isFinite(n)) return 'muted'
-  if (n >= 2.6 && n <= 2.8) return 'good'
-  if (n > 2.8 && n <= 3.2) return 'warn'
+  if (n <= 2.8) return 'good'
+  if (n <= 3.2) return 'warn'
   return 'bad'
 }
 

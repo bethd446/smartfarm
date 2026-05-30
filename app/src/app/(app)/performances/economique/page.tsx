@@ -111,7 +111,7 @@ export default async function EconomiquePage({
   const dateDebutStr = dateDebut.toISOString().split('T')[0]
 
   // ===== 1. FETCH CONSOMMATIONS ALIMENT + FORMULATIONS =====
-  const { data: consommationsData } = await sb
+  const { data: consommationsData, error: consoErr } = await sb
     .from('consommations_aliment')
     .select(
       `
@@ -119,13 +119,14 @@ export default async function EconomiquePage({
       date,
       bande_id,
       formule_id,
-      formulations!inner(cout_kg_xof),
-      bandes!inner(nom)
+      formule:formule_id(cout_kg_fcfa),
+      bandes(nom)
     `
     )
     .gte('date', dateDebutStr)
     .order('date')
 
+  if (consoErr) console.error('[economique] consommations_aliment:', consoErr.message)
   const consommations = consommationsData ?? []
 
   // Fallback coût si formulation sans prix
@@ -133,7 +134,7 @@ export default async function EconomiquePage({
 
   // Calculer coût total aliment période
   const coutTotalAliment = consommations.reduce((sum, c: any) => {
-    const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+    const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
     return sum + c.qte_kg * coutKg
   }, 0)
 
@@ -179,7 +180,7 @@ export default async function EconomiquePage({
 
   consommations.forEach((c: any) => {
     const bandeNom = c.bandes?.nom ?? 'Inconnue'
-    const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+    const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
     const cout = c.qte_kg * coutKg
 
     if (bandesMap.has(bandeNom)) {
@@ -222,7 +223,7 @@ export default async function EconomiquePage({
       (c: any) => c.date >= moisDebut && c.date <= moisFin
     )
     const coutMois = consoMois.reduce((sum, c: any) => {
-      const coutKg = c.formulations?.cout_kg_xof ?? COUT_FALLBACK_XOF_KG
+      const coutKg = c.formule?.cout_kg_fcfa ?? COUT_FALLBACK_XOF_KG
       return sum + c.qte_kg * coutKg
     }, 0)
 

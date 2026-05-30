@@ -38,7 +38,7 @@ export async function SanitaireStats() {
       period: 'calendrier',
       label: 'Actes en retard',
       value: `${stats.actesEnRetard}`,
-      sub: 'Vaccins / soins a rattraper',
+      sub: 'Vaccins / soins à rattraper',
     },
     {
       icon: Activity,
