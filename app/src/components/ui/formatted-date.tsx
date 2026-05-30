@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { formatDateCivile } from '@/lib/format/dates'
 
-type Props = { 
+type Props = {
   date: string | Date
-  /** Format court (dd/MM/yy HH:mm) ou complet (toLocaleString) */
-  format?: 'short' | 'long' 
+  /** Date civile (JJ/MM/AAAA), format court (dd/MM/yy HH:mm) ou complet (toLocaleString) */
+  format?: 'date' | 'short' | 'long'
 }
 
 /**
@@ -24,7 +25,9 @@ export function FormattedDateTime({ date, format = 'short' }: Props) {
   
   useEffect(() => {
     const d = typeof date === 'string' ? new Date(date) : date
-    if (format === 'short') {
+    if (format === 'date') {
+      setLabel(formatDateCivile(d))
+    } else if (format === 'short') {
       setLabel(d.toLocaleString('fr-FR', {
         day: '2-digit',
         month: '2-digit',
