@@ -17,7 +17,6 @@ import {
 } from '@/components/ui/table'
 import {
   Banknote,
-  Plus,
   ChevronLeft,
   AlertTriangle,
 } from 'lucide-react'
@@ -269,15 +268,7 @@ export default async function MatieresPrixPage({
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <DialogPrix
-            matieres={matieres}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau prix
-              </Button>
-            }
-          />
+          <DialogPrix matieres={matieres} />
         </div>
       </div>
 

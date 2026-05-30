@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
-import { Syringe, Plus, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
+import { Syringe, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
 import { DialogActe, type ProduitOption } from './_dialog-acte'
 
 export const metadata: Metadata = { title: 'Actes sanitaires' }
@@ -224,12 +224,6 @@ export default async function ActesSanitairesPage({
             </>
           )}
           <DialogActe
-            trigger={
-              <Button size="lg" className="h-12">
-                <Plus className="h-5 w-5 mr-2" />
-                Enregistrer traitement
-              </Button>
-            }
             animaux={animaux}
             bandes={bandes}
             produits={produits}

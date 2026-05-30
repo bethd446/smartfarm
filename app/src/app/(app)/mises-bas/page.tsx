@@ -2,11 +2,10 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
 import { RelativeTime } from '@/components/ui/relative-time'
-import { Baby, Plus, Scissors, ArrowLeftRight, Heart, Milk, Activity } from 'lucide-react'
+import { Baby, Heart, Milk, Activity } from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { TERRAIN } from '@/lib/terrain-labels'
@@ -275,44 +274,14 @@ export default async function MisesBasPage({
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="mises_bas" />
-          <DialogAdoption
-            mises_bas_allaitantes={misesBasAllaitantes}
-            trigger={
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 text-base"
-                disabled={misesBasAllaitantes.length < 2}
-                title={
-                  misesBasAllaitantes.length < 2
-                    ? 'Il faut au moins 2 portées en allaitement (≤35j)'
-                    : undefined
-                }
-              >
-                <ArrowLeftRight className="h-5 w-5 mr-2" />
-                Adoption
-              </Button>
-            }
-          />
+          <DialogAdoption mises_bas_allaitantes={misesBasAllaitantes} />
           <DialogSevrage
             mises_bas_sans_sevrage={misesBasSansSevrage}
             batiments_disponibles={batimentsDisponibles}
-            trigger={
-              <Button variant="outline" size="lg" className="h-12 text-base">
-                <Scissors className="h-5 w-5 mr-2" />
-                Sevrage
-              </Button>
-            }
           />
           <DialogMiseBas
             saillies={saillesPourMb}
             defaultOpen={autoOpenNew}
-            trigger={
-              <Button size="lg" className="h-12 text-base">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouvelle mise bas
-              </Button>
-            }
           />
         </div>
       </div>
@@ -495,17 +464,6 @@ export default async function MisesBasPage({
                           <DialogAdoption
                             mises_bas_allaitantes={misesBasAllaitantes}
                             source_id_prefill={m.id}
-                            trigger={
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="sm"
-                                className="h-9 text-[11px] uppercase tracking-wider"
-                              >
-                                <ArrowLeftRight className="h-3.5 w-3.5 mr-1.5" />
-                                Adopter
-                              </Button>
-                            }
                           />
                         ) : (
                           <span className="text-[var(--sf-subtle)] text-xs">—</span>

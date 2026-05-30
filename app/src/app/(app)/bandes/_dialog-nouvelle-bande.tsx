@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Plus } from 'lucide-react'
 import { creerBande } from './_server-actions'
 
 const SELECT_CLASS =
@@ -37,6 +38,17 @@ export function DialogNouvelleBande({
   const [isPending, startTransition] = useTransition()
   const today = new Date().toISOString().slice(0, 10)
 
+  // Trigger interne par défaut uniquement en mode non contrôlé (page Server).
+  // En mode contrôlé (FAB client open/onOpenChange), aucun trigger rendu.
+  const isControlled = controlledOpen !== undefined
+  const resolvedTrigger =
+    trigger ??
+    (isControlled ? null : (
+      <Button size="lg" className="h-12 text-base bg-[var(--sf-accent-warm,#A16207)] hover:opacity-90">
+        <Plus className="h-5 w-5 mr-2" />Nouvelle bande
+      </Button>
+    ))
+
   function handleSubmit(formData: FormData) {
     startTransition(async () => {
       const res = await creerBande(formData)
@@ -51,7 +63,7 @@ export function DialogNouvelleBande({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {trigger && <DialogTrigger render={trigger as any} />}
+      {resolvedTrigger && <DialogTrigger render={resolvedTrigger as any} />}
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

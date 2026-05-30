@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/table'
 import {
   Calendar,
-  Plus,
   ChevronLeft,
   TrendingDown,
   AlertTriangle,
@@ -350,12 +349,6 @@ export default async function PlansAlimentationPage(props: {
             mode="create"
             bandes={bandes}
             formules={formules}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau plan
-              </Button>
-            }
           />
         </div>
       </div>

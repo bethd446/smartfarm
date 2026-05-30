@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { RelativeTime } from '@/components/ui/relative-time'
-import { Skull, Plus, Calendar, TrendingDown, AlertTriangle } from 'lucide-react'
+import { Skull, Calendar, TrendingDown, AlertTriangle } from 'lucide-react'
 import { DialogMortalite } from './_dialog-mortalite'
 import type { AnimalOption, BandeOption } from './_dialog-mortalite'
 import {
@@ -175,20 +175,6 @@ export default async function MortalitesPage({
     console.warn('[mortalites] bandes indisponible, mode animal-only:', e)
   }
 
-  const triggerButton = (
-    <Button
-      size="lg"
-      className="h-12 text-base"
-      style={{
-        background: 'var(--sf-danger-ink, #7A2A1F)',
-        color: '#fff',
-      }}
-    >
-      <Plus className="h-5 w-5 mr-2" />
-      Déclarer mortalité
-    </Button>
-  )
-
   // Cellules bandeau KPI dense (Pattern A — alimentation/_components/nutrition-stats).
   const kpiCells = [
     {
@@ -250,7 +236,6 @@ export default async function MortalitesPage({
             bandes={bandesOptions}
             bandesAvailable={bandesAvailable}
             defaultOpen={autoOpenNew}
-            trigger={triggerButton}
           />
         </div>
       </div>

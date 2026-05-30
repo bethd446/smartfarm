@@ -129,12 +129,6 @@ export default async function ConsommationsPage() {
             mode="create"
             bandes={bandes}
             formules={formules}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouvelle saisie
-              </Button>
-            }
           />
         </div>
       </div>

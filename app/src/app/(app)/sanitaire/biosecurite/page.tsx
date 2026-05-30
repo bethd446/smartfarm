@@ -21,7 +21,6 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 import {
   Shield,
-  Plus,
   ChevronLeft,
   CheckCircle2,
   Users,
@@ -227,14 +226,7 @@ export default async function BiosecuritePage() {
             transports.
           </p>
         </div>
-        <DialogNouvelleVisite
-          trigger={
-            <Button variant="default" size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Nouvelle visite
-            </Button>
-          }
-        />
+        <DialogNouvelleVisite />
       </div>
 
       {/* CHECKLIST ----------------------------------------------------------- */}

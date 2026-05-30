@@ -2,7 +2,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { Bug, Plus, ChevronLeft } from 'lucide-react'
@@ -325,15 +324,7 @@ export default async function MycotoxinesPage() {
             qu&apos;un lot reçu depuis plus de 7 jours reste non analysé.
           </p>
         </div>
-        <DialogEnregistrerLot
-          trigger={
-            <Button variant="default" size="sm" className="whitespace-nowrap">
-              <Plus aria-hidden="true" className="h-4 w-4 mr-1" />
-              Enregistrer un lot
-            </Button>
-          }
-          matieres={matieres}
-        />
+        <DialogEnregistrerLot matieres={matieres} />
       </div>
 
       {/* BILAN — bande dense, sévérité par dot (forme), pas de fond coloré ----- */}

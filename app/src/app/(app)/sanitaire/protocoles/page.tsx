@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Syringe, Plus, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
+import { Syringe, ChevronLeft, RotateCcw, ShieldCheck } from 'lucide-react'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 
 import { DialogProtocole, type ProtocoleRow } from './_dialog-protocole'
@@ -182,15 +182,7 @@ export default async function ProtocolesPage() {
         </div>
         <div className="flex gap-2 flex-wrap">
           <FormResetStandards />
-          <DialogProtocole
-            mode="create"
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau protocole
-              </Button>
-            }
-          />
+          <DialogProtocole mode="create" />
         </div>
       </div>
 
@@ -346,15 +338,7 @@ export default async function ProtocolesPage() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1 flex-wrap">
-                        <DialogProtocole
-                          mode="edit"
-                          initial={p}
-                          trigger={
-                            <Button variant="ghost" size="sm">
-                              Modifier
-                            </Button>
-                          }
-                        />
+                        <DialogProtocole mode="edit" initial={p} />
                         <FormToggleActif id={p.id} actif={p.actif} />
                         <FormDelete id={p.id} />
                       </div>

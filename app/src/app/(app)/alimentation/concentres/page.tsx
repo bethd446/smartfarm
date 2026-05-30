@@ -11,7 +11,6 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Package,
-  Plus,
   ChevronLeft,
   RotateCcw,
   Factory,
@@ -234,12 +233,7 @@ export default async function ConcentresPage({
                 observations: null,
               } as MatiereRow
             }
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau concentré
-              </Button>
-            }
+            createLabel="Nouveau concentré"
           />
         </div>
       </div>

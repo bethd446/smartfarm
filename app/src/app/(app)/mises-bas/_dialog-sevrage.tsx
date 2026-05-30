@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Scissors } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -59,7 +60,7 @@ export function DialogSevrage({
   mises_bas_sans_sevrage,
   batiments_disponibles,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   mises_bas_sans_sevrage: MiseBasOption[]
   batiments_disponibles: BatimentOption[]
 }) {
@@ -142,7 +143,16 @@ export function DialogSevrage({
         if (!o) setStep(1)
       }}
     >
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="outline" size="lg" className="h-12 text-base">
+              <Scissors className="h-5 w-5 mr-2" aria-hidden="true" />
+              Sevrage
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

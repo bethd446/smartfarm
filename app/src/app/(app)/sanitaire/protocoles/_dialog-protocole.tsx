@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -52,7 +53,9 @@ export type ProtocoleRow = {
 type Mode = 'create' | 'edit'
 
 type Props = {
-  trigger: React.ReactNode
+  // Optionnel : trigger par défaut dérivé du mode (rendu côté client) pour
+  // éviter le mismatch d'hydratation du passage RSC→Client + Radix asChild.
+  trigger?: React.ReactNode
   mode?: Mode
   initial?: ProtocoleRow | null
 }
@@ -140,9 +143,21 @@ export function DialogProtocole({ trigger, mode = 'create', initial = null }: Pr
     }
   }
 
+  const defaultTrigger =
+    mode === 'edit' ? (
+      <Button variant="ghost" size="sm">
+        Modifier
+      </Button>
+    ) : (
+      <Button variant="default" size="sm">
+        <Plus className="h-4 w-4 mr-1" aria-hidden="true" />
+        Nouveau protocole
+      </Button>
+    )
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as never} />
+      <DialogTrigger render={(trigger ?? defaultTrigger) as never} />
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className={titleClass}>

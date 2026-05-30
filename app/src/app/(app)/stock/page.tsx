@@ -1,13 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ExportButton } from '@/components/export-button'
 import {
   Package,
-  Plus,
   AlertTriangle,
-  ArrowDown,
-  ArrowUp,
   Boxes,
   Coins,
   Truck,
@@ -121,33 +117,11 @@ export default async function StockPage() {
         <div className="flex gap-2 flex-wrap">
           <ExportButton table="matieres_premieres" />
           <DialogEntreeStock
-            trigger={
-              <Button variant="outline" size="lg">
-                <ArrowUp className="h-5 w-5 mr-2" />
-                Entrée
-              </Button>
-            }
             matieres={(stocks ?? []) as any}
             fournisseurs={(fournisseurs ?? []) as any}
           />
-          <DialogSortieStock
-            trigger={
-              <Button variant="outline" size="lg">
-                <ArrowDown className="h-5 w-5 mr-2" />
-                Sortie
-              </Button>
-            }
-            matieres={(stocks ?? []) as any}
-          />
-          <DialogNouvelleMatiere
-            trigger={
-              // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
-              <Button variant="accent" size="lg" className="hidden lg:inline-flex">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouveau matériel
-              </Button>
-            }
-          />
+          <DialogSortieStock matieres={(stocks ?? []) as any} />
+          <DialogNouvelleMatiere />
         </div>
       </div>
 

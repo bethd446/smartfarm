@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { ArrowLeftRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -68,7 +69,9 @@ export function DialogAdoption({
   mises_bas_allaitantes,
   source_id_prefill,
 }: {
-  trigger: React.ReactNode
+  // Optionnel : trigger par défaut dérivé ci-dessous (rendu côté client) pour
+  // éviter le mismatch d'hydratation du passage RSC→Client + Radix asChild.
+  trigger?: React.ReactNode
   mises_bas_allaitantes: MiseBasAllaitanteOption[]
   source_id_prefill?: string
 }) {
@@ -150,9 +153,38 @@ export function DialogAdoption({
     (m) => m.id !== sourceId
   )
 
+  // Trigger par défaut dérivé du contexte (rendu DANS ce client component) :
+  // ligne de tableau si source_id_prefill, sinon en-tête (disabled si < 2 portées).
+  const defaultTrigger = source_id_prefill ? (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      className="h-9 text-[11px] uppercase tracking-wider"
+    >
+      <ArrowLeftRight className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+      Adopter
+    </Button>
+  ) : (
+    <Button
+      variant="outline"
+      size="lg"
+      className="h-12 text-base"
+      disabled={mises_bas_allaitantes.length < 2}
+      title={
+        mises_bas_allaitantes.length < 2
+          ? 'Il faut au moins 2 portées en allaitement (≤35j)'
+          : undefined
+      }
+    >
+      <ArrowLeftRight className="h-5 w-5 mr-2" aria-hidden="true" />
+      Adoption
+    </Button>
+  )
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger render={(trigger ?? defaultTrigger) as any} />
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

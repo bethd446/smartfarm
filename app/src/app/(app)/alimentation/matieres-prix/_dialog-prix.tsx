@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Plus } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
@@ -32,7 +33,7 @@ import { ajouterPrixMatiere } from './_actions'
 type Matiere = { id: string; nom: string }
 
 type Props = {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   matieres: Matiere[]
 }
 
@@ -95,7 +96,16 @@ export function DialogPrix({ trigger, matieres }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger render={trigger as never} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="default" size="sm">
+              <Plus className="h-4 w-4 mr-1" />
+              Nouveau prix
+            </Button>
+          )) as never
+        }
+      />
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={titleClass}>

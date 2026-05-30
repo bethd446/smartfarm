@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Wheat, Plus, ChevronLeft, RotateCcw, Search, AlertTriangle } from 'lucide-react'
+import { Wheat, ChevronLeft, RotateCcw, Search, AlertTriangle } from 'lucide-react'
 
 import { DialogMatiere, type MatiereRow } from './_dialog-matiere'
 import {
@@ -217,15 +217,7 @@ export default async function MatieresPage({
         </div>
         <div className="flex gap-2 flex-wrap">
           <FormResetStandards />
-          <DialogMatiere
-            mode="create"
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouvelle matière
-              </Button>
-            }
-          />
+          <DialogMatiere mode="create" />
         </div>
       </div>
 

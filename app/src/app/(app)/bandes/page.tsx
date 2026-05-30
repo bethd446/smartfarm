@@ -1,11 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
 import type { ComponentProps } from 'react'
-import { Layers, Plus } from 'lucide-react'
+import { Layers } from 'lucide-react'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
 import { BandesFab } from './_fab'
 
@@ -41,13 +40,7 @@ export default async function BandesPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="bandes" />
-          <DialogNouvelleBande
-            trigger={
-              <Button size="lg" className="h-12 text-base bg-[var(--sf-accent-warm,#A16207)] hover:opacity-90">
-                <Plus className="h-5 w-5 mr-2" />Nouvelle bande
-              </Button>
-            }
-          />
+          <DialogNouvelleBande />
         </div>
       </div>
 

@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Plus } from 'lucide-react'
 
 import { enregistrerVisite } from './_actions'
 
@@ -64,7 +65,7 @@ function FieldError({ message }: { message?: string }) {
   )
 }
 
-export function DialogNouvelleVisite({ trigger }: { trigger: React.ReactNode }) {
+export function DialogNouvelleVisite({ trigger }: { trigger?: React.ReactNode }) {
   const [open, setOpen] = useState(false)
   const today = new Date().toISOString().slice(0, 16) // datetime-local
 
@@ -128,7 +129,16 @@ export function DialogNouvelleVisite({ trigger }: { trigger: React.ReactNode }) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as never} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="default" size="sm">
+              <Plus className="h-4 w-4 mr-1" aria-hidden="true" />
+              Nouvelle visite
+            </Button>
+          )) as never
+        }
+      />
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle className={titleClass}>Nouvelle visite</DialogTitle>

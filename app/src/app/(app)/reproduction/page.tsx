@@ -2,12 +2,11 @@ import type { Metadata } from 'next'
 import type { CSSProperties } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { PageTitle } from '@/components/ui/page-title'
 import { EmptyState } from '@/components/ui/empty-state'
 import { RelativeTime } from '@/components/ui/relative-time'
 import { ExportButton } from '@/components/export-button'
-import { Heart, Plus, Stethoscope } from 'lucide-react'
+import { Heart } from 'lucide-react'
 import { diagnosticLabel } from '@/lib/terrain-labels'
 import { DialogFaireMonter } from './_dialog-faire-monter'
 import { DialogDiagnostic } from './_dialog-diagnostic'
@@ -203,24 +202,12 @@ export default async function ReproductionPage({
             verrats={verrats ?? []}
             bandes={bandes ?? []}
             defaultOpen={sp.action === 'diag'}
-            trigger={
-              <Button variant="outline" size="lg" className="h-12 text-base">
-                <Stethoscope className="h-5 w-5 mr-2" />
-                Diagnostic gestation
-              </Button>
-            }
           />
           <DialogFaireMonter
             truies={truies ?? []}
             verrats={verrats ?? []}
             bandes={bandes ?? []}
             defaultOpen={sp.action === 'new'}
-            trigger={
-              <Button size="lg" className="h-12 text-base">
-                <Plus className="h-5 w-5 mr-2" />
-                Nouvelle saillie
-              </Button>
-            }
           />
         </div>
       </div>
@@ -294,12 +281,7 @@ export default async function ReproductionPage({
                   verrats={verrats ?? []}
                   bandes={bandes ?? []}
                   defaultSaillieId={s.saillie_id}
-                  trigger={
-                    <Button size="sm" variant="outline" className="shrink-0 min-h-11">
-                      <Stethoscope className="h-4 w-4 mr-1" aria-hidden="true" />
-                      Diagnostiquer
-                    </Button>
-                  }
+                  triggerKind="inline"
                 />
               </li>
             ))}
