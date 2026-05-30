@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { CalendarDays, AlertCircle, BellRing, Clock, Syringe, Calendar } from 'lucide-react'
+import { CalendarDays, AlertCircle, BellRing, Clock, Syringe, Calendar, CheckCircle2 } from 'lucide-react'
 import { EmptyOnboarding } from '@/components/ui/empty-onboarding'
 import { format } from 'date-fns'
 import { fr } from 'date-fns/locale'
@@ -66,13 +66,14 @@ export default async function CalendrierSanitairePage({
     <div className="space-y-6">
       {toastKind === 'success' && toastMsg ? (
         <div
-          className="rounded-md px-4 py-3 text-sm"
+          className="rounded-md px-4 py-3 text-sm flex items-center gap-2"
           style={{
             background: 'var(--sf-success-bg, #D6E3CC)',
             color: 'var(--sf-success-ink, #1F3B12)',
           }}
         >
-          ✅ {decodeURIComponent(toastMsg)}
+          <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {decodeURIComponent(toastMsg)}
         </div>
       ) : null}
       {toastKind === 'error' && toastMsg ? (

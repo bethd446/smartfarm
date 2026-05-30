@@ -115,7 +115,7 @@ export function ResponsiveTable<T extends Record<string, any>>({
           return (
             <div
               key={getRowKey(item)}
-              className="rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface)] p-4 space-y-2"
+              className="rounded-md border border-[var(--sf-line)] bg-[var(--sf-surface-0)] p-4 space-y-2"
             >
               {/* Titre card = colonne primary */}
               <div

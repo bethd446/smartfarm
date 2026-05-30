@@ -24,6 +24,7 @@ import {
   type AnimalOption,
   type BandeOption,
 } from './_dialog-faire-monter'
+import { Lightbulb } from 'lucide-react'
 
 type FormData = z.input<typeof diagnosticSchema>
 
@@ -378,8 +379,9 @@ export function DialogDiagnostic({
                   borderColor: 'var(--sf-warning-ink, #5C4416)',
                 }}
               >
-                <div className="font-semibold mb-1">
-                  💡 Truie revenue en chaleur
+                <div className="font-semibold mb-1 flex items-center gap-2">
+                  <Lightbulb className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  Truie revenue en chaleur
                 </div>
                 <p className="text-xs leading-relaxed">
                   Prévoir une nouvelle saillie sous{' '}

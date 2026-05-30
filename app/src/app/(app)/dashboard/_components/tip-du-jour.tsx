@@ -1,23 +1,18 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Lightbulb, ArrowRight } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
+import { Lightbulb, ArrowUpRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import { EmptyState } from '@/components/ui/empty-state'
 import { createClient } from '@/lib/supabase/server'
 
 /**
- * Smart Farm — TipDuJour widget (C2-SCHEMA + V2-H polish)
+ * Smart Farm — Note d'atelier « Tip du jour » (pied du poste de travail)
  * -------------------------------------------------------------------------
- * Card "💡 Tip du jour" sur le dashboard avec image héro à gauche.
- * Tip pseudo-aléatoire mais déterministe par jour : tous les utilisateurs
- * voient le même tip le même jour (formule : tips[dayOfYear % total]).
+ * Bande horizontale sobre (registre note d'atelier, PAS card-héro marketing).
+ * Vignette image compacte à gauche, conseil dense à droite, lien d'ouverture.
+ * Tip pseudo-aléatoire déterministe par jour : tips[dayOfYear % total].
  *
- * Résilient : si la table tips_conseiller n'existe pas encore ou est vide,
- * affiche un EmptyState propre.
- *
- * Visuel héro : l'image vient de /public/images/ds/icons/r1-*.webp. Mapping
- * catégorie → image thématique (fallback r1-mise-bas).
+ * Résilient : si la table tips_conseiller n'existe pas / est vide,
+ * affiche une note minimale sans héro.
  */
 
 const CATEGORIE_LABELS: Record<string, string> = {
@@ -41,16 +36,7 @@ const CATEGORIE_BADGE_VARIANT: Record<
   installation: 'default',
 }
 
-/**
- * Mapping catégorie → image héro (assets r1-*.webp disponibles).
- * Choix thématique :
- *  - reproduction → saillie
- *  - sanitaire    → mortalité (signal sanitaire le plus fort)
- *  - nutrition    → stock-aliment
- *  - conduite     → regroupement
- *  - economique   → reforme-perf
- *  - installation → transition
- */
+/** Mapping catégorie → image héro (assets r1-*.webp disponibles). */
 const CATEGORIE_IMAGE: Record<string, string> = {
   reproduction: '/images/ds/icons/r8-saillie.webp',
   sanitaire: '/images/ds/icons/r4-mortalite.webp',
@@ -62,17 +48,14 @@ const CATEGORIE_IMAGE: Record<string, string> = {
 
 const FALLBACK_IMAGE = '/images/ds/icons/r1-mise-bas.webp'
 
-/**
- * Mapping catégorie → fond de la zone héro (aplats sémantiques carnet).
- * Utilise les tokens success/warning/danger/info-bg quand pertinent.
- */
+/** Mapping catégorie → fond de la vignette (aplats sémantiques carnet). */
 const CATEGORIE_BG: Record<string, string> = {
-  reproduction: 'var(--sf-info-bg, #D7E4F2)',
-  sanitaire: 'var(--sf-danger-bg, #F1D4CE)',
+  reproduction: 'var(--sf-info-bg, #CDD9E3)',
+  sanitaire: 'var(--sf-danger-bg, #F4CCC8)',
   nutrition: 'var(--sf-success-bg, #DCE9CB)',
-  conduite: 'var(--sf-surface-2, #F1ECE0)',
-  economique: 'var(--sf-warning-bg, #F5E6C5)',
-  installation: 'var(--sf-warm, #F5EBD9)',
+  conduite: 'var(--sf-surface-2, #FEF3C7)',
+  economique: 'var(--sf-warning-bg, #FBE7C4)',
+  installation: 'var(--sf-warm, #FFFBEB)',
 }
 
 /** Numéro du jour de l'année 1..366 (UTC pour stabilité). */
@@ -82,12 +65,11 @@ function dayOfYearUTC(d: Date): number {
   return Math.floor((now - start) / 86_400_000)
 }
 
-const MAX_RESUME = 180
+const MAX_RESUME = 150
 
 export async function TipDuJour() {
   const sb = await createClient()
 
-  // Resilience : si la table n'existe pas, on dégrade en empty state.
   let total = 0
   let tips: Array<{
     slug: string
@@ -97,7 +79,6 @@ export async function TipDuJour() {
   }> = []
 
   try {
-    // 1) Compte total
     const { count } = await sb
       .from('tips_conseiller')
       .select('*', { count: 'exact', head: true })
@@ -107,7 +88,6 @@ export async function TipDuJour() {
   }
 
   if (total > 0) {
-    // Index déterministe pour aujourd'hui
     const idx = dayOfYearUTC(new Date()) % total
     try {
       const { data } = await sb
@@ -123,103 +103,89 @@ export async function TipDuJour() {
 
   const tip = tips[0]
 
-  const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
-  const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+  const panelLabel =
+    'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.16em] text-[var(--sf-muted)] font-bold'
+  const openCls =
+    'group/open inline-flex items-center gap-1 min-h-[44px] py-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline'
 
-  // Pas de tip → EmptyState dans une Card simple (pas de héro)
+  // Pas de tip → note minimale, registre atelier
   if (!tip) {
     return (
-      <Card className="h-full min-h-[320px]">
-        <CardContent className="pt-6">
-          <div className="flex items-baseline justify-between gap-3 mb-4">
-            <h2 className={eyebrowCls}>
-              <Lightbulb className="inline size-3 mr-1 -mt-0.5" aria-hidden />
-              Tip du jour
-            </h2>
-            <Link href="/conseiller" className={seeAllCls}>
-              Voir tous →
-            </Link>
-          </div>
-          <EmptyState
-            icon={Lightbulb}
-            title="Conseiller en construction"
-            description="Le catalogue de 300 conseils sera bientôt disponible."
-            cta={{ label: 'Explorer le conseiller', href: '/conseiller' }}
-          />
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-between gap-3 border border-[var(--sf-line)] bg-[var(--sf-surface-1)] px-4 py-3">
+        <div className="flex items-center gap-3">
+          <Lightbulb className="size-4 shrink-0 text-[var(--sf-accent-deep)]" aria-hidden />
+          <span className="text-sm text-[var(--sf-muted)]">
+            <span className={panelLabel}>Conseil du jour</span>
+            <span className="ml-2">Catalogue de conseils en construction.</span>
+          </span>
+        </div>
+        <Link href="/conseiller" className={openCls}>
+          Conseiller
+          <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+        </Link>
+      </div>
     )
   }
 
-  // Tip présent → carte héro avec image à gauche, texte à droite
   const heroImage = CATEGORIE_IMAGE[tip.categorie] ?? FALLBACK_IMAGE
-  const heroBg = CATEGORIE_BG[tip.categorie] ?? 'var(--sf-warm, #F5EBD9)'
+  const heroBg = CATEGORIE_BG[tip.categorie] ?? 'var(--sf-warm, #FFFBEB)'
   const resumeText =
     tip.resume.length > MAX_RESUME
       ? tip.resume.slice(0, MAX_RESUME).trimEnd() + '…'
       : tip.resume
 
   return (
-    <Card className="h-full min-h-[320px] overflow-hidden">
-      <div className="grid h-full grid-cols-1 md:grid-cols-[180px_1fr]">
-        {/* Zone héro : aplat thématique + image r1-*.webp */}
-        <div
-          className="relative h-32 md:h-auto md:min-h-[320px] flex items-center justify-center"
-          style={{ background: heroBg }}
-          aria-hidden
-        >
-          <Image
-            src={heroImage}
-            alt=""
-            width={140}
-            height={140}
-            className="object-contain p-4 max-h-full"
-            priority={false}
-          />
-        </div>
-
-        {/* Zone texte */}
-        <div className="flex flex-col p-5">
-          <div className="flex items-baseline justify-between gap-3 mb-3">
-            <h2 className={eyebrowCls}>
-              <Lightbulb className="inline size-3 mr-1 -mt-0.5" aria-hidden />
-              Tip du jour
-            </h2>
-            <Link href="/conseiller" className={seeAllCls}>
-              Voir tous →
-            </Link>
-          </div>
-
-          <Badge
-            variant={CATEGORIE_BADGE_VARIANT[tip.categorie] ?? 'secondary'}
-            className="self-start mb-2"
-          >
-            {CATEGORIE_LABELS[tip.categorie] ?? tip.categorie}
-          </Badge>
-
-          <Link
-            href={`/conseiller/${tip.slug}`}
-            className="block text-base font-semibold text-[var(--sf-ink)] hover:underline leading-tight mb-2"
-          >
-            {tip.titre}
-          </Link>
-
-          <p className="text-sm text-[var(--sf-muted)] leading-relaxed flex-1">
-            {resumeText}
-          </p>
-
-          <Link
-            href={`/conseiller/${tip.slug}`}
-            className="inline-flex items-center gap-1 text-sm font-medium text-[var(--sf-primary)] hover:underline mt-3"
-          >
-            Lire le conseil
-            <ArrowRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+    <div className="flex items-stretch gap-0 border border-[var(--sf-line)] bg-[var(--sf-surface-0)]">
+      {/* Vignette compacte — aplat thématique + asset r*.webp */}
+      <div
+        className="relative hidden w-[88px] shrink-0 items-center justify-center border-r border-[var(--sf-line)] sm:flex"
+        style={{ background: heroBg }}
+        aria-hidden
+      >
+        <Image
+          src={heroImage}
+          alt=""
+          width={56}
+          height={56}
+          className="object-contain p-2"
+          priority={false}
+        />
       </div>
-    </Card>
+
+      {/* Texte dense */}
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 px-4 py-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="size-3.5 shrink-0 text-[var(--sf-accent-deep)]" aria-hidden />
+            <span className={panelLabel}>Conseil du jour</span>
+            <Badge variant={CATEGORIE_BADGE_VARIANT[tip.categorie] ?? 'secondary'}>
+              {CATEGORIE_LABELS[tip.categorie] ?? tip.categorie}
+            </Badge>
+          </div>
+          <Link href="/conseiller" className={`${openCls} hidden sm:inline-flex`}>
+            Conseiller
+            <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+          </Link>
+        </div>
+
+        <Link
+          href={`/conseiller/${tip.slug}`}
+          className="text-[15px] font-semibold leading-tight text-[var(--sf-ink)] hover:underline"
+        >
+          {tip.titre}
+        </Link>
+
+        <p className="text-sm leading-snug text-[var(--sf-muted)]">{resumeText}</p>
+
+        <Link
+          href={`/conseiller/${tip.slug}`}
+          className="group/open mt-0.5 inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+        >
+          Lire le conseil
+          <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+        </Link>
+      </div>
+    </div>
   )
 }
 

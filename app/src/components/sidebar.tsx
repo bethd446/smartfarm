@@ -6,109 +6,20 @@ import { cn } from '@/lib/utils'
 import { deconnexionAction } from '@/app/(auth)/_actions'
 import { GlobalSearch } from '@/components/global-search'
 import {
-  LayoutDashboard, PiggyBank, Heart, Baby,
-  Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle, LogOut, Calendar, Zap, Skull,
-} from 'lucide-react'
+  NAV_ITEMS, NAV_GROUPS,
+  type SidebarUser, type SidebarFerme,
+  getInitiales, getNomComplet, getRoleLabel, getBrandSubline,
+} from '@/lib/nav'
+import { AlertTriangle, LogOut } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
-// V2-HARMONIE (HARM-A) — sidebar 4 groupes / 14 menus
-// Refonte v1.0 (2026-05-23) : structure BEM .sidebar__* conforme au design system
-// S6 (2026-05-27) : rename Pilotage→Aujourd'hui, fusion Santé+Alimentation→Sanitaire & alim
-// ZIP smartfarm-design-v1/components/sidebar.html — CSS dans design-v1.css
+// V2-HARMONIE (HARM-A) — sidebar desktop. La nav vit dans @/lib/nav (source
+// unique partagée avec mobile-drawer.tsx) pour éviter toute désynchro.
+// Structure BEM .sidebar__* — styles dans design-v1.css.
 // ---------------------------------------------------------------------------
-const nav = [
-  // Aujourd'hui
-  { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: "Aujourd'hui" },
-  { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: "Aujourd'hui" },
-  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: "Aujourd'hui" },
-  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: "Aujourd'hui" },
-  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: "Aujourd'hui" },
-
-  // Élevage
-  { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
-  { href: '/batiments',             label: 'Bâtiments',             icon: Building2,       group: 'Élevage' },
-  { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
-  { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
-  { href: '/mortalites',            label: 'Mortalités',            icon: Skull,           group: 'Élevage' },
-
-  // Sanitaire & alim
-  { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Sanitaire & alim' },
-  { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Sanitaire & alim' },
-  { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Sanitaire & alim' },
-
-  // Outils
-  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Outils' },
-  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Outils' },
-]
-
-// ---------------------------------------------------------------------------
-// L2 Sprint 1 — Types pour user/ferme injectés depuis le layout serveur.
-// ---------------------------------------------------------------------------
-export interface SidebarUser {
-  prenom: string | null
-  nom: string | null
-  role: string | null
-  numero_client: string | null
-  email: string | null
-}
-
-export interface SidebarFerme {
-  nom: string
-  localisation: string | null
-}
-
 export interface SidebarProps {
   user: SidebarUser | null
   ferme: SidebarFerme | null
-}
-
-// ---------------------------------------------------------------------------
-// Helpers identité (partagés sidebar/mobile-drawer si besoin plus tard)
-// ---------------------------------------------------------------------------
-export function getInitiales(u: SidebarUser | null): string {
-  if (!u) return '?'
-  const p = (u.prenom ?? '').trim()
-  const n = (u.nom ?? '').trim()
-  if (p && n) return (p[0] + n[0]).toUpperCase()
-  if (p) return p[0].toUpperCase()
-  if (n) return n[0].toUpperCase()
-  if (u.email) return u.email[0].toUpperCase()
-  return '?'
-}
-
-export function getNomComplet(u: SidebarUser | null): string {
-  if (!u) return 'Utilisateur'
-  const p = (u.prenom ?? '').trim()
-  const n = (u.nom ?? '').trim()
-  if (p && n) return `${p} ${n}`
-  if (p) return p
-  if (n) return n
-  if (u.email) return u.email
-  return 'Utilisateur'
-}
-
-export function getRoleLabel(u: SidebarUser | null): string {
-  if (!u?.role) return '—'
-  const r = u.role.toLowerCase()
-  if (r === 'admin') return 'Administrateur'
-  if (r === 'superadmin') return 'Super admin'
-  if (r === 'viewer') return 'Lecteur'
-  if (r === 'editor') return 'Éditeur'
-  return r.charAt(0).toUpperCase() + r.slice(1)
-}
-
-/**
- * Branding ligne 2 : "SF-XXXXXX · Localisation"
- * Si pas de code → fallback sur localisation seule. Si pas de loc → code seul.
- */
-function getBrandSubline(user: SidebarUser | null, ferme: SidebarFerme | null): string {
-  const code = user?.numero_client?.trim() || ''
-  const loc = ferme?.localisation?.trim() || ''
-  if (code && loc) return `${code} · ${loc}`
-  if (code) return code
-  if (loc) return loc
-  return 'Élevage porcin · CI'
 }
 
 /**
@@ -122,7 +33,6 @@ function getBrandSubline(user: SidebarUser | null, ferme: SidebarFerme | null): 
  */
 export function Sidebar({ user, ferme }: SidebarProps) {
   const pathname = usePathname()
-  const groups = Array.from(new Set(nav.map(n => n.group)))
 
   const initiales = getInitiales(user)
   const nomComplet = getNomComplet(user)
@@ -172,10 +82,10 @@ export function Sidebar({ user, ferme }: SidebarProps) {
       </div>
 
       <nav className="sidebar__nav">
-        {groups.map(group => (
+        {NAV_GROUPS.map(group => (
           <div className="sidebar__group" key={group}>
             <div className="sidebar__group-title">{group}</div>
-            {nav.filter(n => n.group === group).map(item => {
+            {NAV_ITEMS.filter(n => n.group === group).map(item => {
               const active = pathname === item.href
               const Icon = item.icon
               return (

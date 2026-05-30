@@ -511,25 +511,25 @@ export default async function PlansAlimentationPage(props: {
       <div className="flex gap-2 flex-wrap text-xs">
         <Link
           href="/alimentation/plans"
-          className={`px-3 py-1.5 rounded-md border ${!filtreStatut && !filtreBande ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-slate-200 hover:bg-slate-50'}`}
+          className={`px-3 py-1.5 rounded-md border ${!filtreStatut && !filtreBande ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-[var(--sf-line,#E7E5E4)] hover:bg-[var(--sf-surface-1)]'}`}
         >
           Tous
         </Link>
         <Link
           href="/alimentation/plans?statut=en_cours"
-          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'en_cours' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-slate-200 hover:bg-slate-50'}`}
+          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'en_cours' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-[var(--sf-line,#E7E5E4)] hover:bg-[var(--sf-surface-1)]'}`}
         >
           En cours
         </Link>
         <Link
           href="/alimentation/plans?statut=a_venir"
-          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'a_venir' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-slate-200 hover:bg-slate-50'}`}
+          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'a_venir' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-[var(--sf-line,#E7E5E4)] hover:bg-[var(--sf-surface-1)]'}`}
         >
           À venir
         </Link>
         <Link
           href="/alimentation/plans?statut=termine"
-          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'termine' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-slate-200 hover:bg-slate-50'}`}
+          className={`px-3 py-1.5 rounded-md border ${filtreStatut === 'termine' ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-transparent' : 'border-[var(--sf-line,#E7E5E4)] hover:bg-[var(--sf-surface-1)]'}`}
         >
           Terminés
         </Link>

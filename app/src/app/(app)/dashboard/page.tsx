@@ -1,10 +1,22 @@
-import { PageTitle } from '@/components/ui/page-title'
+/* Hallmark · macrostructure: 05-workbench · screen: /dashboard · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P5 H5 E4 S5 R4 V5 */
 import { createClient } from '@/lib/supabase/server'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui/empty-state'
 import Link from 'next/link'
-import { PiggyBank, AlertCircle, Clock, Calendar, Baby, CheckCircle2, Zap, Skull, Target, Hourglass } from 'lucide-react'
+import {
+  AlertCircle,
+  Clock,
+  Calendar,
+  Baby,
+  CheckCircle2,
+  Zap,
+  Skull,
+  Target,
+  Hourglass,
+  ListChecks,
+  ArrowUpRight,
+  PackageOpen,
+} from 'lucide-react'
 import { toneTauxPortee } from '@/lib/colors'
 import { AnimalLabel } from '@/components/ui/animal-label'
 import { TYPE_LABELS, cleanDescription } from '@/lib/terrain-labels'
@@ -30,11 +42,9 @@ function prioMeta(p: number | string | null | undefined): {
   Icon: typeof AlertCircle
   label: string
 } {
-  // Forme numérique historique
   if (p === 1) return { variant: 'danger', Icon: AlertCircle, label: 'URGENT' }
   if (p === 2) return { variant: 'warning', Icon: Clock, label: 'IMPORTANT' }
   if (p === 3) return { variant: 'info', Icon: Calendar, label: 'NORMAL' }
-  // Forme sémantique renvoyée par v_calendrier_repro (critique, elevee, ...)
   if (typeof p === 'string') {
     const s = p.toLowerCase().replace(/^p[_-]?/, '')
     if (s === 'critique' || s === 'urgent')
@@ -119,119 +129,175 @@ export default async function DashboardPage() {
 
   // Compteur stocks en alerte (stock < seuil_alerte) — helper centralisé
   const nbStocksAlerte = (stockAlertes ?? []).filter(isAlerte).length
+  const evts = prochainsEvts ?? []
+  const evtsRetard = evts.filter((e: any) => (e.jours_restants ?? 0) < 0).length
 
-  // Eyebrow réutilisable : Big Shoulders 11 px uppercase tracking 0.18em muted
-  const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
+  // === Voix du registre carnet/atelier ===
+  // Étiquette de colonne d'établi : Big Shoulders 11px uppercase, tracking serré
+  const panelLabel =
+    'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.16em] text-[var(--sf-muted)] font-bold'
+  // Lien d'ouverture d'établi — texte autonome, touch 44px, hover underline
+  const openCls =
+    'group/open inline-flex items-center gap-1 min-h-[44px] py-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline'
 
-  // Link "Voir tout" réutilisable — min-h 44 px mobile pour touch target
-  const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+  // Relevé d'atelier (status-bar du poste) — pas de hero-chiffre, lecture en bande
+  const releve: Array<{ k: string; v: number; href: string }> = [
+    { k: 'Cheptel actif', v: nbAnimaux ?? 0, href: '/cheptel' },
+    { k: 'Truies', v: nbTruies ?? 0, href: '/cheptel?categorie=truie' },
+    { k: 'Verrats', v: nbVerrats ?? 0, href: '/cheptel?categorie=verrat' },
+    { k: 'Portées · 8 sem.', v: nbBandesActives ?? 0, href: '/mises-bas' },
+  ]
 
   return (
-    <div className="space-y-8">
-      {/* === HEADER PageTitle === */}
-      <PageTitle
-        eyebrow={`PILOTAGE · ${today}${fermeNom ? ' · ' + fermeNom.toUpperCase() : ''}`}
-        icon={<PiggyBank className="h-9 w-9 text-[var(--sf-primary)]" />}
-      >
-        Tableau de bord
-      </PageTitle>
+    <div className="space-y-6 lg:space-y-7">
+      {/* ====================================================================
+          EN-TÊTE DE POSTE — workbench « lite »
+          Titre fonctionnel discret + relevé d'atelier en bande (status-bar).
+          Remplace le hero-chiffre géant : les effectifs deviennent un relevé
+          dense, pas une vedette. C'est ce qui distingue /dashboard de /kpi.
+      ==================================================================== */}
+      <header className="border-b-2 border-[var(--sf-primary)] pb-4">
+        <p className={panelLabel}>
+          Poste de travail · {today}{fermeNom ? ' · ' + fermeNom.toUpperCase() : ''}
+        </p>
+        <div className="mt-1 flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
+          <h1 className="font-[family-name:var(--sf-font-display)] text-3xl sm:text-4xl font-black uppercase tracking-[0.02em] text-[var(--sf-ink)] leading-[1.02] [overflow-wrap:anywhere] min-w-0">
+            Tableau de bord
+          </h1>
+          {/* Relevé d'atelier — effectifs en notation tabulaire, filets entre cellules.
+              Grille 2×2 sur mobile (320px safe), bande de 4 sur sm+. */}
+          <dl className="grid w-full grid-cols-2 gap-px border border-[var(--sf-line)] bg-[var(--sf-line)] sm:flex sm:w-auto sm:gap-0">
+            {releve.map((r) => (
+              <Link
+                key={r.k}
+                href={r.href}
+                className="flex min-w-[84px] flex-col gap-0.5 bg-[var(--sf-surface-0)] px-3.5 py-2 transition-colors hover:bg-[var(--sf-surface-1)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--sf-focus)] sm:border-l sm:border-[var(--sf-line)] sm:first:border-l-0"
+              >
+                <dt className="font-[family-name:var(--sf-font-display)] uppercase text-[9px] tracking-[0.14em] text-[var(--sf-subtle)] font-bold leading-none whitespace-nowrap">
+                  {r.k}
+                </dt>
+                <dd className="font-[family-name:var(--sf-font-display)] text-[26px] font-black leading-none tabular-nums text-[var(--sf-primary)]">
+                  {r.v}
+                </dd>
+              </Link>
+            ))}
+          </dl>
+        </div>
+      </header>
 
-      {/* === KPI GRID ASYMÉTRIQUE — hero géant + stack 3 === */}
-      <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-        {/* KPI HERO : Cheptel total — domine visuellement */}
-        <Card
-          className="relative overflow-hidden min-h-[280px]"
-          style={{ background: 'var(--sf-warm)' }}
-        >
-          {/* Fond ambiance — icône cochon en filigrane */}
-          <PiggyBank
-            aria-hidden
-            className="absolute pointer-events-none text-[var(--sf-primary)]"
-            strokeWidth={1.25}
-            style={{
-              right: '-20px',
-              bottom: '-20px',
-              width: '200px',
-              height: '200px',
-              opacity: 0.08,
-            }}
-          />
-          <CardContent className="relative z-10 flex flex-col h-full min-h-[280px]">
-            {/* Eyebrow + label en haut */}
-            <div>
-              <div className={eyebrowCls}>Cheptel (les animaux) · {today}</div>
-              <div className="font-[family-name:var(--sf-font-display)] uppercase text-xs tracking-[0.14em] text-[var(--sf-ink)] font-bold mt-2">
-                Cheptel total
-              </div>
-              <div className="text-xs italic text-[var(--sf-muted)] mt-1">
-                tous animaux actifs
-              </div>
-            </div>
-            {/* Chiffre centré dans le bloc */}
-            <div className="flex-1 flex items-center">
-              <div
-                className="text-[var(--sf-primary)] leading-[0.9] tabular-nums tracking-[-0.03em]"
-                style={{
-                  fontFamily: 'var(--sf-font-display)',
-                  fontWeight: 700,
-                  fontSize: 'clamp(96px, 18vw, 160px)',
-                }}
-              >
-                {nbAnimaux ?? 0}
-              </div>
-            </div>
-            {/* Pied : bandes actives */}
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[10px] tracking-[0.14em] text-[var(--sf-subtle)]">
-              {nbBandesActives ?? 0} portée{(nbBandesActives ?? 0) > 1 ? 's' : ''} (8 dernières sem.)
-            </div>
-          </CardContent>
-        </Card>
+      {/* ====================================================================
+          ZONE 1 — À TRAITER AUJOURD'HUI (la file de travail du poste)
+          Deux établis côte à côte : Alertes actives + Échéances en retard.
+          Orientés action, denses, filet de section comme séparateur.
+      ==================================================================== */}
+      <section aria-labelledby="zone-traiter">
+        <div className="mb-3 flex items-center gap-3">
+          <ListChecks className="size-4 text-[var(--sf-primary)]" aria-hidden />
+          <h2
+            id="zone-traiter"
+            className="font-[family-name:var(--sf-font-display)] uppercase text-[13px] tracking-[0.14em] text-[var(--sf-ink)] font-bold"
+          >
+            À traiter aujourd&apos;hui
+          </h2>
+          <span className="h-px flex-1 bg-[var(--sf-line)]" aria-hidden />
+          {evtsRetard > 0 && (
+            <Badge variant="danger">
+              <AlertCircle className="size-3" aria-hidden />
+              <span className="tabular-nums">{evtsRetard} en retard</span>
+            </Badge>
+          )}
+        </div>
 
-        {/* Stack droite — 3 Cards dégressives, totalisent min-h-[280px] */}
-        <div className="flex flex-col gap-4 min-h-[280px]">
-          <Card className="flex-1">
-            <CardContent className="flex flex-col justify-between h-full p-5">
-              <div className={eyebrowCls}>Truies actives</div>
-              <div
-                className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-primary)] leading-none tabular-nums self-end"
-                style={{ fontSize: '48px' }}
-              >
-                {nbTruies ?? 0}
+        <div className="grid grid-cols-1 lg:grid-cols-2 border border-[var(--sf-line)] divide-y lg:divide-y-0 lg:divide-x divide-[var(--sf-line)] bg-[var(--sf-surface-0)]">
+          {/* Établi A — Alertes actives (panneau dense, sans card-héro) */}
+          <AlertesWidget />
+
+          {/* Établi B — Échéances en retard / à venir */}
+          <div className="flex min-w-0 flex-col p-4">
+            <div className="flex items-center justify-between gap-3 pb-2">
+              <h3 className={panelLabel}>Échéances repro &amp; soins</h3>
+              <Link href="/calendrier" className={openCls}>
+                Calendrier
+                <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+              </Link>
+            </div>
+            {evts.length === 0 ? (
+              <div className="flex flex-1 items-center justify-center py-6">
+                <EmptyState
+                  icon={CheckCircle2}
+                  tone="good"
+                  title="Aucune échéance en attente"
+                  description="Rien de planifié dans les 30 prochains jours."
+                />
               </div>
-            </CardContent>
-          </Card>
-          <Card className="flex-1">
-            <CardContent className="flex flex-col justify-between h-full p-5">
-              <div className={eyebrowCls}>Verrats actifs</div>
-              <div
-                className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-accent)] leading-none tabular-nums self-end"
-                style={{ fontSize: '36px' }}
-              >
-                {nbVerrats ?? 0}
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="flex-1">
-            <CardContent className="flex flex-col justify-between h-full p-5">
-              <div className={eyebrowCls}>Portées récentes</div>
-              <div
-                className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink)] leading-none tabular-nums self-end"
-                style={{ fontSize: '28px' }}
-              >
-                {nbBandesActives ?? 0}
-              </div>
-            </CardContent>
-          </Card>
+            ) : (
+              <ul className="-mx-2 divide-y divide-[var(--sf-line)]">
+                {evts.map((e: any) => {
+                  const d = new Date(e.date_prevue)
+                  const jr = e.jours_restants
+                  const enRetard = jr < 0
+                  const urgent = jr >= 0 && jr < 3
+                  const meta = prioMeta(e.priorite)
+                  const PrioIcon = meta.Icon
+                  return (
+                    <li key={e.id}>
+                      <div className="flex items-center gap-3 rounded-[var(--sf-radius-sm)] px-2 py-2.5 min-h-[48px] transition-colors hover:bg-[var(--sf-surface-1)]">
+                        {/* Colonne échéance — ancre tabulaire à gauche */}
+                        <div className="w-[60px] shrink-0 text-right">
+                          <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold uppercase tabular-nums text-[var(--sf-ink)] leading-none">
+                            {d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
+                          </div>
+                          <div
+                            className={`mt-0.5 text-[10px] uppercase tracking-[0.08em] tabular-nums ${
+                              enRetard
+                                ? 'text-[var(--sf-danger-ink)] font-bold'
+                                : urgent
+                                ? 'text-[var(--sf-accent-deep)] font-bold'
+                                : 'text-[var(--sf-muted)]'
+                            }`}
+                          >
+                            {jr === 0 ? "auj." : jr > 0 ? `J−${jr}` : `+${-jr}j`}
+                          </div>
+                        </div>
+                        <span
+                          className="h-8 w-px shrink-0 bg-[var(--sf-line)]"
+                          aria-hidden
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <Badge variant={meta.variant} className="shrink-0">
+                              <PrioIcon className="size-3" aria-hidden />
+                              <span>{meta.label}</span>
+                            </Badge>
+                            <span className="truncate text-sm font-medium text-[var(--sf-ink)]">
+                              {TYPE_LABELS[e.type_evenement] ?? e.type_evenement}
+                            </span>
+                          </div>
+                          <div className="mt-0.5 truncate text-xs text-[var(--sf-muted)]">
+                            {e.animal_tag && (
+                              <span className="font-mono text-[var(--sf-ink-secondary)]">
+                                {e.animal_nom ?? e.animal_tag} ({e.animal_tag})
+                              </span>
+                            )}
+                            {e.bande_nom && <> · Bande {e.bande_nom}</>}
+                            {cleanDescription(e.notes) && <> · {cleanDescription(e.notes)}</>}
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* === KPI TECHNIQUES MÉTIER — 4 cards (V2-E) ===
-          A9 : repli des cartes "muted" (données insuffisantes) en 1 bandeau compact.
-          - Tous muted → affiche 1 bandeau, pas de cartes
-          - Mix       → cartes actives + bandeau récapitulant les manquantes
-          - Tous OK   → 4 cartes, pas de bandeau */}
+      {/* ====================================================================
+          ZONE 2 — RELEVÉ TECHNIQUE (les instruments du poste)
+          KPI métier en bande de relevés, pas grille de cards égales.
+          A9 : repli des KPI muted en 1 bandeau compact.
+      ==================================================================== */}
       {(() => {
         const kpiDefs = [
           {
@@ -281,62 +347,59 @@ export default async function DashboardPage() {
         const nbMissing = missing.length
         const missingLabels = missing.map((k) => k.label).join(', ')
 
-        // Bandeau compact "X KPI techniques en attente" — card jaune-pâle, 1 ligne
         const banner =
           nbMissing > 0 ? (
-            <div
-              className="flex items-start gap-3 p-4 border border-[var(--sf-line)] rounded-md"
-              style={{ background: 'var(--sf-warm)' }}
-            >
+            <div className="flex items-start gap-3 border border-[var(--sf-line)] bg-[var(--sf-surface-1)] p-4">
               <Hourglass
                 aria-hidden
-                className="size-5 mt-0.5 shrink-0"
-                style={{ color: 'var(--sf-accent-deep, #B45309)' }}
+                className="mt-0.5 size-5 shrink-0 text-[var(--sf-accent-deep)]"
               />
-              <div className="flex-1 min-w-0">
-                <div
-                  className="font-bold text-[var(--sf-ink)]"
-                  style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                    fontSize: '13px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.12em',
-                  }}
-                >
+              <div className="min-w-0 flex-1">
+                <div className="font-[family-name:var(--sf-font-display)] text-[13px] font-bold uppercase tracking-[0.12em] text-[var(--sf-ink)]">
                   {nbMissing} KPI technique{nbMissing > 1 ? 's' : ''} en attente
                 </div>
-                <div className="text-xs text-[var(--sf-muted)] mt-1 leading-snug">
+                <div className="mt-1 text-xs leading-snug text-[var(--sf-muted)]">
                   Saisis quelques portées de plus pour activer&nbsp;
                   <span className="font-medium text-[var(--sf-ink)]">{missingLabels}</span>.
                   Minimum 1 cycle complet (sevrage → saillie fécondante) requis.
                 </div>
               </div>
-              <Link
-                href="/kpi"
-                className="shrink-0 inline-flex items-center min-h-[44px] py-2 px-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline whitespace-nowrap"
-              >
-                Voir KPI activables →
+              <Link href="/kpi" className={`${openCls} shrink-0 whitespace-nowrap`}>
+                KPI activables
+                <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
               </Link>
             </div>
           ) : null
 
-        // Grille des cartes actives — colonnes adaptées au nb restant pour rester aligné
         const gridCols =
           active.length === 1
             ? 'grid-cols-1'
             : active.length === 2
-            ? 'grid-cols-2 md:grid-cols-2'
+            ? 'grid-cols-2'
             : active.length === 3
             ? 'grid-cols-2 md:grid-cols-3'
             : 'grid-cols-2 md:grid-cols-4'
 
         return (
-          <section>
-            <div className={`${eyebrowCls} mb-3`}>KPI techniques · Performances métier</div>
-            <div className="space-y-4">
+          <section aria-labelledby="zone-releve">
+            <div className="mb-3 flex items-center gap-3">
+              <Target className="size-4 text-[var(--sf-primary)]" aria-hidden />
+              <h2
+                id="zone-releve"
+                className="font-[family-name:var(--sf-font-display)] uppercase text-[13px] tracking-[0.14em] text-[var(--sf-ink)] font-bold"
+              >
+                Relevé technique
+              </h2>
+              <span className="h-px flex-1 bg-[var(--sf-line)]" aria-hidden />
+              <Link href="/kpi" className={openCls}>
+                Détail KPI
+                <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+              </Link>
+            </div>
+            <div className="space-y-3">
               {banner}
               {active.length > 0 && (
-                <div className={`grid ${gridCols} gap-4`}>
+                <div className={`grid ${gridCols} gap-3`}>
                   {active.map((k) => (
                     <KpiTechCard
                       key={k.key}
@@ -357,207 +420,139 @@ export default async function DashboardPage() {
         )
       })()}
 
-      {/* === WIDGETS ALERTES (C3) + TIP DU JOUR (C2) === */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <AlertesWidget />
-        <TipDuJour />
-      </div>
+      {/* ====================================================================
+          ZONE 3 — ACTIVITÉ RÉCENTE (les bordereaux du poste)
+          Naissances + Stock en deux établis. Tip du jour en note de pied.
+      ==================================================================== */}
+      <section aria-labelledby="zone-activite">
+        <div className="mb-3 flex items-center gap-3">
+          <Calendar className="size-4 text-[var(--sf-primary)]" aria-hidden />
+          <h2
+            id="zone-activite"
+            className="font-[family-name:var(--sf-font-display)] uppercase text-[13px] tracking-[0.14em] text-[var(--sf-ink)] font-bold"
+          >
+            Activité récente
+          </h2>
+          <span className="h-px flex-1 bg-[var(--sf-line)]" aria-hidden />
+        </div>
 
-      {/* === ÉVÉNEMENTS EN RETARD — Card pleine largeur === */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-baseline justify-between">
-            <h2 className={eyebrowCls}>Événements en retard</h2>
-            <Link href="/calendrier" className={seeAllCls}>
-              Voir tout →
-            </Link>
-          </div>
-        </CardHeader>
-        <CardContent className="pt-2">
-          {(prochainsEvts ?? []).length === 0 ? (
-            <EmptyState
-              icon={CheckCircle2}
-              tone="good"
-              title="Rien d'urgent aujourd'hui ✅"
-              description="Aucun événement planifié dans les 30 prochains jours."
-            />
-          ) : (
-            <ul className="divide-y divide-[var(--sf-line)] border-t border-[var(--sf-line)]">
-              {(prochainsEvts ?? []).map((e: any) => {
-                const d = new Date(e.date_prevue)
-                const jr = e.jours_restants
-                const urgent = jr < 3
-                const meta = prioMeta(e.priorite)
-                const PrioIcon = meta.Icon
-                return (
-                  <li key={e.id} className="flex items-center justify-between gap-3 py-3 min-h-[48px]">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <Badge variant={meta.variant} className="inline-flex items-center gap-1.5">
-                        <PrioIcon className="size-3" aria-hidden />
-                        <span>{meta.label}</span>
-                      </Badge>
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
-                          {TYPE_LABELS[e.type_evenement] ?? e.type_evenement}
-                          {e.animal_tag && (
-                            <span className="text-xs text-[var(--sf-subtle)] ml-2">
-                              · {e.animal_nom ?? e.animal_tag} ({e.animal_tag})
-                            </span>
-                          )}
-                        </div>
-                      <div className="text-xs text-[var(--sf-muted)]">
-                        {e.bande_nom && <>Bande : {e.bande_nom} · </>}
-                        {e.statut === 'retard' && (
-                          <span className="text-[var(--sf-danger-ink)] font-semibold">En retard · </span>
-                        )}
-                        {cleanDescription(e.notes)}
-                      </div>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold text-[var(--sf-ink)] tabular-nums uppercase">
-                        {d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' })}
-                      </div>
-                      <div
-                        className={`text-[10px] uppercase tracking-[0.1em] tabular-nums ${
-                          jr < 0
-                            ? 'text-[var(--sf-danger-ink)] font-bold'
-                            : urgent
-                            ? 'text-[var(--sf-ink)] font-bold'
-                            : 'text-[var(--sf-muted)]'
-                        }`}
-                      >
-                        {jr === 0 ? "aujourd'hui" : jr > 0 ? `dans ${jr} j` : `${-jr} j de retard`}
-                      </div>
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* === GRID 2 COLONNES : Naissances + Stocks === */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* DERNIÈRES NAISSANCES */}
-        <Card className="h-full min-h-[320px]">
-          <CardHeader>
-            <div className="flex items-baseline justify-between">
-              <h2 className={eyebrowCls}>Dernières naissances</h2>
-              <Link href="/mises-bas" className={seeAllCls}>
-                Voir tout →
+        <div className="grid grid-cols-1 lg:grid-cols-2 border border-[var(--sf-line)] divide-y lg:divide-y-0 lg:divide-x divide-[var(--sf-line)] bg-[var(--sf-surface-0)]">
+          {/* Établi — Dernières naissances */}
+          <div className="flex min-w-0 flex-col p-4">
+            <div className="flex items-center justify-between gap-3 pb-2">
+              <h3 className={panelLabel}>Dernières naissances</h3>
+              <Link href="/mises-bas" className={openCls}>
+                Mises bas
+                <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
               </Link>
             </div>
-          </CardHeader>
-          <CardContent className="pt-2">
             {(dernieresMb ?? []).length === 0 ? (
-              <EmptyState
-                icon={Baby}
-                title="Aucune naissance récente"
-                description="Les mises-bas des 30 derniers jours apparaîtront ici."
-                cta={{ label: 'Enregistrer une naissance', href: '/mises-bas?action=new' }}
-              />
+              <div className="flex flex-1 items-center justify-center py-6">
+                <EmptyState
+                  icon={Baby}
+                  title="Aucune naissance récente"
+                  description="Les mises bas des 30 derniers jours apparaîtront ici."
+                  cta={{ label: 'Enregistrer une mise bas', href: '/mises-bas?action=new' }}
+                />
+              </div>
             ) : (
-              <ul className="divide-y divide-[var(--sf-line)] border-t border-[var(--sf-line)]">
+              <ul className="-mx-2 divide-y divide-[var(--sf-line)]">
                 {(dernieresMb ?? []).map((mb: any) => {
                   const totaux = mb.nes_totaux ?? 0
                   const vivants = mb.nes_vivants ?? 0
                   const ratio = totaux > 0 ? vivants / totaux : 0
                   return (
-                    <li key={mb.id} className="flex items-center justify-between gap-3 py-3 min-h-[48px]">
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
-                          {mb.animaux ? (
-                            <AnimalLabel animal={mb.animaux} format="full" />
-                          ) : '—'}
+                    <li key={mb.id}>
+                      <div className="flex items-center justify-between gap-3 rounded-[var(--sf-radius-sm)] px-2 py-2.5 min-h-[48px] transition-colors hover:bg-[var(--sf-surface-1)]">
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-medium text-[var(--sf-ink)]">
+                            {mb.animaux ? <AnimalLabel animal={mb.animaux} format="full" /> : '—'}
+                          </div>
+                          <div className="text-xs tabular-nums text-[var(--sf-muted)]">
+                            {new Date(mb.date_mise_bas).toLocaleDateString('fr-FR')} · {totaux} totaux · {mb.nes_morts ?? 0} morts
+                          </div>
                         </div>
-                        <div className="text-xs text-[var(--sf-muted)] tabular-nums">
-                          {new Date(mb.date_mise_bas).toLocaleDateString('fr-FR')} · {totaux} totaux · {mb.nes_morts ?? 0} morts
-                        </div>
+                        <Badge variant={variantPortee(ratio)}>
+                          <span className="tabular-nums">{vivants} vivants</span>
+                        </Badge>
                       </div>
-                      <Badge variant={variantPortee(ratio)}>
-                        <span className="tabular-nums">{vivants} vivants</span>
-                      </Badge>
                     </li>
                   )
                 })}
               </ul>
             )}
-          </CardContent>
-        </Card>
+          </div>
 
-        {/* STOCK QUI BAISSE */}
-        <Card className="h-full min-h-[320px]">
-          <CardHeader>
-            <div className="flex items-baseline justify-between gap-3">
-              <h2 className={eyebrowCls}>Stock qui baisse</h2>
+          {/* Établi — Stock qui baisse */}
+          <div className="flex min-w-0 flex-col p-4">
+            <div className="flex items-center justify-between gap-3 pb-2">
+              <h3 className={panelLabel}>Stock qui baisse</h3>
               <div className="flex items-center gap-3">
                 {nbStocksAlerte > 0 && (
                   <Badge variant="danger">
                     <AlertCircle className="size-3" aria-hidden />
-                    {nbStocksAlerte} en alerte
+                    <span className="tabular-nums">{nbStocksAlerte} en alerte</span>
                   </Badge>
                 )}
-                <Link href="/stock" className={seeAllCls}>
-                  Voir tout →
+                <Link href="/stock" className={openCls}>
+                  Stock
+                  <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
                 </Link>
               </div>
             </div>
-          </CardHeader>
-          <CardContent className="pt-2">
             {(stockAlertes ?? []).length === 0 ? (
-              <EmptyState
-                icon={CheckCircle2}
-                tone="good"
-                title="Stocks au-dessus du seuil"
-                description="Aucune matière première en alerte stock — tout est OK."
-              />
+              <div className="flex flex-1 items-center justify-center py-6">
+                <EmptyState
+                  icon={PackageOpen}
+                  tone="good"
+                  title="Stocks au-dessus du seuil"
+                  description="Aucune matière première en alerte stock."
+                />
+              </div>
             ) : (
-              <ul className="divide-y divide-[var(--sf-line)] border-t border-[var(--sf-line)]">
+              <ul className="-mx-2 divide-y divide-[var(--sf-line)]">
                 {(stockAlertes ?? []).map((s: any) => {
                   const seuil = s.seuil_alerte ?? 0
                   const stock = s.stock_actuel ?? 0
                   let variant: 'danger' | 'warning' | 'secondary' = 'secondary'
-                  let rowBorder = ''
-                  if (seuil && stock < seuil) {
-                    variant = 'danger'
-                    rowBorder = 'bg-[var(--sf-danger-bg)]/40 rounded-md px-3'
-                  } else if (seuil && stock < seuil * 1.5) {
-                    variant = 'warning'
-                  }
+                  const sousSeuil = seuil > 0 && stock < seuil
+                  if (sousSeuil) variant = 'danger'
+                  else if (seuil && stock < seuil * 1.5) variant = 'warning'
                   return (
-                    <li
-                      key={s.id}
-                      className={`flex items-center justify-between gap-3 py-3 min-h-[48px] ${rowBorder}`}
-                    >
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-[var(--sf-ink)] truncate">
-                          {s.nom}
+                    <li key={s.id}>
+                      <div
+                        className={`flex items-center justify-between gap-3 rounded-[var(--sf-radius-sm)] px-2 py-2.5 min-h-[48px] transition-colors hover:bg-[var(--sf-surface-1)] ${
+                          sousSeuil ? 'bg-[var(--sf-danger-bg)]/40' : ''
+                        }`}
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-medium text-[var(--sf-ink)]">
+                            {s.nom}
+                          </div>
+                          <div className="text-xs uppercase tracking-[0.08em] text-[var(--sf-muted)]">
+                            {s.type}
+                            {seuil > 0 && (
+                              <span className="ml-2 tabular-nums">· seuil {seuil} {s.unite}</span>
+                            )}
+                          </div>
                         </div>
-                        <div className="text-xs text-[var(--sf-muted)] uppercase tracking-[0.08em]">
-                          {s.type}
-                          {seuil > 0 && (
-                            <span className="ml-2 tabular-nums">
-                              · seuil {seuil} {s.unite}
-                            </span>
-                          )}
-                        </div>
+                        <Badge variant={variant}>
+                          <span className="tabular-nums">{stock} {s.unite}</span>
+                        </Badge>
                       </div>
-                      <Badge variant={variant}>
-                        <span className="tabular-nums">
-                          {stock} {s.unite}
-                        </span>
-                      </Badge>
                     </li>
                   )
                 })}
               </ul>
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
 
+        {/* Note de pied du poste — conseil du jour, registre note d'atelier */}
+        <div className="mt-3">
+          <TipDuJour />
+        </div>
+      </section>
     </div>
   )
 }

@@ -1,7 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import { Sidebar, type SidebarUser, type SidebarFerme } from '@/components/sidebar'
+import { Sidebar } from '@/components/sidebar'
+import { type SidebarUser, type SidebarFerme } from '@/lib/nav'
 import { BottomNav } from '@/components/bottom-nav'
 import { MobileDrawer } from '@/components/mobile-drawer'
 import { GlobalSearch } from '@/components/global-search'

@@ -137,7 +137,7 @@ function SlotLink({
             className={cn(
               'pointer-events-none absolute -top-1.5 -right-2 z-10',
               'min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center',
-              'rounded-full bg-red-600 text-white',
+              'rounded-full bg-[var(--sf-danger,#DC2626)] text-white',
               'text-[11px] font-bold leading-none tabular-nums',
               'ring-2 ring-[var(--sf-surface-0)]',
             )}

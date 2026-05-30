@@ -48,7 +48,7 @@ function getToneColor(tone: 'good' | 'warn' | 'bad' | 'muted'): string {
     case 'good':
       return 'var(--sf-primary)'
     case 'warn':
-      return 'var(--sf-accent-deep, #B45309)'
+      return 'var(--sf-accent-deep)'
     case 'bad':
       return 'var(--sf-danger-ink, #7A2A1F)'
     default:

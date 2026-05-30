@@ -220,7 +220,7 @@ export function FormulationCalculator({ catalog }: Props) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-600" />
+              <Sparkles className="h-4 w-4 text-[var(--sf-accent-warm,#A16207)]" />
               Préréglages « formules type »
             </CardTitle>
           </CardHeader>
@@ -312,7 +312,7 @@ export function FormulationCalculator({ catalog }: Props) {
           </CardHeader>
           <CardContent>
             {lignes.length === 0 ? (
-              <div className="text-sm text-slate-500 py-6 text-center">
+              <div className="text-sm text-[var(--sf-muted,#5C5346)] py-6 text-center">
                 Aucun ingrédient — ajoute depuis le catalogue ou applique un préréglage.
               </div>
             ) : (
@@ -401,7 +401,7 @@ export function FormulationCalculator({ catalog }: Props) {
             type="button"
             onClick={onSubmit}
             disabled={!canSubmit || pending}
-            className="bg-amber-600 hover:bg-amber-700"
+            className="bg-[var(--sf-accent-warm,#A16207)] hover:opacity-90"
           >
             <Save className="h-4 w-4 mr-2" />
             {pending ? 'Enregistrement…' : 'Enregistrer la formulation'}
@@ -418,7 +418,7 @@ export function FormulationCalculator({ catalog }: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-xs space-y-1">
-            <div className="text-[11px] text-slate-500 mb-2">
+            <div className="text-[11px] text-[var(--sf-muted,#5C5346)] mb-2">
               Source : NRC 2012 + INRA 2018 (minima)
             </div>
             <div className="flex justify-between">

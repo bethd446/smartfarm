@@ -1,12 +1,12 @@
+/* Hallmark · macrostructure: 04 Stat-Led · screen: /kpi · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P5 H5 E4 S5 R4 V4 */
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getFermeId } from '@/lib/supabase/ferme-context'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { PiggyBank, TrendingUp, Users, Gauge, AlertTriangle, ArrowRight } from 'lucide-react'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import Link from 'next/link'
 import { BoutonPdfMensuel } from './_bouton-pdf-mensuel'
+import { FigureTick } from './_figure-tick'
 
 export const metadata: Metadata = {
   title: 'Indicateurs zootechniques',
@@ -49,11 +49,24 @@ function getToneColor(tone: 'good' | 'warn' | 'bad' | 'muted'): string {
     case 'good':
       return 'var(--sf-primary)'
     case 'warn':
-      return 'var(--sf-accent-deep, #B45309)'
+      return 'var(--sf-accent-deep)'
     case 'bad':
       return 'var(--sf-danger-ink, #7A2A1F)'
     default:
       return 'var(--sf-muted)'
+  }
+}
+
+function toneLabel(tone: 'good' | 'warn' | 'bad' | 'muted'): string {
+  switch (tone) {
+    case 'good':
+      return 'Dans la cible'
+    case 'warn':
+      return 'Sous la cible'
+    case 'bad':
+      return 'Hors cible'
+    default:
+      return 'Non calculable'
   }
 }
 
@@ -126,14 +139,17 @@ type VScoreTruie = {
   score_global: number | null
 }
 
-// Eyebrow styles
-const eyebrowStyle: React.CSSProperties = {
+// Étiquette de planche — eyebrow ordinal, dosé (langage registre carnet, stack vertical)
+const plancheLabel: React.CSSProperties = {
   fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
   fontSize: '11px',
   textTransform: 'uppercase',
-  letterSpacing: '0.1em',
+  letterSpacing: '0.12em',
   color: 'var(--sf-muted)',
 }
+
+const displayFont = "var(--sf-font-display, 'Big Shoulders Display', sans-serif)"
+const bodyFont = "var(--sf-font-body, 'Instrument Sans', sans-serif)"
 
 export default async function KpiPageV2() {
   const sb = await createClient()
@@ -185,309 +201,312 @@ export default async function KpiPageV2() {
   const toneProdu = toneProductivite(productiviteNumerique)
   const toneIcVal = toneIc(icFerme?.ic ?? null)
 
+  // Registre de chiffres de support (voix "ligne de registre", pas card)
+  const support = [
+    {
+      label: 'Truies actives',
+      value: dash?.truies_actives != null ? String(dash.truies_actives) : '—',
+      note: 'Cheptel reproducteur en service',
+      color: 'var(--sf-ink)',
+    },
+    {
+      label: 'IC ferme · 30 j',
+      value: fmtNum(icFerme?.ic, 2),
+      note: `${toneLabel(toneIcVal)} · cible 2,6–2,8`,
+      color: getToneColor(toneIcVal),
+    },
+    {
+      label: 'Alertes actives',
+      value: String(dash?.alertes_actives ?? 0),
+      note: dash?.alertes_actives ? 'À traiter en priorité' : 'Aucune alerte ouverte',
+      color: dash?.alertes_actives ? 'var(--sf-danger-ink)' : 'var(--sf-muted)',
+    },
+  ]
+
   return (
-    <div className="space-y-6 pb-8">
-      {/* ===== HEADER : EYEBROW + H1 + BOUTON PDF ===== */}
-      <div>
-        <div className="mb-2" style={eyebrowStyle}>
-          PILOTAGE · {today.toUpperCase()} · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
+    <div className="pb-8" style={{ fontFamily: bodyFont }}>
+      {/* ===== EN-TÊTE DE PLANCHE — filet primary en tête (langage Stat-Led) ===== */}
+      <header
+        className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between pt-1 pb-5"
+        style={{ borderTop: '3px solid var(--sf-primary)' }}
+      >
+        <div>
+          <div className="mb-2" style={plancheLabel}>
+            Pilotage IFIP · {today.toUpperCase()} · {dash?.ferme_nom?.toUpperCase() ?? 'FERME'}
+          </div>
+          <h1
+            className="text-3xl sm:text-4xl font-black uppercase tracking-[0.01em] text-[var(--sf-ink)]"
+            style={{ fontFamily: displayFont, lineHeight: 1.05 }}
+          >
+            Indicateurs zootechniques
+          </h1>
+          <p className="mt-2 max-w-[58ch] text-sm text-[var(--sf-muted)]">
+            Performance reproductive et croissance, qualifiée par les référentiels IFIP.
+          </p>
         </div>
-        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-          <div>
-            <h1
-              className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-            >
-              <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
-              Indicateurs zootechniques
-            </h1>
-            <p
-              className="text-sm text-[var(--sf-muted)] mt-1"
-              style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
-            >
-              Performance IFIP, productivité numérique et classement truies
-            </p>
+
+        <div className="lg:max-w-md w-full lg:text-right">
+          <div className="mb-2" style={plancheLabel}>
+            Registre mensuel
+          </div>
+          <BoutonPdfMensuel fermeId={fermeId} />
+        </div>
+      </header>
+
+      {/* ===== BANDEAU-FIGURE : la productivité numérique structure la page ===== */}
+      <section className="grid grid-cols-1 lg:grid-cols-[1.55fr_1fr]">
+        {/* Figure dominante */}
+        <div
+          className="py-8 lg:py-10 lg:pr-10"
+          style={{ borderBottom: '1px solid var(--sf-line)' }}
+        >
+          <div style={plancheLabel}>Productivité numérique</div>
+          <div className="mt-3 flex items-baseline gap-2">
+            <FigureTick
+              value={productiviteNumerique}
+              digits={1}
+              className="font-black tabular-nums leading-none"
+              style={{
+                fontFamily: displayFont,
+                color: getToneColor(toneProdu),
+                fontSize: 'clamp(4.5rem, 14vw, 7rem)',
+              }}
+            />
+            <span className="text-base text-[var(--sf-muted)]">porcelets / truie / an</span>
           </div>
 
-          {/* Encart Exports PDF */}
-          <Card className="border-[var(--sf-line)] bg-[var(--sf-surface-1)] lg:w-auto w-full">
-            <CardContent className="p-4">
-              <div className="mb-2" style={eyebrowStyle}>
-                EXPORTS
-              </div>
-              <BoutonPdfMensuel fermeId={fermeId} />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+          {/* Qualificateur sous la figure — la voix Stat-Led */}
+          <p className="mt-3 max-w-[52ch] text-sm text-[var(--sf-ink-secondary)]">
+            {toneLabel(toneProdu)} face au référentiel IFIP{' '}
+            <span className="font-semibold tabular-nums">≥ 22</span>. Calcul : portée moyenne 12 mois
+            × portées actives ÷ nombre de truies.
+          </p>
 
-      {/* ===== GRID ASYMÉTRIQUE : KPI HÉRO + 3 STACK ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* KPI HÉRO : Productivité numérique (2x en desktop, span 2 colonnes) */}
-        <Card className="md:col-span-2 border-[var(--sf-line)] shadow-[var(--sf-stamp-ring)]">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between">
+          {techFerme && (
+            <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+              {[
+                ['Truies', String(techFerme.nb_truies)],
+                ['Portée moyenne', fmtNum(techFerme.portee_moyenne_12m, 1)],
+                ['Portées actives', String(techFerme.nb_portees_actives)],
+              ].map(([label, val]) => (
+                <div key={label} className="flex flex-col">
+                  <dt style={plancheLabel}>{label}</dt>
+                  <dd
+                    className="mt-1 text-lg font-bold tabular-nums text-[var(--sf-ink)]"
+                    style={{ fontFamily: displayFont }}
+                  >
+                    {val}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+        </div>
+
+        {/* Registre des chiffres de support — lignes hairline, pas de cards */}
+        <div className="lg:pl-10 lg:border-l lg:border-[var(--sf-line)]">
+          {support.map((s, i) => (
+            <div
+              key={s.label}
+              className="flex items-baseline justify-between gap-4 py-4"
+              style={{
+                borderBottom: '1px solid var(--sf-line)',
+                borderTop: i === 0 ? '1px solid var(--sf-line)' : undefined,
+              }}
+            >
               <div>
-                <div style={eyebrowStyle} className="mb-2">
-                  KPI HÉRO — PRODUCTIVITÉ NUMÉRIQUE
-                </div>
-                <div
-                  className="text-6xl font-black tabular-nums"
-                  style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                    color: getToneColor(toneProdu),
-                  }}
-                >
-                  {productiviteNumerique !== null ? fmtNum(productiviteNumerique, 1) : '—'}
-                </div>
-                <div className="mt-2 text-sm text-[var(--sf-muted)]">
-                  Porcelets sevrés / truie / an
-                </div>
-                <div className="mt-1 text-xs italic text-[var(--sf-muted)]">
-                  Cible IFIP ≥ 22 · Calcul : portée moyenne 12m × portées actives / nb truies
-                </div>
-                {techFerme && (
-                  <div className="mt-3 flex gap-4 text-xs text-[var(--sf-muted)]">
-                    <span>
-                      <strong>{techFerme.nb_truies}</strong> truies
-                    </span>
-                    <span>
-                      <strong>{fmtNum(techFerme.portee_moyenne_12m, 1)}</strong> portée moy.
-                    </span>
-                    <span>
-                      <strong>{techFerme.nb_portees_actives}</strong> portées actives
-                    </span>
-                  </div>
-                )}
+                <div style={plancheLabel}>{s.label}</div>
+                <div className="mt-0.5 text-xs text-[var(--sf-muted)]">{s.note}</div>
               </div>
-              <TrendingUp className="h-12 w-12 text-[var(--sf-primary)] opacity-20" />
+              <div
+                className="text-3xl font-black tabular-nums leading-none"
+                style={{ fontFamily: displayFont, color: s.color }}
+              >
+                {s.value}
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* STACK 3 KPIs */}
-        <div className="flex flex-col gap-4">
-          {/* Truies actives */}
-          <Card className="border-[var(--sf-line)]">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div style={eyebrowStyle}>TRUIES ACTIVES</div>
-                  <div
-                    className="text-3xl font-black tabular-nums text-[var(--sf-ink)] mt-1"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-                  >
-                    {dash?.truies_actives ?? '—'}
-                  </div>
-                </div>
-                <Users className="h-8 w-8 text-[var(--sf-primary)]" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* IC ferme */}
-          <Card className="border-[var(--sf-line)]">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div style={eyebrowStyle}>IC FERME (30j)</div>
-                  <div
-                    className="text-3xl font-black tabular-nums mt-1"
-                    style={{
-                      fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                      color: getToneColor(toneIcVal),
-                    }}
-                  >
-                    {fmtNum(icFerme?.ic, 2)}
-                  </div>
-                  <div className="text-xs text-[var(--sf-muted)] mt-1">cible 2,6–2,8</div>
-                </div>
-                <Gauge className="h-8 w-8 text-[var(--sf-accent-deep)]" />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Alertes actives */}
-          <Card className="border-[var(--sf-line)]">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div style={eyebrowStyle}>ALERTES ACTIVES</div>
-                  <div
-                    className="text-3xl font-black tabular-nums text-[var(--sf-danger-ink)] mt-1"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-                  >
-                    {dash?.alertes_actives ?? 0}
-                  </div>
-                </div>
-                <AlertTriangle className="h-8 w-8 text-[var(--sf-danger-ink)]" />
-              </div>
-            </CardContent>
-          </Card>
+          ))}
         </div>
-      </div>
+      </section>
 
-      {/* ===== SECTION PERFORMANCE PAR BANDE ===== */}
-      <Card className="border-[var(--sf-line)]">
-        <CardContent className="p-6">
-          <div className="mb-4 flex items-center justify-between">
+      {/* ===== PLANCHE — PERFORMANCE PAR BANDE ===== */}
+      <section className="pt-9">
+        <div className="flex items-end justify-between gap-4 pb-3">
+          <div>
+            <div style={plancheLabel}>Croissance · {bandesList.length} bandes</div>
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-ink)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              className="mt-1 text-xl uppercase tracking-[0.01em] text-[var(--sf-ink)]"
+              style={{ fontFamily: displayFont }}
             >
               Performance par bande
             </h2>
-            <Link
-              href="/performances/croissance"
-              className="inline-flex items-center min-h-[44px] py-2 gap-1 text-sm text-[var(--sf-primary)] hover:underline"
+          </div>
+          <Link
+            href="/performances/croissance"
+            className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap py-2 text-sm font-semibold text-[var(--sf-primary)] transition-colors duration-150 hover:text-[var(--sf-primary-deep)] [min-height:var(--sf-touch-min,44px)]"
+            style={{ fontFamily: displayFont, letterSpacing: '0.04em' }}
+          >
+            Détail croissance →
+          </Link>
+        </div>
+
+        {bandesList.length === 0 ? (
+          <p
+            className="py-8 text-sm text-[var(--sf-muted)]"
+            style={{ borderTop: '1px solid var(--sf-line)' }}
+          >
+            Aucune bande enregistrée. Créez une bande depuis Cheptel → Bandes pour suivre GMQ, IC et
+            mortalité par lot.
+          </p>
+        ) : (
+          <ResponsiveTable
+            data={bandesList}
+            getRowKey={(b) => b.bande_id}
+            columns={[
+              {
+                key: 'bande_nom',
+                label: 'Bande',
+                primary: true,
+                className: 'font-bold text-[var(--sf-ink)]',
+              },
+              {
+                key: 'effectif_actuel',
+                label: 'Effectif',
+                className: 'font-mono tabular-nums',
+              },
+              {
+                key: 'gmq_moyen',
+                label: 'GMQ (g/j)',
+                render: (v) => (v !== null ? Math.round(Number(v)).toLocaleString('fr-FR') : '—'),
+                className: 'font-mono tabular-nums font-semibold',
+              },
+              {
+                key: 'ic',
+                label: 'IC',
+                render: (v) => fmtNum(v, 2),
+                className: 'font-mono tabular-nums',
+              },
+              {
+                key: 'taux_mortalite',
+                label: 'Mortalité (%)',
+                render: (v) => fmtPct(v, 1),
+                className: 'font-mono tabular-nums',
+              },
+              {
+                key: 'statut',
+                label: 'Statut',
+                render: (v) => <Badge variant="outline">{v ?? 'N/A'}</Badge>,
+              },
+            ]}
+          />
+        )}
+      </section>
+
+      {/* ===== DEUX PLANCHES TRUIES — registres en lignes hairline ===== */}
+      <div className="grid grid-cols-1 gap-x-12 gap-y-9 pt-9 md:grid-cols-2">
+        {/* Top 5 truies — score IFIP */}
+        <section>
+          <div className="pb-3" style={{ borderBottom: '1px solid var(--sf-line)' }}>
+            <div style={plancheLabel}>Reproduction · score IFIP</div>
+            <h2
+              className="mt-1 text-xl uppercase tracking-[0.01em] text-[var(--sf-ink)]"
+              style={{ fontFamily: displayFont }}
             >
-              Détail croissance <ArrowRight className="h-4 w-4" />
-            </Link>
+              Top 5 truies
+            </h2>
           </div>
 
-          {bandesList.length === 0 ? (
-            <p className="text-center text-sm text-[var(--sf-muted)] py-6">
-              Aucune bande enregistrée. Créez une bande depuis Cheptel → Bandes.
+          {top5.length === 0 ? (
+            <p className="py-6 text-sm text-[var(--sf-muted)]">
+              Aucune truie avec portée complète. Le classement s’active dès la première mise bas suivie
+              d’un sevrage.
             </p>
           ) : (
-            <ResponsiveTable
-              data={bandesList}
-              getRowKey={(b) => b.bande_id}
-              columns={[
-                {
-                  key: 'bande_nom',
-                  label: 'Bande',
-                  primary: true,
-                  className: 'font-bold text-[var(--sf-ink)]',
-                },
-                {
-                  key: 'effectif_actuel',
-                  label: 'Effectif',
-                  className: 'font-mono tabular-nums',
-                },
-                {
-                  key: 'gmq_moyen',
-                  label: 'GMQ (g/j)',
-                  render: (v) => (v !== null ? Math.round(Number(v)).toLocaleString('fr-FR') : '—'),
-                  className: 'font-mono tabular-nums font-semibold',
-                },
-                {
-                  key: 'ic',
-                  label: 'IC',
-                  render: (v) => fmtNum(v, 2),
-                  className: 'font-mono tabular-nums',
-                },
-                {
-                  key: 'taux_mortalite',
-                  label: 'Mortalité (%)',
-                  render: (v) => fmtPct(v, 1),
-                  className: 'font-mono tabular-nums',
-                },
-                {
-                  key: 'statut',
-                  label: 'Statut',
-                  render: (v) => <Badge variant="outline">{v ?? 'N/A'}</Badge>,
-                },
-              ]}
-            />
-          )}
-        </CardContent>
-      </Card>
-
-      {/* ===== TOP 5 TRUIES + À SURVEILLER ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Top 5 truies */}
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-6">
-            <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-4"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-            >
-              Top 5 truies · Score IFIP
-            </h2>
-            {top5.length === 0 ? (
-              <p className="text-sm text-[var(--sf-muted)] py-4">
-                Aucune truie avec portée complète. Le classement s'active dès la première mise bas + sevrage.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {top5.map((t, idx) => (
-                  <div
-                    key={t.truie_id}
-                    className="flex items-center justify-between p-3 rounded border border-[var(--sf-line)] bg-[var(--sf-surface-1)] hover:bg-[var(--sf-surface-2)] transition"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center font-black text-sm"
-                        style={{
-                          background:
-                            idx === 0
-                              ? 'var(--sf-primary)'
-                              : idx === 1
-                                ? 'var(--sf-accent-deep)'
-                                : 'var(--sf-surface-2)',
-                          color: idx < 2 ? 'white' : 'var(--sf-muted)',
-                          fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                        }}
-                      >
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <div className="font-mono font-bold text-sm">{t.tag}</div>
-                        <div className="text-xs text-[var(--sf-muted)]">
-                          {t.nb_portees} portées · moy. {fmtNum(t.portee_moyenne, 1)}
-                        </div>
-                      </div>
-                    </div>
-                    <Badge
-                      variant={t.classe === 'A' ? 'default' : t.classe === 'B' ? 'secondary' : 'outline'}
+            <ol>
+              {top5.map((t, idx) => (
+                <li
+                  key={t.truie_id}
+                  className="flex items-center justify-between gap-4 py-4"
+                  style={{ borderBottom: '1px solid var(--sf-line)' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <span
+                      className="w-7 text-2xl font-black tabular-nums leading-none"
+                      style={{
+                        fontFamily: displayFont,
+                        color: idx === 0 ? 'var(--sf-primary)' : 'var(--sf-subtle)',
+                      }}
                     >
-                      Classe {t.classe}
-                    </Badge>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* À surveiller (suggestion réforme) */}
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-6">
-            <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-danger-ink)] mb-4"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-            >
-              À surveiller · Réforme suggérée
-            </h2>
-            {reforme5.length === 0 ? (
-              <p className="text-sm text-[var(--sf-muted)] py-4">
-                Aucune truie signalée. Critères : taux réussite &lt;70%, ≥2 retours, ≥8 MB ou portée moy. &lt;8.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {reforme5.map((t) => (
-                  <div
-                    key={t.truie_id}
-                    className="flex items-center justify-between p-3 rounded border border-[var(--sf-danger-border)] bg-[var(--sf-danger-bg)] hover:bg-[var(--sf-surface-2)] transition"
-                  >
+                      {idx + 1}
+                    </span>
                     <div>
-                      <div className="font-mono font-bold text-sm">{t.tag}</div>
-                      <div className="text-xs text-[var(--sf-muted)]">
-                        {t.nb_saillies} saillies · {t.nb_positifs} OK · {t.nb_retours} retours
+                      <div className="font-mono text-sm font-bold text-[var(--sf-ink)] tabular-nums">
+                        {t.tag}
+                        {t.nom ? (
+                          <span className="ml-2 font-normal text-[var(--sf-muted)]">{t.nom}</span>
+                        ) : null}
                       </div>
-                      <div className="text-xs text-[var(--sf-muted)]">
-                        Taux réussite : {fmtPct(t.taux_reussite_pct, 0)} · {t.nb_mb} MB · moy.{' '}
-                        {fmtNum(t.moy_nes_vivants, 1)} nés viv.
+                      <div className="mt-0.5 text-xs text-[var(--sf-muted)] tabular-nums">
+                        {t.nb_portees} portées · moyenne {fmtNum(t.portee_moyenne, 1)}
                       </div>
                     </div>
-                    <Badge variant="danger">Sortir</Badge>
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                  <Badge
+                    variant={t.classe === 'A' ? 'default' : t.classe === 'B' ? 'secondary' : 'outline'}
+                  >
+                    Classe {t.classe}
+                  </Badge>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
+
+        {/* À surveiller — réforme suggérée */}
+        <section>
+          <div className="pb-3" style={{ borderBottom: '1px solid var(--sf-danger-border)' }}>
+            <div style={{ ...plancheLabel, color: 'var(--sf-danger-ink)' }}>
+              Reproduction · réforme suggérée
+            </div>
+            <h2
+              className="mt-1 text-xl uppercase tracking-[0.01em] text-[var(--sf-danger-ink)]"
+              style={{ fontFamily: displayFont }}
+            >
+              À surveiller
+            </h2>
+          </div>
+
+          {reforme5.length === 0 ? (
+            <p className="py-6 text-sm text-[var(--sf-muted)]">
+              Aucune truie signalée. Critères : taux de réussite &lt; 70 %, ≥ 2 retours, ≥ 8 mises bas
+              ou portée moyenne &lt; 8.
+            </p>
+          ) : (
+            <ul>
+              {reforme5.map((t) => (
+                <li
+                  key={t.truie_id}
+                  className="flex items-start justify-between gap-4 py-4"
+                  style={{ borderBottom: '1px solid var(--sf-line)' }}
+                >
+                  <div>
+                    <div className="font-mono text-sm font-bold text-[var(--sf-ink)] tabular-nums">
+                      {t.tag}
+                    </div>
+                    <div className="mt-0.5 text-xs text-[var(--sf-muted)] tabular-nums">
+                      {t.nb_saillies} saillies · {t.nb_positifs} OK · {t.nb_retours} retours
+                    </div>
+                    <div className="text-xs text-[var(--sf-muted)] tabular-nums">
+                      Réussite {fmtPct(t.taux_reussite_pct, 0)} · {t.nb_mb} mises bas · moyenne{' '}
+                      {fmtNum(t.moy_nes_vivants, 1)} nés vivants
+                    </div>
+                  </div>
+                  <Badge variant="danger">Sortir</Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
     </div>
   )

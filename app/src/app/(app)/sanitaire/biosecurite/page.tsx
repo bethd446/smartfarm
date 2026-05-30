@@ -402,13 +402,19 @@ export default async function BiosecuritePage() {
                       )}
                     </TableCell>
                     <TableCell className="text-center">
-                      {v.douche_obligatoire_effectuee ? '✅' : '—'}
+                      {v.douche_obligatoire_effectuee ? (
+                        <CheckCircle2 className="inline h-4 w-4 text-[var(--sf-success,#2D4A1F)]" aria-label="Effectué" />
+                      ) : '—'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {v.changement_tenue ? '✅' : '—'}
+                      {v.changement_tenue ? (
+                        <CheckCircle2 className="inline h-4 w-4 text-[var(--sf-success,#2D4A1F)]" aria-label="Effectué" />
+                      ) : '—'}
                     </TableCell>
                     <TableCell className="text-center">
-                      {v.pediluve_utilise ? '✅' : '—'}
+                      {v.pediluve_utilise ? (
+                        <CheckCircle2 className="inline h-4 w-4 text-[var(--sf-success,#2D4A1F)]" aria-label="Utilisé" />
+                      ) : '—'}
                     </TableCell>
                     <TableCell className="text-xs text-[var(--sf-muted,#5C5346)] max-w-[24rem]">
                       {v.observations ?? '—'}

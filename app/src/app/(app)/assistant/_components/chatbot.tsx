@@ -245,13 +245,13 @@ export function Chatbot({ sessionToken }: { sessionToken: string }) {
     messages[messages.length - 1].content === ''
 
   return (
-    <div className="flex-1 flex flex-col min-h-0 rounded-lg border border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-paper,#FBF9F4)] overflow-hidden">
-      {/* Toolbar */}
-      <div className="shrink-0 flex items-center justify-between px-4 py-2 border-b border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-surface-1)]">
-        <div className="text-[11px] uppercase tracking-wider font-semibold text-[var(--sf-muted,#5C5346)]">
+    <div className="flex-1 flex flex-col min-h-0 rounded-[12px] border border-[var(--sf-line)] bg-[var(--sf-surface-0)] overflow-hidden">
+      {/* En-tête du fil — registre carnet, pas barre de chat */}
+      <div className="shrink-0 flex items-center justify-between px-4 py-2.5 border-b border-[var(--sf-line)] bg-[var(--sf-surface-1)]">
+        <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-[0.12em] text-[11px] font-bold text-[var(--sf-muted)] tabular-nums">
           {messages.length === 0
-            ? 'Nouvelle conversation'
-            : `${messages.length} message${messages.length > 1 ? 's' : ''}`}
+            ? 'Fil de conseil'
+            : `Fil de conseil · ${messages.length} échange${messages.length > 1 ? 's' : ''}`}
         </div>
         <Button
           type="button"
@@ -262,76 +262,76 @@ export function Chatbot({ sessionToken }: { sessionToken: string }) {
           className="gap-1.5 text-xs"
         >
           <Trash2 className="h-3.5 w-3.5" />
-          Nouvelle conversation
+          Repartir à zéro
         </Button>
       </div>
 
-      {/* Zone scroll messages */}
+      {/* Zone scroll — fil de conseil (entrées de carnet séparées par filets) */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-4 space-y-4"
+        className="flex-1 overflow-y-auto px-4 py-5"
       >
         {messages.length === 0 ? (
-          <div className="space-y-4">
-            <div className="text-center py-4">
-              <div className="text-base font-semibold text-[var(--sf-ink,#1a1a1a)]">
-                Bienvenue 👋
-              </div>
-              <div className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
-                Pose ta question, ou choisis une suggestion ci-dessous.
-              </div>
-            </div>
-            <Suggestions onPick={(p) => void sendMessage(p)} disabled={isStreaming} />
-          </div>
+          <Suggestions onPick={(p) => void sendMessage(p)} disabled={isStreaming} />
         ) : (
-          messages.map((m, i) => (
-            <MessageBubble
-              key={i}
-              role={m.role}
-              content={m.content}
-              streaming={
-                isStreaming && i === messages.length - 1 && m.role === 'assistant'
-              }
-            />
-          ))
+          <div className="divide-y divide-[var(--sf-line)]">
+            {messages.map((m, i) => (
+              <div key={i} className="py-4 first:pt-0 last:pb-0">
+                <MessageBubble
+                  role={m.role}
+                  content={m.content}
+                  streaming={
+                    isStreaming && i === messages.length - 1 && m.role === 'assistant'
+                  }
+                />
+              </div>
+            ))}
+          </div>
         )}
 
         {isStreaming && lastIsEmptyAssistant && (
-          <div className="text-[11px] text-[var(--sf-muted,#5C5346)] flex items-center gap-1.5 px-11">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            L&apos;assistant écrit…
+          <div className="text-[13px] text-[var(--sf-muted)] flex items-center gap-1.5 mt-2 font-[family-name:var(--sf-font-body)]">
+            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+            Le conseiller consulte ses références…
           </div>
         )}
       </div>
 
-      {/* Erreur (banner) */}
+      {/* Erreur (banner) — honnête, pas d'« oups » */}
       {error && (
-        <div className="shrink-0 px-4 py-2 text-xs bg-[var(--sf-danger-bg,#F1D4CE)] text-[var(--sf-danger-ink,#7A2A1F)] border-t border-[var(--sf-border,#E5E0D8)]">
+        <div className="shrink-0 px-4 py-2.5 text-[13px] bg-[var(--sf-danger-bg)] text-[var(--sf-danger-ink)] border-t border-[var(--sf-danger-border)] font-[family-name:var(--sf-font-body)]">
           {error}
         </div>
       )}
 
-      {/* Composer */}
+      {/* Saisie de la question — registre carnet */}
       <form
         onSubmit={handleSubmit}
-        className="shrink-0 border-t border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-surface-1)] p-3"
+        className="shrink-0 border-t border-[var(--sf-line)] bg-[var(--sf-surface-1)] p-3"
       >
+        <label
+          htmlFor="sf-conseil-input"
+          className="block font-[family-name:var(--sf-font-display)] uppercase tracking-[0.1em] text-[10px] font-bold text-[var(--sf-subtle)] mb-1.5"
+        >
+          Votre question
+        </label>
         <div className="flex items-end gap-2">
           <textarea
+            id="sf-conseil-input"
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Pose ta question agritech… (Entrée pour envoyer, Maj+Entrée pour saut de ligne)"
+            placeholder="Ration, sevrage, diagnostic, biosécurité… (Entrée pour poser, Maj+Entrée pour un saut de ligne)"
             rows={1}
             disabled={isStreaming}
             className={cn(
-              'flex-1 resize-none rounded-md border border-[var(--sf-border,#E5E0D8)] bg-[var(--sf-surface-1)]',
-              'px-3 py-2 text-sm leading-relaxed',
-              'placeholder:text-[var(--sf-muted,#5C5346)]',
-              'focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary,#2D4A1F)]/30 focus:border-[var(--sf-primary,#2D4A1F)]',
+              'flex-1 resize-none rounded-[6px] border border-[var(--sf-line)] bg-[var(--sf-surface-0)]',
+              'px-3 py-2.5 text-[15px] leading-relaxed text-[var(--sf-ink)] font-[family-name:var(--sf-font-body)]',
+              'placeholder:text-[var(--sf-muted)]',
+              'focus:outline-none focus:ring-2 focus:ring-[var(--sf-focus)] focus:border-[var(--sf-primary)]',
               'disabled:opacity-60 disabled:cursor-not-allowed',
-              'min-h-[40px] max-h-[200px]',
+              'min-h-12 max-h-[200px]',
             )}
           />
           <Button
@@ -340,11 +340,11 @@ export function Chatbot({ sessionToken }: { sessionToken: string }) {
             className="gap-1.5 shrink-0"
           >
             {isStreaming ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
             ) : (
-              <Send className="h-4 w-4" />
+              <Send className="h-4 w-4" aria-hidden />
             )}
-            Envoyer
+            Poser
           </Button>
         </div>
       </form>

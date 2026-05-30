@@ -1,7 +1,6 @@
 import Link from 'next/link'
-import { AlertOctagon, AlertTriangle, Info, Bell, CheckCircle2 } from 'lucide-react'
+import { AlertOctagon, AlertTriangle, Info, ShieldCheck, ArrowUpRight } from 'lucide-react'
 
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { RelativeTime } from '@/components/ui/relative-time'
@@ -10,13 +9,14 @@ import { getAlertesActives, type Alerte } from '@/lib/alertes-engine'
 import { ORDRE_GRAVITE } from '@/lib/alertes-regles'
 
 /**
- * Smart Farm — Widget « Alertes actives » (tableau de bord)
+ * Smart Farm — Établi « Alertes actives » (poste de travail / dashboard)
  * -------------------------------------------------------------------------
- * Server Component. Affiche le top 5 des alertes actives triées par gravité
- * décroissante (critique > élevée > moyenne > info). Format compact.
+ * Server Component. Panneau dense (PAS une card autonome) : vit dans la
+ * grille bordée de la Zone 1 « À traiter aujourd'hui » du dashboard.
+ * Affiche le top 5 des alertes actives triées par gravité décroissante.
  *
- * Source : `getAlertesActives(supabase)` (cf. agent C3-A) — view SQL
- * `v_alertes_actives` queriée à la volée, jamais stockée.
+ * Source : `getAlertesActives(supabase)` — view SQL `v_alertes_actives`
+ * queriée à la volée, jamais stockée.
  */
 
 type GraviteMeta = {
@@ -54,8 +54,7 @@ export async function AlertesWidget() {
   const sb = await createClient()
 
   // Resilience build : si la view v_alertes_actives n'existe pas encore
-  // (migration C3-A pas appliquée), on dégrade en widget vide silencieusement
-  // plutôt que de faire crasher le dashboard.
+  // on dégrade en panneau vide silencieusement plutôt que de crasher.
   let alertes: Alerte[] = []
   try {
     alertes = await getAlertesActives(sb)
@@ -63,8 +62,7 @@ export async function AlertesWidget() {
     alertes = []
   }
 
-  // Filtrer les alertes de test (titre contenant "test" case-insensitive)
-  // pour éviter d'afficher les alertes manuelles de test sur le dashboard
+  // Filtrer les alertes de test (titre contenant "test")
   const alertesFiltrees = alertes.filter((a) => {
     const titre = a.titre?.toLowerCase() || ''
     return !titre.includes('test')
@@ -73,79 +71,69 @@ export async function AlertesWidget() {
   const total = alertesFiltrees.length
   const top = trierParGravite(alertesFiltrees).slice(0, 5)
 
-  const eyebrowCls =
-    "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
-  const seeAllCls =
-    "inline-flex items-center min-h-[44px] py-2 px-1 -mx-1 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline"
+  const panelLabel =
+    'font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.16em] text-[var(--sf-muted)] font-bold'
+  const openCls =
+    'group/open inline-flex items-center gap-1 min-h-[44px] py-2 text-[11px] uppercase tracking-[0.14em] font-bold text-[var(--sf-primary)] hover:underline'
 
   return (
-    <Card className="h-full min-h-[320px]">
-      <CardHeader>
-        <div className="flex items-baseline justify-between gap-3">
-          <h2 className={eyebrowCls}>
-            <Bell className="inline size-3 mr-1 -mt-0.5" aria-hidden />
-            Alertes actives
-          </h2>
-          <div className="flex items-center gap-3">
-            {total > 0 && (
-              <Badge variant="secondary">
-                <span className="tabular-nums">{total} au total</span>
-              </Badge>
-            )}
-            <Link href="/alertes" className={seeAllCls}>
-              Voir toutes →
-            </Link>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="pt-2">
-        {top.length === 0 ? (
+    <div className="flex min-w-0 flex-col p-4">
+      <div className="flex items-center justify-between gap-3 pb-2">
+        <h3 className={panelLabel}>
+          Alertes actives
+          {total > 0 && (
+            <span className="ml-2 tabular-nums font-black text-[var(--sf-ink)]">{total}</span>
+          )}
+        </h3>
+        <Link href="/alertes" className={openCls}>
+          Alertes
+          <ArrowUpRight className="size-3.5 transition-transform group-hover/open:-translate-y-px" aria-hidden />
+        </Link>
+      </div>
+
+      {top.length === 0 ? (
+        <div className="flex flex-1 items-center justify-center py-6">
           <EmptyState
-            icon={CheckCircle2}
+            icon={ShieldCheck}
             tone="good"
-            title="Aucune alerte ✓"
-            description="Tout va bien sur la ferme. Aucune anomalie détectée."
+            title="Aucune anomalie détectée"
+            description="La ferme est saine. Rien à traiter pour l'instant."
           />
-        ) : (
-          <ul className="divide-y divide-[var(--sf-line)] border-t border-[var(--sf-line)]">
-            {top.map((a) => {
-              const meta = graviteMeta(a.gravite)
-              const Icon = meta.Icon
-              const detecte = new Date(a.detecte_le)
-              return (
-                <li
-                  key={`${a.regle_id}-${a.cible_id}`}
-                  className="flex items-center justify-between gap-3 py-3 min-h-[48px]"
+        </div>
+      ) : (
+        <ul className="-mx-2 divide-y divide-[var(--sf-line)]">
+          {top.map((a) => {
+            const meta = graviteMeta(a.gravite)
+            const Icon = meta.Icon
+            const detecte = new Date(a.detecte_le)
+            return (
+              <li key={`${a.regle_id}-${a.cible_id}`}>
+                <Link
+                  href={a.lien_suggere}
+                  className="flex items-center gap-3 rounded-[var(--sf-radius-sm)] px-2 py-2.5 min-h-[48px] transition-colors hover:bg-[var(--sf-surface-1)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--sf-focus)]"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <Badge variant={meta.variant}>
-                      <Icon className="size-3" aria-hidden />
-                      {meta.label}
-                    </Badge>
-                    <div className="min-w-0">
-                      <Link
-                        href={a.lien_suggere}
-                        className="min-h-[44px] inline-flex items-center py-2 text-sm font-medium text-[var(--sf-ink)] truncate hover:underline"
-                      >
-                        {a.titre}
-                      </Link>
-                      <div className="text-xs text-[var(--sf-muted)] truncate">
-                        {a.cible_label}
-                      </div>
+                  <Badge variant={meta.variant} className="shrink-0">
+                    <Icon className="size-3" aria-hidden />
+                    {meta.label}
+                  </Badge>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-sm font-medium text-[var(--sf-ink)]">
+                      {a.titre}
+                    </div>
+                    <div className="truncate text-xs text-[var(--sf-muted)]">
+                      {a.cible_label}
                     </div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-[10px] uppercase tracking-[0.1em] text-[var(--sf-subtle)] tabular-nums">
-                      <RelativeTime date={detecte} prefix="" addSuffix />
-                    </div>
+                  <div className="shrink-0 text-right text-[10px] uppercase tracking-[0.08em] tabular-nums text-[var(--sf-subtle)]">
+                    <RelativeTime date={detecte} prefix="" addSuffix />
                   </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </CardContent>
-    </Card>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </div>
   )
 }
 

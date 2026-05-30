@@ -4,9 +4,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { ExportButton } from '@/components/export-button'
+import type { ComponentProps } from 'react'
 import { Layers, Plus } from 'lucide-react'
 import { DialogNouvelleBande } from './_dialog-nouvelle-bande'
 import { BandesFab } from './_fab'
+
+type BadgeVariant = NonNullable<ComponentProps<typeof Badge>['variant']>
 
 export default async function BandesPage() {
   const sb = await createClient()
@@ -19,26 +22,28 @@ export default async function BandesPage() {
 
   const bandes = (bandesData ?? []) as any[]
 
-  const statutColors: Record<string, string> = {
-    preparation: 'bg-slate-100 text-slate-700',
-    active: 'bg-emerald-100 text-emerald-700',
-    sevree: 'bg-blue-100 text-blue-700',
-    engraissement: 'bg-amber-100 text-amber-700',
-    finie: 'bg-violet-100 text-violet-700',
+  // Statuts → variantes Badge charte (paires bg/ink validées AA) plutôt que
+  // des classes Tailwind brutes hors-charte (violet/slate/emerald banni).
+  const statutVariants: Record<string, BadgeVariant> = {
+    preparation: 'secondary',
+    active: 'success',
+    sevree: 'info',
+    engraissement: 'warning',
+    finie: 'secondary',
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-4xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-amber-600" />Bandes</h1>
-          <p className="text-sm text-slate-500 mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
+          <h1 className="text-4xl font-bold flex items-center gap-2"><Layers className="h-7 w-7 text-[var(--sf-accent-warm,#A16207)]" />Bandes</h1>
+          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">Lots de production · {bandes.length} bande{bandes.length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <ExportButton table="bandes" />
           <DialogNouvelleBande
             trigger={
-              <Button size="lg" className="h-12 text-base bg-amber-600 hover:bg-amber-700">
+              <Button size="lg" className="h-12 text-base bg-[var(--sf-accent-warm,#A16207)] hover:opacity-90">
                 <Plus className="h-5 w-5 mr-2" />Nouvelle bande
               </Button>
             }
@@ -61,15 +66,15 @@ export default async function BandesPage() {
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-base">{b.nom}</CardTitle>
-                    <div className="text-xs text-slate-500 font-mono mt-1">{b.code}</div>
+                    <div className="text-xs text-[var(--sf-muted,#5C5346)] font-mono mt-1">{b.code}</div>
                   </div>
-                  <Badge className={statutColors[b.statut] ?? 'bg-slate-100'}>{b.statut}</Badge>
+                  <Badge variant={statutVariants[b.statut] ?? 'secondary'}>{b.statut}</Badge>
                 </div>
               </CardHeader>
               <CardContent className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-slate-500">Début</span><span className="font-mono">{b.date_debut ? new Date(b.date_debut).toLocaleDateString('fr-FR') : '—'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Fin prévue</span><span className="font-mono">{b.date_fin_prevue ? new Date(b.date_fin_prevue).toLocaleDateString('fr-FR') : '—'}</span></div>
-                <div className="flex justify-between"><span className="text-slate-500">Effectif</span><span className="font-mono font-bold text-emerald-700">{b.bande_animaux?.length ?? 0}</span></div>
+                <div className="flex justify-between"><span className="text-[var(--sf-muted,#5C5346)]">Début</span><span className="font-mono">{b.date_debut ? new Date(b.date_debut).toLocaleDateString('fr-FR') : '—'}</span></div>
+                <div className="flex justify-between"><span className="text-[var(--sf-muted,#5C5346)]">Fin prévue</span><span className="font-mono">{b.date_fin_prevue ? new Date(b.date_fin_prevue).toLocaleDateString('fr-FR') : '—'}</span></div>
+                <div className="flex justify-between"><span className="text-[var(--sf-muted,#5C5346)]">Effectif</span><span className="font-mono font-bold text-[var(--sf-primary,#2D4A1F)]">{b.bande_animaux?.length ?? 0}</span></div>
               </CardContent>
             </Card>
           ))}

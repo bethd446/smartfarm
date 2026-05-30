@@ -51,33 +51,33 @@ export default async function NouvelleFormulationPage() {
         <div>
           <Link
             href="/alimentation/formulation"
-            className="text-xs text-slate-500 inline-flex items-center gap-1 mb-1 hover:underline"
+            className="text-xs text-[var(--sf-muted,#5C5346)] inline-flex items-center gap-1 mb-1 hover:underline"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             Formulations
           </Link>
           <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Calculator className="h-7 w-7 text-amber-600" />
+            <Calculator className="h-7 w-7 text-[var(--sf-accent-warm,#A16207)]" />
             Nouvelle formulation
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
             Calculateur live · besoins NRC 2012 / INRA 2018 · devise FCFA
           </p>
         </div>
       </div>
 
       {error ? (
-        <div className="rounded-lg border border-[var(--sf-danger-ink,#7A2A1F)]/30 bg-[var(--sf-danger,#FCE9E4)] p-4 text-sm">
+        <div className="rounded-lg border border-[var(--sf-danger-border,#E29A92)] bg-[var(--sf-danger-bg,#F4CCC8)] p-4 text-sm text-[var(--sf-danger-ink,#5A1F19)]">
           Erreur de chargement du catalogue : {error.message}
         </div>
       ) : null}
 
       {catalog.length === 0 ? (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+        <div className="rounded-lg border border-[var(--sf-line,#E7E5E4)] bg-[var(--sf-surface-1)] p-4 text-sm text-[var(--sf-ink-secondary,#44403C)]">
           Aucune matière première dans le catalogue. Ajoute-en depuis{' '}
           <Link
             href="/alimentation/matieres"
-            className="font-medium text-amber-700 hover:underline"
+            className="font-medium text-[var(--sf-accent-warm,#A16207)] hover:underline"
           >
             /alimentation/matieres
           </Link>{' '}

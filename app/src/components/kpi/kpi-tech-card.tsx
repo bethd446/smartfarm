@@ -57,7 +57,7 @@ export function toneColors(t: KpiTone): { fg: string; bg: string } {
     case 'good':
       return { fg: 'var(--sf-primary)', bg: 'var(--sf-surface-2)' }
     case 'warn':
-      return { fg: 'var(--sf-accent-deep, #B45309)', bg: 'var(--sf-warm)' }
+      return { fg: 'var(--sf-accent-deep)', bg: 'var(--sf-warm)' }
     case 'bad':
       return { fg: 'var(--sf-danger-ink, #7A2A1F)', bg: 'var(--sf-surface-2)' }
     default:

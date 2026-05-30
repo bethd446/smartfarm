@@ -1,7 +1,7 @@
+/* Hallmark · macrostructure: 11-catalogue · screen: /conseiller · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P5 H4 E4 S4 R4 V4 */
 import Link from 'next/link'
-import { Lightbulb, AlertTriangle, ChevronRight } from 'lucide-react'
+import { AlertTriangle, ChevronRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SearchTips } from './_components/search-tips'
 import {
@@ -49,7 +49,7 @@ export default async function ConseillerPage({
 
   const sb = await createClient()
 
-  // KPI counts (résilient : si la table n'existe pas encore on dégrade)
+  // Inventaire par catégorie (résilient : si la table n'existe pas encore on dégrade)
   let total = 0
   let totalRepro = 0
   let totalSanit = 0
@@ -152,186 +152,209 @@ export default async function ConseillerPage({
 
   // Pill class helper — touch target ≥ 44px (audit mobile 2026-05-25)
   const pillCls = (active: boolean) =>
-    'inline-flex items-center min-h-[44px] rounded-full px-4 py-2 text-sm font-medium transition-colors border ' +
+    'inline-flex items-center min-h-[44px] rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 border ' +
     (active
-      ? 'bg-[var(--sf-primary,#2D4A1F)] text-white border-[var(--sf-primary,#2D4A1F)]'
-      : 'bg-transparent text-[var(--sf-ink,#1a1a1a)] border-[var(--sf-muted,#5C5346)]/30 hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]')
+      ? 'bg-[var(--sf-primary)] text-[var(--sf-warm)] border-[var(--sf-primary)]'
+      : 'bg-transparent text-[var(--sf-ink)] border-[var(--sf-line)] hover:bg-[var(--sf-surface-1)]')
+
+  // Le compteur ouvre le catalogue (grammaire Catalogue : inventaire daté/compté).
+  const nbCategoriesGarnies = [totalRepro, totalSanit, totalNutri].filter(
+    (n) => n > 0
+  ).length
+
+  // Bornes catalogue : numéro de tête / fin du lot affiché.
+  const firstNum = nbResults > 0 ? (page - 1) * PAGE_SIZE + 1 : 0
+  const lastNum = (page - 1) * PAGE_SIZE + tips.length
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <header className="space-y-2">
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-          <Lightbulb className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
-          Conseiller
+    <div className="mx-auto w-full max-w-3xl">
+      {/* En-tête d'inventaire — le compte EST le titre (grammaire Catalogue) */}
+      <header className="pb-5">
+        <p className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.16em] text-[var(--sf-accent)] font-bold">
+          Catalogue conseiller
+        </p>
+        <h1
+          className="no-uppercase mt-1.5 font-[family-name:var(--sf-font-display)] text-[1.75rem] leading-[1.1] font-bold text-[var(--sf-ink)] tracking-[-0.01em]"
+        >
+          <span className="tabular-nums">{total}</span> conseil
+          {total > 1 ? 's' : ''} techniques
+          {!tableMissing && total > 0 && (
+            <span className="text-[var(--sf-subtle)]">
+              {' · '}
+              <span className="tabular-nums">{CATEGORIES.length}</span>{' '}
+              catégories
+            </span>
+          )}
         </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-          Conseils techniques pour gérer ton élevage porcin
+        <p className="mt-1.5 max-w-prose font-[family-name:var(--sf-font-editorial)] text-base italic leading-snug text-[var(--sf-muted)]">
+          Reproduction, sanitaire, nutrition, conduite : l’inventaire technique
+          pour conduire ton élevage porcin.
         </p>
       </header>
 
-      {/* KPI cards */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card>
-          <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
-              Total tips
-            </div>
-            <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-primary,#2D4A1F)] leading-none tabular-nums text-3xl mt-2">
-              {total}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
-              Reproduction
-            </div>
-            <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
-              {totalRepro}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
-              Sanitaire
-            </div>
-            <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
-              {totalSanit}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted,#5C5346)] font-bold">
-              Nutrition
-            </div>
-            <div className="font-[family-name:var(--sf-font-display)] font-black text-[var(--sf-ink,#1a1a1a)] leading-none tabular-nums text-3xl mt-2">
-              {totalNutri}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
+      {/* Bande d'inventaire — registres variés, pas un quad de KPI uniformes.
+          Total en tête (anchor), répartition par catégorie en filets. */}
+      {!tableMissing && total > 0 && (
+        <dl className="grid grid-cols-3 border-y border-[var(--sf-line)] divide-x divide-[var(--sf-line)]">
+          {(
+            [
+              ['reproduction', totalRepro],
+              ['sanitaire', totalSanit],
+              ['nutrition', totalNutri],
+            ] as const
+          ).map(([cat, n]) => (
+            <Link
+              key={cat}
+              href={buildFilterHref(cat, niveau)}
+              className={
+                'group flex flex-col gap-0.5 px-3 py-3 transition-colors duration-150 hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]' +
+                (categorie === cat ? ' bg-[var(--sf-surface-2)]' : '')
+              }
+            >
+              <dt className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.12em] text-[var(--sf-muted)] font-bold">
+                {CATEGORIE_LABELS[cat]}
+              </dt>
+              <dd className="font-[family-name:var(--sf-font-display)] tabular-nums text-2xl font-semibold leading-none text-[var(--sf-ink)]">
+                {n}
+              </dd>
+            </Link>
+          ))}
+        </dl>
+      )}
 
       {/* Recherche */}
-      <SearchTips initial={q} />
+      <div className="pt-5">
+        <SearchTips initial={q} />
+      </div>
 
-      {/* Filtres catégorie */}
-      <div className="space-y-2">
-        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted,#5C5346)] font-bold">
-          Catégorie
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href={buildFilterHref(null, niveau)}
-            className={pillCls(!categorie)}
-          >
-            Toutes
-          </Link>
-          {CATEGORIES.map((c) => (
+      {/* Filtres — catégorie puis niveau, alignés en filets (langage catalogue) */}
+      <div className="mt-4 space-y-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-subtle)] font-bold w-[5.5rem] shrink-0">
+            Catégorie
+          </span>
+          <div className="flex flex-1 flex-wrap gap-2">
             <Link
-              key={c}
-              href={buildFilterHref(c, niveau)}
-              className={pillCls(categorie === c)}
+              href={buildFilterHref(null, niveau)}
+              className={pillCls(!categorie)}
             >
-              {CATEGORIE_LABELS[c]}
+              Toutes
             </Link>
-          ))}
+            {CATEGORIES.map((c) => (
+              <Link
+                key={c}
+                href={buildFilterHref(c, niveau)}
+                className={pillCls(categorie === c)}
+              >
+                {CATEGORIE_LABELS[c]}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-subtle)] font-bold w-[5.5rem] shrink-0">
+            Niveau
+          </span>
+          <div className="flex flex-1 flex-wrap gap-2">
+            <Link
+              href={buildFilterHref(categorie, null)}
+              className={pillCls(!niveau)}
+            >
+              Tous
+            </Link>
+            {NIVEAUX.map((n) => (
+              <Link
+                key={n}
+                href={buildFilterHref(categorie, n)}
+                className={pillCls(niveau === n)}
+              >
+                {NIVEAU_LABELS[n]}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Filtres niveau */}
-      <div className="space-y-2">
-        <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted,#5C5346)] font-bold">
-          Niveau
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Link
-            href={buildFilterHref(categorie, null)}
-            className={pillCls(!niveau)}
-          >
-            Tous
-          </Link>
-          {NIVEAUX.map((n) => (
-            <Link
-              key={n}
-              href={buildFilterHref(categorie, n)}
-              className={pillCls(niveau === n)}
-            >
-              {NIVEAU_LABELS[n]}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Compteur résultats */}
-      <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-        {nbResults} conseil{nbResults > 1 ? 's' : ''} affiché
-        {nbResults > 1 ? 's' : ''}
+      {/* Ligne d'inventaire affiché (catalogue : bornes + total filtré) */}
+      <div className="mt-5 flex items-baseline justify-between gap-2 border-b-2 border-[var(--sf-primary)] pb-1.5">
+        <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted)] font-bold">
+          {nbResults > 0 ? (
+            <>
+              <span className="tabular-nums">
+                {String(firstNum).padStart(2, '0')}–
+                {String(lastNum).padStart(2, '0')}
+              </span>{' '}
+              sur <span className="tabular-nums">{nbResults}</span>
+            </>
+          ) : (
+            'Aucun conseil'
+          )}
+        </span>
         {nbPages > 1 && (
-          <span className="ml-2">
-            · page {page} / {nbPages}
+          <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-subtle)] font-bold tabular-nums">
+            Page {page} / {nbPages}
           </span>
         )}
-      </p>
+      </div>
 
-      {/* Grille de tips */}
+      {/* Index des conseils — liste numérotée, bandeau de catégorie entre groupes */}
       {tips.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[var(--sf-muted,#5C5346)]/30 p-10 text-center">
-          <AlertTriangle className="mx-auto h-10 w-10 text-[var(--sf-muted,#5C5346)]" />
-          <p className="mt-3 text-sm text-[var(--sf-muted,#5C5346)]">
+        <div className="mt-8 border border-dashed border-[var(--sf-line)] bg-[var(--sf-surface-1)] p-10 text-center">
+          <AlertTriangle className="mx-auto h-9 w-9 text-[var(--sf-subtle)]" />
+          <p className="mx-auto mt-3 max-w-prose text-sm text-[var(--sf-muted)]">
             {tableMissing
-              ? 'Le catalogue est en cours de construction. Les conseils arriveront bientôt.'
+              ? 'Le catalogue est en cours de constitution. Les conseils arriveront bientôt.'
               : total === 0
               ? 'Aucun conseil pour le moment — le catalogue sera bientôt rempli.'
-              : 'Aucun conseil ne correspond à votre recherche.'}
+              : 'Aucun conseil ne correspond à cette recherche. Élargis la catégorie ou le niveau.'}
           </p>
+          {!tableMissing && total > 0 && (categorie || niveau || q) && (
+            <Link
+              href="/conseiller"
+              className="mt-4 inline-flex min-h-[44px] items-center rounded-md border border-[var(--sf-line)] px-4 text-sm font-medium text-[var(--sf-ink)] transition-colors duration-150 hover:bg-[var(--sf-surface-2)]"
+            >
+              Réinitialiser les filtres
+            </Link>
+          )}
         </div>
       ) : (
-        <ol
-          className="border-t-2"
-          style={{ borderTopColor: 'var(--sf-primary)' }}
-        >
+        <ol>
           {tips.map((t, i) => {
             const catVariant =
               CATEGORIE_BADGE_VARIANT[t.categorie] ?? 'secondary'
             const visibleTags = t.tags.slice(0, 4)
             const extraTags = t.tags.length - visibleTags.length
             const num = (page - 1) * PAGE_SIZE + i + 1
+            // Bandeau de catégorie quand la catégorie change (la requête ordonne par catégorie).
+            const showBand =
+              !categorie && (i === 0 || tips[i - 1].categorie !== t.categorie)
 
             return (
-              <li
-                key={t.slug}
-                className="border-b border-[var(--sf-line)]"
-              >
+              <li key={t.slug}>
+                {showBand && (
+                  <div className="flex items-center gap-3 pt-6 pb-1">
+                    <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.16em] text-[var(--sf-accent)] font-bold">
+                      {CATEGORIE_LABELS[t.categorie] ?? t.categorie}
+                    </span>
+                    <span className="h-px flex-1 bg-[var(--sf-line)]" />
+                  </div>
+                )}
                 <Link
                   href={`/conseiller/${t.slug}`}
-                  className="group flex items-start gap-3 md:gap-4 min-h-[44px] px-2 py-4 transition-colors hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
+                  className="group flex items-start gap-3 md:gap-4 min-h-[44px] border-b border-[var(--sf-line)] py-4 transition-colors duration-150 hover:bg-[var(--sf-surface-1)] focus:outline-none focus-visible:bg-[var(--sf-surface-1)] focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--sf-primary)]"
                 >
                   {/* Numéro de catalogue */}
-                  <span
-                    className="shrink-0 tabular-nums text-[var(--sf-subtle)] text-sm font-semibold leading-tight pt-0.5 w-7 text-right"
-                    style={{
-                      fontFamily:
-                        "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                    }}
-                  >
+                  <span className="shrink-0 tabular-nums text-[var(--sf-subtle)] text-sm font-semibold leading-tight pt-0.5 w-7 text-right font-[family-name:var(--sf-font-display)]">
                     {String(num).padStart(2, '0')}
                   </span>
 
                   <div className="min-w-0 flex-1">
                     {/* Titre + badges catégorie/niveau */}
                     <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                      <h3
-                        className="text-[15px] md:text-base font-semibold leading-tight text-[var(--sf-ink)] tracking-[0.01em]"
-                        style={{
-                          fontFamily:
-                            "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                        }}
-                      >
+                      <h2 className="font-[family-name:var(--sf-font-display)] text-[15px] md:text-base font-semibold leading-tight text-[var(--sf-ink)] tracking-[0.01em]">
                         {t.titre}
-                      </h3>
+                      </h2>
                       <span className="inline-flex flex-wrap gap-1.5">
                         <Badge variant={catVariant}>
                           {CATEGORIE_LABELS[t.categorie] ?? t.categorie}
@@ -353,13 +376,13 @@ export default async function ConseillerPage({
                         {visibleTags.map((tag) => (
                           <span
                             key={tag}
-                            className="inline-block rounded-md bg-[var(--sf-surface-2)]/60 px-1.5 py-0.5 text-[11px] text-[var(--sf-muted)]"
+                            className="inline-block bg-[var(--sf-surface-2)] px-1.5 py-0.5 text-[11px] text-[var(--sf-muted)]"
                           >
                             #{tag}
                           </span>
                         ))}
                         {extraTags > 0 && (
-                          <span className="inline-block px-1 py-0.5 text-[11px] text-[var(--sf-subtle)]">
+                          <span className="inline-block px-1 py-0.5 text-[11px] text-[var(--sf-subtle)] tabular-nums">
                             +{extraTags}
                           </span>
                         )}
@@ -367,7 +390,7 @@ export default async function ConseillerPage({
                     )}
                   </div>
 
-                  <ChevronRight className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] transition-transform duration-150 group-hover:translate-x-0.5" />
                 </Link>
               </li>
             )
@@ -379,26 +402,30 @@ export default async function ConseillerPage({
       {nbPages > 1 && (
         <nav
           aria-label="Pagination"
-          className="flex items-center justify-center gap-2 pt-2"
+          className="mt-6 flex items-center justify-between gap-2"
         >
-          {page > 1 && (
+          {page > 1 ? (
             <Link
               href={buildPageHref(page - 1)}
-              className="rounded-md px-3 py-1.5 text-sm border border-[var(--sf-muted,#5C5346)]/30 text-[var(--sf-ink,#1a1a1a)] hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]"
+              className="inline-flex min-h-[44px] items-center rounded-md border border-[var(--sf-line)] px-4 text-sm font-medium text-[var(--sf-ink)] transition-colors duration-150 hover:bg-[var(--sf-surface-1)]"
             >
               ← Précédent
             </Link>
+          ) : (
+            <span aria-hidden />
           )}
-          <span className="text-sm text-[var(--sf-muted,#5C5346)] tabular-nums">
+          <span className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.14em] text-[var(--sf-muted)] font-bold tabular-nums">
             {page} / {nbPages}
           </span>
-          {page < nbPages && (
+          {page < nbPages ? (
             <Link
               href={buildPageHref(page + 1)}
-              className="rounded-md px-3 py-1.5 text-sm border border-[var(--sf-muted,#5C5346)]/30 text-[var(--sf-ink,#1a1a1a)] hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]"
+              className="inline-flex min-h-[44px] items-center rounded-md border border-[var(--sf-line)] px-4 text-sm font-medium text-[var(--sf-ink)] transition-colors duration-150 hover:bg-[var(--sf-surface-1)]"
             >
               Suivant →
             </Link>
+          ) : (
+            <span aria-hidden />
           )}
         </nav>
       )}

@@ -57,7 +57,7 @@ export function TipCard({ tip }: { tip: TipCardData }) {
       href={`/conseiller/${tip.slug}`}
       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sf-primary,#2D4A1F)] focus-visible:ring-offset-2 rounded-lg"
     >
-      <Card className="h-full transition-all hover:shadow-md hover:-translate-y-0.5">
+      <Card className="h-full transition-[box-shadow] duration-150 ease-out group-hover:shadow-[var(--sf-elev-2)]">
         <CardHeader className="pb-2">
           <div className="flex items-start justify-between gap-2">
             <CardTitle className="text-base leading-tight text-[var(--sf-ink,#1a1a1a)]">

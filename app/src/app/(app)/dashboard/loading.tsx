@@ -1,42 +1,47 @@
 import { Skeleton } from '@/components/ui/skeleton'
 
 /**
- * Smart Farm — Loading state pour /dashboard
+ * Smart Farm — Loading state pour /dashboard (macrostructure Workbench)
  *
- * Squelette qui reflète la structure réelle :
- *   - header (eyebrow + H1)
- *   - KPI hero + stack (2 colonnes asymétriques)
- *   - 4 KPI techniques
- *   - Widgets Alertes + Tip du jour
- *   - Tableau Prochains événements
- *   - Grid 2 colonnes (Naissances / Stocks)
+ * Reflète la structure réelle du poste de travail :
+ *   - en-tête lite (eyebrow + H1 + relevé d'atelier en bande)
+ *   - Zone 1 « À traiter » : 2 établis (alertes / échéances)
+ *   - Zone 2 « Relevé technique » : bande de KPI
+ *   - Zone 3 « Activité récente » : 2 établis (naissances / stock) + note de pied
  *
- * Composant Server (pas d'interactivité). Servi automatiquement par
- * Next.js App Router pendant le chargement de page.tsx.
+ * Composant Server. Servi automatiquement par Next.js App Router pendant
+ * le chargement de page.tsx.
  */
 export default function Loading() {
   return (
-    <div className="space-y-8" aria-busy="true" aria-live="polite">
-      {/* Header */}
-      <header className="space-y-2">
-        <Skeleton className="h-3 w-64" />
-        <Skeleton className="h-9 w-40" />
+    <div className="space-y-6 lg:space-y-7" aria-busy="true" aria-live="polite">
+      {/* En-tête lite + relevé d'atelier */}
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b-2 border-[var(--sf-primary)] pb-4">
+        <div className="space-y-2">
+          <Skeleton className="h-3 w-56" />
+          <Skeleton className="h-9 w-48" />
+        </div>
+        <div className="flex gap-px">
+          <Skeleton className="h-14 w-[84px]" />
+          <Skeleton className="h-14 w-[84px]" />
+          <Skeleton className="h-14 w-[84px]" />
+          <Skeleton className="h-14 w-[84px]" />
+        </div>
       </header>
 
-      {/* KPI HERO + stack */}
-      <section className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-        <Skeleton className="min-h-[280px] w-full" />
-        <div className="flex flex-col gap-4 min-h-[280px]">
-          <Skeleton className="flex-1" />
-          <Skeleton className="flex-1" />
-          <Skeleton className="flex-1" />
-        </div>
-      </section>
-
-      {/* KPI techniques (4) */}
+      {/* Zone 1 — À traiter (2 établis) */}
       <section>
-        <Skeleton className="h-3 w-60 mb-3" />
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Skeleton className="mb-3 h-4 w-52" />
+        <div className="grid grid-cols-1 gap-px border border-[var(--sf-line)] lg:grid-cols-2">
+          <Skeleton className="h-72" />
+          <Skeleton className="h-72" />
+        </div>
+      </section>
+
+      {/* Zone 2 — Relevé technique */}
+      <section>
+        <Skeleton className="mb-3 h-4 w-44" />
+        <div className="grid grid-cols-2 gap-px md:grid-cols-4">
           <Skeleton className="h-32" />
           <Skeleton className="h-32" />
           <Skeleton className="h-32" />
@@ -44,20 +49,15 @@ export default function Loading() {
         </div>
       </section>
 
-      {/* Widgets Alertes + Tip */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Skeleton className="h-[320px]" />
-        <Skeleton className="h-[320px]" />
-      </div>
-
-      {/* Prochains événements (table card) */}
-      <Skeleton className="h-64 w-full" />
-
-      {/* Naissances + Stocks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Skeleton className="h-[320px]" />
-        <Skeleton className="h-[320px]" />
-      </div>
+      {/* Zone 3 — Activité récente (2 établis) + note de pied */}
+      <section>
+        <Skeleton className="mb-3 h-4 w-44" />
+        <div className="grid grid-cols-1 gap-px border border-[var(--sf-line)] lg:grid-cols-2">
+          <Skeleton className="h-72" />
+          <Skeleton className="h-72" />
+        </div>
+        <Skeleton className="mt-3 h-24 w-full" />
+      </section>
     </div>
   )
 }

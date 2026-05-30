@@ -6,63 +6,24 @@ import { usePathname } from 'next/navigation'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import { cn } from '@/lib/utils'
 import {
-  type SidebarUser,
-  type SidebarFerme,
-  getInitiales,
-  getNomComplet,
-  getRoleLabel,
-} from '@/components/sidebar'
-import {
-  LayoutDashboard, PiggyBank, Heart, Baby,
-  Stethoscope, Wheat, Package, TrendingUp, Settings, Building2, Bell,
-  Sparkles, AlertTriangle, Calendar, Zap,
-  X, LogOut,
-} from 'lucide-react'
+  NAV_ITEMS, NAV_GROUPS,
+  type SidebarUser, type SidebarFerme,
+  getInitiales, getNomComplet, getRoleLabel, getBrandSubline,
+} from '@/lib/nav'
+import { AlertTriangle, X, LogOut } from 'lucide-react'
 import { deconnexionAction } from '@/app/(auth)/_actions'
 
 // ---------------------------------------------------------------------------
-// V2-HARMONIE (HARM-A) — doit rester aligné 1:1 avec sidebar.tsx
-//   4 groupes / 14 menus — Aujourd'hui/Élevage/Sanitaire & alim/Outils
-// Refonte v1.0 : classes BEM .sidebar__* (styles design-v1.css)
+// V2-HARMONIE (HARM-A) — variante mobile de la sidebar. La nav vient de
+// @/lib/nav (source unique partagée avec sidebar.tsx) : aligné 1:1 par
+// construction, plus aucun risque de désynchro (ex. Mortalités manquant).
+// Classes BEM .sidebar__* — styles design-v1.css.
 // ---------------------------------------------------------------------------
-const nav = [
-  // Aujourd'hui
-  { href: '/dashboard',             label: 'Tableau de bord',       icon: LayoutDashboard, group: "Aujourd'hui" },
-  { href: '/alertes',               label: 'Alertes',               icon: Bell,            group: "Aujourd'hui" },
-  { href: '/calendrier',            label: 'Calendrier',            icon: Calendar,        group: "Aujourd'hui" },
-  { href: '/actions-rapides',       label: 'Actions rapides',       icon: Zap,             group: "Aujourd'hui" },
-  { href: '/kpi',                   label: 'Mes résultats',         icon: TrendingUp,      group: "Aujourd'hui" },
-
-  // Élevage
-  { href: '/cheptel',               label: 'Cheptel',               icon: PiggyBank,       group: 'Élevage' },
-  { href: '/batiments',             label: 'Bâtiments',             icon: Building2,       group: 'Élevage' },
-  { href: '/reproduction',          label: 'Reproduction',          icon: Heart,           group: 'Élevage' },
-  { href: '/mises-bas',             label: 'Mises bas',             icon: Baby,            group: 'Élevage' },
-
-  // Sanitaire & alim
-  { href: '/sanitaire',             label: 'Sanitaire',             icon: Stethoscope,     group: 'Sanitaire & alim' },
-  { href: '/alimentation',          label: 'Alimentation',          icon: Wheat,           group: 'Sanitaire & alim' },
-  { href: '/stock',                 label: 'Stock',                 icon: Package,         group: 'Sanitaire & alim' },
-
-  // Outils
-  { href: '/assistant',             label: 'Assistant',             icon: Sparkles,        group: 'Outils' },
-  { href: '/parametres',            label: 'Paramètres',            icon: Settings,        group: 'Outils' },
-]
-
 export interface MobileDrawerProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   user?: SidebarUser | null
   ferme?: SidebarFerme | null
-}
-
-function getBrandSubline(user: SidebarUser | null, ferme: SidebarFerme | null): string {
-  const code = user?.numero_client?.trim() || ''
-  const loc = ferme?.localisation?.trim() || ''
-  if (code && loc) return `${code} · ${loc}`
-  if (code) return code
-  if (loc) return loc
-  return 'Élevage porcin · CI'
 }
 
 /**
@@ -73,7 +34,6 @@ function getBrandSubline(user: SidebarUser | null, ferme: SidebarFerme | null): 
  */
 export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: MobileDrawerProps) {
   const pathname = usePathname()
-  const groups = Array.from(new Set(nav.map(n => n.group)))
 
   const initiales = getInitiales(user)
   const nomComplet = getNomComplet(user)
@@ -140,10 +100,10 @@ export function MobileDrawer({ open, onOpenChange, user = null, ferme = null }: 
           )}
 
           <nav className="sidebar__nav">
-            {groups.map(group => (
+            {NAV_GROUPS.map(group => (
               <div className="sidebar__group" key={group}>
                 <div className="sidebar__group-title">{group}</div>
-                {nav.filter(n => n.group === group).map(item => {
+                {NAV_ITEMS.filter(n => n.group === group).map(item => {
                   const active = pathname === item.href
                   const Icon = item.icon
                   return (

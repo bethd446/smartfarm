@@ -70,19 +70,19 @@ export function BarcodeScanner({ open, onOpenChange, onScan }: Props) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <ScanLine className="h-5 w-5 text-emerald-600" />
+            <ScanLine className="h-5 w-5 text-[var(--sf-primary,#2D4A1F)]" />
             Scanner code-barres / QR
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-3">
           <div
             id={containerId}
-            className="w-full aspect-square bg-slate-900 rounded-lg overflow-hidden flex items-center justify-center text-slate-400 text-sm"
+            className="w-full aspect-square bg-[var(--sf-ink,#1C1917)] rounded-lg overflow-hidden flex items-center justify-center text-[var(--sf-muted,#5C5346)] text-sm"
           >
             {starting && 'Initialisation de la caméra…'}
           </div>
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md p-3">
+            <div className="text-sm text-[var(--sf-danger-ink,#5A1F19)] bg-[var(--sf-danger-bg,#F4CCC8)] border border-[var(--sf-danger-border,#E29A92)] rounded-md p-3">
               {error}
             </div>
           )}

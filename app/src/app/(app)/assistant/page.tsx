@@ -1,23 +1,22 @@
+/* Hallmark · macrostructure: 06-conversational-faq · screen: /assistant · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P5 H5 E4 S4 R5 V4 */
 import type { Metadata } from 'next'
-import { Sparkles } from 'lucide-react'
 import { Chatbot } from './_components/chatbot'
 import { signSessionToken } from '@/lib/chatbot/session-token'
 
 export const metadata: Metadata = {
-  title: 'Assistant',
+  title: 'Conseil',
 }
 
 /**
- * Smart Farm — Page hub /assistant (C7-B)
+ * Smart Farm — Page /assistant, refonte macrostructure 06 (Conversational FAQ).
  *
- * Assistant agritech conversationnel pour l'éleveur :
- *   - Conversation streaming (POST /api/chatbot)
- *   - Persistance localStorage (50 derniers messages)
- *   - Suggestions d'amorce si conversation vide
+ * Carnet de conseil terrain en Q/R : questions fréquentes d'élevage en tête
+ * (registre FAQ), puis fil de conseil streaming (POST /api/chatbot, persistance
+ * localStorage 50 messages). Aucune signature chatbot-IA : ni Sparkles, ni
+ * « Assistant Smart Farm », ni avatar.
  *
- * L'UI complète vit dans `_components/chatbot.tsx` (client component).
- * Cette page est volontairement un Server Component minimal : elle pose
- * uniquement le header sémantique et délègue tout le runtime au client.
+ * Server Component minimal : pose l'en-tête sémantique, délègue le runtime au
+ * client component `_components/chatbot.tsx`.
  */
 
 export const dynamic = 'force-dynamic'
@@ -29,14 +28,16 @@ export default function AssistantPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-2rem)] gap-4">
-      <header className="shrink-0">
-        <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-          <Sparkles className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
-          Assistant Smart Farm
+      <header className="shrink-0 border-b border-[var(--sf-line)] pb-3">
+        <div className="font-[family-name:var(--sf-font-display)] uppercase tracking-[0.14em] text-[11px] font-bold text-[var(--sf-accent)]">
+          Conseil — élevage porcin tropical
+        </div>
+        <h1 className="text-3xl font-bold text-[var(--sf-ink)] mt-1 font-[family-name:var(--sf-font-display)]">
+          Quelle est votre question&nbsp;?
         </h1>
-        <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
-          Conseil agritech personnalisé pour ta ferme — nutrition, sanitaire,
-          reproduction, protocoles vaccinaux.
+        <p className="text-[14px] text-[var(--sf-muted)] mt-1.5 font-[family-name:var(--sf-font-body)] max-w-[64ch]">
+          Ration, sanitaire, reproduction, biosécurité&nbsp;: posez la question
+          du jour, ou ouvrez une des questions qui reviennent le plus.
         </p>
       </header>
 
