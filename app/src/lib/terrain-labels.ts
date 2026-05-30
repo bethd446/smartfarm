@@ -67,9 +67,15 @@ export const TERRAIN = {
  * Seul le label visible change.
  */
 export const CATEGORIE_LABEL: Record<string, string> = {
-  verrat: 'Verrat',
   truie: 'Truie',
   cochette: 'Cochette',
+  verrat: 'Verrat',
+  porcelet_lait: 'Porcelet (sous la mère)',
+  porcelet_sevre: 'Porcelet sevré',
+  porcelet_croissance: 'Porc en croissance',
+  porc_engraissement: "Porc à l'engrais",
+  reforme: 'Réforme',
+  // Legacy (anciennes valeurs hors enum categorie_animal) — conservées par sécurité
   porcelet: 'Porcelet',
   sevrage: 'Porcelet sevré',
   engraissement: 'Porc en engraissement',
