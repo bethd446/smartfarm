@@ -174,6 +174,7 @@ function IndexSection({
   return (
     <section className="border-t border-[var(--sf-line)] py-[var(--sf-space-lg)]">
       <div className="flex items-baseline gap-[var(--sf-space-md)]">
+        {/* numéro = index ordinal volontaire (macrostructure Index-First), pas un eyebrow */}
         <span
           className="shrink-0 font-mono text-sm tabular-nums text-[var(--sf-subtle)]"
           aria-hidden="true"

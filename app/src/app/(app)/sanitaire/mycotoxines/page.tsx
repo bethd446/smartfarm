@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: 13-index-first · screen: /sanitaire/mycotoxines · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P4 H4 E4 S5 R4 V4 */
+/* Hallmark · macrostructure: Registre dense (dossier sanitaire) · screen: /sanitaire/mycotoxines · tone: terrain-vivant · theme: Terre & Mil (DESIGN.md) · pre-emit: P4 H4 E4 S5 R4 V4 */
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
@@ -96,6 +96,20 @@ function statutLot(l: LotRow): {
   }
   if (!l.conforme) return { label: 'Non conforme', tone: 'non_conforme' }
   return { label: 'Conforme', tone: 'conforme' }
+}
+
+/** Mappe le `tone` d'un statut de lot vers le `tone` de pastille `Dot`. */
+function toneStatutLot(
+  tone: 'conforme' | 'non_conforme' | 'non_analyse_retard' | 'non_analyse',
+): 'faible' | 'eleve' | 'modere' | 'non_analyse' {
+  return (
+    {
+      conforme: 'faible',
+      non_conforme: 'eleve',
+      non_analyse_retard: 'modere',
+      non_analyse: 'non_analyse',
+    } as const
+  )[tone]
 }
 
 /** Pastille de sévérité — forme + couleur token, jamais fond coloré décoratif. */
@@ -293,7 +307,7 @@ export default async function MycotoxinesPage() {
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             }}
           >
-            <ChevronLeft className="h-3.5 w-3.5" />
+            <ChevronLeft aria-hidden="true" className="h-3.5 w-3.5" />
             Sanitaire
           </Link>
           <h1
@@ -303,7 +317,7 @@ export default async function MycotoxinesPage() {
                 "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
             }}
           >
-            <Bug className="h-8 w-8 text-[var(--sf-primary)]" />
+            <Bug aria-hidden="true" className="h-8 w-8 text-[var(--sf-primary)]" />
             Mycotoxines
           </h1>
           <p className="max-w-prose text-sm text-[var(--sf-muted)]">
@@ -314,7 +328,7 @@ export default async function MycotoxinesPage() {
         <DialogEnregistrerLot
           trigger={
             <Button variant="default" size="sm" className="whitespace-nowrap">
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus aria-hidden="true" className="h-4 w-4 mr-1" />
               Enregistrer un lot
             </Button>
           }
@@ -327,7 +341,7 @@ export default async function MycotoxinesPage() {
         <SectionLabel>Bilan des lots</SectionLabel>
         <div className="grid grid-cols-3 divide-x divide-[var(--sf-line)] border-b border-[var(--sf-line)]">
           <div className="flex items-center gap-2.5 py-3 pr-3">
-            <Bug className="h-4 w-4 shrink-0 text-[var(--sf-primary)]" />
+            <Bug aria-hidden="true" className="h-4 w-4 shrink-0 text-[var(--sf-primary)]" />
             <div className="min-w-0">
               <div
                 className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink)]"
@@ -629,17 +643,7 @@ export default async function MycotoxinesPage() {
                         </td>
                         <td className="p-2">
                           <span className="inline-flex items-center gap-1.5 whitespace-nowrap text-xs text-[var(--sf-ink)]">
-                            <Dot
-                              tone={
-                                st.tone === 'conforme'
-                                  ? 'faible'
-                                  : st.tone === 'non_conforme'
-                                  ? 'eleve'
-                                  : st.tone === 'non_analyse_retard'
-                                  ? 'modere'
-                                  : 'non_analyse'
-                              }
-                            />
+                            <Dot tone={toneStatutLot(st.tone)} />
                             {st.label}
                           </span>
                         </td>
@@ -671,17 +675,7 @@ export default async function MycotoxinesPage() {
                         {l.reference_lot}
                       </span>
                       <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-xs text-[var(--sf-ink)]">
-                        <Dot
-                          tone={
-                            st.tone === 'conforme'
-                              ? 'faible'
-                              : st.tone === 'non_conforme'
-                              ? 'eleve'
-                              : st.tone === 'non_analyse_retard'
-                              ? 'modere'
-                              : 'non_analyse'
-                          }
-                        />
+                        <Dot tone={toneStatutLot(st.tone)} />
                         {st.label}
                       </span>
                     </div>

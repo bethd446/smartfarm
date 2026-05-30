@@ -150,7 +150,7 @@ export function Suggestions({
                       )}
                     >
                       Demander au conseiller
-                      <ArrowRight className="h-4 w-4" />
+                      <ArrowRight aria-hidden="true" className="h-4 w-4" />
                     </button>
                   </div>
                 </div>

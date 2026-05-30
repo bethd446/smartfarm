@@ -177,12 +177,12 @@ export default async function ConseillerPage({
           className="no-uppercase mt-1.5 font-[family-name:var(--sf-font-display)] text-[1.75rem] leading-[1.1] font-bold text-[var(--sf-ink)] tracking-[-0.01em]"
         >
           <span className="tabular-nums">{total}</span> conseil
-          {total > 1 ? 's' : ''} techniques
+          {total > 1 ? 's' : ''} technique{total > 1 ? 's' : ''}
           {!tableMissing && total > 0 && (
             <span className="text-[var(--sf-subtle)]">
               {' · '}
               <span className="tabular-nums">{CATEGORIES.length}</span>{' '}
-              catégories
+              catégorie{CATEGORIES.length > 1 ? 's' : ''}
             </span>
           )}
         </h1>
@@ -301,7 +301,7 @@ export default async function ConseillerPage({
       {/* Index des conseils — liste numérotée, bandeau de catégorie entre groupes */}
       {tips.length === 0 ? (
         <div className="mt-8 border border-dashed border-[var(--sf-line)] bg-[var(--sf-surface-1)] p-10 text-center">
-          <AlertTriangle className="mx-auto h-9 w-9 text-[var(--sf-subtle)]" />
+          <AlertTriangle aria-hidden="true" className="mx-auto h-9 w-9 text-[var(--sf-subtle)]" />
           <p className="mx-auto mt-3 max-w-prose text-sm text-[var(--sf-muted)]">
             {tableMissing
               ? 'Le catalogue est en cours de constitution. Les conseils arriveront bientôt.'
@@ -390,7 +390,7 @@ export default async function ConseillerPage({
                     )}
                   </div>
 
-                  <ChevronRight className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] transition-transform duration-150 group-hover:translate-x-0.5" />
+                  <ChevronRight aria-hidden="true" className="shrink-0 mt-1 h-4 w-4 text-[var(--sf-subtle)] transition-transform duration-150 group-hover:translate-x-0.5" />
                 </Link>
               </li>
             )
