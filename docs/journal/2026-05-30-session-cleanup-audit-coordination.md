@@ -4,7 +4,7 @@
 
 ## Fait
 1. **Abandon PorcTrack8** : projet remplacé par Smart Farm. Dossiers locaux supprimés (`~/PorcTrack8` 1,9 Go re-clonable depuis GitHub `bethd446/PorcTrack8`, `~/porctrack-test-screens`). Mémoire Claude privée reconstruite sur Smart Farm.
-2. **Consolidation worktrees** : 4 copies → **1 seule** `~/smartfarm`. Worktrees `smartfarm-design`, `smartfarm-fix`, `.claude/worktrees/objective-cerf` supprimés. ⚠️ `smartfarm-design` a été retiré pendant qu'une autre session y lançait des agents (collision — d'où ce système de coordination). Toutes les branches sont sur origin.
+2. **Consolidation worktrees → ERREUR DE JUGEMENT, corrigée dans le protocole**. J'ai supprimé `smartfarm-design`, `smartfarm-fix`, `.claude/worktrees/objective-cerf` pour « 1 copie propre ». Mais une autre session a aussitôt **recréé `~/smartfarm-design`** (elle y travaillait) : les worktrees ne sont PAS de la confusion, c'est le mécanisme d'**isolation entre sessions parallèles**. La bonne règle (désormais dans CLAUDE.md §15) : `~/smartfarm` = worktree de référence sur `main` ; **chaque session active = son propre worktree éphémère `../sf-<N>-slug`**, supprimé après merge. Aucune perte (branches toutes sur origin).
 3. **bug-sweep sauvegardé** + **PR #14 repointée sur `main`** (était sur `feat/design-phase-d`, en conflit) → MERGEABLE/CLEAN. À merger en premier (apporte hydration #418, sécu, filtres + Phase D1/D2). Reste un geste humain (déploie sur smartfarm.group).
 4. **Repo dégraissé** : zip d'audit 33 Mo supprimé ; 198 screenshots (~71 Mo) sortis du tracking de `agents/` et `.audits/` ; **158 rapports .md conservés** versionnés.
 5. **Audit design web+mobile** → `docs/audits/2026-05-30-audit-design-web-mobile.md` (Nielsen 24/40).

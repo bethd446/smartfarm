@@ -396,8 +396,8 @@ Plusieurs sessions Claude (et Christophe) travaillent **en parallèle** sur ce r
 ### Règles dures
 1. **Démarrage** (cf §12 étape 0) : `gh issue list --state open` + lire les 2-3 derniers `docs/journal/`. **Ne reprends jamais** une issue déjà assignée ou fermée.
 2. **Réserver AVANT de coder** : `gh issue edit <N> --add-assignee @me`. Si déjà assignée à quelqu'un d'autre, prends une autre tâche. Pas de findings nouveaux sans créer l'issue d'abord.
-3. **1 issue = 1 branche** : `fix/<N>-slug` ou `feat/<N>-slug`. Toujours `git pull --rebase origin main` avant de pousser. Jamais deux sessions sur la même branche.
-4. **Avant de supprimer/consolider un worktree ou une branche** : vérifier qu'aucune autre session n'y travaille (`git worktree list`, journaux récents). Une suppression peut casser une session active (incident vécu 2026-05-30).
+3. **1 session active = 1 worktree + 1 branche** (isolation obligatoire) : `git worktree add ../sf-<N>-slug -b fix/<N>-slug origin/main`. **Ne JAMAIS partager le répertoire `~/smartfarm` entre deux sessions actives** : deux sessions dans le même working tree corrompent leurs commits/fichiers (collision vécue 2026-05-30, commits entrelacés). `~/smartfarm` = worktree de référence (`main`) ; chaque session bosse dans `../sf-<N>-...`. `git pull --rebase origin main` avant de pousser.
+4. **Worktree éphémère** : supprimé après merge de sa PR (`git worktree remove ../sf-<N>-...`). C'est ça « le repo propre » — pas « zéro worktree », mais zéro worktree *orphelin*. **Avant de supprimer un worktree/branche, vérifier qu'aucune autre session n'y travaille** (`git worktree list`, journaux récents) : une suppression casse une session active.
 5. **Fin de session** : écrire `docs/journal/<date>-<sujet>.md` (fait / branche / fichiers / reste), **fermer l'issue** (`gh issue close <N>`), commit + push. Pas de travail non rapporté.
 
 ### Découverte d'un bug / d'un audit
