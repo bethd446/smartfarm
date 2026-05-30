@@ -99,20 +99,20 @@ export function OnboardingForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-lg border border-[var(--sf-border)] bg-[var(--sf-surface-1)] shadow-sm overflow-hidden"
+      className="rounded-[var(--rl)] border border-[var(--line)] bg-[var(--card)] shadow-[var(--sh-sm)] overflow-hidden"
     >
       {/* Stepper */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--sf-border)] bg-[var(--sf-surface-0)]">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--line)] bg-[var(--paper)]">
         {[1, 2, 3].map((n) => (
           <div key={n} className="flex items-center gap-2 flex-1">
             <span
               className={[
                 'flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold border-2',
                 step === n
-                  ? 'bg-[var(--sf-primary)] text-white border-[var(--sf-primary)]'
+                  ? 'bg-[var(--sage)] text-white border-[var(--sage)]'
                   : step > n
-                  ? 'bg-[var(--sf-primary)]/20 text-[var(--sf-primary)] border-[var(--sf-primary)]/40'
-                  : 'bg-transparent text-[var(--sf-muted)] border-[var(--sf-border)]',
+                  ? 'bg-[var(--sage-bg)] text-[var(--sage-d)] border-[var(--sage)]/40'
+                  : 'bg-transparent text-[var(--mut)] border-[var(--line2)]',
               ].join(' ')}
             >
               {step > n ? '✓' : n}
@@ -120,12 +120,12 @@ export function OnboardingForm() {
             <span
               className={[
                 'text-[10px] uppercase tracking-[0.1em] hidden sm:inline',
-                step === n ? 'text-[var(--sf-ink)] font-semibold' : 'text-[var(--sf-muted)]',
+                step === n ? 'text-[var(--ink)] font-semibold' : 'text-[var(--mut)]',
               ].join(' ')}
             >
               {n === 1 ? 'Identité' : n === 2 ? 'Races' : 'Effectifs'}
             </span>
-            {n < 3 && <span className="flex-1 h-px bg-[var(--sf-border)] mx-2" aria-hidden />}
+            {n < 3 && <span className="flex-1 h-px bg-[var(--line2)] mx-2" aria-hidden />}
           </div>
         ))}
       </div>
@@ -136,17 +136,17 @@ export function OnboardingForm() {
           <fieldset className="space-y-5">
             <legend className="sr-only">Étape 1 : identité de la ferme</legend>
             <div>
-              <h2 className="text-lg font-semibold text-[var(--sf-ink)] mb-1">
+              <h2 className="font-[family-name:var(--disp)] text-lg font-bold text-[var(--ink)] mb-1">
                 Identifions votre exploitation
               </h2>
-              <p className="text-xs text-[var(--sf-muted)]">
+              <p className="text-xs text-[var(--mut)]">
                 Le nom de la ferme est obligatoire. Le reste est optionnel.
               </p>
             </div>
 
-            <div>
-              <label htmlFor="nom" className="block text-xs font-semibold uppercase tracking-wide text-[var(--sf-ink)] mb-1.5">
-                Nom de la ferme <span className="text-red-600">*</span>
+            <div className="field !mb-0">
+              <label htmlFor="nom" className="field__label">
+                Nom de la ferme <span className="text-[var(--bad)]">*</span>
               </label>
               <input
                 id="nom"
@@ -156,13 +156,13 @@ export function OnboardingForm() {
                 value={nom}
                 onChange={(e) => setNom(e.target.value)}
                 placeholder="Ex. Ferme Sahel Yamoussoukro"
-                className="w-full h-12 px-4 rounded-md border border-[var(--sf-border)] bg-[var(--sf-surface-0)] text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)]/70 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]"
+                className="input"
                 autoFocus
               />
             </div>
 
-            <div>
-              <label htmlFor="localisation" className="block text-xs font-semibold uppercase tracking-wide text-[var(--sf-ink)] mb-1.5">
+            <div className="field !mb-0">
+              <label htmlFor="localisation" className="field__label">
                 Localisation
               </label>
               <input
@@ -171,12 +171,12 @@ export function OnboardingForm() {
                 value={localisation}
                 onChange={(e) => setLocalisation(e.target.value)}
                 placeholder="Ex. Yamoussoukro, Côte d'Ivoire"
-                className="w-full h-12 px-4 rounded-md border border-[var(--sf-border)] bg-[var(--sf-surface-0)] text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)]/70 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]"
+                className="input"
               />
             </div>
 
-            <div>
-              <label htmlFor="telephone" className="block text-xs font-semibold uppercase tracking-wide text-[var(--sf-ink)] mb-1.5">
+            <div className="field !mb-0">
+              <label htmlFor="telephone" className="field__label">
                 Téléphone contact
               </label>
               <input
@@ -185,7 +185,7 @@ export function OnboardingForm() {
                 value={telephone}
                 onChange={(e) => setTelephone(e.target.value)}
                 placeholder="+225 07 00 00 00 00"
-                className="w-full h-12 px-4 rounded-md border border-[var(--sf-border)] bg-[var(--sf-surface-0)] text-[var(--sf-ink)] placeholder:text-[var(--sf-muted)]/70 focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]"
+                className="input"
               />
             </div>
           </fieldset>
@@ -195,10 +195,10 @@ export function OnboardingForm() {
           <fieldset className="space-y-5">
             <legend className="sr-only">Étape 2 : races dominantes</legend>
             <div>
-              <h2 className="text-lg font-semibold text-[var(--sf-ink)] mb-1">
+              <h2 className="font-[family-name:var(--disp)] text-lg font-bold text-[var(--ink)] mb-1">
                 Quelles races élevez-vous ?
               </h2>
-              <p className="text-xs text-[var(--sf-muted)]">
+              <p className="text-xs text-[var(--mut)]">
                 Sélection multiple. Optionnel — vous pourrez ajuster plus tard.
               </p>
             </div>
@@ -210,19 +210,19 @@ export function OnboardingForm() {
                   <label
                     key={race}
                     className={[
-                      'flex items-center gap-3 px-4 py-3 rounded-md border-2 cursor-pointer transition-colors',
+                      'flex items-center gap-3 px-4 py-3 rounded-[var(--r)] border-2 cursor-pointer transition-colors',
                       checked
-                        ? 'border-[var(--sf-primary)] bg-[var(--sf-primary)]/10'
-                        : 'border-[var(--sf-border)] bg-[var(--sf-surface-0)] hover:border-[var(--sf-primary)]/40',
+                        ? 'border-[var(--sage)] bg-[var(--sage-bg)]'
+                        : 'border-[var(--line2)] bg-[var(--paper)] hover:border-[var(--sage)]/40',
                     ].join(' ')}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleRace(race)}
-                      className="h-4 w-4 accent-[var(--sf-primary)]"
+                      className="h-4 w-4 accent-[var(--sage)]"
                     />
-                    <span className="text-sm font-medium text-[var(--sf-ink)]">{race}</span>
+                    <span className="text-sm font-medium text-[var(--ink)]">{race}</span>
                   </label>
                 )
               })}
@@ -234,12 +234,12 @@ export function OnboardingForm() {
           <fieldset className="space-y-5">
             <legend className="sr-only">Étape 3 : effectifs initiaux</legend>
             <div>
-              <h2 className="text-lg font-semibold text-[var(--sf-ink)] mb-1">
+              <h2 className="font-[family-name:var(--disp)] text-lg font-bold text-[var(--ink)] mb-1">
                 Vos effectifs actuels (informatif)
               </h2>
-              <p className="text-xs text-[var(--sf-muted)]">
+              <p className="text-xs text-[var(--mut)]">
                 Ces nombres sont juste indicatifs. Vous créerez chaque animal
-                individuellement dans <span className="font-semibold">Cheptel</span> après l&apos;onboarding.
+                individuellement dans <span className="font-semibold text-[var(--ink)]">Cheptel</span> après l&apos;onboarding.
               </p>
             </div>
 
@@ -249,8 +249,8 @@ export function OnboardingForm() {
                 { id: 'verrats',   label: 'Verrats',   value: verrats,   set: setVerrats },
                 { id: 'porcelets', label: 'Porcelets', value: porcelets, set: setPorcelets },
               ].map(({ id, label, value, set }) => (
-                <div key={id}>
-                  <label htmlFor={id} className="block text-xs font-semibold uppercase tracking-wide text-[var(--sf-ink)] mb-1.5">
+                <div key={id} className="field !mb-0">
+                  <label htmlFor={id} className="field__label">
                     {label}
                   </label>
                   <input
@@ -258,20 +258,21 @@ export function OnboardingForm() {
                     type="number"
                     min={0}
                     step={1}
+                    inputMode="numeric"
                     value={value}
                     onChange={(e) => set(Math.max(0, parseInt(e.target.value, 10) || 0))}
-                    className="w-full h-12 px-4 rounded-md border border-[var(--sf-border)] bg-[var(--sf-surface-0)] text-[var(--sf-ink)] focus:outline-none focus:ring-2 focus:ring-[var(--sf-primary)]"
+                    className="input"
                   />
                 </div>
               ))}
             </div>
 
-            <div className="rounded-md border border-[var(--sf-border)] bg-[var(--sf-surface-0)] p-4 text-xs text-[var(--sf-muted)]">
-              <strong className="text-[var(--sf-ink)]">À la création de la ferme :</strong>
+            <div className="rounded-[var(--r)] border border-[var(--line)] bg-[var(--paper)] p-4 text-xs text-[var(--ink-soft)]">
+              <strong className="text-[var(--ink)]">À la création de la ferme :</strong>
               <ul className="mt-2 space-y-1 list-disc list-inside">
                 <li>5 bâtiments standards seront créés (verraterie, gestation, maternité, post-sevrage, engraissement)</li>
                 <li>Le catalogue des matières premières et protocoles sanitaires sera initialisé</li>
-                <li>Vous deviendrez <strong>administrateur</strong> de votre ferme</li>
+                <li>Vous deviendrez <strong className="text-[var(--ink)]">administrateur</strong> de votre ferme</li>
               </ul>
             </div>
           </fieldset>
@@ -280,23 +281,23 @@ export function OnboardingForm() {
 
       {/* Erreur globale */}
       {error && (
-        <div role="alert" className="mx-6 mb-4 rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+        <div role="alert" className="mx-6 mb-4 rounded-[var(--r)] border border-[var(--bad)]/40 bg-[var(--bad-bg)] px-4 py-3 text-sm text-[var(--bad-d)]">
           {error}
         </div>
       )}
 
       {/* Footer actions */}
-      <div className="flex items-center justify-between gap-3 border-t border-[var(--sf-border)] bg-[var(--sf-surface-0)] px-6 py-4">
+      <div className="flex items-center justify-between gap-3 border-t border-[var(--line)] bg-[var(--paper)] px-6 py-4">
         <button
           type="button"
           onClick={prevStep}
           disabled={step === 1 || isPending}
-          className="h-12 px-5 rounded-md border border-[var(--sf-border)] bg-transparent text-sm font-semibold uppercase tracking-wide text-[var(--sf-ink)] hover:bg-[var(--sf-surface-1)] disabled:opacity-40 disabled:cursor-not-allowed"
+          className="btn btn--outline disabled:opacity-40 disabled:cursor-not-allowed"
         >
           ← Précédent
         </button>
 
-        <span className="text-xs text-[var(--sf-muted)] hidden sm:inline">
+        <span className="text-xs text-[var(--mut)] hidden sm:inline">
           Étape {step} / 3
         </span>
 
@@ -305,7 +306,7 @@ export function OnboardingForm() {
             type="button"
             onClick={nextStep}
             disabled={isPending}
-            className="h-12 px-6 rounded-md bg-[var(--sf-primary)] text-white text-sm font-semibold uppercase tracking-wide hover:bg-[var(--sf-primary)]/90 disabled:opacity-40"
+            className="btn btn--primary disabled:opacity-40"
           >
             Suivant →
           </button>
@@ -313,7 +314,7 @@ export function OnboardingForm() {
           <button
             type="submit"
             disabled={isPending || !nomValide}
-            className="h-12 px-6 rounded-md bg-[var(--sf-primary)] text-white text-sm font-semibold uppercase tracking-wide hover:bg-[var(--sf-primary)]/90 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="btn btn--primary disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {isPending ? 'Création…' : 'Créer ma ferme'}
           </button>

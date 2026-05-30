@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Plus, Trash2, Sparkles, Save } from 'lucide-react'
+import { Plus, Trash2, Sparkles, Save, Beaker } from 'lucide-react'
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -220,7 +220,7 @@ export function FormulationCalculator({ catalog }: Props) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-amber-600" />
+              <Sparkles className="h-4 w-4 text-[var(--sage-d)]" />
               Préréglages « formules type »
             </CardTitle>
           </CardHeader>
@@ -312,7 +312,7 @@ export function FormulationCalculator({ catalog }: Props) {
           </CardHeader>
           <CardContent>
             {lignes.length === 0 ? (
-              <div className="text-sm text-slate-500 py-6 text-center">
+              <div className="text-sm text-[var(--mut)] py-6 text-center">
                 Aucun ingrédient — ajoute depuis le catalogue ou applique un préréglage.
               </div>
             ) : (
@@ -392,7 +392,7 @@ export function FormulationCalculator({ catalog }: Props) {
         {/* Action submit */}
         <div className="flex items-center justify-end gap-3">
           {!totalEq100 && lignes.length > 0 ? (
-            <span className="text-xs text-[var(--sf-danger-ink,#7A2A1F)]">
+            <span className="text-xs text-[var(--bad-d)]">
               Le total des ingrédients doit faire exactement 100 % (actuel :{' '}
               {fmt(mix.totalPct, 2)} %)
             </span>
@@ -401,7 +401,7 @@ export function FormulationCalculator({ catalog }: Props) {
             type="button"
             onClick={onSubmit}
             disabled={!canSubmit || pending}
-            className="bg-amber-600 hover:bg-amber-700"
+            size="lg"
           >
             <Save className="h-4 w-4 mr-2" />
             {pending ? 'Enregistrement…' : 'Enregistrer la formulation'}
@@ -418,7 +418,7 @@ export function FormulationCalculator({ catalog }: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent className="text-xs space-y-1">
-            <div className="text-[11px] text-slate-500 mb-2">
+            <div className="text-[11px] text-[var(--mut)] mb-2">
               Source : NRC 2012 + INRA 2018 (minima)
             </div>
             <div className="flex justify-between">
@@ -499,15 +499,22 @@ export function FormulationCalculator({ catalog }: Props) {
               </div>
             </div>
 
-            {conformite.ok ? (
-              <Badge className="w-full justify-center mt-2 bg-[var(--sf-success,#E1F2DA)] text-[var(--sf-success-ink,#2F5D2B)]">
-                Conforme aux besoins du stade
-              </Badge>
-            ) : (
-              <Badge className="w-full justify-center mt-2 bg-[var(--sf-danger,#FCE9E4)] text-[var(--sf-danger-ink,#7A2A1F)]">
-                Carence détectée
-              </Badge>
-            )}
+            <div
+              className={`live mt-3 ${conformite.ok ? 'ok' : 'bad'}`}
+              style={{ maxWidth: 'none' }}
+            >
+              <span className="lv-ic">
+                <Beaker className="h-[17px] w-[17px]" />
+              </span>
+              <div>
+                <b>
+                  {conformite.ok ? 'Conforme aux besoins' : 'Carence détectée'}
+                </b>
+                <small>
+                  {LABEL_STADE[stade]} · {Math.round(mix.cout_kg_xof)} FCFA/kg
+                </small>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

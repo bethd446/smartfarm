@@ -17,6 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { Plus } from 'lucide-react'
 import { creerSaillie } from './_server-actions'
 import { saillieSchema } from './_schemas'
 
@@ -104,9 +105,22 @@ export function DialogFaireMonter({
     }
   }
 
+  // Trigger par défaut rendu DANS ce client (évite le mismatch d'hydratation
+  // d'un <Button> construit en Server Component). N'apparaît qu'en mode non
+  // contrôlé : en mode contrôlé (open/onOpenChange fournis, ex. dialog secondaire
+  // « Programmer nouvelle saillie ») aucun trigger ne doit être rendu.
+  const resolvedTrigger =
+    trigger ??
+    (openProp === undefined ? (
+      <Button size="lg" className="h-12 text-base">
+        <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
+        Nouvelle saillie
+      </Button>
+    ) : null)
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {trigger && <DialogTrigger render={trigger as any} />}
+      {resolvedTrigger && <DialogTrigger render={resolvedTrigger as any} />}
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

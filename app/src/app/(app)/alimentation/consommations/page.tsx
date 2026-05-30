@@ -14,7 +14,6 @@ import { formatDateContextuel } from '@/lib/format/dates'
 
 import { DialogConsommation, type ConsoRow } from './_dialog-conso'
 import { supprimerConsommation } from './_actions'
-import { ConsommationsFab } from './_fab'
 
 /* -------------------------------------------------------------------------- */
 /*  Server action button                                                      */
@@ -129,12 +128,6 @@ export default async function ConsommationsPage() {
             mode="create"
             bandes={bandes}
             formules={formules}
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouvelle saisie
-              </Button>
-            }
           />
         </div>
       </div>
@@ -230,21 +223,28 @@ export default async function ConsommationsPage() {
               ) : null}
             </div>
           ) : rows.length === 0 ? (
-            <div className="p-8 text-center space-y-3">
-              <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                Aucune consommation enregistrée — démarrez le suivi.
-              </p>
-              <DialogConsommation
-                mode="create"
-                bandes={bandes}
-                formules={formules}
-                trigger={
-                  <Button variant="default" size="sm">
-                    <Plus className="h-4 w-4 mr-1" />
-                    Saisir une première consommation
-                  </Button>
-                }
-              />
+            <div className="p-6">
+              <div className="sf-empty" role="status">
+                <span className="sf-empty-ic">
+                  <Activity className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3>Aucune consommation enregistrée</h3>
+                <p>
+                  Démarrez le suivi quotidien des distributions par bande pour
+                  piloter l&apos;indice de consommation et les coûts aliment.
+                </p>
+                <DialogConsommation
+                  mode="create"
+                  bandes={bandes}
+                  formules={formules}
+                  trigger={
+                    <Button variant="default" size="sm">
+                      <Plus className="h-4 w-4 mr-1" />
+                      Saisir une première consommation
+                    </Button>
+                  }
+                />
+              </div>
             </div>
           ) : (
             <ResponsiveTable
@@ -330,9 +330,6 @@ export default async function ConsommationsPage() {
           )}
         </CardContent>
       </Card>
-
-      {/* === FAB mobile === */}
-      <ConsommationsFab bandes={bandes} formules={formules} />
     </div>
   )
 }

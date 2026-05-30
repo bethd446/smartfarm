@@ -5,106 +5,89 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Smart Farm — Button (atome « tampon encré » v3.2)
+ * Smart Farm — Button (atome VERGER)
  * -------------------------------------------------------------------------
- * - radius 4 px (pas pill, sauf .pill / badge)
- * - effet tampon : box-shadow `var(--sf-stamp-ring)` (double bordure inset
- *   blanche dans le primary, type matrice d'imprimerie)
- * - :active = translateY(1px) + ombre intérieure « pression mécanique »
- *   (pas de scale(0.97))
- * - typo Big Shoulders Display, UPPERCASE, letter-spacing 0.08em
- * - hauteur ≥ 48 px partout (sm=48, default=48, lg=56) — gants K13
+ * - radius ~12px (rounded-xl), pas pill (sauf usage badge/chips dédié)
+ * - typo DM Sans (var(--body)), weight 600, casse normale (pas d'UPPERCASE)
+ * - transition background .16s
+ * - cible tactile : ≥ 44px partout, ≥ 48px en primaire (default/lg)
+ * - hover : primary → var(--sage-d) ; danger → brightness(.95) ; surfaces → var(--paper-3)
  *
- * Chantier C1 (responsive) :
- *   - Toutes les variantes size respectent déjà tap target ≥ 48px (h-12 / h-14)
- *     via `min-h-12` / `min-h-14`. Le size "sm" a été promu à 48px aussi
- *     (anti-pattern terrain : pas de bouton < 48px en prod).
- *   - text-size volontairement contenu (12–14px) pour ne pas casser l'identité
- *     "tampon imprimerie" (UPPERCASE display). Pas de surcharge text-base
- *     en mobile : le DS prime sur le défaut Airbnb. Les call-sites qui
- *     veulent text-base le mergent via className.
- *
- * Les variantes sémantiques (success/warning/danger) s'appuient sur les
- * paires de tokens `--sf-<x>-bg / --sf-<x>-ink` exposés par le fichier
- * `smartfarm-tokens.css`.
+ * Couleurs (tous via tokens VERGER, le pont --sf-* pointe sur VERGER) :
+ *   primary  = fond var(--sage)  / texte #fff  / hover var(--sage-d)
+ *   danger   = fond var(--bad)   / texte #fff  / hover brightness(.95)
+ *   secondary/outline = fond var(--card) / bordure var(--line2) / texte var(--ink)
+ *   ghost    = transparent / texte var(--ink)
+ * Garde-fou contraste : --apri/--ocre jamais en texte courant (forme/bordure seulement).
  */
 const buttonVariants = cva(
   [
     // Layout / reset
     "group/button inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap",
-    "border border-transparent select-none outline-none transition-[transform,box-shadow,background-color,color]",
+    "border border-transparent select-none outline-none transition-[background-color,color,filter] duration-[160ms] ease-[var(--ease-out)]",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-    // Identité « carnet d'élevage »
-    "rounded-[4px]",
-    "font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em]",
-    // Focus terrain : pas de ring SaaS, on souligne via le tampon
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sf-primary)]",
-    // État pressé : pression mécanique
+    // Identité VERGER : rayon doux + labels DM Sans
+    "rounded-xl",
+    "font-[family-name:var(--body)] font-semibold",
+    // Focus accessible
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)]",
+    // Pression discrète
     "active:translate-y-px",
   ].join(" "),
   {
     variants: {
       variant: {
-        // Tampon plein primaire (vert ferme)
+        // Plein primaire (vert sauge)
         default: [
-          "bg-[var(--sf-primary)] text-white",
-          "shadow-[var(--sf-stamp-ring)]",
-          "hover:bg-[color-mix(in_srgb,var(--sf-primary)_90%,black)]",
-          "active:shadow-[var(--sf-stamp-ring),var(--sf-stamp-press)]",
+          "bg-[var(--sage)] text-white shadow-[var(--sh-sm)]",
+          "hover:bg-[var(--sage-d)]",
         ].join(" "),
-        // Tampon accent terre cuite
+        // Accent (terre cuite) — réservé aux CTA secondaires forts, texte #fff garde AA
         accent: [
-          "bg-[var(--sf-accent)] text-white",
-          "shadow-[var(--sf-stamp-ring-accent,var(--sf-stamp-ring))]",
-          "hover:bg-[color-mix(in_srgb,var(--sf-accent)_90%,black)]",
-          "active:shadow-[var(--sf-stamp-ring-accent,var(--sf-stamp-ring)),var(--sf-stamp-press)]",
+          "bg-[var(--apri)] text-white shadow-[var(--sh-sm)]",
+          "hover:[filter:brightness(0.95)]",
         ].join(" "),
-        // Contour seul, pas de fill
+        // Contour seul
         outline: [
-          "bg-transparent text-[var(--sf-primary)]",
-          "border-2 border-solid border-[var(--sf-primary)]",
-          "hover:bg-[var(--sf-primary)] hover:text-white",
-          "active:shadow-[var(--sf-stamp-press)]",
+          "bg-[var(--card)] text-[var(--ink)]",
+          "border border-[var(--line2)]",
+          "hover:bg-[var(--paper-3)]",
         ].join(" "),
-        // Secondaire (surface 1, ink ferme)
+        // Secondaire (surface carte, ink ferme)
         secondary: [
-          "bg-[var(--sf-surface-1,var(--sf-surface-0,#FAF7F0))] text-[var(--sf-ink)]",
-          "border border-[var(--sf-line,rgba(0,0,0,0.18))]",
-          "hover:bg-[var(--sf-surface-2,#EFE7D6)]",
-          "active:shadow-[var(--sf-stamp-press)]",
+          "bg-[var(--card)] text-[var(--ink)]",
+          "border border-[var(--line2)]",
+          "hover:bg-[var(--paper-3)]",
         ].join(" "),
-        // Ghost : pas de fond, juste l'ink
+        // Ghost : pas de fond
         ghost: [
-          "bg-transparent text-[var(--sf-ink)]",
-          "hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]",
+          "bg-transparent text-[var(--ink)]",
+          "hover:bg-[var(--paper-3)]",
         ].join(" "),
-        // Danger sémantique (rouge sourd carnet)
+        // Danger sémantique (rouge)
         destructive: [
-          "bg-[var(--sf-danger-bg,#7A2A1F)] text-[var(--sf-danger-ink,#FFFFFF)]",
-          "shadow-[var(--sf-stamp-ring)]",
-          "hover:bg-[color-mix(in_srgb,var(--sf-danger-bg,#7A2A1F)_90%,black)]",
-          "active:shadow-[var(--sf-stamp-ring),var(--sf-stamp-press)]",
+          "bg-[var(--bad)] text-white shadow-[var(--sh-sm)]",
+          "hover:[filter:brightness(0.95)]",
         ].join(" "),
-        // Lien minimal (pas de tampon)
+        // Lien minimal
         link: [
-          "bg-transparent text-[var(--sf-primary)]",
+          "bg-transparent text-[var(--sage-d)]",
           "rounded-none underline underline-offset-4 hover:no-underline",
-          "tracking-normal normal-case",
         ].join(" "),
       },
       size: {
-        // Toutes les tailles ≥ 48 px (gants terrain)
-        sm: "h-12 min-h-12 px-3 text-[12px]",
-        default: "h-14 min-h-14 px-5 text-[13px]",
-        lg: "h-14 min-h-14 px-6 text-[14px]",
-        // Icon-only : carré 48
+        // sm ≥ 44px (cible tactile mini) ; default/lg ≥ 48px (primaire)
+        sm: "h-11 min-h-11 px-3.5 text-[13px]",
+        default: "h-12 min-h-12 px-4 text-[14px]",
+        lg: "h-12 min-h-12 px-6 text-[14px]",
+        // Icon-only
         icon: "size-12 min-h-12 p-0",
-        "icon-lg": "size-14 min-h-14 p-0",
-        // Compat shadcn (rétro-mappés sur 48 — pas en-dessous, touch K13)
-        xs: "h-12 min-h-12 px-3 text-[12px]",
-        "icon-xs": "size-12 min-h-12 p-0",
-        "icon-sm": "size-12 min-h-12 p-0",
+        "icon-lg": "size-12 min-h-12 p-0",
+        // Compat shadcn (rétro-mappés ≥ 44px — pas en-dessous, touch terrain)
+        xs: "h-11 min-h-11 px-3.5 text-[13px]",
+        "icon-xs": "size-11 min-h-11 p-0",
+        "icon-sm": "size-11 min-h-11 p-0",
       },
     },
     defaultVariants: {

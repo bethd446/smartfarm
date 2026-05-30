@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Settings, Database, Users, Building2, FileText, Download } from 'lucide-react'
+import { Settings, Database, Users, Building2, FileText, Download, Sun } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { ContrastToggle } from '@/components/contrast-toggle'
 
 export default async function ParametresPage() {
   const sb = await createClient()
@@ -17,38 +17,29 @@ export default async function ParametresPage() {
       {/* === Header de page === */}
       <div>
         <h1
-          className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
-          style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+          className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--ink)]"
+          style={{ fontFamily: 'var(--disp)' }}
         >
-          <Settings className="h-8 w-8 text-[var(--sf-muted)]" />
+          <Settings className="h-8 w-8 text-[var(--mut)]" />
           Réglages
         </h1>
-        <p
-          className="text-sm text-[var(--sf-muted)] mt-1"
-          style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
-        >
-          Configuration de l'exploitation
-        </p>
+        <p className="text-sm text-[var(--mut)] mt-1">Configuration de l'exploitation</p>
       </div>
 
-      {/* Fermes — Card patché hérite du double-trait */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Building2 className="h-4 w-4 text-[var(--sf-primary)]" />
+      {/* Fermes — panel .pn / lignes label-valeur */}
+      <div className="pn">
+        <div className="pn-h">
+          <h3 className="flex items-center gap-2">
+            <Building2 className="h-4 w-4 text-[var(--sage-d)]" />
             Fermes
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
+          </h3>
+        </div>
+        <div className="divide-y divide-[var(--line)]">
           {(fermes ?? []).map((f: any) => (
-            <div
-              key={f.id}
-              className="flex justify-between items-center p-3 border border-[var(--sf-line)]"
-              style={{ background: 'var(--sf-surface-2)' }}
-            >
-              <div>
-                <div className="font-semibold text-[var(--sf-ink)]">{f.nom}</div>
-                <div className="text-xs text-[var(--sf-muted)]">
+            <div key={f.id} className="flex items-center justify-between gap-3 py-3 first:pt-0">
+              <div className="min-w-0">
+                <div className="font-semibold text-[var(--ink)] truncate">{f.nom}</div>
+                <div className="text-xs text-[var(--mut)]">
                   {f.code} · {f.localisation}
                 </div>
               </div>
@@ -56,92 +47,104 @@ export default async function ParametresPage() {
             </div>
           ))}
           {(!fermes || fermes.length === 0) && (
-            <div className="text-sm text-[var(--sf-muted)] py-4 text-center">
+            <div className="text-sm text-[var(--mut)] py-4 text-center">
               Aucune ferme enregistrée.
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Utilisateurs */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Users className="h-4 w-4 text-[var(--sf-accent)]" />
+      {/* Utilisateurs — panel .pn / lignes label-valeur */}
+      <div className="pn">
+        <div className="pn-h">
+          <h3 className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-[var(--apri-d)]" />
             Utilisateurs
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
+          </h3>
+        </div>
+        <div className="divide-y divide-[var(--line)]">
           {(utilisateurs ?? []).map((u: any) => (
-            <div
-              key={u.id}
-              className="flex justify-between items-center p-3 border border-[var(--sf-line)]"
-              style={{ background: 'var(--sf-surface-2)' }}
-            >
-              <div>
-                <div className="font-semibold text-[var(--sf-ink)]">
+            <div key={u.id} className="flex items-center justify-between gap-3 py-3 first:pt-0">
+              <div className="min-w-0">
+                <div className="font-semibold text-[var(--ink)] truncate">
                   {u.prenom} {u.nom}
                 </div>
-                <div className="text-xs text-[var(--sf-muted)] font-mono">{u.email}</div>
+                <div className="text-xs text-[var(--mut)] font-mono truncate">{u.email}</div>
               </div>
               <Badge>{u.role}</Badge>
             </div>
           ))}
           {(!utilisateurs || utilisateurs.length === 0) && (
-            <div className="text-sm text-[var(--sf-muted)] py-4 text-center">
-              Aucun utilisateur.
-            </div>
+            <div className="text-sm text-[var(--mut)] py-4 text-center">Aucun utilisateur.</div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Règles de sevrage */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <Database className="h-4 w-4 text-[var(--sf-accent-deep)]" />
+      {/* Règles de sevrage — panel .pn / blocs label-valeur */}
+      <div className="pn">
+        <div className="pn-h">
+          <h3 className="flex items-center gap-2">
+            <Database className="h-4 w-4 text-[var(--apri-d)]" />
             Règles de sevrage
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
+          </h3>
+        </div>
+        <div className="divide-y divide-[var(--line)]">
           {(regles ?? []).map((r: any) => (
-            <div
-              key={r.id}
-              className="p-3 border border-[var(--sf-line)]"
-              style={{ background: 'var(--sf-surface-2)' }}
-            >
-              <div className="font-semibold mb-1 text-[var(--sf-ink)]">{r.nom}</div>
-              <div className="text-xs text-[var(--sf-ink-soft)] grid grid-cols-3 gap-2">
+            <div key={r.id} className="py-3 first:pt-0">
+              <div className="font-semibold mb-1.5 text-[var(--ink)]">{r.nom}</div>
+              <div className="text-xs text-[var(--ink-soft)] grid grid-cols-3 gap-2">
                 <span>
-                  Âge min : <b className="tabular-nums">{r.age_min_jours} j</b>
+                  Âge min : <b className="tabular-nums text-[var(--ink)]">{r.age_min_jours} j</b>
                 </span>
                 <span>
-                  Âge max : <b className="tabular-nums">{r.age_max_jours} j</b>
+                  Âge max : <b className="tabular-nums text-[var(--ink)]">{r.age_max_jours} j</b>
                 </span>
                 <span>
-                  Poids min : <b className="tabular-nums">{r.poids_min_kg} kg</b>
+                  Poids min :{' '}
+                  <b className="tabular-nums text-[var(--ink)]">{r.poids_min_kg} kg</b>
                 </span>
               </div>
             </div>
           ))}
           {(!regles || regles.length === 0) && (
-            <div className="text-sm text-[var(--sf-muted)] py-4 text-center">
+            <div className="text-sm text-[var(--mut)] py-4 text-center">
               Aucune règle de sevrage.
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Registre d'Élevage — bouton tampon default (vert ferme) */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-4 w-4 text-[var(--sf-primary)]" />
+      {/* Affichage — toggle haut-contraste exposé (plein soleil) */}
+      <div className="pn">
+        <div className="pn-h">
+          <h3 className="flex items-center gap-2">
+            <Sun className="h-4 w-4 text-[var(--apri-d)]" />
+            Affichage
+          </h3>
+        </div>
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="font-semibold text-[var(--ink)]">Mode plein soleil</div>
+            <p className="text-xs text-[var(--mut)] mt-0.5">
+              Contraste renforcé pour la lecture en extérieur. Réglage mémorisé sur cet appareil.
+            </p>
+          </div>
+          <div className="shrink-0 rounded-[var(--r)] bg-[var(--ink)] px-2 py-1.5">
+            <ContrastToggle />
+          </div>
+        </div>
+      </div>
+
+      {/* Registre d'Élevage — panel .pn, bouton primaire sage */}
+      <div className="pn">
+        <div className="pn-h">
+          <h3 className="flex items-center gap-2">
+            <FileText className="h-4 w-4 text-[var(--sage-d)]" />
             Registre d'Élevage
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-sm text-[var(--sf-ink-soft)]">
+          </h3>
+        </div>
+        <div className="space-y-3">
+          <p className="text-sm text-[var(--ink-soft)]">
             Document officiel récapitulant mouvements de cheptel, reproduction et interventions
             sanitaires du 1<sup>er</sup> du mois en cours à aujourd'hui. Format A4 prêt à imprimer
             ou à archiver.
@@ -158,8 +161,8 @@ export default async function ParametresPage() {
               Télécharger le registre du mois
             </Button>
           </a>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }

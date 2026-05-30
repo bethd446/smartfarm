@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { BookOpen, ArrowLeft } from 'lucide-react'
+import { BookOpen, ArrowLeft, AlertTriangle } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import { MaladiesSearch } from './_search'
 import { MALADIES_PORCINES } from '@/lib/maladies-porcines'
 
@@ -25,43 +26,50 @@ export default function MaladiesPage() {
         <div>
           <Link
             href="/sanitaire"
-            className="inline-flex items-center gap-1 min-h-11 py-2 text-sm text-[var(--sf-muted,#5C5346)] hover:text-[var(--sf-primary,#2D4A1F)] transition-colors mb-2"
+            className="inline-flex items-center gap-1 min-h-11 py-2 text-sm text-[var(--mut)] hover:text-[var(--sage-d)] transition-colors mb-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Retour Soins
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)]">
-            <BookOpen className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--ink)] font-[family-name:var(--disp)] tracking-[-0.02em]">
+            <BookOpen className="h-7 w-7 text-[var(--sage-d)]" />
             Catalogue maladies
           </h1>
-          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+          <p className="text-sm text-[var(--mut)] mt-1">
             {MALADIES_PORCINES.length} pathologies porcines prioritaires en
             Côte d&apos;Ivoire — sources OIE, FAO, INRAE
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-2 text-xs">
-          <span className="rounded-full px-3 py-1 bg-[var(--sf-danger-bg,#F1D4CE)] text-[var(--sf-danger-ink,#7A2A1F)]">
+        <div className="flex flex-wrap gap-1.5">
+          <Badge variant="danger">
             {counts.critique ?? 0} critique{(counts.critique ?? 0) > 1 ? 's' : ''}
-          </span>
-          <span className="rounded-full px-3 py-1 bg-[var(--sf-danger-bg,#F1D4CE)] text-[var(--sf-danger-ink,#7A2A1F)]">
+          </Badge>
+          <Badge variant="danger">
             {counts['élevée'] ?? 0} élevée{(counts['élevée'] ?? 0) > 1 ? 's' : ''}
-          </span>
-          <span className="rounded-full px-3 py-1 bg-[var(--sf-warning-bg,#F5E0B8)] text-[var(--sf-warning-ink,#5A3E0E)]">
+          </Badge>
+          <Badge variant="warning">
             {counts.moyenne ?? 0} moyenne{(counts.moyenne ?? 0) > 1 ? 's' : ''}
-          </span>
-          <span className="rounded-full px-3 py-1 bg-[var(--sf-success-bg,#D6E3CC)] text-[var(--sf-success-ink,#1F3B12)]">
+          </Badge>
+          <Badge variant="success">
             {counts.faible ?? 0} faible{(counts.faible ?? 0) > 1 ? 's' : ''}
-          </span>
+          </Badge>
         </div>
       </div>
 
-      {/* Avertissement */}
-      <div className="rounded-lg border border-[var(--sf-warning-ink,#5A3E0E)]/30 bg-[var(--sf-warning-bg,#F5E0B8)] p-3 text-sm text-[var(--sf-warning-ink,#5A3E0E)]">
-        Ce catalogue est un outil d&apos;aide à la décision. Toute prescription
-        de médicament vétérinaire doit être validée par un vétérinaire agréé en
-        Côte d&apos;Ivoire. Les molécules indiquées correspondent aux
-        protocoles standards de référence (OIE/FAO/INRAE).
+      {/* Avertissement — lecture en direct VERGER (.live.warn) */}
+      <div className="live warn !max-w-none items-start">
+        <span className="lv-ic mt-0.5">
+          <AlertTriangle className="h-[17px] w-[17px]" aria-hidden="true" />
+        </span>
+        <div>
+          <b>Aide à la décision — validation vétérinaire requise</b>
+          <small>
+            Toute prescription de médicament vétérinaire doit être validée par
+            un vétérinaire agréé en Côte d&apos;Ivoire. Les molécules indiquées
+            correspondent aux protocoles standards de référence (OIE/FAO/INRAE).
+          </small>
+        </div>
       </div>
 
       {/* Composant client recherche + grille */}

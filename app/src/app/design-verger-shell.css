@@ -1,0 +1,125 @@
+/* ============================================================================
+   design-verger-shell.css — Reskin du SHELL en direction VERGER
+   ----------------------------------------------------------------------------
+   Override des selecteurs reels du shell (definis dans design-v1.css).
+   Importer APRES design-v1.css : meme specificite -> gagne par ordre de cascade.
+   Tokens VERGER deja declares globalement (globals.css) : NE PAS redefinir.
+   On ne touche ni le markup (TSX) ni globals.css.
+   Cible : sidebar CLAIRE, brand en --disp, items lisibles, cibles >=44px.
+   ============================================================================ */
+
+/* === Conteneur shell ===================================================== */
+.app        { background: var(--paper); }
+.app__main  { background: var(--paper); }
+
+/* === Sidebar (desktop >=1024px) — fond clair ============================= */
+.sidebar {
+  background: var(--paper-3);
+  color: var(--ink);
+  border-right: 1px solid var(--line);
+  font-family: var(--body);
+}
+
+/* Brand — bandeau haut */
+.sidebar__brand {
+  border-bottom: 1px solid var(--line);
+}
+.sidebar__glyph {
+  background: var(--sage-bg);
+  border: 1px solid var(--line);
+}
+.sidebar__farm {
+  font-family: var(--disp);
+  color: var(--ink);
+}
+.sidebar__id {
+  color: var(--mut);
+  opacity: 1;
+}
+
+/* Navigation */
+.sidebar__group-title {
+  font-family: var(--disp);
+  color: var(--mut);
+  opacity: 1;
+}
+.sidebar__item {
+  color: var(--ink-soft);
+  border-left-color: transparent;
+}
+.sidebar__item:hover {
+  background: var(--sage-bg);
+  color: var(--ink);
+}
+.sidebar__item.is-active {
+  background: var(--sage-bg);
+  color: var(--sage-d);
+  font-weight: 600;
+  border-left-color: var(--sage-d);
+}
+.sidebar__ic {
+  color: var(--ink-soft);
+  opacity: 1;
+}
+.sidebar__item.is-active .sidebar__ic {
+  color: var(--sage-d);
+}
+
+/* Badge alertes — forme/point en --bad (jamais texte courant) */
+.sidebar__badge {
+  background: var(--bad);
+  color: var(--card);
+  font-family: var(--disp);
+}
+
+/* Pied — utilisateur */
+.sidebar__user {
+  border-top: 1px solid var(--line);
+}
+.sidebar .sidebar__avatar,
+.sidebar__avatar {
+  background: var(--sage-bg);
+  border: 1px solid var(--line);
+  color: var(--sage-d);
+}
+.sidebar__user-name {
+  color: var(--ink);
+}
+.sidebar__user-role {
+  color: var(--mut);
+}
+.sidebar__logout {
+  color: var(--mut);
+}
+.sidebar__logout:hover {
+  color: var(--ink);
+}
+
+/* === Topbar mobile — creme + backdrop-blur =============================== */
+.topbar-mobile {
+  background: rgba(251, 250, 245, .86);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-mobile__menu {
+  color: var(--ink);
+}
+.topbar-mobile__title {
+  font-family: var(--disp);
+  color: var(--ink);
+}
+
+/* === Bottom-nav — fond clair, item actif sauge ========================== */
+.bottom-nav {
+  background: var(--card);
+  border-top: 1px solid var(--line);
+}
+.bottom-nav__item {
+  color: var(--mut);
+  font-family: var(--disp);
+}
+.bottom-nav__item.is-active {
+  color: var(--sage-d);
+  border-top-color: var(--sage-d);
+}

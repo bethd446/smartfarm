@@ -160,13 +160,13 @@ export default async function PPAPage() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
         <div>
           <h1
-            className="text-3xl md:text-4xl font-bold flex items-center gap-3"
-            style={{ fontFamily: 'var(--sf-font-display)' }}
+            className="text-3xl md:text-4xl font-bold flex items-center gap-3 text-[var(--ink)]"
+            style={{ fontFamily: 'var(--disp, var(--sf-font-display))' }}
           >
-            <AlertTriangle className="h-7 w-7 md:h-8 md:w-8 text-red-600" />
+            <AlertTriangle className="h-7 w-7 md:h-8 md:w-8 text-[var(--bad)]" />
             PPA — Surveillance
           </h1>
-          <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
+          <p className="text-sm text-[var(--mut)] mt-1">
             Peste Porcine Africaine — Maladie à déclaration obligatoire
             (OIE/WOAH)
           </p>
@@ -174,36 +174,54 @@ export default async function PPAPage() {
         <DialogObservationPPA />
       </div>
 
-      {/* Encart pédagogique */}
-      <Card className="border-red-200 bg-red-50/50 dark:bg-red-950/30 dark:border-red-900">
-        <CardHeader>
-          <CardTitle className="text-red-700 dark:text-red-300 flex items-center gap-2">
-            <Shield className="h-5 w-5" />À savoir sur la PPA
-          </CardTitle>
-          <CardDescription className="text-red-800/80 dark:text-red-200/80">
-            Référentiel OIE/WOAH — fiche technique synthétique
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-sm space-y-2">
+      {/* Banner PPA fort — VERGER hub contextuel */}
+      <div
+        className="rounded-[var(--rl,18px)] border p-4 md:p-5"
+        style={{
+          background: 'var(--bad-bg)',
+          borderColor: 'var(--bad)',
+        }}
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          <span
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
+            style={{ background: 'var(--bad)', color: '#fff' }}
+          >
+            <Shield className="h-5 w-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <h2
+              className="flex flex-wrap items-center gap-2 text-base md:text-lg font-bold leading-tight text-[var(--bad-d)]"
+              style={{ fontFamily: 'var(--disp, var(--sf-font-display))' }}
+            >
+              À savoir sur la PPA
+              <Badge variant="destructive">DÉCLARATION OBLIGATOIRE</Badge>
+            </h2>
+            <p className="text-xs mt-0.5 text-[var(--bad-d)]/80">
+              Référentiel OIE/WOAH — fiche technique synthétique
+            </p>
+          </div>
+        </div>
+        <div className="text-sm space-y-2 mt-3 text-[var(--ink-soft)]">
           <p>
-            <strong>Mortalité 100 %</strong> · Pas de vaccin · Pas de
+            <strong className="text-[var(--bad-d)]">Mortalité 100 %</strong> · Pas de vaccin · Pas de
             traitement · Transmission par contact direct, viande crue
             contaminée, tiques molles <em>Ornithodoros</em>, vecteurs
             mécaniques (mouches piqueuses, matériel souillé).
           </p>
           <p>
-            <strong>Symptômes clés</strong> : fièvre &gt;40 °C, prostration,
+            <strong className="text-[var(--bad-d)]">Symptômes clés</strong> : fièvre &gt;40 °C, prostration,
             refus aliment, hémorragies sous-cutanées (oreilles, abdomen,
             flancs), cyanose des extrémités, vomissements/diarrhée souvent
             hémorragique, mortalité subite chez les jeunes.
           </p>
           <p>
-            <strong>Obligation légale</strong> : toute suspicion =
+            <strong className="text-[var(--bad-d)]">Obligation légale</strong> : toute suspicion =
             déclaration immédiate aux services vétérinaires officiels
             (OIE/WOAH). Confinement total ferme jusqu’à diagnostic. Aucun
             mouvement d’animaux, aliments, effluents.
           </p>
-          <p className="text-red-700 dark:text-red-300 flex items-start gap-2">
+          <p className="text-[var(--bad-d)] flex items-start gap-2 font-medium">
             <Phone className="h-4 w-4 mt-0.5 shrink-0" />
             <span>
               <strong>Urgence vétérinaire :</strong> Direction des Services
@@ -211,72 +229,45 @@ export default async function PPAPage() {
               Halieutiques, Côte d’Ivoire.
             </span>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* KPI surveillance */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-xs text-[var(--sf-muted,#5C5346)] uppercase tracking-wider">
-              Observations 30 j
-            </div>
-            <div className="text-3xl font-bold mt-1">{kpiObs30}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-xs text-[var(--sf-muted,#5C5346)] uppercase tracking-wider">
-              Suspicions critiques 30 j
-            </div>
-            <div
-              className={`text-3xl font-bold mt-1 ${
-                kpiCritiques > 0
-                  ? 'text-[var(--sf-warning-ink,#5A3E0E)]'
-                  : ''
-              }`}
-            >
-              {kpiCritiques}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-xs text-[var(--sf-muted,#5C5346)] uppercase tracking-wider">
-              Non déclarées
-            </div>
-            <div
-              className={`text-3xl font-bold mt-1 ${
-                kpiNonDeclarees > 0
-                  ? 'text-[var(--sf-danger-ink,#7A2A1F)]'
-                  : ''
-              }`}
-            >
-              {kpiNonDeclarees}
-            </div>
-            {kpiNonDeclarees > 0 ? (
-              <div className="text-[10px] text-[var(--sf-danger-ink,#7A2A1F)] mt-1 uppercase tracking-wider font-semibold">
-                Action OIE requise
-              </div>
-            ) : null}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="text-xs text-[var(--sf-muted,#5C5346)] uppercase tracking-wider">
-              Confirmés (cumul)
-            </div>
-            <div
-              className={`text-3xl font-bold mt-1 ${
-                kpiConfirmes > 0
-                  ? 'text-[var(--sf-danger-ink,#7A2A1F)]'
-                  : ''
-              }`}
-            >
-              {kpiConfirmes}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="kpi">
+          <div className="k">Observations 30 j</div>
+          <div className="v">{kpiObs30}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Suspicions critiques 30 j</div>
+          <div
+            className="v"
+            style={kpiCritiques > 0 ? { color: 'var(--warn)' } : undefined}
+          >
+            {kpiCritiques}
+          </div>
+        </div>
+        <div className="kpi">
+          <div className="k">Non déclarées</div>
+          <div
+            className="v"
+            style={kpiNonDeclarees > 0 ? { color: 'var(--bad-d)' } : undefined}
+          >
+            {kpiNonDeclarees}
+          </div>
+          {kpiNonDeclarees > 0 ? (
+            <div className="d neg">Action OIE requise</div>
+          ) : null}
+        </div>
+        <div className="kpi">
+          <div className="k">Confirmés (cumul)</div>
+          <div
+            className="v"
+            style={kpiConfirmes > 0 ? { color: 'var(--bad-d)' } : undefined}
+          >
+            {kpiConfirmes}
+          </div>
+        </div>
       </div>
 
       {/* Checklist visuelle symptômes typiques */}
@@ -294,38 +285,38 @@ export default async function PPAPage() {
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-sm">
             <div className="flex items-start gap-2">
-              <Thermometer className="h-4 w-4 mt-0.5 text-red-600 shrink-0" />
+              <Thermometer className="h-4 w-4 mt-0.5 text-[var(--bad)] shrink-0" />
               <span>
                 <strong>Fièvre élevée</strong> &gt; 40,5 °C, prostration
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <Droplets className="h-4 w-4 mt-0.5 text-red-600 shrink-0" />
+              <Droplets className="h-4 w-4 mt-0.5 text-[var(--bad)] shrink-0" />
               <span>
                 <strong>Hémorragies cutanées</strong> oreilles, abdomen,
                 flancs
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <AlertTriangle className="h-4 w-4 mt-0.5 text-red-600 shrink-0" />
+              <AlertTriangle className="h-4 w-4 mt-0.5 text-[var(--bad)] shrink-0" />
               <span>
                 <strong>Mortalité subite</strong> animaux trouvés morts
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-red-600 font-bold w-4 text-center">●</span>
+              <span className="text-[var(--bad)] font-bold w-4 text-center">●</span>
               <span>
                 <strong>Cyanose</strong> oreilles / extrémités bleu-violet
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-red-600 font-bold w-4 text-center">●</span>
+              <span className="text-[var(--bad)] font-bold w-4 text-center">●</span>
               <span>
                 <strong>Refus aliment</strong> brutal sur plusieurs animaux
               </span>
             </div>
             <div className="flex items-start gap-2">
-              <span className="text-red-600 font-bold w-4 text-center">●</span>
+              <span className="text-[var(--bad)] font-bold w-4 text-center">●</span>
               <span>
                 <strong>Vomissements / diarrhée</strong> souvent hémorragique
               </span>
@@ -351,53 +342,48 @@ export default async function PPAPage() {
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-[var(--sf-surface-1,rgba(0,0,0,0.04))] border-b">
+              <table className="tbl">
+                <thead>
                   <tr>
-                    <th className="text-left p-2 font-semibold">Date</th>
-                    <th className="text-left p-2 font-semibold">Nb</th>
-                    <th className="text-left p-2 font-semibold">Niveau</th>
-                    <th className="text-left p-2 font-semibold">T° max</th>
-                    <th className="text-left p-2 font-semibold">Symptômes</th>
-                    <th className="text-left p-2 font-semibold">Déclaré</th>
-                    <th className="text-left p-2 font-semibold">
-                      Résultat labo
-                    </th>
+                    <th>Date</th>
+                    <th className="num">Nb</th>
+                    <th>Niveau</th>
+                    <th className="num">T° max</th>
+                    <th>Symptômes</th>
+                    <th>Déclaré</th>
+                    <th>Résultat labo</th>
                   </tr>
                 </thead>
                 <tbody>
                   {obs.map((o) => (
-                    <tr
-                      key={o.id}
-                      className="border-b border-[var(--sf-border,#e5e5e5)]"
-                    >
-                      <td className="p-2 whitespace-nowrap">
+                    <tr key={o.id}>
+                      <td className="whitespace-nowrap">
                         {formatDate(o.date_observation)}
                       </td>
-                      <td className="p-2 font-mono">
+                      <td className="num tabular-nums">
                         {o.nb_animaux_affectes}
                       </td>
-                      <td className="p-2">
+                      <td>
                         <Badge variant={NIVEAUX_VARIANT[o.niveau_suspicion]}>
                           {NIVEAUX_LABEL[o.niveau_suspicion]}
                         </Badge>
                       </td>
-                      <td className="p-2 font-mono">
+                      <td className="num tabular-nums">
                         {o.temperature_max != null
                           ? `${o.temperature_max} °C`
                           : '—'}
                       </td>
-                      <td className="p-2 text-xs max-w-[280px]">
+                      <td className="text-xs max-w-[280px]">
                         {symptomesResume(o)}
                       </td>
-                      <td className="p-2">
+                      <td>
                         {o.declare_aux_autorites ? (
                           <Badge variant="success">Oui</Badge>
                         ) : (
                           <Badge variant="danger">Non</Badge>
                         )}
                       </td>
-                      <td className="p-2">
+                      <td>
                         {o.resultat_laboratoire ? (
                           <Badge
                             variant={

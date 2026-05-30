@@ -226,53 +226,29 @@ export default async function BatimentDetail({
         </div>
       </div>
 
-      {/* === 4 KPI cards === */}
+      {/* === 4 KPI cards (gabarit VERGER .kpi) === */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="pt-4">
-            <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)]">
-              Animaux présents
-            </div>
-            <div className="text-3xl font-bold font-mono tabular-nums text-[var(--sf-ink)] mt-1">
-              {totalAnimaux.length}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)]">
-              Capacité totale
-            </div>
-            <div className="text-3xl font-bold font-mono tabular-nums text-[var(--sf-ink)] mt-1">
-              {batiment.capacite ?? '—'}
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)]">
-              Taux occupation
-            </div>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="text-3xl font-bold font-mono tabular-nums text-[var(--sf-ink)]">
-                {tauxOccupation}%
-              </div>
-              <Badge variant={tauxVariant}>
-                {tauxOccupation < 70 ? 'OK' : tauxOccupation < 90 ? 'Élevé' : 'Saturé'}
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="pt-4">
-            <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)]">
-              Cases
-            </div>
-            <div className="text-3xl font-bold font-mono tabular-nums text-[var(--sf-primary)] mt-1">
-              {cases.length}
-            </div>
-          </CardContent>
-        </Card>
+        <div className="kpi">
+          <div className="k">Animaux présents</div>
+          <div className="v tabular-nums">{totalAnimaux.length}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Capacité totale</div>
+          <div className="v tabular-nums">{batiment.capacite ?? '—'}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Taux occupation</div>
+          <div className="flex items-center gap-2">
+            <div className="v tabular-nums">{tauxOccupation}%</div>
+            <Badge variant={tauxVariant}>
+              {tauxOccupation < 70 ? 'OK' : tauxOccupation < 90 ? 'Élevé' : 'Saturé'}
+            </Badge>
+          </div>
+        </div>
+        <div className="kpi">
+          <div className="k">Cases</div>
+          <div className="v tabular-nums" style={{ color: 'var(--sage-d)' }}>{cases.length}</div>
+        </div>
       </div>
 
       {/* === Section NUTRITION === */}
@@ -286,8 +262,8 @@ export default async function BatimentDetail({
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Ration */}
-            <div className="border border-[var(--sf-line,rgba(0,0,0,0.08))] rounded-md p-4">
-              <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)] mb-1">
+            <div className="rounded-[14px] border border-[var(--line)] bg-[var(--card)] p-4">
+              <div className="text-xs uppercase tracking-[0.1em] text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
                 Ration journalière par sujet
               </div>
               <div className="flex items-end justify-between gap-3">
@@ -315,8 +291,8 @@ export default async function BatimentDetail({
             </div>
 
             {/* Formule */}
-            <div className="border border-[var(--sf-line,rgba(0,0,0,0.08))] rounded-md p-4">
-              <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)] mb-1">
+            <div className="rounded-[14px] border border-[var(--line)] bg-[var(--card)] p-4">
+              <div className="text-xs uppercase tracking-[0.1em] text-[var(--mut)] font-[family-name:var(--sf-font-display)] mb-1">
                 Formule affectée
               </div>
               {formule ? (
@@ -349,7 +325,7 @@ export default async function BatimentDetail({
           {/* Projection */}
           {projection && (
             <div
-              className="rounded-md p-4 flex items-start gap-3 flex-wrap"
+              className="rounded-[14px] p-4 flex items-start gap-3 flex-wrap"
               style={{
                 background:
                   projVariant === 'danger'
@@ -430,23 +406,31 @@ export default async function BatimentDetail({
                 return (
                   <div
                     key={c.id}
-                    className="border border-[var(--sf-line,rgba(0,0,0,0.08))] rounded-md p-3"
+                    className="rounded-[14px] border border-[var(--line)] bg-[var(--card)] p-3"
                   >
                     <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
-                      <div className="font-semibold text-[var(--sf-ink)]">
-                        Case {c.numero}
-                        {c.type && (
-                          <span className="text-sm text-[var(--sf-muted)] font-normal ml-2">
-                            ({c.type})
-                          </span>
-                        )}
+                      <div
+                        className="flex items-center gap-2 text-[var(--ink-soft)] font-semibold"
+                        style={{ fontFamily: 'var(--disp)' }}
+                      >
+                        <span className="bi bi-v inline-grid place-items-center" style={{ width: 30, height: 30, borderRadius: 9 }}>
+                          <Boxes className="h-4 w-4" />
+                        </span>
+                        <span className="text-[var(--ink)]">
+                          Case {c.numero}
+                          {c.type && (
+                            <span className="text-sm text-[var(--mut)] font-normal ml-2">
+                              ({c.type})
+                            </span>
+                          )}
+                        </span>
                       </div>
                       <Badge variant={surcharge ? 'danger' : 'secondary'}>
                         {animauxCase.length} / {capCase || '?'}
                       </Badge>
                     </div>
                     {animauxCase.length === 0 ? (
-                      <p className="text-xs text-[var(--sf-muted)] italic">Case vide</p>
+                      <p className="text-xs text-[var(--mut)] italic">Case vide</p>
                     ) : (
                       <AnimauxList animaux={animauxCase} />
                     )}
@@ -454,8 +438,8 @@ export default async function BatimentDetail({
                 )
               })}
               {animauxSansCase.length > 0 && (
-                <div className="border border-dashed border-[var(--sf-line,rgba(0,0,0,0.08))] rounded-md p-3">
-                  <div className="font-semibold text-[var(--sf-ink)] mb-2">
+                <div className="rounded-[14px] border border-dashed border-[var(--line2)] bg-[var(--card)] p-3">
+                  <div className="font-semibold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--disp)' }}>
                     Animaux du bâtiment (hors case)
                     <Badge variant="secondary" className="ml-2">
                       {animauxSansCase.length}

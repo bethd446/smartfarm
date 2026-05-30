@@ -5,51 +5,69 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * Smart Farm — Badge / Pill (atome « pastille terrain » v3.2)
+ * Smart Farm — Badge / Pill VERGER (atome « tag terrain », grammaire §3.2)
  * -------------------------------------------------------------------------
- * - radius 999 (pill OK pour badges UNIQUEMENT — jamais sur boutons)
- * - padding 4 px / 10 px
- * - typo Big Shoulders Display, 11 px UPPERCASE, letter-spacing 0.1em
- * - Variantes sémantiques : utilisent les paires `--sf-<x>-bg / --sf-<x>-ink`
- *   (success / warning / danger / info) avec fallbacks safe.
+ * - pill (--rp / rounded-full), padding 4/10
+ * - typo --body (DM Sans) weight 600, ~12px (pas d'uppercase ni tracking)
+ * - Paires de statut (couleur + forme, jamais couleur seule) :
+ *     succès / sage   → --sage-bg / --sage-d
+ *     attention / apri→ --apri-bg / --apri-d
+ *     prune / info    → --plum-bg / --berry
+ *     neutre          → --paper-3 / --mut
+ *     danger          → --bad-bg  / --bad-d
+ *     critique pleine → --bad     / #fff
+ * - Mode plein soleil (html[data-contrast="high"]) : border 1px currentColor
+ *   ajoutée automatiquement → statut perceptible sans dépendre de la couleur.
+ * - Fallbacks alignés sur les tokens VERGER réels (pas de couleur inventée).
  */
 const badgeVariants = cva(
   [
-    "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1",
+    "group/badge inline-flex w-fit shrink-0 items-center justify-center gap-1.5",
     "rounded-full whitespace-nowrap transition-colors",
     // padding 4/10 + touch target ≥44px si clickable (via data-clickable)
     "px-[10px] py-[4px]",
     "has-[[data-clickable]]:min-h-[var(--sf-touch-min)] has-[[data-clickable]]:min-w-[var(--sf-touch-min)]",
-    // typo carnet
-    "font-[family-name:var(--sf-font-display)] uppercase tracking-[0.1em] text-[11px] leading-none font-semibold",
+    // typo VERGER : corps DM Sans, 12px, weight 600
+    "font-[family-name:var(--body)] text-[12px] leading-none font-semibold",
+    // mode plein soleil : bordure currentColor pour perception sans couleur seule
+    "[html[data-contrast='high']_&]:border [html[data-contrast='high']_&]:border-current",
     // états
-    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--sf-primary)]",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--focus)]",
     "[&>svg]:pointer-events-none [&>svg]:size-3",
   ].join(" "),
   {
     variants: {
       variant: {
+        // statut neutre primaire — fond sauge plein, texte blanc (AA)
         default:
-          "bg-[var(--sf-primary)] text-white",
+          "bg-[var(--sf-primary,var(--sage))] text-white",
+        // neutre atténué
         secondary:
-          "bg-[var(--sf-surface-2,#EFE7D6)] text-[var(--sf-ink,#1a1a1a)]",
+          "bg-[var(--paper-3)] text-[var(--mut)]",
+        // contour discret sur ligne affirmée
         outline:
-          "bg-transparent border border-[var(--sf-ink,#1a1a1a)] text-[var(--sf-ink,#1a1a1a)]",
+          "bg-transparent border border-[var(--line2)] text-[var(--ink-soft)]",
+        // succès / sage
         success:
-          "bg-[var(--sf-success-bg,#D6E3CC)] text-[var(--sf-success-ink,#1F3B12)]",
+          "bg-[var(--sf-success-bg,var(--sage-bg))] text-[var(--sf-success-ink,var(--sage-d))]",
+        // attention / abricot
         warning:
-          "bg-[var(--sf-warning-bg,#F5E0B8)] text-[var(--sf-warning-ink,#5A3E0E)]",
+          "bg-[var(--sf-warning-bg,var(--apri-bg))] text-[var(--sf-warning-ink,var(--apri-d))]",
+        // danger (fond clair)
         danger:
-          "bg-[var(--sf-danger-bg,#F1D4CE)] text-[var(--sf-danger-ink,#7A2A1F)]",
-        // Alias destructive (compat shadcn) → mappe sur danger
+          "bg-[var(--sf-danger-bg,var(--bad-bg))] text-[var(--sf-danger-ink,var(--bad-d))]",
+        // critique pleine (compat shadcn destructive) → fond --bad, texte blanc
         destructive:
-          "bg-[var(--sf-danger-bg,#F1D4CE)] text-[var(--sf-danger-ink,#7A2A1F)]",
+          "bg-[var(--bad)] text-white",
+        // prune / info
         info:
-          "bg-[var(--sf-info-bg,#D6E2EE)] text-[var(--sf-info-ink,#1F3A55)]",
+          "bg-[var(--sf-info-bg,var(--plum-bg))] text-[var(--sf-info-ink,var(--berry))]",
+        // neutre transparent
         ghost:
-          "bg-transparent text-[var(--sf-muted,#5C5346)] hover:bg-[var(--sf-surface-1,rgba(0,0,0,0.04))]",
+          "bg-transparent text-[var(--mut)] hover:bg-[var(--paper-3)]",
+        // lien textuel
         link:
-          "bg-transparent text-[var(--sf-primary)] underline underline-offset-4 hover:no-underline tracking-normal normal-case",
+          "bg-transparent text-[var(--sage-d)] underline underline-offset-4 hover:no-underline",
       },
     },
     defaultVariants: {

@@ -76,10 +76,9 @@ export default function InscriptionPage() {
   // Succès : on affiche le numéro client en grand.
   if (state && state.ok) {
     return (
-      <section className="bg-[var(--sf-surface-1)] border border-[var(--sf-line)] rounded-lg p-6 sm:p-8 text-center">
-        <h1 className="font-[family-name:var(--sf-font-display)] uppercase tracking-tight text-2xl text-[var(--sf-ink-deep,#14532D)]">
-          Bienvenue !
-        </h1>
+      <div className="auth-form__body text-center">
+        <p className="eyebrow">Compte créé</p>
+        <h1 className="auth-form__h1">Bienvenue&nbsp;!</h1>
         {state.numero_client && (
           <>
             <p className="mt-4 text-sm text-[var(--sf-muted)]">Ton numéro client</p>
@@ -100,20 +99,20 @@ export default function InscriptionPage() {
             Aller à la connexion
           </Button>
         </Link>
-      </section>
+      </div>
     )
   }
 
   return (
-    <section className="bg-[var(--sf-surface-1)] border border-[var(--sf-line)] rounded-lg p-6 sm:p-8">
-      <h1 className="font-[family-name:var(--sf-font-display)] uppercase tracking-tight text-2xl text-[var(--sf-ink)]">
-        Créer un compte
-      </h1>
-      <p className="mt-1 text-sm text-[var(--sf-muted)]">
-        Tu recevras un numéro client unique (format SF-XXXXXX) pour te connecter.
+    <div className="auth-form__body">
+      <p className="eyebrow">Inscription</p>
+      <h1 className="auth-form__h1">Crée ton compte&nbsp;éleveur.</h1>
+      <p className="auth-form__lead">
+        Tu recevras un numéro client unique (format SF-XXXXXX) pour te connecter
+        — plus simple à retenir qu&apos;un email.
       </p>
 
-      <form action={action} className="mt-6 space-y-4" noValidate>
+      <form action={action} className="space-y-4" noValidate>
         {/* Nom complet */}
         <div className="space-y-1.5">
           <Label htmlFor="nom_complet">Nom complet</Label>
@@ -222,11 +221,9 @@ export default function InscriptionPage() {
         </div>
 
         {state && 'error' in state && state.error && (
-          <div
-            role="alert"
-            className="text-sm text-[var(--sf-terre,#9A3412)] bg-[var(--sf-surface-2,#FEF3C7)] border border-[var(--sf-terre,#9A3412)]/30 rounded-md px-3 py-2"
-          >
-            {state.error}
+          <div role="alert" className="auth-alert">
+            <div className="auth-alert__title">Inscription refusée</div>
+            <div>{state.error}</div>
           </div>
         )}
 
@@ -240,15 +237,12 @@ export default function InscriptionPage() {
         </Button>
       </form>
 
-      <div className="mt-8 pt-6 border-t border-[var(--sf-line)] text-center text-sm text-[var(--sf-muted)]">
-        Déjà un compte ?{' '}
-        <Link
-          href="/connexion"
-          className="font-semibold text-[var(--sf-ink-deep,#14532D)] underline underline-offset-2 hover:text-[var(--sf-primary)]"
-        >
+      <div className="toggle-row" style={{ marginTop: 28 }}>
+        Déjà un compte&nbsp;?{' '}
+        <Link href="/connexion" className="toggle-link">
           Se connecter
         </Link>
       </div>
-    </section>
+    </div>
   )
 }

@@ -9,7 +9,6 @@ import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { PiggyBank, Baby, Mars, Layers, Activity, Skull } from 'lucide-react'
 import { CheptelActions } from './_actions'
 import { CheptelRowActions } from './_row-actions'
-import { CheptelFab } from './_fab'
 import { toneTruie } from '@/lib/colors'
 import { BannerTransfertCroissance } from './_banner-transfert-croissance'
 import { PorceletsTableBulk } from './_porcelets-table-bulk'
@@ -236,6 +235,26 @@ export default async function CheptelPage({
         <CheptelActions races={races ?? []} />
       </div>
 
+      {/* === Rangée KPI (gabarit VERGER .kpi) — counts déjà calculés === */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="kpi">
+          <div className="k">Verrats</div>
+          <div className="v tabular-nums">{counts.verrats ?? '—'}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Truies</div>
+          <div className="v tabular-nums">{counts.truies ?? '—'}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Porcelets</div>
+          <div className="v tabular-nums">{counts.porcelets ?? '—'}</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Portées</div>
+          <div className="v tabular-nums">{counts.portees ?? '—'}</div>
+        </div>
+      </div>
+
       {/* === Onglets (Link-based, server-friendly) === */}
       <nav
         aria-label="Catégories du cheptel"
@@ -315,8 +334,6 @@ export default async function CheptelPage({
         <AnimauxTable rows={animaux} tab={tab} stadeReproById={stadeReproById} />
       )}
 
-      {/* === FAB mobile === */}
-      <CheptelFab races={races ?? []} />
     </div>
   )
 }
@@ -484,29 +501,22 @@ function PorteesTable({ rows }: { rows: any[] }) {
   }
 
   return (
-    <section aria-labelledby="cheptel-portees-titre">
+    <section
+      aria-labelledby="cheptel-portees-titre"
+      className="pn md:border-t-2"
+      style={{ borderTopColor: 'var(--sf-primary)' }}
+    >
       <div className="overflow-x-auto">
-        <table
-          className="w-full text-sm border-b border-[var(--sf-line)] border-t-2"
-          style={{ borderTopColor: 'var(--sf-primary)' }}
-        >
-          <thead
-            className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
-            style={{
-              fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-            }}
-          >
+        <table className="tbl">
+          <thead>
             <tr>
-              <th className="py-3 pr-4 font-semibold">Code</th>
-              <th className="py-3 pr-4 font-semibold">Truie</th>
-              <th className="py-3 pr-4 font-semibold">Date MB</th>
-              <th className="py-3 pr-4 font-semibold">Nés vivants</th>
-              <th className="py-3 pr-4 font-semibold">Morts-nés</th>
-              <th className="py-3 pr-4 font-semibold">Effectif actuel</th>
-              <th className="py-3 pr-4 font-semibold">Phase</th>
+              <th>Code</th>
+              <th>Truie</th>
+              <th>Date MB</th>
+              <th className="num">Nés vivants</th>
+              <th className="num">Morts-nés</th>
+              <th className="num">Effectif actuel</th>
+              <th>Phase</th>
             </tr>
           </thead>
           <tbody>
@@ -517,24 +527,21 @@ function PorteesTable({ rows }: { rows: any[] }) {
               const nv = p.mb?.nes_vivants ?? p.nes_vivants ?? null
               const mn = p.mb?.morts_nes ?? null
               return (
-                <tr
-                  key={p.id}
-                  className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
-                >
-                  <td className="py-3 pr-4 font-mono font-bold text-[var(--sf-ink)]">
+                <tr key={p.id} className="hover:bg-[var(--sf-surface-2)]/40">
+                  <td className="font-mono font-bold text-[var(--sf-ink)]">
                     {p.code ?? p.numero ?? '—'}
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink)]">
+                  <td className="text-[var(--sf-ink)]">
                     <span className="font-mono font-bold">{truieTag}</span>
                     {truieNom ? <span className="text-[var(--sf-muted)] ml-2">{truieNom}</span> : null}
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
+                  <td className="text-[var(--sf-muted)] tabular-nums">
                     {dateMb ? <FormattedDateTime date={dateMb} format="date" /> : '—'}
                   </td>
-                  <td className="py-3 pr-4 tabular-nums">{nv ?? '—'}</td>
-                  <td className="py-3 pr-4 tabular-nums">{mn ?? '—'}</td>
-                  <td className="py-3 pr-4 tabular-nums">{p.effectif_actuel ?? '—'}</td>
-                  <td className="py-3 pr-4">
+                  <td className="num tabular-nums">{nv ?? '—'}</td>
+                  <td className="num tabular-nums">{mn ?? '—'}</td>
+                  <td className="num tabular-nums">{p.effectif_actuel ?? '—'}</td>
+                  <td>
                     {p.phase ? (
                       <Badge variant="outline" className="capitalize">
                         {p.phase}

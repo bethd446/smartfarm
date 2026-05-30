@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ArrowLeft, PiggyBank, TrendingUp, AlertCircle } from 'lucide-react'
@@ -294,106 +292,70 @@ export default async function EconomiquePage({
       </div>
 
       {isEmpty ? (
-        <Card className="border-[var(--sf-line)]">
-          <CardContent className="p-12 text-center">
-            <AlertCircle className="h-12 w-12 text-[var(--sf-muted)] mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-[var(--sf-ink)] mb-2">
-              Aucune consommation d'aliment enregistrée
-            </h2>
-            <p className="text-sm text-[var(--sf-muted)]">
-              Commencez par enregistrer les consommations d'aliment pour voir vos indicateurs
-              économiques.
-            </p>
-          </CardContent>
-        </Card>
+        <div className="sf-empty" role="status">
+          <span className="sf-empty-ic">
+            <AlertCircle className="h-6 w-6" />
+          </span>
+          <h3>Aucune consommation d'aliment enregistrée</h3>
+          <p>
+            Commencez par enregistrer les consommations d'aliment pour voir vos indicateurs
+            économiques.
+          </p>
+        </div>
       ) : (
         <>
-          {/* ===== SYNTHÈSE KPI — registre dense tabulaire ===== */}
-          <section className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
-            <div className="mb-2 px-2 pt-3" style={eyebrowStyle}>
-              SYNTHÈSE ÉCONOMIQUE · {periode}
+          {/* ===== SYNTHÈSE KPI ===== */}
+          <div className="mb-1" style={eyebrowStyle}>
+            SYNTHÈSE ÉCONOMIQUE · {periode}
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Coût aliment par kg vif produit */}
+            <div className="kpi">
+              <div className="k">Coût aliment par kg vif produit</div>
+              <div className="v tabular-nums" style={{ color: getToneColor(coutTone) }}>
+                {coutAlimentParKgVif !== null ? Math.round(coutAlimentParKgVif) : '—'}
+                <small> XOF/kg</small>
+              </div>
+              <div
+                className={`d ${coutTone === 'good' ? 'pos' : coutTone === 'warn' ? 'amb' : coutTone === 'bad' ? 'neg' : ''}`}
+              >
+                {coutTone === 'good' && 'Excellent · cible < 250 XOF/kg'}
+                {coutTone === 'warn' && 'Acceptable · 250-350 XOF/kg'}
+                {coutTone === 'bad' && 'Élevé · > 350 XOF/kg'}
+                {coutTone === 'muted' && 'Données insuffisantes'}
+              </div>
             </div>
-            <dl>
-              {/* Coût aliment par kg vif produit */}
-              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-                <dt className="min-w-0">
-                  <span
-                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-                  >
-                    Coût aliment par kg vif produit
-                  </span>
-                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
-                    {coutTone === 'good' && 'Excellent · cible < 250 XOF/kg'}
-                    {coutTone === 'warn' && 'Acceptable · 250-350 XOF/kg'}
-                    {coutTone === 'bad' && 'Élevé · > 350 XOF/kg'}
-                    {coutTone === 'muted' && 'Données insuffisantes'}
-                  </span>
-                </dt>
-                <dd
-                  className="shrink-0 font-mono font-bold tabular-nums text-lg"
-                  style={{ color: getToneColor(coutTone) }}
-                >
-                  {coutAlimentParKgVif !== null ? Math.round(coutAlimentParKgVif) : '—'}
-                  <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">XOF/kg</span>
-                </dd>
-              </div>
 
-              {/* Coût total aliment période */}
-              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-                <dt className="min-w-0">
-                  <span
-                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-                  >
-                    Coût total aliment période
-                  </span>
-                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
-                    {consommations.length} consommations enregistrées
-                  </span>
-                </dt>
-                <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-ink)]">
-                  {fmtXOF(coutTotalAliment)}
-                </dd>
-              </div>
+            {/* Coût total aliment période */}
+            <div className="kpi">
+              <div className="k">Coût total aliment période</div>
+              <div className="v tabular-nums">{fmtXOF(coutTotalAliment)}</div>
+              <div className="d">{consommations.length} consommations enregistrées</div>
+            </div>
 
-              {/* Marge brute estimée */}
-              <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-                <dt className="min-w-0">
-                  <span
-                    className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-                  >
-                    Marge brute estimée
-                  </span>
-                  <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
-                    CA {fmtXOF(caTotal)} − coûts {fmtXOF(coutTotalAliment + coutSanitaireEstime)}
-                  </span>
-                </dt>
-                <dd
-                  className="shrink-0 font-mono font-bold tabular-nums text-lg"
-                  style={{ color: margeEstimee > 0 ? 'var(--sf-primary)' : 'var(--sf-danger-ink)' }}
-                >
-                  {fmtXOF(margeEstimee)}
-                </dd>
+            {/* Marge brute estimée */}
+            <div className="kpi">
+              <div className="k">Marge brute estimée</div>
+              <div
+                className="v tabular-nums"
+                style={{ color: margeEstimee > 0 ? 'var(--ok)' : 'var(--bad)' }}
+              >
+                {fmtXOF(margeEstimee)}
               </div>
-            </dl>
-          </section>
+              <div className="d">
+                CA {fmtXOF(caTotal)} − coûts {fmtXOF(coutTotalAliment + coutSanitaireEstime)}
+              </div>
+            </div>
+          </div>
 
           {/* ===== CHARTS ===== */}
           <EconomiqueCharts coutParBande={coutParBande} repartitionCouts={repartitionCouts} />
 
           {/* ===== TABLEAU MENSUEL ===== */}
-          <Card className="border-[var(--sf-line)]">
-            <CardContent className="p-6">
-              <h2
-                className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-4"
-                style={{
-                  fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                }}
-              >
-                Évolution mensuelle sur 12 mois
-              </h2>
+          <div className="pn">
+            <div className="pn-h">
+              <h3>Évolution mensuelle sur 12 mois</h3>
+            </div>
 
               <ResponsiveTable
                 data={mois12}
@@ -441,8 +403,7 @@ export default async function EconomiquePage({
                   },
                 ]}
               />
-            </CardContent>
-          </Card>
+          </div>
         </>
       )}
     </div>

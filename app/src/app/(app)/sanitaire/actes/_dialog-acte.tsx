@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { AlertTriangle, Info, Syringe } from 'lucide-react'
+import { AlertTriangle, Info, Plus, Syringe } from 'lucide-react'
 import { creerActeSanitaire } from './_server-actions'
 import { UNITES_DOSE, VOIES_ADMINISTRATION } from './_schemas'
 
@@ -41,7 +41,7 @@ export type ProduitOption = {
 }
 
 type Props = {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   animaux: AnimalOption[]
   bandes: BandeOption[]
   produits: ProduitOption[]
@@ -147,7 +147,16 @@ export function DialogActe({
 
   return (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) reset() }}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button size="lg" className="h-12">
+              <Plus className="h-5 w-5 mr-2" />
+              Enregistrer traitement
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className={titleClass}>

@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { ArrowUp, ArrowDown, Plus } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -82,7 +83,7 @@ export function DialogEntreeStock({
   matieres,
   fournisseurs,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   matieres: Matiere[]
   fournisseurs: Fournisseur[]
 }) {
@@ -130,7 +131,16 @@ export function DialogEntreeStock({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="outline" size="lg">
+              <ArrowUp className="h-5 w-5 mr-2" aria-hidden="true" />
+              Entrée
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className={titleClassName}>Entrée stock</DialogTitle>
@@ -268,7 +278,7 @@ export function DialogSortieStock({
   matieres,
   bandes = [],
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
   matieres: Matiere[]
   bandes?: Bande[]
 }) {
@@ -312,7 +322,16 @@ export function DialogSortieStock({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            <Button variant="outline" size="lg">
+              <ArrowDown className="h-5 w-5 mr-2" aria-hidden="true" />
+              Sortie
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className={titleClassName}>Sortie stock</DialogTitle>
@@ -461,7 +480,7 @@ type MatiereForm = z.output<typeof schemaMatiere>
 export function DialogNouvelleMatiere({
   trigger,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
 }) {
   const [open, setOpen] = useState(false)
   const {
@@ -509,7 +528,17 @@ export function DialogNouvelleMatiere({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger
+        render={
+          (trigger ?? (
+            // FAB unique VERGER : création via bouton d'en-tête, visible sur tous viewports.
+            <Button variant="accent" size="lg" className="inline-flex">
+              <Plus className="h-5 w-5 mr-2" aria-hidden="true" />
+              Nouveau matériel
+            </Button>
+          )) as any
+        }
+      />
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className={titleClassName}>Nouveau matériel</DialogTitle>

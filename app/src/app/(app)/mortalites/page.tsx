@@ -1,11 +1,10 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
-import { Skull, Plus } from 'lucide-react'
+import { Skull } from 'lucide-react'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 import { DialogMortalite } from './_dialog-mortalite'
 import type { AnimalOption, BandeOption } from './_dialog-mortalite'
@@ -174,20 +173,6 @@ export default async function MortalitesPage({
     console.warn('[mortalites] bandes indisponible, mode animal-only:', e)
   }
 
-  const triggerButton = (
-    <Button
-      size="lg"
-      className="h-12 text-base"
-      style={{
-        background: 'var(--sf-danger-ink, #7A2A1F)',
-        color: '#fff',
-      }}
-    >
-      <Plus className="h-5 w-5 mr-2" />
-      Déclarer mortalité
-    </Button>
-  )
-
   return (
     <div className="space-y-6">
       {/* === Header === */}
@@ -215,144 +200,115 @@ export default async function MortalitesPage({
             bandes={bandesOptions}
             bandesAvailable={bandesAvailable}
             defaultOpen={autoOpenNew}
-            trigger={triggerButton}
           />
         </div>
       </div>
 
       {/* === KPI === */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)]">
-              Total YTD
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-black tabular-nums text-[var(--sf-ink)]">
-              {kpiYtd}
+        <div className="kpi">
+          <div className="k">Total YTD</div>
+          <div className="v tabular-nums">{kpiYtd}</div>
+          <div className="d">animaux depuis le 1er janvier</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Mois courant</div>
+          <div className="v tabular-nums">{kpiMonth}</div>
+          <div className="d">animaux ce mois-ci</div>
+        </div>
+        <div className="kpi">
+          <div className="k">Top 3 motifs (YTD)</div>
+          {topMotifs.length === 0 ? (
+            <div className="text-xs text-[var(--mut)] mt-1">
+              Aucune mortalité YTD
             </div>
-            <div className="text-xs text-[var(--sf-muted)] mt-1">
-              animaux depuis le 1er janvier
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)]">
-              Mois courant
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-black tabular-nums text-[var(--sf-ink)]">
-              {kpiMonth}
-            </div>
-            <div className="text-xs text-[var(--sf-muted)] mt-1">
-              animaux ce mois-ci
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)]">
-              Top 3 motifs (YTD)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {topMotifs.length === 0 ? (
-              <div className="text-xs text-[var(--sf-muted)]">
-                Aucune mortalité YTD
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                {topMotifs.map(([motif, n]) => {
-                  const pct = Math.round((n / topTotal) * 100)
-                  return (
-                    <div key={motif}>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-[var(--sf-ink)] font-medium">
-                          {MOTIF_LABELS[motif]}
-                        </span>
-                        <span className="tabular-nums text-[var(--sf-muted)]">
-                          {n} ({pct}%)
-                        </span>
-                      </div>
-                      <div className="h-1.5 bg-[var(--sf-line,#d4cfc1)] rounded-full overflow-hidden">
-                        <div
-                          className="h-full"
-                          style={{
-                            width: `${pct}%`,
-                            background: 'var(--sf-danger-ink, #7A2A1F)',
-                          }}
-                        />
-                      </div>
+          ) : (
+            <div className="space-y-1.5 mt-1">
+              {topMotifs.map(([motif, n]) => {
+                const pct = Math.round((n / topTotal) * 100)
+                return (
+                  <div key={motif}>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-[var(--ink)] font-medium">
+                        {MOTIF_LABELS[motif]}
+                      </span>
+                      <span className="tabular-nums text-[var(--mut)]">
+                        {n} ({pct}%)
+                      </span>
                     </div>
-                  )
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                    <div className="h-1.5 bg-[var(--line)] rounded-full overflow-hidden mt-1">
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${pct}%`,
+                          background: 'var(--bad)',
+                        }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* === Filtres (form GET) === */}
-      <Card>
-        <CardContent className="p-3">
-          <form
-            method="GET"
-            action="/mortalites"
-            className="flex flex-wrap items-end gap-3"
-          >
-            <div>
-              <label
-                htmlFor="motif"
-                className="block text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-1"
-              >
-                Motif
-              </label>
-              <select
-                id="motif"
-                name="motif"
-                defaultValue={filterMotif ?? ''}
-                className="h-10 px-2 border border-[var(--sf-line)] bg-transparent text-sm text-[var(--sf-ink)]"
-              >
-                <option value="">Tous</option>
-                {MOTIFS_MORTALITE.map((m) => (
-                  <option key={m} value={m}>
-                    {MOTIF_LABELS[m]}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label
-                htmlFor="mois"
-                className="block text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] mb-1"
-              >
-                Mois (YYYY-MM)
-              </label>
-              <input
-                id="mois"
-                name="mois"
-                type="month"
-                defaultValue={filterMois ?? ''}
-                className="h-10 px-2 border border-[var(--sf-line)] bg-transparent text-sm text-[var(--sf-ink)]"
-              />
-            </div>
-            <Button type="submit" variant="outline" size="default">
-              Filtrer
-            </Button>
-            {(filterMotif || filterMois) && (
-              <a
-                href="/mortalites"
-                className="text-xs text-[var(--sf-muted)] underline self-center"
-              >
-                Réinitialiser
-              </a>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+      <div className="pn">
+        <form
+          method="GET"
+          action="/mortalites"
+          className="flex flex-wrap items-end gap-3"
+        >
+          <div>
+            <label
+              htmlFor="motif"
+              className="block text-[11.5px] uppercase tracking-[0.04em] text-[var(--mut)] font-semibold mb-1"
+            >
+              Motif
+            </label>
+            <select
+              id="motif"
+              name="motif"
+              defaultValue={filterMotif ?? ''}
+              className="h-12 px-[13px] rounded-[11px] border border-[var(--line2)] bg-[var(--paper)] text-sm text-[var(--ink)]"
+            >
+              <option value="">Tous</option>
+              {MOTIFS_MORTALITE.map((m) => (
+                <option key={m} value={m}>
+                  {MOTIF_LABELS[m]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label
+              htmlFor="mois"
+              className="block text-[11.5px] uppercase tracking-[0.04em] text-[var(--mut)] font-semibold mb-1"
+            >
+              Mois (YYYY-MM)
+            </label>
+            <input
+              id="mois"
+              name="mois"
+              type="month"
+              defaultValue={filterMois ?? ''}
+              className="h-12 px-[13px] rounded-[11px] border border-[var(--line2)] bg-[var(--paper)] text-sm text-[var(--ink)]"
+            />
+          </div>
+          <Button type="submit" variant="outline" size="default">
+            Filtrer
+          </Button>
+          {(filterMotif || filterMois) && (
+            <a
+              href="/mortalites"
+              className="text-xs text-[var(--mut)] underline self-center"
+            >
+              Réinitialiser
+            </a>
+          )}
+        </form>
+      </div>
 
       {/* === Tableau / EmptyState === */}
       {mortalites.length === 0 ? (
@@ -363,73 +319,69 @@ export default async function MortalitesPage({
           tone="good"
         />
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle>Historique ({mortalites.length})</CardTitle>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto -mx-4 sm:mx-0">
-              <table className="w-full min-w-[720px] text-sm">
-                <thead className="bg-muted/40 border-b">
-                  <tr>
-                    <th className="text-left p-3 font-medium">Date</th>
-                    <th className="text-left p-3 font-medium">Cible</th>
-                    <th className="text-left p-3 font-medium">Motif</th>
-                    <th className="text-right p-3 font-medium">Nb</th>
-                    <th className="text-left p-3 font-medium">Observations</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mortalites.map((m) => {
-                    let cibleLabel: string
-                    if (m.animal) {
-                      cibleLabel = m.animal.nom
-                        ? `${m.animal.nom} (${m.animal.tag})`
-                        : m.animal.tag
-                    } else if (m.bande) {
-                      cibleLabel = m.bande.code
-                        ? `${m.bande.code} — ${m.bande.nom}`
-                        : m.bande.nom
-                    } else {
-                      cibleLabel = '—'
-                    }
-                    const motifLabel = MOTIF_LABELS[m.motif]
-                    return (
-                      <tr
-                        key={m.id}
-                        className="border-b last:border-0 hover:bg-muted/20"
-                      >
-                        <td className="p-3 tabular-nums whitespace-nowrap">
-                          <FormattedDateTime date={m.date_mortalite} format="date" />
-                        </td>
-                        <td className="p-3">
-                          <div>{cibleLabel}</div>
-                          <div className="text-[10px] uppercase tracking-[0.08em] text-[var(--sf-muted)]">
-                            {m.animal ? 'Individuel' : 'Masse / bande'}
+        <div className="pn">
+          <div className="pn-h">
+            <h3>Déclarations récentes</h3>
+            <span className="meta">{mortalites.length} sur cette page</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="tbl min-w-[720px]">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Cible</th>
+                  <th>Motif</th>
+                  <th className="num">Nb</th>
+                  <th>Observations</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mortalites.map((m) => {
+                  let cibleLabel: string
+                  if (m.animal) {
+                    cibleLabel = m.animal.nom
+                      ? `${m.animal.nom} (${m.animal.tag})`
+                      : m.animal.tag
+                  } else if (m.bande) {
+                    cibleLabel = m.bande.code
+                      ? `${m.bande.code} — ${m.bande.nom}`
+                      : m.bande.nom
+                  } else {
+                    cibleLabel = '—'
+                  }
+                  const motifLabel = MOTIF_LABELS[m.motif]
+                  return (
+                    <tr key={m.id}>
+                      <td className="tabular-nums whitespace-nowrap">
+                        <FormattedDateTime date={m.date_mortalite} format="date" />
+                      </td>
+                      <td>
+                        <div className="font-medium text-[var(--ink)]">{cibleLabel}</div>
+                        <div className="text-[10px] uppercase tracking-[0.08em] text-[var(--mut)]">
+                          {m.animal ? 'Individuel' : 'Masse / bande'}
+                        </div>
+                      </td>
+                      <td>
+                        <Badge variant="danger">{motifLabel}</Badge>
+                        {m.motif === 'autre' && m.motif_libre && (
+                          <div className="text-xs text-[var(--mut)] mt-1">
+                            {m.motif_libre}
                           </div>
-                        </td>
-                        <td className="p-3">
-                          <Badge variant="danger">{motifLabel}</Badge>
-                          {m.motif === 'autre' && m.motif_libre && (
-                            <div className="text-xs text-[var(--sf-muted)] mt-1">
-                              {m.motif_libre}
-                            </div>
-                          )}
-                        </td>
-                        <td className="p-3 text-right tabular-nums font-medium">
-                          {m.nb_animaux}
-                        </td>
-                        <td className="p-3 text-xs text-[var(--sf-muted)] max-w-[280px]">
-                          {m.observations ?? '—'}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                        )}
+                      </td>
+                      <td className="num tabular-nums font-medium text-[var(--ink)]">
+                        {m.nb_animaux}
+                      </td>
+                      <td className="text-xs text-[var(--mut)] max-w-[280px]">
+                        {m.observations ?? '—'}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {/* === Pagination simple === */}

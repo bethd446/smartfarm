@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { ArrowLeftRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
@@ -68,7 +69,9 @@ export function DialogAdoption({
   mises_bas_allaitantes,
   source_id_prefill,
 }: {
-  trigger: React.ReactNode
+  // Optionnel : trigger par defaut derive ci-dessous (rendu DANS ce client
+  // component) pour eviter le mismatch d'hydratation RSC -> Client + Radix asChild.
+  trigger?: React.ReactNode
   mises_bas_allaitantes: MiseBasAllaitanteOption[]
   source_id_prefill?: string
 }) {
@@ -150,9 +153,39 @@ export function DialogAdoption({
     (m) => m.id !== sourceId
   )
 
+  // Trigger par defaut derive du contexte (rendu DANS ce client component) :
+  // bouton inline si source_id_prefill (depuis une portee), sinon en-tete
+  // (disabled si < 2 portees allaitantes). Rendu visuel identique au W2.
+  const defaultTrigger = source_id_prefill ? (
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      className="w-full h-10 text-xs uppercase tracking-wider"
+    >
+      <ArrowLeftRight className="h-4 w-4 mr-2" aria-hidden="true" />
+      Adopter depuis cette portée
+    </Button>
+  ) : (
+    <Button
+      variant="outline"
+      size="lg"
+      className="h-12 text-base"
+      disabled={mises_bas_allaitantes.length < 2}
+      title={
+        mises_bas_allaitantes.length < 2
+          ? 'Il faut au moins 2 portées en allaitement (≤35j)'
+          : undefined
+      }
+    >
+      <ArrowLeftRight className="h-5 w-5 mr-2" aria-hidden="true" />
+      Adoption
+    </Button>
+  )
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={trigger as any} />
+      <DialogTrigger render={(trigger ?? defaultTrigger) as any} />
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle

@@ -77,7 +77,7 @@ export default async function BandeDetail({
       <div>
         <Link
           href="/bandes"
-          className="inline-flex items-center gap-1 text-sm text-[var(--sf-muted)] hover:text-[var(--sf-ink)]"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--mut)] hover:text-[var(--ink)] transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           Toutes les bandes
@@ -87,17 +87,11 @@ export default async function BandeDetail({
       {/* Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1
-            className="text-4xl font-bold flex items-center gap-3 tracking-[0.01em] text-[var(--sf-ink)]"
-            style={{
-              fontFamily:
-                "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-            }}
-          >
-            <Layers className="h-8 w-8 text-[var(--sf-primary)]" />
+          <h1 className="text-4xl font-bold flex items-center gap-3 tracking-[-0.02em] text-[var(--ink)] font-[family-name:var(--disp)]">
+            <Layers className="h-8 w-8 text-[var(--sage)]" />
             {bande.nom}
           </h1>
-          <div className="flex items-center gap-3 mt-2 text-sm text-[var(--sf-muted)] flex-wrap">
+          <div className="flex items-center gap-3 mt-2 text-sm text-[var(--mut)] flex-wrap">
             <span className="font-mono">{bande.code}</span>
             <span>·</span>
             <Badge variant="outline">
@@ -134,43 +128,40 @@ export default async function BandeDetail({
 
       {/* Bannière R22 si applicable */}
       {peutEtreSexee && (
-        <div className="rounded-md border border-[var(--sf-warning-ink,#5A3E0E)] bg-[var(--sf-warning-bg,#F5E0B8)] text-[var(--sf-warning-ink,#5A3E0E)] px-4 py-3 text-sm">
-          <strong>Sexage requis</strong> · Cette bande a plus de 60 jours et
-          n&apos;est pas encore sexée. Séparer mâles et femelles évite la
-          consanguinité (règle R22).
+        <div className="live warn">
+          <span className="lv-ic"><Sparkles className="h-[17px] w-[17px]" /></span>
+          <div>
+            <b>Sexage requis</b>
+            <small>
+              Cette bande a plus de 60 jours et n&apos;est pas encore sexée.
+              Séparer mâles et femelles évite la consanguinité (règle R22).
+            </small>
+          </div>
         </div>
       )}
 
       {/* 6 KPI */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {[
-          { label: 'Effectif total', value: bande.effectif_total ?? 0, accent: 'text-[var(--sf-primary)]' },
+          { label: 'Effectif total', value: bande.effectif_total ?? 0, accent: 'text-[var(--sage-d)]' },
           { label: 'Nb mâles', value: bande.nb_males ?? 0 },
           { label: 'Nb femelles', value: bande.nb_femelles ?? 0 },
           { label: 'Sous-groupe M', value: bande.sous_groupe_m ?? 0 },
           { label: 'Sous-groupe F', value: bande.sous_groupe_f ?? 0 },
           { label: 'Âge (jours)', value: ageBande },
         ].map((k) => (
-          <Card key={k.label}>
-            <CardContent className="pt-4">
-              <div className="text-xs uppercase tracking-[0.1em] text-[var(--sf-muted)] font-[family-name:var(--sf-font-display)]">
-                {k.label}
-              </div>
-              <div
-                className={`text-3xl font-bold font-mono tabular-nums mt-1 ${k.accent ?? 'text-[var(--sf-ink)]'}`}
-              >
-                {k.value}
-              </div>
-            </CardContent>
-          </Card>
+          <div className="kpi" key={k.label}>
+            <div className="k">{k.label}</div>
+            <div className={`v tabular-nums ${k.accent ?? ''}`}>{k.value}</div>
+          </div>
         ))}
       </div>
 
       {/* Historique transits */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <ArrowRightLeft className="h-5 w-5 text-[var(--sf-primary)]" />
+          <CardTitle className="flex items-center gap-2 font-[family-name:var(--disp)]">
+            <ArrowRightLeft className="h-5 w-5 text-[var(--sage)]" />
             Historique des transits ({transits?.length ?? 0})
           </CardTitle>
         </CardHeader>
@@ -183,55 +174,40 @@ export default async function BandeDetail({
             />
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="tbl">
                 <thead>
-                  <tr className="text-left text-[var(--sf-muted)] uppercase tracking-[0.08em] text-xs border-b border-[var(--sf-line,rgba(0,0,0,0.08))]">
-                    <th className="py-2 pr-3">Date</th>
-                    <th className="py-2 pr-3">De → Vers</th>
-                    <th className="py-2 pr-3 text-right">M</th>
-                    <th className="py-2 pr-3 text-right">F</th>
-                    <th className="py-2 pr-3 text-right">Poids M</th>
-                    <th className="py-2 pr-3 text-right">Poids F</th>
-                    <th className="py-2 pr-3 text-right">Total kg</th>
-                    <th className="py-2 pr-3">Observations</th>
+                  <tr>
+                    <th>Date</th>
+                    <th>De → Vers</th>
+                    <th className="num">M</th>
+                    <th className="num">F</th>
+                    <th className="num">Poids M</th>
+                    <th className="num">Poids F</th>
+                    <th className="num">Total kg</th>
+                    <th>Observations</th>
                   </tr>
                 </thead>
                 <tbody>
                   {transits.map((t: any) => (
-                    <tr
-                      key={t.id}
-                      className="border-b border-[var(--sf-line,rgba(0,0,0,0.06))] last:border-0"
-                    >
-                      <td className="py-2 pr-3 font-mono">
+                    <tr key={t.id}>
+                      <td className="font-mono">
                         <FormattedDateTime date={t.date_transit} format="date" />
                       </td>
-                      <td className="py-2 pr-3">
+                      <td>
                         <span className="capitalize">
                           {phasesLabel[t.phase_avant] ?? t.phase_avant}
                         </span>
-                        <span className="mx-1 text-[var(--sf-muted)]">→</span>
+                        <span className="mx-1 text-[var(--mut)]">→</span>
                         <span className="capitalize font-semibold">
                           {phasesLabel[t.phase_apres] ?? t.phase_apres}
                         </span>
                       </td>
-                      <td className="py-2 pr-3 text-right font-mono tabular-nums">
-                        {t.nb_males}
-                      </td>
-                      <td className="py-2 pr-3 text-right font-mono tabular-nums">
-                        {t.nb_femelles}
-                      </td>
-                      <td className="py-2 pr-3 text-right font-mono tabular-nums">
-                        {t.poids_moyen_m_kg ?? '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-right font-mono tabular-nums">
-                        {t.poids_moyen_f_kg ?? '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-right font-mono tabular-nums font-semibold">
-                        {t.poids_total_kg ?? '—'}
-                      </td>
-                      <td className="py-2 pr-3 text-[var(--sf-muted)]">
-                        {t.observations ?? ''}
-                      </td>
+                      <td className="num font-mono tabular-nums">{t.nb_males}</td>
+                      <td className="num font-mono tabular-nums">{t.nb_femelles}</td>
+                      <td className="num font-mono tabular-nums">{t.poids_moyen_m_kg ?? '—'}</td>
+                      <td className="num font-mono tabular-nums">{t.poids_moyen_f_kg ?? '—'}</td>
+                      <td className="num font-mono tabular-nums font-semibold">{t.poids_total_kg ?? '—'}</td>
+                      <td className="text-[var(--mut)]">{t.observations ?? ''}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -244,12 +220,12 @@ export default async function BandeDetail({
       {/* Aide */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-[var(--sf-muted)]" />
+          <CardTitle className="flex items-center gap-2 font-[family-name:var(--disp)]">
+            <Users className="h-5 w-5 text-[var(--mut)]" />
             Rappel métier
           </CardTitle>
         </CardHeader>
-        <CardContent className="text-sm text-[var(--sf-muted)] space-y-1">
+        <CardContent className="text-sm text-[var(--mut)] space-y-1">
           <p>
             <strong>Sexage (≈60 j post-sevrage)</strong> : séparer mâles et
             femelles en sous-groupes pour éviter la consanguinité et adapter

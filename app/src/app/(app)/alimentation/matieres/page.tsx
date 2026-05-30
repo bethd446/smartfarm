@@ -7,16 +7,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Wheat, Plus, ChevronLeft, RotateCcw, Search, AlertTriangle } from 'lucide-react'
+import { Wheat, ChevronLeft, RotateCcw, Search, AlertTriangle } from 'lucide-react'
 
 import { DialogMatiere, type MatiereRow } from './_dialog-matiere'
 import {
@@ -217,15 +208,7 @@ export default async function MatieresPage({
         </div>
         <div className="flex gap-2 flex-wrap">
           <FormResetStandards />
-          <DialogMatiere
-            mode="create"
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouvelle matière
-              </Button>
-            }
-          />
+          <DialogMatiere mode="create" />
         </div>
       </div>
 
@@ -325,31 +308,39 @@ export default async function MatieresPage({
               ) : null}
             </div>
           ) : rows.length === 0 ? (
-            <div className="p-8 text-center space-y-3">
-              <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                Aucune matière ne correspond à ces filtres.
-              </p>
-              <FormResetStandards />
+            <div className="p-6">
+              <div className="sf-empty" role="status">
+                <span className="sf-empty-ic">
+                  <Wheat className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <h3>Aucune matière au catalogue</h3>
+                <p>
+                  Aucune matière ne correspond à ces filtres. Réinitialisez au
+                  catalogue standard pour repartir des ingrédients de référence.
+                </p>
+                <FormResetStandards />
+              </div>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Catégorie</TableHead>
-                  <TableHead>Origine</TableHead>
-                  <TableHead className="text-right">MAT %</TableHead>
-                  <TableHead className="text-right">EM kcal/kg</TableHead>
-                  <TableHead className="text-right">Lys SID %</TableHead>
-                  <TableHead className="text-right">Met SID %</TableHead>
-                  <TableHead className="text-right">Ca %</TableHead>
-                  <TableHead className="text-right">P %</TableHead>
-                  <TableHead className="text-right">Prix XOF/kg</TableHead>
-                  <TableHead className="text-right">Stock</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <div className="px-6 pb-4">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Catégorie</th>
+                  <th>Origine</th>
+                  <th className="num">MAT %</th>
+                  <th className="num">EM kcal/kg</th>
+                  <th className="num">Lys SID %</th>
+                  <th className="num">Met SID %</th>
+                  <th className="num">Ca %</th>
+                  <th className="num">P %</th>
+                  <th className="num">Prix XOF/kg</th>
+                  <th className="num">Stock</th>
+                  <th className="num">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
                 {rows.map((m) => {
                   const cat = m.categorie_nutritionnelle as
                     | CategorieNutritionnelle
@@ -359,49 +350,49 @@ export default async function MatieresPage({
                     m.stock_actuel != null &&
                     Number(m.stock_actuel) < Number(m.seuil_alerte)
                   return (
-                    <TableRow key={m.id}>
-                      <TableCell>
+                    <tr key={m.id}>
+                      <td>
                         <div className="font-medium">{m.nom}</div>
                         {m.fournisseur ? (
                           <div className="text-xs text-[var(--sf-muted,#5C5346)]">
                             {m.fournisseur}
                           </div>
                         ) : null}
-                      </TableCell>
-                      <TableCell>
+                      </td>
+                      <td>
                         {cat ? (
-                          <Badge variant="outline" className="text-xs">
+                          <span className="tag t-grey">
                             {LABEL_CATEGORIE[cat]}
-                          </Badge>
+                          </span>
                         ) : (
                           '—'
                         )}
-                      </TableCell>
-                      <TableCell className="text-xs">
+                      </td>
+                      <td className="text-xs">
                         {m.origine ? LABEL_ORIGINE[m.origine] : '—'}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {n(m.mat_pct)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {nint(m.em_porc_kcal_kg)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {n(m.lysine_pct, 2)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {n(m.methionine_pct, 2)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {n(m.calcium_pct, 2)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {n(m.phosphore_pct, 2)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         {nint(m.prix_indicatif_xof_kg)}
-                      </TableCell>
-                      <TableCell className="text-right tabular-nums">
+                      </td>
+                      <td className="num tabular-nums">
                         <span
                           className={
                             sousAlerte
@@ -411,26 +402,22 @@ export default async function MatieresPage({
                         >
                           {nint(m.stock_actuel)}
                         </span>
-                      </TableCell>
-                      <TableCell className="text-right">
+                      </td>
+                      <td className="num">
                         <div className="flex justify-end gap-1 flex-wrap">
                           <DialogMatiere
                             mode="edit"
                             initial={m}
-                            trigger={
-                              <Button variant="ghost" size="sm">
-                                Modifier
-                              </Button>
-                            }
                           />
                           <FormDelete id={m.id} />
                         </div>
-                      </TableCell>
-                    </TableRow>
+                      </td>
+                    </tr>
                   )
                 })}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
+            </div>
           )}
         </CardContent>
       </Card>

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ResponsiveTable } from '@/components/ui/responsive-table'
 import { ArrowLeft, TrendingUp, Gauge, Target } from 'lucide-react'
@@ -233,97 +232,67 @@ export default async function CroissancePage() {
         </p>
       </div>
 
-      {/* ===== CHART + SÉLECTEURS ===== */}
-      <Card className="border-[var(--sf-line)]">
-        <CardContent className="p-6">
-          <CroissanceChart
-            referentiel={referentiel}
-            reel={reel}
-            bandes={bandes.map((b) => ({ id: b.id, nom: b.nom, code: b.code_bande }))}
-          />
-        </CardContent>
-      </Card>
-
-      {/* ===== SYNTHÈSE KPI — registre dense tabulaire ===== */}
-      <section className="border-t-2" style={{ borderTopColor: 'var(--sf-primary)' }}>
-        <div className="mb-2 px-2 pt-3" style={eyebrowStyle}>
-          SYNTHÈSE GMQ · RÉEL VS RÉFÉRENTIEL
+      {/* ===== SYNTHÈSE KPI ===== */}
+      <div className="mb-1" style={eyebrowStyle}>
+        SYNTHÈSE GMQ · RÉEL VS RÉFÉRENTIEL
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* GMQ moyen ferme */}
+        <div className="kpi">
+          <div className="k">GMQ moyen ferme</div>
+          <div className="v tabular-nums">
+            {gmqMoyenFerme !== null ? Math.round(gmqMoyenFerme) : '—'}
+            <small> g/j</small>
+          </div>
+          <div className="d">
+            Calculé sur {kpiParStade.reduce((s, k) => s + k.n_animaux, 0)} animaux
+          </div>
         </div>
-        <dl>
-          {/* GMQ moyen ferme */}
-          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-            <dt className="min-w-0">
-              <span
-                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-              >
-                GMQ moyen ferme
-              </span>
-              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
-                Calculé sur {kpiParStade.reduce((s, k) => s + k.n_animaux, 0)} animaux
-              </span>
-            </dt>
-            <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-ink)]">
-              {gmqMoyenFerme !== null ? Math.round(gmqMoyenFerme) : '—'}
-              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">g/j</span>
-            </dd>
-          </div>
 
-          {/* GMQ référentiel LT-CI */}
-          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-            <dt className="min-w-0">
-              <span
-                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-              >
-                GMQ référentiel LT-CI
-              </span>
-              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">Moyenne J0→J180</span>
-            </dt>
-            <dd className="shrink-0 font-mono font-bold tabular-nums text-lg text-[var(--sf-muted)]">
-              {gmqRefMoyen !== null ? Math.round(gmqRefMoyen) : '—'}
-              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">g/j</span>
-            </dd>
+        {/* GMQ référentiel LT-CI */}
+        <div className="kpi">
+          <div className="k">GMQ référentiel LT-CI</div>
+          <div className="v tabular-nums text-[var(--mut)]">
+            {gmqRefMoyen !== null ? Math.round(gmqRefMoyen) : '—'}
+            <small> g/j</small>
           </div>
+          <div className="d">Moyenne J0→J180</div>
+        </div>
 
-          {/* Écart vs référentiel */}
-          <div className="flex items-baseline justify-between gap-4 border-t border-[var(--sf-line)] px-2 py-3">
-            <dt className="min-w-0">
-              <span
-                className="block text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)]"
-                style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-              >
-                Écart vs référentiel
-              </span>
-              <span className="block text-xs text-[var(--sf-subtle)] mt-0.5">
-                {ecartTone === 'good' && 'Performance normale'}
-                {ecartTone === 'warn' && 'Léger retard'}
-                {ecartTone === 'bad' && 'Retard significatif'}
-                {ecartTone === 'muted' && 'Données insuffisantes'}
-              </span>
-            </dt>
-            <dd
-              className="shrink-0 font-mono font-bold tabular-nums text-lg"
-              style={{ color: getToneColor(ecartTone) }}
-            >
-              {ecartPct !== null ? (ecartPct > 0 ? '+' : '') + fmtNum(ecartPct, 1) : '—'}
-              <span className="text-xs font-normal text-[var(--sf-muted)] ml-1">%</span>
-            </dd>
+        {/* Écart vs référentiel */}
+        <div className="kpi">
+          <div className="k">Écart vs référentiel</div>
+          <div className="v tabular-nums" style={{ color: getToneColor(ecartTone) }}>
+            {ecartPct !== null ? (ecartPct > 0 ? '+' : '') + fmtNum(ecartPct, 1) : '—'}
+            <small> %</small>
           </div>
-        </dl>
-      </section>
+          <div
+            className={`d ${ecartTone === 'good' ? 'pos' : ecartTone === 'warn' ? 'amb' : ecartTone === 'bad' ? 'neg' : ''}`}
+          >
+            {ecartTone === 'good' && 'Performance normale'}
+            {ecartTone === 'warn' && 'Léger retard'}
+            {ecartTone === 'bad' && 'Retard significatif'}
+            {ecartTone === 'muted' && 'Données insuffisantes'}
+          </div>
+        </div>
+      </div>
+
+      {/* ===== CHART + SÉLECTEURS ===== */}
+      <div className="pn">
+        <CroissanceChart
+          referentiel={referentiel}
+          reel={reel}
+          bandes={bandes.map((b) => ({ id: b.id, nom: b.nom, code: b.code_bande }))}
+        />
+      </div>
 
       {/* ===== TABLEAU DÉTAIL PAR STADE ===== */}
-      <Card className="border-[var(--sf-line)]">
-        <CardContent className="p-6">
-          <h2
-            className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-4"
-            style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
-          >
-            Performance par stade de croissance
-          </h2>
+      <div className="pn">
+        <div className="pn-h">
+          <h3>Performance par stade de croissance</h3>
+        </div>
 
-          <ResponsiveTable
+        <ResponsiveTable
             data={tableauStades}
             getRowKey={(r) => r.stade}
             columns={[
@@ -370,8 +339,7 @@ export default async function CroissancePage() {
               },
             ]}
           />
-        </CardContent>
-      </Card>
+      </div>
     </div>
   )
 }

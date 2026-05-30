@@ -58,12 +58,12 @@ function ToneCell({
   const n = num(value)
   const { fg } = toneColors(tone)
   if (n === null) {
-    return <span className="text-[var(--sf-muted)] italic">—</span>
+    return <span className="text-[var(--mut)] italic">—</span>
   }
   return (
-    <span className="font-mono font-bold tabular-nums" style={{ color: fg }}>
+    <span className="font-bold tabular-nums" style={{ color: fg }}>
       {n.toFixed(digits)}
-      {unit ? <span className="text-[var(--sf-muted)] font-normal"> {unit}</span> : null}
+      {unit ? <span className="text-[var(--mut)] font-normal"> {unit}</span> : null}
     </span>
   )
 }
@@ -106,23 +106,20 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
   }
 
   const headStyle: React.CSSProperties = {
-    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-    fontSize: '11px',
-    textTransform: 'uppercase',
-    letterSpacing: '0.1em',
+    fontFamily: 'var(--disp)',
   }
 
-  function Th({ k, children }: { k: SortKey; children: React.ReactNode }) {
+  function Th({ k, num: isNum, children }: { k: SortKey; num?: boolean; children: React.ReactNode }) {
     const active = sortKey === k
     return (
       <th
         scope="col"
-        className="py-3 px-4 font-semibold select-none cursor-pointer hover:text-[var(--sf-ink)]"
+        className={`select-none cursor-pointer hover:text-[var(--ink)]${isNum ? ' num' : ''}`}
       >
         <button
           type="button"
           onClick={() => toggle(k)}
-          className="inline-flex items-center gap-1"
+          className={`inline-flex items-center gap-1${isNum ? ' flex-row-reverse' : ''}`}
         >
           {children}
           {active ? (
@@ -140,29 +137,17 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
   }
 
   return (
-    <div
-      className="overflow-x-auto -mx-4 sm:mx-0"
-      style={{
-        borderTop: 'var(--sf-rule-top, 4px solid var(--sf-primary, #2D4A1F))',
-        borderBottom: 'var(--sf-rule-bottom, 1px solid var(--sf-border, rgba(0,0,0,0.18)))',
-        borderLeft: 'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
-        borderRight: 'var(--sf-rule-side, 1px solid var(--sf-line, rgba(0,0,0,0.12)))',
-        background: 'var(--sf-surface-1, #FFFFFF)',
-      }}
-    >
-      <table className="w-full min-w-[700px] text-sm">
-        <thead
-          className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
-          style={headStyle}
-        >
+    <div className="overflow-x-auto -mx-4 sm:mx-0">
+      <table className="tbl min-w-[700px]">
+        <thead style={headStyle}>
           <tr>
             <Th k="tag">Truie</Th>
-            <Th k="nb_mises_bas">Portées</Th>
-            <Th k="nes_vivants_moyen">Nés vivants / portée</Th>
-            <Th k="sevres_moyen">Sevrés / portée</Th>
-            <Th k="issf_jours">ISSF (j)</Th>
-            <Th k="tmm_pct">TMM (%)</Th>
-            <Th k="productivite_numerique">Productivité num.</Th>
+            <Th k="nb_mises_bas" num>Portées</Th>
+            <Th k="nes_vivants_moyen" num>Nés vivants / portée</Th>
+            <Th k="sevres_moyen" num>Sevrés / portée</Th>
+            <Th k="issf_jours" num>ISSF (j)</Th>
+            <Th k="tmm_pct" num>TMM (%)</Th>
+            <Th k="productivite_numerique" num>Productivité num.</Th>
           </tr>
         </thead>
         <tbody>
@@ -171,12 +156,12 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
             return (
               <tr
                 key={t.truie_id}
-                className="border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40"
+                className="hover:bg-[var(--paper-3)]"
               >
-                <td className="py-3 px-4 font-mono font-bold tabular-nums text-[var(--sf-ink)]">
+                <td className="font-bold tabular-nums text-[var(--ink)]">
                   {t.tag}
                   {t.nom ? (
-                    <span className="ml-2 font-normal text-[var(--sf-muted)]">
+                    <span className="ml-2 font-normal text-[var(--mut)]">
                       {t.nom}
                     </span>
                   ) : null}
@@ -184,34 +169,34 @@ export function KpiTechRanking({ rows }: { rows: KpiTechTruieRow[] }) {
                 {insufficient ? (
                   <td
                     colSpan={6}
-                    className="py-3 px-4 italic text-[var(--sf-muted)]"
+                    className="italic text-[var(--mut)]"
                   >
                     Pas assez de cycles
                   </td>
                 ) : (
                   <>
-                    <td className="py-3 px-4 tabular-nums text-[var(--sf-ink)]">
+                    <td className="num tabular-nums text-[var(--ink)]">
                       {t.nb_mises_bas}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="num">
                       <ToneCell
                         tone={toneNesVivants(t.nes_vivants_moyen)}
                         value={t.nes_vivants_moyen}
                         digits={1}
                       />
                     </td>
-                    <td className="py-3 px-4 font-mono tabular-nums text-[var(--sf-ink)]">
+                    <td className="num tabular-nums text-[var(--ink)]">
                       {num(t.sevres_moyen) !== null
                         ? num(t.sevres_moyen)!.toFixed(1)
-                        : <span className="text-[var(--sf-muted)] italic">—</span>}
+                        : <span className="text-[var(--mut)] italic">—</span>}
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="num">
                       <ToneCell tone={toneIssf(t.issf_jours)} value={t.issf_jours} digits={1} />
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="num">
                       <ToneCell tone={toneTmm(t.tmm_pct)} value={t.tmm_pct} unit="%" digits={1} />
                     </td>
-                    <td className="py-3 px-4">
+                    <td className="num">
                       <ToneCell
                         tone={toneProductivite(t.productivite_numerique)}
                         value={t.productivite_numerique}

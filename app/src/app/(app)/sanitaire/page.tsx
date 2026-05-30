@@ -14,7 +14,6 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import { MALADIES_PORCINES } from '@/lib/maladies-porcines'
-import { SanitaireFab } from './_fab'
 import { SanitaireStats } from './_components/sanitaire-stats'
 
 export const metadata: Metadata = { title: 'Sanitaire' }
@@ -182,7 +181,6 @@ export default async function SanitairePage() {
           </ul>
         </div>
       </section>
-      <SanitaireFab />
     </div>
   )
 }

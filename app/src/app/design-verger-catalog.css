@@ -1,0 +1,869 @@
+/* ============================================================================
+   VERGER — Catalogue de composants (Niveau B) + États (Niveau C)
+   Porté fidèlement depuis /tmp/verger-audit/1-grammar.md §3.3–3.20 & §4.1–4.4.
+   Tokens (--sage, --r, --disp, --ease-*, …) déclarés dans globals.css : ne PAS
+   les redéfinir ici. Le mode plein soleil [data-contrast="high"] est suivi
+   automatiquement via var(). Sidebar/bottom-nav : autre fichier.
+   ========================================================================== */
+
+/* ── 3.3 Cartes KPI ──────────────────────────────────────────────────────── */
+.kpi {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  min-width: 160px;
+}
+.kpi .k {
+  font-size: 12px;
+  color: var(--mut);
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.kpi .v {
+  font-family: var(--disp);
+  font-weight: 800;
+  font-size: 1.7rem;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.kpi .v small {
+  font-size: 0.9rem;
+  color: var(--mut);
+  font-weight: 600;
+}
+.kpi .d {
+  font-size: 12px;
+  margin-top: 7px;
+  font-weight: 600;
+}
+.kpi .d.pos { color: var(--ok); }
+.kpi .d.neg { color: var(--bad); }
+.kpi .d.amb { color: var(--warn); }
+
+/* ── 3.4 Panneaux ────────────────────────────────────────────────────────── */
+.pn {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+}
+.pn .pn-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.pn .pn-h h3 {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 1rem;
+}
+.pn .meta {
+  font-size: 12px;
+  color: var(--mut);
+}
+
+/* ── 3.6 Stepper ─────────────────────────────────────────────────────────── */
+.stepper {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--line2);
+  border-radius: 11px;
+  overflow: hidden;
+  background: var(--paper);
+  max-width: 170px;
+}
+.stepper button {
+  width: 44px;
+  border: 0;
+  background: var(--sage-bg);
+  color: var(--sage-d);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+.stepper input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--ink);
+  outline: none;
+  min-width: 0;
+}
+
+/* ── 3.7 Segmented control ───────────────────────────────────────────────── */
+.seg2 {
+  display: inline-flex;
+  background: var(--paper);
+  border: 1px solid var(--line2);
+  border-radius: 11px;
+  padding: 3px;
+}
+.seg2 button {
+  padding: 9px 16px;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.seg2 button.on {
+  background: var(--sage);
+  color: #fff;
+}
+
+/* ── 3.8 Chips mono-sélection ────────────────────────────────────────────── */
+.qchips {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+.qchips button {
+  border: 1px solid var(--line2);
+  background: var(--paper);
+  border-radius: 999px;
+  padding: 8px 13px;
+  font-family: var(--body);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.qchips button.on {
+  background: var(--sage);
+  color: #fff;
+  border-color: var(--sage);
+}
+.qchips.warnsel button.on {
+  background: var(--apri);
+  border-color: var(--apri);
+}
+
+/* ── 3.9 BCS (Body Condition Score) ──────────────────────────────────────── */
+.bcs {
+  display: inline-flex;
+  gap: 6px;
+}
+.bcs button {
+  width: 46px;
+  border: 1px solid var(--line2);
+  background: var(--paper);
+  border-radius: 10px;
+  padding: 9px 0;
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+.bcs button.on {
+  background: var(--sage);
+  color: #fff;
+  border-color: var(--sage);
+}
+.bcs button.ideal {
+  box-shadow: inset 0 0 0 2px var(--sage-200);
+}
+
+/* ── 3.10 Lecture en direct ──────────────────────────────────────────────── */
+.live {
+  border-radius: 12px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 13.5px;
+  border: 1px solid var(--line);
+  max-width: 380px;
+}
+.live .lv-ic {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.live .lv-ic svg {
+  width: 17px;
+  height: 17px;
+}
+.live b {
+  font-family: var(--disp);
+  font-weight: 800;
+}
+.live small {
+  display: block;
+  color: var(--mut);
+  font-size: 11.5px;
+  font-weight: 500;
+  margin-top: 1px;
+}
+.live.ok {
+  background: var(--sage-bg);
+}
+.live.ok .lv-ic {
+  background: var(--sage);
+  color: #fff;
+}
+.live.ok b {
+  color: var(--sage-d);
+}
+.live.warn {
+  background: var(--apri-bg);
+}
+.live.warn .lv-ic {
+  background: var(--apri);
+  color: #fff;
+}
+.live.warn b {
+  color: var(--apri-d);
+}
+.live.bad {
+  background: var(--bad-bg);
+}
+.live.bad .lv-ic {
+  background: var(--bad);
+  color: #fff;
+}
+.live.bad b {
+  color: var(--bad-d);
+}
+.live.muted {
+  background: var(--paper-3);
+}
+.live.muted .lv-ic {
+  background: var(--card);
+  color: var(--mut);
+}
+.live.muted b {
+  color: var(--ink-soft);
+}
+
+/* ── 3.11 BigNum ─────────────────────────────────────────────────────────── */
+.bignum {
+  background: var(--sage);
+  color: #fff;
+  border-radius: 13px;
+  padding: 13px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 320px;
+}
+.bignum .bl {
+  font-size: 12.5px;
+  font-weight: 600;
+  opacity: 0.92;
+}
+.bignum .bv {
+  font-family: var(--disp);
+  font-weight: 800;
+  font-size: 2rem;
+  line-height: 1;
+}
+.bignum.warn {
+  background: var(--apri);
+}
+
+/* ── 3.12 Alertes / À faire (urgences) ───────────────────────────────────── */
+.urg {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  border: 1px solid var(--line);
+  max-width: 520px;
+}
+.urg .u-ic {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.urg .u-ic svg {
+  width: 18px;
+  height: 18px;
+}
+.urg .u-b {
+  flex: 1;
+  min-width: 0;
+}
+.urg .u-b b {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.urg .u-b small {
+  font-size: 12px;
+  color: var(--mut);
+}
+.urg .u-act {
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 15px;
+  font-family: var(--body);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+/* Critique */
+.urg.crit {
+  background: var(--bad-bg);
+  border-color: rgba(181, 72, 59, 0.35);
+}
+.urg.crit .u-ic {
+  background: var(--bad);
+  color: #fff;
+}
+.urg.crit .u-b b {
+  color: var(--bad-d);
+}
+.urg.crit .u-act {
+  background: var(--bad);
+  color: #fff;
+}
+/* Élevée */
+.urg.high {
+  background: var(--apri-bg);
+  border-color: rgba(232, 159, 98, 0.4);
+}
+.urg.high .u-ic {
+  background: var(--apri);
+  color: #fff;
+}
+.urg.high .u-act {
+  background: var(--card);
+  color: var(--apri-d);
+  border: 1px solid rgba(232, 159, 98, 0.55);
+}
+/* Normale */
+.urg.norm {
+  background: var(--paper);
+  border-color: var(--line);
+}
+.urg.norm .u-ic {
+  background: var(--sage-bg);
+  color: var(--sage-d);
+}
+.urg.norm .u-act {
+  background: var(--card);
+  color: var(--sage-d);
+  border: 1px solid var(--line2);
+}
+
+/* ── 3.13 Diagnostic ─────────────────────────────────────────────────────── */
+.dopt {
+  border: 1.5px solid var(--line2);
+  background: var(--paper);
+  border-radius: 13px;
+  padding: 13px 12px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--body);
+  min-width: 150px;
+}
+.dopt b {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: block;
+  margin-bottom: 3px;
+}
+.dopt small {
+  font-size: 11px;
+  color: var(--mut);
+  line-height: 1.3;
+  display: block;
+}
+.dopt.on[data-r="gestante"] {
+  border-color: var(--sage);
+  background: var(--sage-bg);
+}
+.dopt.on[data-r="gestante"] b {
+  color: var(--sage-d);
+}
+.dopt.on[data-r="retour"] {
+  border-color: var(--apri);
+  background: var(--apri-bg);
+}
+.dopt.on[data-r="retour"] b {
+  color: var(--apri-d);
+}
+.dopt.on[data-r="vide"] {
+  border-color: var(--berry);
+  background: var(--plum-bg);
+}
+.dopt.on[data-r="vide"] b {
+  color: var(--berry);
+}
+
+/* ── 3.14 Cartes bâtiments ───────────────────────────────────────────────── */
+.bldg {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-width: 170px;
+}
+.bldg .bh {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.bldg .bi {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  background: var(--sage-bg);
+  color: var(--sage-d);
+}
+.bldg .bi svg {
+  width: 17px;
+  height: 17px;
+}
+.bldg .bi-vide {
+  background: var(--plum-bg);
+  color: var(--berry);
+}
+.bldg .bi-mat {
+  background: var(--apri-bg);
+  color: var(--apri-d);
+}
+.bldg .bi-v {
+  background: var(--paper-3);
+  color: var(--ink-soft);
+}
+.bldg .bc {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 1.9rem;
+  letter-spacing: -0.02em;
+  margin-top: 10px;
+  line-height: 1;
+}
+.bldg .bl {
+  font-size: 11.5px;
+  color: var(--mut);
+  margin-top: 3px;
+}
+
+/* ── 3.15 Cartes lots ────────────────────────────────────────────────────── */
+.lot {
+  background: var(--card);
+  border: 1px solid var(--line2);
+  border-radius: 12px;
+  padding: 12px 13px;
+  max-width: 230px;
+}
+.lot.ready {
+  border-color: var(--apri);
+  box-shadow: 0 0 0 3px var(--apri-bg);
+}
+.lot .lt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.lot .lt b {
+  font-family: var(--disp);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.lot .lm {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+.lot .lg2 {
+  font-size: 11.5px;
+  color: var(--mut);
+  margin-top: 3px;
+}
+.lot .lot-move {
+  margin-top: 10px;
+  width: 100%;
+  justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--apri);
+  color: #fff;
+  font-weight: 600;
+  font-size: 12.5px;
+  padding: 9px;
+  cursor: pointer;
+}
+
+/* ── 3.16 Échéances ──────────────────────────────────────────────────────── */
+.ech {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 11px;
+  border: 1px solid var(--line);
+  max-width: 300px;
+}
+.ech .ed {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.ech .et b {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+}
+.ech .et small {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+.ech.late {
+  background: var(--bad-bg);
+  border-color: rgba(181, 72, 59, 0.3);
+}
+.ech.late .ed {
+  background: var(--bad);
+}
+.ech.today {
+  background: var(--apri-bg);
+  border-color: rgba(232, 159, 98, 0.35);
+}
+.ech.today .ed {
+  background: var(--apri);
+}
+.ech.soon {
+  border-color: var(--line);
+}
+.ech.soon .ed {
+  background: var(--sage);
+}
+
+/* ── 3.17 Biosécurité ────────────────────────────────────────────────────── */
+.bio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  max-width: 380px;
+}
+.bio:last-child {
+  border-bottom: 0;
+}
+.bio .bk {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: none;
+  border: 0;
+}
+.bio .bk svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.4;
+}
+.bio.ok .bk {
+  background: var(--sage);
+  color: #fff;
+}
+.bio.todo .bk {
+  background: var(--apri-bg);
+  color: var(--apri-d);
+}
+.bio .bl2 b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.bio .bl2 small {
+  font-size: 11.5px;
+  color: var(--mut);
+}
+
+/* ── 3.18 Frises temporelles ─────────────────────────────────────────────── */
+.tl {
+  position: relative;
+  padding-left: 22px;
+  max-width: 430px;
+}
+.tl::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--sage-100);
+}
+.tl .ev {
+  position: relative;
+  padding: 0 0 16px;
+}
+.tl .ev:last-child {
+  padding-bottom: 0;
+}
+.tl .ev .dot {
+  position: absolute;
+  left: -19px;
+  top: 3px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--card);
+  border: 2.5px solid var(--sage);
+}
+.tl .ev.warn .dot {
+  border-color: var(--apri);
+}
+.tl .ev .dt {
+  font-size: 11px;
+  color: var(--mut);
+  font-weight: 600;
+}
+.tl .ev b {
+  font-size: 13.5px;
+  display: block;
+}
+.tl .ev p {
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* ── 3.19 Tableaux ───────────────────────────────────────────────────────── */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.tbl th {
+  text-align: left;
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mut);
+  font-weight: 600;
+  padding: 0 0 10px;
+  border-bottom: 1px solid var(--line);
+}
+.tbl td {
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+.tbl tr:last-child td {
+  border-bottom: 0;
+}
+.tbl .num {
+  text-align: right;
+}
+
+/* ── 3.20 Toast ──────────────────────────────────────────────────────────── */
+.toast-demo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  font-weight: 500;
+}
+.toast-demo .ic {
+  color: var(--sage-200);
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================================================================
+   États (Niveau C) — §4.1–4.4
+   ========================================================================== */
+
+/* ── 4.1 Skeleton ────────────────────────────────────────────────────────── */
+.sf-skel {
+  position: relative;
+  overflow: hidden;
+  background: var(--sage-bg);
+  border-radius: 8px;
+}
+.sf-skel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: sf-shimmer 1.3s var(--ease-in-out) infinite;
+}
+.sf-skel-line {
+  height: 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+.sf-skel-line.w-40 { width: 40%; }
+.sf-skel-line.w-60 { width: 60%; }
+.sf-skel-line.w-80 { width: 80%; }
+.sf-skel-title {
+  height: 22px;
+  width: 45%;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+.sf-skel-kpi {
+  height: 84px;
+  border-radius: var(--r);
+}
+.sf-skel-row {
+  height: 44px;
+  border-radius: 10px;
+  margin: 6px 0;
+}
+.sf-skel-card {
+  height: 140px;
+  border-radius: var(--r);
+}
+
+@keyframes sf-shimmer {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+/* ── 4.2 État vide ───────────────────────────────────────────────────────── */
+.sf-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 38px 22px;
+  background: var(--card);
+  border: 1px dashed var(--line2);
+  border-radius: var(--rl);
+  color: var(--mut);
+}
+.sf-empty .sf-empty-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--sage-bg);
+  color: var(--sage-d);
+}
+.sf-empty h3 {
+  font-size: 16px;
+  color: var(--ink);
+  margin: 0;
+}
+.sf-empty p {
+  font-size: 13px;
+  max-width: 42ch;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── 4.3 État d'erreur ───────────────────────────────────────────────────── */
+.sf-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 34px 22px;
+  background: var(--bad-bg);
+  border: 1px solid rgba(181, 72, 59, 0.32);
+  border-radius: var(--rl);
+  color: var(--bad-d);
+}
+.sf-error .sf-error-ic {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: var(--bad);
+}
+.sf-error h3 {
+  font-size: 16px;
+  color: var(--bad-d);
+  margin: 0;
+}
+.sf-error p {
+  font-size: 13px;
+  max-width: 46ch;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── 4.4 Rechargement en place ───────────────────────────────────────────── */
+.sf-busy {
+  position: relative;
+}
+.sf-busy[aria-busy="true"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: rgba(251, 250, 245, 0.55);
+  backdrop-filter: blur(1px);
+  border-radius: inherit;
+}
+.sf-spin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid var(--sage-100);
+  border-top-color: var(--sage-d);
+  animation: sf-rot 0.7s linear infinite;
+}
+
+@keyframes sf-rot {
+  to { transform: rotate(360deg); }
+}
+
+/* ── prefers-reduced-motion (§4.1 + §4.4) ────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .sf-skel {
+    background: var(--sage-100);
+  }
+  .sf-skel::after {
+    animation: none;
+    content: none;
+  }
+  .sf-spin {
+    animation-duration: 1.4s;
+  }
+}

@@ -21,7 +21,6 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
 import {
   Shield,
-  Plus,
   ChevronLeft,
   CheckCircle2,
   Users,
@@ -218,8 +217,8 @@ export default async function BiosecuritePage() {
             <ChevronLeft className="h-3 w-3" />
             Retour aux soins
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2 text-[var(--sf-ink,#1a1a1a)] mt-1">
-            <Shield className="h-7 w-7 text-[var(--sf-primary,#2D4A1F)]" />
+          <h1 className="font-[family-name:var(--sf-font-display)] text-4xl font-black uppercase tracking-[0.02em] flex items-center gap-3 text-[var(--sf-ink,#1a1a1a)] mt-1">
+            <Shield className="h-9 w-9 text-[var(--sf-primary,#2D4A1F)]" />
             Biosécurité
           </h1>
           <p className="text-sm text-[var(--sf-muted,#5C5346)] mt-1">
@@ -227,14 +226,7 @@ export default async function BiosecuritePage() {
             transports.
           </p>
         </div>
-        <DialogNouvelleVisite
-          trigger={
-            <Button variant="default" size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Nouvelle visite
-            </Button>
-          }
-        />
+        <DialogNouvelleVisite />
       </div>
 
       {/* CHECKLIST ----------------------------------------------------------- */}

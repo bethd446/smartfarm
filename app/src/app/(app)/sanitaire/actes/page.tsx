@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 import { FormattedDateTime } from '@/components/ui/formatted-date'
-import { Syringe, Plus, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
+import { Syringe, ChevronLeft, AlertTriangle, FileText, FileSpreadsheet } from 'lucide-react'
 import { DialogActe, type ProduitOption } from './_dialog-acte'
 
 export const metadata: Metadata = { title: 'Actes sanitaires' }
@@ -224,12 +224,6 @@ export default async function ActesSanitairesPage({
             </>
           )}
           <DialogActe
-            trigger={
-              <Button size="lg" className="h-12">
-                <Plus className="h-5 w-5 mr-2" />
-                Enregistrer traitement
-              </Button>
-            }
             animaux={animaux}
             bandes={bandes}
             produits={produits}
@@ -343,16 +337,16 @@ export default async function ActesSanitairesPage({
           description="Enregistrez un traitement véto (vitamine, antibiotique, vaccin…) pour démarrer le carnet sanitaire MIRAH."
         />
       ) : (
-        <div className="overflow-x-auto rounded-md border border-[var(--sf-line,rgba(0,0,0,0.12))]">
-          <table className="min-w-full text-sm">
-            <thead className="bg-[var(--sf-surface-1,rgba(0,0,0,0.03))] text-left">
-              <tr className="font-[family-name:var(--sf-font-display)] uppercase tracking-[0.08em] text-xs">
-                <th className="px-3 py-2">Date</th>
-                <th className="px-3 py-2">Cible</th>
-                <th className="px-3 py-2">Produit</th>
-                <th className="px-3 py-2">Dose / Voie</th>
-                <th className="px-3 py-2">Durée</th>
-                <th className="px-3 py-2">Fin délai attente</th>
+        <div className="pn overflow-x-auto">
+          <table className="tbl min-w-full">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Cible</th>
+                <th>Produit</th>
+                <th>Dose / Voie</th>
+                <th className="num">Durée</th>
+                <th>Fin délai attente</th>
               </tr>
             </thead>
             <tbody>
@@ -367,15 +361,12 @@ export default async function ActesSanitairesPage({
                       : a.bande.code ?? '—'
                     : '—'
                 return (
-                  <tr
-                    key={a.id}
-                    className="border-t border-[var(--sf-line,rgba(0,0,0,0.08))]"
-                  >
-                    <td className="px-3 py-2 whitespace-nowrap tabular-nums">
+                  <tr key={a.id}>
+                    <td className="whitespace-nowrap tabular-nums">
                       <FormattedDateTime date={a.date_administration} />
                     </td>
-                    <td className="px-3 py-2">{cible}</td>
-                    <td className="px-3 py-2">
+                    <td>{cible}</td>
+                    <td>
                       {a.produit?.nom ?? <span className="text-[var(--sf-muted)]">—</span>}
                       {a.produit?.type && (
                         <Badge variant="secondary" className="ml-2 text-[10px]">
@@ -383,11 +374,11 @@ export default async function ActesSanitairesPage({
                         </Badge>
                       )}
                     </td>
-                    <td className="px-3 py-2 tabular-nums">
+                    <td className="tabular-nums">
                       {a.dose} {a.unite_dose} · {a.voie}
                     </td>
-                    <td className="px-3 py-2 tabular-nums">{a.duree_jours} j</td>
-                    <td className="px-3 py-2 tabular-nums">
+                    <td className="num tabular-nums">{a.duree_jours} j</td>
+                    <td className="tabular-nums">
                       {a.date_fin_delai_attente ? (
                         <FormattedDateTime date={a.date_fin_delai_attente} />
                       ) : (

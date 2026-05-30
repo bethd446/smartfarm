@@ -48,13 +48,13 @@ function toneProductivite(v: number | null | undefined): 'good' | 'warn' | 'bad'
 function getToneColor(tone: 'good' | 'warn' | 'bad' | 'muted'): string {
   switch (tone) {
     case 'good':
-      return 'var(--sf-primary)'
+      return 'var(--ok)'
     case 'warn':
-      return 'var(--sf-accent-deep, #B45309)'
+      return 'var(--warn)'
     case 'bad':
-      return 'var(--sf-danger-ink, #7A2A1F)'
+      return 'var(--bad)'
     default:
-      return 'var(--sf-muted)'
+      return 'var(--mut)'
   }
 }
 
@@ -129,11 +129,11 @@ type VScoreTruie = {
 
 // Eyebrow styles
 const eyebrowStyle: React.CSSProperties = {
-  fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+  fontFamily: 'var(--disp)',
   fontSize: '11px',
   textTransform: 'uppercase',
   letterSpacing: '0.1em',
-  color: 'var(--sf-muted)',
+  color: 'var(--mut)',
 }
 
 export default async function KpiPageV2() {
@@ -191,22 +191,22 @@ export default async function KpiPageV2() {
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
           <div>
             <h1
-              className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--sf-ink)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              className="text-4xl font-black uppercase flex items-center gap-3 tracking-[0.02em] text-[var(--ink)]"
+              style={{ fontFamily: 'var(--disp)' }}
             >
-              <PiggyBank className="h-8 w-8 text-[var(--sf-primary)]" />
+              <PiggyBank className="h-8 w-8 text-[var(--sage)]" />
               Indicateurs zootechniques
             </h1>
             <p
-              className="text-sm text-[var(--sf-muted)] mt-1"
-              style={{ fontFamily: "var(--sf-font-body, 'Instrument Sans', sans-serif)" }}
+              className="text-sm text-[var(--mut)] mt-1"
+              style={{ fontFamily: 'var(--body)' }}
             >
               Performance IFIP, productivité numérique et classement truies
             </p>
           </div>
 
           {/* Encart Exports PDF */}
-          <Card className="border-[var(--sf-line)] bg-[var(--sf-surface-1)] lg:w-auto w-full">
+          <Card className="border-[var(--line)] bg-[var(--card)] lg:w-auto w-full">
             <CardContent className="p-4">
               <div className="mb-2" style={eyebrowStyle}>
                 EXPORTS
@@ -220,7 +220,7 @@ export default async function KpiPageV2() {
       {/* ===== GRID ASYMÉTRIQUE : KPI HÉRO + 3 STACK ===== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* KPI HÉRO : Productivité numérique (2x en desktop, span 2 colonnes) */}
-        <Card className="md:col-span-2 border-[var(--sf-line)] shadow-[var(--sf-stamp-ring)]">
+        <Card className="md:col-span-2 border-[var(--line)]">
           <CardContent className="p-6">
             <div className="flex items-start justify-between">
               <div>
@@ -230,20 +230,20 @@ export default async function KpiPageV2() {
                 <div
                   className="text-6xl font-black tabular-nums"
                   style={{
-                    fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                    fontFamily: 'var(--disp)',
                     color: getToneColor(toneProdu),
                   }}
                 >
                   {productiviteNumerique !== null ? fmtNum(productiviteNumerique, 1) : '—'}
                 </div>
-                <div className="mt-2 text-sm text-[var(--sf-muted)]">
+                <div className="mt-2 text-sm text-[var(--ink-soft)]">
                   Porcelets sevrés / truie / an
                 </div>
-                <div className="mt-1 text-xs italic text-[var(--sf-muted)]">
+                <div className="mt-1 text-xs italic text-[var(--mut)]">
                   Cible IFIP ≥ 22 · Calcul : portée moyenne 12m × portées actives / nb truies
                 </div>
                 {techFerme && (
-                  <div className="mt-3 flex gap-4 text-xs text-[var(--sf-muted)]">
+                  <div className="mt-3 flex gap-4 text-xs text-[var(--mut)]">
                     <span>
                       <strong>{techFerme.nb_truies}</strong> truies
                     </span>
@@ -256,7 +256,7 @@ export default async function KpiPageV2() {
                   </div>
                 )}
               </div>
-              <TrendingUp className="h-12 w-12 text-[var(--sf-primary)] opacity-20" />
+              <TrendingUp className="h-12 w-12 text-[var(--sage)] opacity-20" />
             </div>
           </CardContent>
         </Card>
@@ -264,25 +264,25 @@ export default async function KpiPageV2() {
         {/* STACK 3 KPIs */}
         <div className="flex flex-col gap-4">
           {/* Truies actives */}
-          <Card className="border-[var(--sf-line)]">
+          <Card className="border-[var(--line)]">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div style={eyebrowStyle}>TRUIES ACTIVES</div>
                   <div
-                    className="text-3xl font-black tabular-nums text-[var(--sf-ink)] mt-1"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                    className="text-3xl font-black tabular-nums text-[var(--ink)] mt-1"
+                    style={{ fontFamily: 'var(--disp)' }}
                   >
                     {dash?.truies_actives ?? '—'}
                   </div>
                 </div>
-                <Users className="h-8 w-8 text-[var(--sf-primary)]" />
+                <Users className="h-8 w-8 text-[var(--sage)]" />
               </div>
             </CardContent>
           </Card>
 
           {/* IC ferme */}
-          <Card className="border-[var(--sf-line)]">
+          <Card className="border-[var(--line)]">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -290,33 +290,33 @@ export default async function KpiPageV2() {
                   <div
                     className="text-3xl font-black tabular-nums mt-1"
                     style={{
-                      fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                      fontFamily: 'var(--disp)',
                       color: getToneColor(toneIcVal),
                     }}
                   >
                     {fmtNum(icFerme?.ic, 2)}
                   </div>
-                  <div className="text-xs text-[var(--sf-muted)] mt-1">cible 2,6–2,8</div>
+                  <div className="text-xs mt-1 font-semibold" style={{ color: getToneColor(toneIcVal) }}>cible 2,6–2,8</div>
                 </div>
-                <Gauge className="h-8 w-8 text-[var(--sf-accent-deep)]" />
+                <Gauge className="h-8 w-8 text-[var(--apri-d)]" />
               </div>
             </CardContent>
           </Card>
 
           {/* Alertes actives */}
-          <Card className="border-[var(--sf-line)]">
+          <Card className="border-[var(--line)]">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
                   <div style={eyebrowStyle}>ALERTES ACTIVES</div>
                   <div
-                    className="text-3xl font-black tabular-nums text-[var(--sf-danger-ink)] mt-1"
-                    style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+                    className="text-3xl font-black tabular-nums text-[var(--bad)] mt-1"
+                    style={{ fontFamily: 'var(--disp)' }}
                   >
                     {dash?.alertes_actives ?? 0}
                   </div>
                 </div>
-                <AlertTriangle className="h-8 w-8 text-[var(--sf-danger-ink)]" />
+                <AlertTriangle className="h-8 w-8 text-[var(--bad)]" />
               </div>
             </CardContent>
           </Card>
@@ -324,25 +324,25 @@ export default async function KpiPageV2() {
       </div>
 
       {/* ===== SECTION PERFORMANCE PAR BANDE ===== */}
-      <Card className="border-[var(--sf-line)]">
+      <Card className="border-[var(--line)]">
         <CardContent className="p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-ink)]"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              className="text-xl uppercase tracking-wide text-[var(--ink)]"
+              style={{ fontFamily: 'var(--disp)' }}
             >
               Performance par bande
             </h2>
             <Link
               href="/performances/croissance"
-              className="inline-flex items-center min-h-[44px] py-2 gap-1 text-sm text-[var(--sf-primary)] hover:underline"
+              className="inline-flex items-center min-h-[44px] py-2 gap-1 text-sm text-[var(--sage-d)] hover:underline"
             >
               Détail croissance <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
           {bandesList.length === 0 ? (
-            <p className="text-center text-sm text-[var(--sf-muted)] py-6">
+            <p className="text-center text-sm text-[var(--mut)] py-6">
               Aucune bande enregistrée. Créez une bande depuis Cheptel → Bandes.
             </p>
           ) : (
@@ -354,30 +354,30 @@ export default async function KpiPageV2() {
                   key: 'bande_nom',
                   label: 'Bande',
                   primary: true,
-                  className: 'font-bold text-[var(--sf-ink)]',
+                  className: 'font-bold text-[var(--ink)]',
                 },
                 {
                   key: 'effectif_actuel',
                   label: 'Effectif',
-                  className: 'font-mono tabular-nums',
+                  className: 'tabular-nums',
                 },
                 {
                   key: 'gmq_moyen',
                   label: 'GMQ (g/j)',
                   render: (v) => (v !== null ? Math.round(Number(v)).toLocaleString('fr-FR') : '—'),
-                  className: 'font-mono tabular-nums font-semibold',
+                  className: 'tabular-nums font-semibold',
                 },
                 {
                   key: 'ic',
                   label: 'IC',
                   render: (v) => fmtNum(v, 2),
-                  className: 'font-mono tabular-nums',
+                  className: 'tabular-nums',
                 },
                 {
                   key: 'taux_mortalite',
                   label: 'Mortalité (%)',
                   render: (v) => fmtPct(v, 1),
-                  className: 'font-mono tabular-nums',
+                  className: 'tabular-nums',
                 },
                 {
                   key: 'statut',
@@ -393,16 +393,16 @@ export default async function KpiPageV2() {
       {/* ===== TOP 5 TRUIES + À SURVEILLER ===== */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Top 5 truies */}
-        <Card className="border-[var(--sf-line)]">
+        <Card className="border-[var(--line)]">
           <CardContent className="p-6">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-ink)] mb-4"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              className="text-xl uppercase tracking-wide text-[var(--ink)] mb-4"
+              style={{ fontFamily: 'var(--disp)' }}
             >
               Top 5 truies · Score IFIP
             </h2>
             {top5.length === 0 ? (
-              <p className="text-sm text-[var(--sf-muted)] py-4">
+              <p className="text-sm text-[var(--mut)] py-4">
                 Aucune truie avec portée complète. Le classement s'active dès la première mise bas + sevrage.
               </p>
             ) : (
@@ -410,7 +410,7 @@ export default async function KpiPageV2() {
                 {top5.map((t, idx) => (
                   <div
                     key={t.truie_id}
-                    className="flex items-center justify-between p-3 rounded border border-[var(--sf-line)] bg-[var(--sf-surface-1)] hover:bg-[var(--sf-surface-2)] transition"
+                    className="flex items-center justify-between p-3 rounded-[var(--r)] border border-[var(--line)] bg-[var(--paper)] hover:bg-[var(--paper-3)] transition"
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -418,19 +418,19 @@ export default async function KpiPageV2() {
                         style={{
                           background:
                             idx === 0
-                              ? 'var(--sf-primary)'
+                              ? 'var(--sage)'
                               : idx === 1
-                                ? 'var(--sf-accent-deep)'
-                                : 'var(--sf-surface-2)',
-                          color: idx < 2 ? 'white' : 'var(--sf-muted)',
-                          fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
+                                ? 'var(--apri-d)'
+                                : 'var(--paper-3)',
+                          color: idx < 2 ? 'var(--paper)' : 'var(--mut)',
+                          fontFamily: 'var(--disp)',
                         }}
                       >
                         {idx + 1}
                       </div>
                       <div>
-                        <div className="font-mono font-bold text-sm">{t.tag}</div>
-                        <div className="text-xs text-[var(--sf-muted)]">
+                        <div className="font-bold text-sm tabular-nums">{t.tag}</div>
+                        <div className="text-xs text-[var(--mut)]">
                           {t.nb_portees} portées · moy. {fmtNum(t.portee_moyenne, 1)}
                         </div>
                       </div>
@@ -448,16 +448,16 @@ export default async function KpiPageV2() {
         </Card>
 
         {/* À surveiller (suggestion réforme) */}
-        <Card className="border-[var(--sf-line)]">
+        <Card className="border-[var(--line)]">
           <CardContent className="p-6">
             <h2
-              className="text-xl uppercase tracking-wide text-[var(--sf-danger-ink)] mb-4"
-              style={{ fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)" }}
+              className="text-xl uppercase tracking-wide text-[var(--bad-d)] mb-4"
+              style={{ fontFamily: 'var(--disp)' }}
             >
               À surveiller · Réforme suggérée
             </h2>
             {reforme5.length === 0 ? (
-              <p className="text-sm text-[var(--sf-muted)] py-4">
+              <p className="text-sm text-[var(--mut)] py-4">
                 Aucune truie signalée. Critères : taux réussite &lt;70%, ≥2 retours, ≥8 MB ou portée moy. &lt;8.
               </p>
             ) : (
@@ -465,14 +465,14 @@ export default async function KpiPageV2() {
                 {reforme5.map((t) => (
                   <div
                     key={t.truie_id}
-                    className="flex items-center justify-between p-3 rounded border border-[var(--sf-danger-border)] bg-[var(--sf-danger-bg)] hover:bg-[var(--sf-surface-2)] transition"
+                    className="flex items-center justify-between p-3 rounded-[var(--r)] border border-[var(--bad)] bg-[var(--bad-bg)] hover:bg-[var(--paper-3)] transition"
                   >
                     <div>
-                      <div className="font-mono font-bold text-sm">{t.tag}</div>
-                      <div className="text-xs text-[var(--sf-muted)]">
+                      <div className="font-bold text-sm tabular-nums">{t.tag}</div>
+                      <div className="text-xs text-[var(--mut)]">
                         {t.nb_saillies} saillies · {t.nb_positifs} OK · {t.nb_retours} retours
                       </div>
-                      <div className="text-xs text-[var(--sf-muted)]">
+                      <div className="text-xs text-[var(--mut)]">
                         Taux réussite : {fmtPct(t.taux_reussite_pct, 0)} · {t.nb_mb} MB · moy.{' '}
                         {fmtNum(t.moy_nes_vivants, 1)} nés viv.
                       </div>

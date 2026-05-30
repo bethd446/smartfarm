@@ -4,20 +4,18 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 import { cn } from "@/lib/utils"
 
 /**
- * Smart Farm — Input (atome « field underline » v3.2)
+ * Smart Farm — Input (atome « field » VERGER)
  * -------------------------------------------------------------------------
- * - pas de border (sauf bas), pas de border-radius
- * - border-bottom 2 px solid ink
- * - focus : border-bottom-color → primary, PAS de ring
- * - background transparent (bordereau)
- * - taille tactile : h ≥ 48 px (gants K13)
- * - font-size 16 px (évite zoom iOS au focus) — JAMAIS descendre en text-sm
+ * Reskin VERGER (audit 1-grammar.md §3.5) :
+ * - border-box : 1px solid var(--line2), background var(--paper), radius 11px
+ * - padding 11px 13px, font var(--body), color var(--ink)
+ * - focus : outline 2px var(--focus) offset 1px, border transparent (anneau sauge)
+ * - erreur : border var(--bad), background var(--bad-bg)
  *
- * Chantier C1 (responsive) :
- *   - h-12 + min-h-12 garantissent un tap target ≥ 48px sur mobile
- *   - text-base (= 16px) verrouille l'anti-zoom iOS Safari
- *   - px-0 est volontaire (design underline : pas de chrome latéral)
- *     Si un call-site veut du padding, il merge via className.
+ * Terrain / gants (§5.2) :
+ *   - h-12 + min-h-12 → tap target ≥ 48px
+ *   - text-base (16px) mobile = anti-zoom iOS Safari, 14px ≥md (spec --body 14px)
+ *   - inputmode numérique posé par le call-site (poids/effectifs)
  */
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
@@ -25,24 +23,20 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       type={type}
       data-slot="input"
       className={cn(
-        // Reset
-        "w-full min-w-0 bg-transparent outline-none transition-colors",
-        "rounded-none border-0",
-        // Border bas uniquement
-        "border-b-2 border-[var(--sf-ink,#1a1a1a)]",
-        // C1 — Touch ≥48px + typo 16px anti-zoom iOS (mobile-first, conservé ≥md)
-        "h-12 min-h-12 px-0 py-2 text-base text-[var(--sf-ink,#1a1a1a)]",
+        // Box VERGER : bordure, surface papier, rayon champ
+        "w-full min-w-0 rounded-[11px] border border-[var(--line2)] bg-[var(--paper)] transition-colors outline-none",
+        // Tactile ≥48px + anti-zoom iOS (16px mobile, 14px ≥md) + padding 11/13
+        "h-12 min-h-12 px-[13px] py-[11px] text-base md:text-sm text-[var(--ink)]",
         // Placeholder muted
-        "placeholder:text-[var(--sf-muted,#5C5346)]",
-        // Focus : ink → primary (pas de ring)
-        "focus:border-b-[var(--sf-primary,#2D4A1F)]",
-        "focus-visible:border-b-[var(--sf-primary,#2D4A1F)]",
+        "placeholder:text-[var(--mut)]",
+        // Focus : anneau sauge (outline), bordure transparente
+        "focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--focus)]",
         // Erreur
-        "aria-invalid:border-b-[var(--sf-danger-ink,#7A2A1F)]",
+        "aria-invalid:border-[var(--bad)] aria-invalid:bg-[var(--bad-bg)]",
         // Disabled
         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-        // Cohérence file input (file:h-10 pour rester tactile)
-        "file:inline-flex file:h-10 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--sf-ink,#1a1a1a)]",
+        // File input : rester tactile et cohérent
+        "file:inline-flex file:h-10 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-[var(--ink)]",
         className
       )}
       {...props}

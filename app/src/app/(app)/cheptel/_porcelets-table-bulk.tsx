@@ -95,22 +95,14 @@ export function PorceletsTableBulk({
 
   return (
     <section aria-labelledby="porcelets-bulk-titre">
-      <div className="overflow-x-auto">
-        <table
-          className="w-full text-sm border-b border-[var(--sf-line)] border-t-2"
-          style={{ borderTopColor: 'var(--sf-primary)' }}
-        >
-          <thead
-            className="border-b border-[var(--sf-line)] text-left text-[var(--sf-muted)]"
-            style={{
-              fontFamily: "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-              fontSize: '11px',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-            }}
-          >
+      <div
+        className="pn md:border-t-2 overflow-x-auto"
+        style={{ borderTopColor: 'var(--sf-primary)' }}
+      >
+        <table className="tbl">
+          <thead>
             <tr>
-              <th className="py-3 pl-3 pr-2 w-10">
+              <th className="pl-1 pr-2 w-10">
                 <input
                   type="checkbox"
                   checked={allSelected}
@@ -122,14 +114,14 @@ export function PorceletsTableBulk({
                   className="h-5 w-5 cursor-pointer accent-[var(--sf-primary)]"
                 />
               </th>
-              <th className="py-3 pr-4 font-semibold">Tag</th>
-              <th className="py-3 pr-4 font-semibold">Nom</th>
-              <th className="py-3 pr-4 font-semibold">Sexe</th>
-              <th className="py-3 pr-4 font-semibold">Catégorie</th>
-              <th className="py-3 pr-4 font-semibold">Stade</th>
-              <th className="py-3 pr-4 font-semibold">Race</th>
-              <th className="py-3 pr-4 font-semibold">Naissance</th>
-              <th className="py-3 pr-3 font-semibold text-right">Actions</th>
+              <th>Tag</th>
+              <th>Nom</th>
+              <th>Sexe</th>
+              <th>Catégorie</th>
+              <th>Stade</th>
+              <th>Race</th>
+              <th>Naissance</th>
+              <th className="num">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -138,11 +130,11 @@ export function PorceletsTableBulk({
               return (
                 <tr
                   key={r.id}
-                  className={`border-b border-[var(--sf-line)] hover:bg-[var(--sf-surface-2)]/40 ${
+                  className={`hover:bg-[var(--sf-surface-2)]/40 ${
                     checked ? 'bg-[var(--sf-primary)]/5' : ''
                   }`}
                 >
-                  <td className="py-3 pl-3 pr-2">
+                  <td className="pl-1 pr-2">
                     <input
                       type="checkbox"
                       checked={checked}
@@ -151,7 +143,7 @@ export function PorceletsTableBulk({
                       className="h-5 w-5 cursor-pointer accent-[var(--sf-primary)]"
                     />
                   </td>
-                  <td className="py-3 pr-4 font-mono font-bold text-[var(--sf-ink)] tabular-nums">
+                  <td className="font-mono font-bold text-[var(--sf-ink)] tabular-nums">
                     <Link
                       href={`/cheptel/${r.id}`}
                       className="hover:underline"
@@ -160,31 +152,31 @@ export function PorceletsTableBulk({
                       {r.tag}
                     </Link>
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink)]">{r.nom ?? '—'}</td>
-                  <td className="py-3 pr-4">
+                  <td className="text-[var(--sf-ink)]">{r.nom ?? '—'}</td>
+                  <td>
                     <Badge variant={r.sexe === 'M' ? 'outline' : 'secondary'}>
                       {r.sexe === 'M' ? '♂ Mâle' : '♀ Femelle'}
                     </Badge>
                   </td>
-                  <td className="py-3 pr-4">
+                  <td>
                     <Badge variant="outline" className="capitalize">
                       {r.categorie.replace(/_/g, ' ')}
                     </Badge>
                   </td>
-                  <td className="py-3 pr-4">
+                  <td>
                     <Badge variant="secondary">
                       {LIBELLES_STADE[r.stade as StadeAnimal] ?? r.stade}
                     </Badge>
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-ink-soft)]">
+                  <td className="text-[var(--sf-ink-soft)]">
                     {r.races?.nom ?? '—'}
                   </td>
-                  <td className="py-3 pr-4 text-[var(--sf-muted)] tabular-nums">
+                  <td className="text-[var(--sf-muted)] tabular-nums">
                     {r.date_naissance
                       ? new Date(r.date_naissance).toLocaleDateString('fr-FR')
                       : '—'}
                   </td>
-                  <td className="py-3 pr-3 text-right">
+                  <td className="num">
                     <CheptelRowActions
                       animalId={r.id}
                       animalTag={r.tag}

@@ -46,19 +46,19 @@ export default async function OnboardingPage() {
   const prenomAffiche = profil?.prenom?.trim() || authUser.email?.split('@')[0] || 'éleveur'
 
   return (
-    <main className="min-h-[calc(100vh-4rem)] bg-[var(--sf-surface-0)] py-10 px-4">
+    <main className="min-h-[calc(100vh-4rem)] bg-[var(--paper)] py-10 px-4">
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <header className="mb-8 text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--sf-muted)] mb-2">
+          <p className="eyebrow mb-2 text-[var(--mut)]">
             Configuration initiale
           </p>
-          <h1 className="text-3xl md:text-4xl font-display uppercase tracking-tight text-[var(--sf-ink)]">
+          <h1 className="font-[family-name:var(--disp)] text-3xl md:text-4xl font-bold tracking-tight text-[var(--ink)]">
             Bienvenue, {prenomAffiche}
           </h1>
-          <p className="mt-3 text-sm text-[var(--sf-muted)] max-w-md mx-auto">
+          <p className="mt-3 text-sm text-[var(--ink-soft)] max-w-md mx-auto">
             Configurons votre exploitation porcine en 3 étapes. Vous pourrez tout
-            modifier plus tard depuis <span className="font-medium">Paramètres</span>.
+            modifier plus tard depuis <span className="font-medium text-[var(--ink)]">Paramètres</span>.
           </p>
         </header>
 

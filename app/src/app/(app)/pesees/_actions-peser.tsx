@@ -22,8 +22,8 @@ export function ActionsPeser({
       defaultOpen={defaultOpen}
       defaultAnimalId={defaultAnimalId}
       trigger={
-        // Audit mobile 2026-05-25 — masqué <lg (FAB suffit en mobile, dédoublonner CTA).
-        <Button className="hidden lg:inline-flex">
+        // FAB unique VERGER : création via bouton d'en-tête, visible sur tous viewports.
+        <Button className="inline-flex">
           <Plus className="h-4 w-4 mr-2" />
           Peser maintenant
         </Button>

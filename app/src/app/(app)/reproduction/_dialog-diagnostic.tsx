@@ -24,6 +24,7 @@ import {
   type AnimalOption,
   type BandeOption,
 } from './_dialog-faire-monter'
+import { Stethoscope } from 'lucide-react'
 
 type FormData = z.input<typeof diagnosticSchema>
 
@@ -81,6 +82,7 @@ const RADIO_OPTIONS: {
 
 export function DialogDiagnostic({
   trigger,
+  triggerKind = 'header',
   saillies,
   truies = [],
   verrats = [],
@@ -88,7 +90,15 @@ export function DialogDiagnostic({
   defaultSaillieId,
   defaultOpen = false,
 }: {
-  trigger: React.ReactNode
+  trigger?: React.ReactNode
+  /**
+   * Sélectionne le trigger par défaut rendu DANS ce client (évite le mismatch
+   * d'hydratation d'un <Button> construit en Server Component) :
+   *  - 'header' : bouton lg « Diagnostic gestation » (en-tête de page)
+   *  - 'inline' : bouton sm « Diagnostiquer » (ligne « à diagnostiquer »)
+   * Ignoré si `trigger` est fourni explicitement (ex. FAB client).
+   */
+  triggerKind?: 'header' | 'inline'
   saillies: SaillieOption[]
   /** Optionnel — nécessaire pour activer le bouton « Programmer nouvelle saillie ». */
   truies?: AnimalOption[]
@@ -213,7 +223,22 @@ export function DialogDiagnostic({
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger render={trigger as any} />
+        <DialogTrigger
+          render={
+            (trigger ??
+              (triggerKind === 'inline' ? (
+                <Button size="sm" variant="outline" className="shrink-0 min-h-11">
+                  <Stethoscope className="h-4 w-4 mr-1" aria-hidden="true" />
+                  Diagnostiquer
+                </Button>
+              ) : (
+                <Button variant="outline" size="lg" className="h-12 text-base">
+                  <Stethoscope className="h-5 w-5 mr-2" aria-hidden="true" />
+                  Diagnostic gestation
+                </Button>
+              ))) as any
+          }
+        />
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle

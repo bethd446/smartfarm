@@ -277,14 +277,11 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
     "font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold"
 
   const displayKPI = (label: string, value: string | number, unit?: string) => (
-    <div>
-      <div className={eyebrowCls}>{label}</div>
-      <div
-        className="text-2xl font-bold tabular-nums text-[var(--sf-primary)]"
-        style={{ fontFamily: 'var(--sf-font-display)' }}
-      >
+    <div className="kpi">
+      <div className="k">{label}</div>
+      <div className="v">
         {value}
-        {unit ? <span className="text-base text-[var(--sf-muted)] ml-1">{unit}</span> : null}
+        {unit ? <small>{unit}</small> : null}
       </div>
     </div>
   )
@@ -394,28 +391,12 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
 
       {/* === KPIs CARDS === */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-5">
-            {displayKPI('Poids actuel', dernierePesee?.poids_kg ?? '—', dernierePesee ? 'kg' : '')}
-          </CardContent>
-        </Card>
-        {gmq !== null ? (
-          <Card>
-            <CardContent className="p-5">{displayKPI('GMQ', gmq.toFixed(3), 'kg/j')}</CardContent>
-          </Card>
-        ) : null}
-        {isFemelle && nbPortees !== null ? (
-          <Card>
-            <CardContent className="p-5">
-              {displayKPI('Portées', nbPortees, nbPortees > 1 ? 'portées' : 'portée')}
-            </CardContent>
-          </Card>
-        ) : null}
-        <Card>
-          <CardContent className="p-5">
-            {displayKPI('Pesées', nbPesees, nbPesees > 1 ? 'pesées' : 'pesée')}
-          </CardContent>
-        </Card>
+        {displayKPI('Poids actuel', dernierePesee?.poids_kg ?? '—', dernierePesee ? 'kg' : '')}
+        {gmq !== null ? displayKPI('GMQ', gmq.toFixed(3), 'kg/j') : null}
+        {isFemelle && nbPortees !== null
+          ? displayKPI('Portées', nbPortees, nbPortees > 1 ? 'portées' : 'portée')
+          : null}
+        {displayKPI('Pesées', nbPesees, nbPesees > 1 ? 'pesées' : 'pesée')}
       </div>
 
       {/* === HISTORIQUE PESÉES (Phase 4.D) === */}
@@ -425,34 +406,30 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
       {isFemelle ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {derniereSaillie ? (
-            <Card>
-              <CardHeader>
-                <div className={eyebrowCls}>Dernière saillie</div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-[var(--sf-ink)]">
-                  <FormattedDateTime date={derniereSaillie.date_saillie} format="date" /> · {derniereSaillie.methode}
+            <div className="pn">
+              <div className="pn-h">
+                <h3>Dernière saillie</h3>
+              </div>
+              <p className="text-sm text-[var(--sf-ink)]">
+                <FormattedDateTime date={derniereSaillie.date_saillie} format="date" /> · {derniereSaillie.methode}
+              </p>
+              {derniereSaillie.verrat ? (
+                <p className="text-xs text-[var(--sf-muted)] mt-1">
+                  Verrat : {derniereSaillie.verrat.nom ?? derniereSaillie.verrat.tag}
                 </p>
-                {derniereSaillie.verrat ? (
-                  <p className="text-xs text-[var(--sf-muted)] mt-1">
-                    Verrat : {derniereSaillie.verrat.nom ?? derniereSaillie.verrat.tag}
-                  </p>
-                ) : null}
-              </CardContent>
-            </Card>
+              ) : null}
+            </div>
           ) : null}
           {derniereMiseBas ? (
-            <Card>
-              <CardHeader>
-                <div className={eyebrowCls}>Dernière mise-bas</div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-[var(--sf-ink)]">
-                  <FormattedDateTime date={derniereMiseBas.date_mise_bas} format="date" /> · {derniereMiseBas.nes_vivants}{' '}
-                  vivants / {derniereMiseBas.nes_totaux} totaux
-                </p>
-              </CardContent>
-            </Card>
+            <div className="pn">
+              <div className="pn-h">
+                <h3>Dernière mise-bas</h3>
+              </div>
+              <p className="text-sm text-[var(--sf-ink)]">
+                <FormattedDateTime date={derniereMiseBas.date_mise_bas} format="date" /> · {derniereMiseBas.nes_vivants}{' '}
+                vivants / {derniereMiseBas.nes_totaux} totaux
+              </p>
+            </div>
           ) : null}
         </div>
       ) : null}
@@ -630,11 +607,11 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
       {isFemelle ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Carte BCS */}
-          <Card>
-            <CardHeader>
-              <div className={eyebrowCls}>BCS (Body Condition Score)</div>
-            </CardHeader>
-            <CardContent>
+          <div className="pn">
+            <div className="pn-h">
+              <h3>BCS (Body Condition Score)</h3>
+            </div>
+            <div>
               {bcsHistorique.length === 0 ? (
                 <p className="text-sm text-[var(--sf-muted)]">
                   Aucune évaluation BCS enregistrée. Renseigne le BCS lors des
@@ -660,15 +637,15 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
                   ))}
                 </ul>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Carte Historique portées décomposé */}
-          <Card>
-            <CardHeader>
-              <div className={eyebrowCls}>Historique des portées</div>
-            </CardHeader>
-            <CardContent>
+          <div className="pn">
+            <div className="pn-h">
+              <h3>Historique des portées</h3>
+            </div>
+            <div>
               {historiquePortees.length === 0 ? (
                 <p className="text-sm text-[var(--sf-muted)]">
                   Aucune portée enregistrée.
@@ -728,18 +705,18 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
                   ))}
                 </ul>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       ) : null}
 
       {/* === PROD-B : BCS 1-tap (truie/cochette uniquement) === */}
       {isFemelle ? (
-        <Card>
-          <CardHeader>
-            <div className={eyebrowCls}>BCS du jour — saisie rapide</div>
-          </CardHeader>
-          <CardContent>
+        <div className="pn">
+          <div className="pn-h">
+            <h3>BCS du jour — saisie rapide</h3>
+          </div>
+          <div>
             <form action={saisirBcsRapide} className="flex gap-2 flex-wrap">
               <input type="hidden" name="animal_id" value={animal.id} />
               {[1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5].map((bcs) => (
@@ -759,16 +736,16 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               Touche le score observé — cible 3,0 (gestation) / 3,5 (mise-bas).
               Enregistré sous <code className="font-mono">observations_bcs</code>.
             </p>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       ) : null}
 
       {/* === PROD-B : Identification rapide (QR / code-barres) === */}
-      <Card>
-        <CardHeader>
-          <div className={eyebrowCls}>Identification rapide</div>
-        </CardHeader>
-        <CardContent>
+      <div className="pn">
+        <div className="pn-h">
+          <h3>Identification rapide</h3>
+        </div>
+        <div>
           <div className="flex items-center gap-4 flex-wrap">
             <div
               className="shrink-0 border-2 border-[var(--sf-ink)] rounded-md p-4 bg-[var(--sf-surface-2)] flex flex-col items-center"
@@ -787,8 +764,8 @@ export default async function AnimalDetailPage({ params }: { params: Promise<{ i
               </p>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* === ONGLETS : Pesées, Reproduction, Santé, Mouvements === */}
       <AnimalTabs

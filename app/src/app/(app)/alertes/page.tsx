@@ -2,12 +2,10 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Bell, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
-import { Card, CardContent } from '@/components/ui/card'
 import { PageTitle } from '@/components/ui/page-title'
 import { getAlertesActives, compteParGravite } from '@/lib/alertes-engine'
 import { AlertesList } from './_components/alertes-list'
 import { DialogAlerteManuelle } from './_components/dialog-alerte-manuelle'
-import { AlertesFab } from './_fab'
 
 export const metadata: Metadata = {
   title: 'Alertes',
@@ -67,150 +65,96 @@ export default async function AlertesPage() {
         />
       </div>
 
-      {/* Bilan gravité — bande dense, sévérité par DOT (forme), pas par fond
-          coloré ni faux-dégradé. Total en tête, puis 3 niveaux décroissants.
+      {/* Bilan gravité — 4 KPI .kpi (gabarit VERGER). Sévérité encodée par DOT
+          (forme), pas par fond coloré ni faux-dégradé. Total en tête, puis 3
+          niveaux décroissants.
           FIX S5-L3 #3 : cap visuel total à 99+ pour ne pas désensibiliser. */}
-      <Card>
-        <CardContent className="p-0">
-          <div className="grid grid-cols-2 md:grid-cols-4 divide-y divide-x divide-[var(--sf-line)] md:divide-y-0">
-            {/* Total */}
-            <div className="flex items-center gap-3 p-4">
-              <Bell className="h-5 w-5 shrink-0 text-[var(--sf-primary,#2D4A1F)]" />
-              <div className="min-w-0">
-                <div
-                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
-                  style={{
-                    fontFamily:
-                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                  }}
-                  aria-label={`${total} alertes actives`}
-                >
-                  {total > 99 ? '99+' : total}
-                </div>
-                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
-                  Alertes actives
-                </div>
-              </div>
-            </div>
-
-            {/* Critiques — dot plein rouge */}
-            <div className="flex items-center gap-3 p-4">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{ background: 'var(--sf-danger,#DC2626)' }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <div
-                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
-                  style={{
-                    fontFamily:
-                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                  }}
-                >
-                  {compte.critique ?? 0}
-                </div>
-                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
-                  Critiques
-                </div>
-              </div>
-            </div>
-
-            {/* Élevées — anneau rouge épais */}
-            <div className="flex items-center gap-3 p-4">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{
-                  background: 'transparent',
-                  boxShadow: 'inset 0 0 0 3px var(--sf-danger,#DC2626)',
-                }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <div
-                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
-                  style={{
-                    fontFamily:
-                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                  }}
-                >
-                  {compte['élevée'] ?? 0}
-                </div>
-                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
-                  Élevées
-                </div>
-              </div>
-            </div>
-
-            {/* Moyennes — anneau ambre */}
-            <div className="flex items-center gap-3 p-4">
-              <span
-                className="h-2.5 w-2.5 shrink-0 rounded-full"
-                style={{
-                  background: 'transparent',
-                  boxShadow: 'inset 0 0 0 2px var(--sf-warning,#A16207)',
-                }}
-                aria-hidden="true"
-              />
-              <div className="min-w-0">
-                <div
-                  className="text-3xl font-bold leading-none tabular-nums text-[var(--sf-ink,#1a1a1a)]"
-                  style={{
-                    fontFamily:
-                      "var(--sf-font-display, 'Big Shoulders Display', sans-serif)",
-                  }}
-                >
-                  {compte.moyenne ?? 0}
-                </div>
-                <div className="eyebrow text-[10px] mt-1.5 text-[var(--sf-muted,#5C5346)]">
-                  Moyennes
-                </div>
-              </div>
-            </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {/* Total */}
+        <div className="kpi">
+          <div className="k flex items-center gap-2">
+            <Bell className="h-3.5 w-3.5 shrink-0 text-[var(--sage-d)]" />
+            Alertes actives
           </div>
-        </CardContent>
-      </Card>
+          <div className="v tabular-nums" aria-label={`${total} alertes actives`}>
+            {total > 99 ? '99+' : total}
+          </div>
+        </div>
+
+        {/* Critiques — dot plein rouge */}
+        <div className="kpi">
+          <div className="k flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: 'var(--bad)' }}
+              aria-hidden="true"
+            />
+            Critiques
+          </div>
+          <div className="v tabular-nums">{compte.critique ?? 0}</div>
+        </div>
+
+        {/* Élevées — anneau rouge épais */}
+        <div className="kpi">
+          <div className="k flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{
+                background: 'transparent',
+                boxShadow: 'inset 0 0 0 3px var(--bad)',
+              }}
+              aria-hidden="true"
+            />
+            Élevées
+          </div>
+          <div className="v tabular-nums">{compte['élevée'] ?? 0}</div>
+        </div>
+
+        {/* Moyennes — anneau ambre */}
+        <div className="kpi">
+          <div className="k flex items-center gap-2">
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{
+                background: 'transparent',
+                boxShadow: 'inset 0 0 0 2px var(--warn)',
+              }}
+              aria-hidden="true"
+            />
+            Moyennes
+          </div>
+          <div className="v tabular-nums">{compte.moyenne ?? 0}</div>
+        </div>
+      </div>
 
       {/* Liste ou état vide */}
       {total === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <div className="flex flex-col items-center gap-4 max-w-md mx-auto">
-              <CheckCircle2 
-                className="h-6 w-6 text-[var(--sf-success-ink,#166534)]" 
-                strokeWidth={2.5} 
-              />
-              <div>
-                <h2 className="text-lg font-semibold text-[var(--sf-ink,#1a1a1a)] mb-1">
-                  Aucune alerte active
-                </h2>
-                <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-                  Toutes les tâches critiques sont à jour. Continue ton suivi quotidien depuis le dashboard.
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-2">
-                <Link 
-                  href="/dashboard" 
-                  className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-lg bg-[var(--sf-primary,#2D4A1F)] text-[var(--sf-warm,#FFFBEB)] font-semibold text-sm hover:opacity-90 transition-opacity"
-                >
-                  Voir le tableau de bord
-                </Link>
-                <Link 
-                  href="/parametres" 
-                  className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-lg border border-[var(--sf-line,rgba(0,0,0,0.12))] text-[var(--sf-ink,#1a1a1a)] font-semibold text-sm hover:bg-[var(--sf-surface-2,#F5F1ED)] transition-colors"
-                >
-                  Configurer les règles d&apos;alerte
-                </Link>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="sf-empty">
+          <div className="sf-empty-ic">
+            <CheckCircle2 className="h-6 w-6" strokeWidth={2.5} />
+          </div>
+          <h3>Aucune alerte active</h3>
+          <p>
+            Toutes les tâches critiques sont à jour. Continue ton suivi quotidien depuis le dashboard.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto mt-2">
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-[var(--rp)] bg-[var(--sage)] text-[var(--paper)] font-semibold text-sm hover:opacity-90 transition-opacity"
+            >
+              Voir le tableau de bord
+            </Link>
+            <Link
+              href="/parametres"
+              className="inline-flex items-center justify-center min-h-[44px] px-6 rounded-[var(--rp)] border border-[var(--line)] text-[var(--ink)] font-semibold text-sm hover:bg-[var(--paper-3)] transition-colors"
+            >
+              Configurer les règles d&apos;alerte
+            </Link>
+          </div>
+        </div>
       ) : (
         <AlertesList alertes={alertes} />
       )}
-
-      {/* === FAB mobile === */}
-      <AlertesFab />
     </div>
   )
 }

@@ -7,11 +7,9 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import {
   Package,
-  Plus,
   ChevronLeft,
   RotateCcw,
   Factory,
@@ -57,27 +55,12 @@ const LABEL_STADE_FILTRE: Record<StadeFiltre, string> = {
   verrat: 'Verrat',
 }
 
-const STADE_COLOR: Record<StadeFiltre, { bg: string; ink: string }> = {
-  porcelet: {
-    bg: 'var(--sf-warning-bg, #F5E0B8)',
-    ink: 'var(--sf-warning-ink, #5A3E0E)',
-  },
-  croissance: {
-    bg: 'var(--sf-success-bg, #D6E3CC)',
-    ink: 'var(--sf-success-ink, #1F3B12)',
-  },
-  finition: {
-    bg: 'var(--sf-bg, #F5F1E8)',
-    ink: 'var(--sf-ink, #1a1a1a)',
-  },
-  truie: {
-    bg: 'var(--sf-danger-bg, #F1D4CE)',
-    ink: 'var(--sf-danger-ink, #7A2A1F)',
-  },
-  verrat: {
-    bg: 'var(--sf-bg, #F5F1E8)',
-    ink: 'var(--sf-ink, #1a1a1a)',
-  },
+const STADE_TAG: Record<StadeFiltre, string> = {
+  porcelet: 'tag t-apri',
+  croissance: 'tag t-sage',
+  finition: 'tag t-grey',
+  truie: 'tag t-plum',
+  verrat: 'tag t-grey',
 }
 
 /* -------------------------------------------------------------------------- */
@@ -234,12 +217,7 @@ export default async function ConcentresPage({
                 observations: null,
               } as MatiereRow
             }
-            trigger={
-              <Button variant="default" size="sm">
-                <Plus className="h-4 w-4 mr-1" />
-                Nouveau concentré
-              </Button>
-            }
+            createLabel="Nouveau concentré"
           />
         </div>
       </div>
@@ -336,20 +314,21 @@ export default async function ConcentresPage({
           </CardContent>
         </Card>
       ) : rows.length === 0 ? (
-        <Card>
-          <CardContent className="p-8 text-center space-y-3">
-            <Package className="h-10 w-10 mx-auto text-[var(--sf-muted,#5C5346)]" />
-            <p className="text-sm text-[var(--sf-muted,#5C5346)]">
-              Aucun concentré ne correspond à ces filtres.
-            </p>
-            <FormResetStandards />
-          </CardContent>
-        </Card>
+        <div className="sf-empty" role="status">
+          <span className="sf-empty-ic">
+            <Package className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <h3>Aucun concentré au catalogue</h3>
+          <p>
+            Aucun concentré ne correspond à ces filtres. Réinitialisez au
+            catalogue standard pour retrouver les aliments commercialisés en CI.
+          </p>
+          <FormResetStandards />
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {rows.map((c) => {
             const stadeC = inferStade(c.nom)
-            const colors = stadeC ? STADE_COLOR[stadeC] : null
             return (
               <Card key={c.id} className="flex flex-col">
                 <CardHeader className="pb-2">
@@ -362,12 +341,10 @@ export default async function ConcentresPage({
                         {c.nom}
                       </CardTitle>
                     </div>
-                    {stadeC && colors ? (
-                      <Badge
-                        style={{ background: colors.bg, color: colors.ink }}
-                      >
+                    {stadeC ? (
+                      <span className={STADE_TAG[stadeC]}>
                         {LABEL_STADE_FILTRE[stadeC]}
-                      </Badge>
+                      </span>
                     ) : null}
                   </div>
                 </CardHeader>
@@ -430,11 +407,7 @@ export default async function ConcentresPage({
                   <DialogMatiere
                     mode="edit"
                     initial={c}
-                    trigger={
-                      <Button variant="ghost" size="sm">
-                        Détails
-                      </Button>
-                    }
+                    editLabel="Détails"
                   />
                 </div>
               </Card>

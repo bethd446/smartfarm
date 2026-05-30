@@ -51,37 +51,41 @@ export default async function NouvelleFormulationPage() {
         <div>
           <Link
             href="/alimentation/formulation"
-            className="text-xs text-slate-500 inline-flex items-center gap-1 mb-1 hover:underline"
+            className="text-xs text-[var(--mut)] inline-flex items-center gap-1 mb-1 hover:underline"
           >
             <ChevronLeft className="h-3.5 w-3.5" />
             Formulations
           </Link>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
-            <Calculator className="h-7 w-7 text-amber-600" />
+          <h1 className="text-3xl font-[family-name:var(--disp)] font-extrabold tracking-[-0.02em] flex items-center gap-2 text-[var(--ink)]">
+            <Calculator className="h-7 w-7 text-[var(--sage-d)]" />
             Nouvelle formulation
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-[var(--mut)] mt-1">
             Calculateur live · besoins NRC 2012 / INRA 2018 · devise FCFA
           </p>
         </div>
       </div>
 
       {error ? (
-        <div className="rounded-lg border border-[var(--sf-danger-ink,#7A2A1F)]/30 bg-[var(--sf-danger,#FCE9E4)] p-4 text-sm">
-          Erreur de chargement du catalogue : {error.message}
+        <div className="sf-error" role="alert">
+          <h3>Erreur de chargement du catalogue</h3>
+          <p>{error.message}</p>
         </div>
       ) : null}
 
       {catalog.length === 0 ? (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
-          Aucune matière première dans le catalogue. Ajoute-en depuis{' '}
-          <Link
-            href="/alimentation/matieres"
-            className="font-medium text-amber-700 hover:underline"
-          >
-            /alimentation/matieres
-          </Link>{' '}
-          puis reviens ici.
+        <div className="sf-empty" role="status">
+          <h3>Catalogue vide</h3>
+          <p>
+            Aucune matière première dans le catalogue. Ajoute-en depuis{' '}
+            <Link
+              href="/alimentation/matieres"
+              className="font-medium text-[var(--sage-d)] hover:underline"
+            >
+              /alimentation/matieres
+            </Link>{' '}
+            puis reviens ici.
+          </p>
         </div>
       ) : (
         <FormulationCalculator catalog={catalog} />
