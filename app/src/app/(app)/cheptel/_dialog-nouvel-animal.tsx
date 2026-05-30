@@ -33,12 +33,13 @@ const schema = z.object({
   nom: z.string().optional().or(z.literal('')),
   sexe: z.enum(['M', 'F']),
   categorie: z.enum([
-    'verrat',
     'truie',
     'cochette',
-    'porcelet',
-    'sevrage',
-    'engraissement',
+    'verrat',
+    'porcelet_lait',
+    'porcelet_sevre',
+    'porcelet_croissance',
+    'porc_engraissement',
   ]),
   race_id: z.string().uuid().optional().or(z.literal('')),
   date_naissance: z.string().optional().or(z.literal('')),
@@ -50,12 +51,13 @@ type FormData = z.input<typeof schema>
 
 // Ordre d'affichage pour les catégories (vocabulaire éleveur)
 const CATEGORIES_ORDER: Array<FormData['categorie']> = [
-  'verrat',
   'truie',
   'cochette',
-  'porcelet',
-  'sevrage',
-  'engraissement',
+  'verrat',
+  'porcelet_lait',
+  'porcelet_sevre',
+  'porcelet_croissance',
+  'porc_engraissement',
 ]
 
 export function DialogNouvelAnimal({

@@ -18,7 +18,7 @@ export const saillieSchema = z
     verrat_id: z.string().uuid().optional().or(z.literal('')),
     bande_id: z.string().uuid().optional().or(z.literal('')),
     date_saillie: z.string().min(1, 'Date requise'),
-    methode: z.enum(['naturelle', 'IA', 'IA_double']),
+    methode: z.enum(['naturelle', 'IA']),
     rang_porte: z.coerce
       .number()
       .int('Rang de portée entier requis')

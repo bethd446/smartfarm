@@ -15,11 +15,11 @@ export default async function PeseesPage({
   const defaultOpen = sp.action === 'new'
   const defaultAnimalId = sp.animal_id
   const sb = await createClient()
-  const [{ data: pesees }, { data: animaux }, { data: bandes }] =
+  const [{ data: pesees, error: peseesErr }, { data: animaux }, { data: bandes }] =
     await Promise.all([
       sb
         .from('pesees')
-        .select(`*, animal:animal_id(tag,nom), bande:bande_id(nom,code)`)
+        .select(`*, animal:animal_id(tag,nom)`)
         .order('date_pesee', { ascending: false })
         .limit(50),
       sb.from('animaux').select('id, tag, nom').in('statut', ['actif', 'malade']).is('deleted_at', null).order('tag'),
@@ -43,13 +43,21 @@ export default async function PeseesPage({
         />
       </div>
 
-      {(!pesees || pesees.length === 0) ? (
+      {peseesErr ? (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <Scale className="h-12 w-12 mx-auto text-[var(--sf-danger-ink,#7A2A1F)] mb-3" />
+            <p className="eyebrow text-[12px] text-[var(--sf-danger-ink,#7A2A1F)]">Erreur de chargement des pesées</p>
+            <p className="text-sm text-stone-700 mt-2">{peseesErr.message}</p>
+          </CardContent>
+        </Card>
+      ) : (!pesees || pesees.length === 0) ? (
         <Card>
           <CardContent className="py-12 text-center">
             <Scale className="h-12 w-12 mx-auto text-[var(--sf-line,rgba(0,0,0,0.2))] mb-3" />
             <p className="eyebrow text-[12px] text-stone-700">Aucune pesée pour l'instant</p>
             <p className="text-sm text-stone-700 mt-2">
-              Commence par peser une bande.
+              Commence par peser un animal.
             </p>
           </CardContent>
         </Card>
@@ -76,7 +84,7 @@ export default async function PeseesPage({
                         <FormattedDateTime date={p.date_pesee} format="date" />
                       </td>
                       <td className="py-3 pr-4 text-[var(--sf-ink,#1a1a1a)]">
-                        {p.animal?.nom ?? p.bande?.nom ?? '—'}
+                        {p.animal?.nom ?? '—'}
                       </td>
                       <td className="py-3 pr-4">
                         <Badge variant="outline">{p.type}</Badge>

@@ -17,17 +17,47 @@ export async function creerPesee(
   }
   const d = parsed.data
 
+  const supabase = await createClient()
+
+  // ferme_id (NOT NULL + RLS) — pattern declarerMortalite
+  const {
+    data: { user },
+    error: errUser,
+  } = await supabase.auth.getUser()
+  if (errUser || !user) {
+    return { ok: false, error: 'Session expirée — merci de vous reconnecter' }
+  }
+  const { data: farmRow, error: errFarm } = await supabase
+    .from('user_farms')
+    .select('ferme_id')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true })
+    .limit(1)
+    .single()
+  if (errFarm || !farmRow) {
+    return { ok: false, error: 'Aucune ferme associée à votre compte' }
+  }
+
+  // La table `pesees` n'a PAS de colonne bande_id ; le CHECK exige animal_id OU
+  // portee_id. La pesée par bande n'est donc pas supportée par le schéma actuel
+  // (migration bande_id/portee_id requise — issue #21).
+  if (d.type !== 'individuelle' || !d.animal_id) {
+    return {
+      ok: false,
+      error:
+        "Seules les pesées individuelles (par animal) sont supportées pour l'instant — la pesée par bande nécessite une évolution du schéma.",
+    }
+  }
+
+  // Colonnes réelles uniquement (cf genesis pesees) ; `contexte` prend son DEFAULT 'controle'.
   const payload: Record<string, unknown> = {
-    type: d.type,
+    ferme_id: farmRow.ferme_id,
+    animal_id: d.animal_id,
     date_pesee: d.date_pesee,
     poids_kg: d.poids_kg,
-    nb_animaux: d.nb_animaux,
   }
-  if (d.animal_id) payload.animal_id = d.animal_id
-  if (d.bande_id) payload.bande_id = d.bande_id
   if (d.observations) payload.observations = d.observations
 
-  const supabase = await createClient()
   const { error } = await supabase.from('pesees').insert(payload)
   if (error) return { ok: false, error: error.message }
 
