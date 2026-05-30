@@ -31,6 +31,8 @@
 .sidebar__farm {
   font-family: var(--disp);
   color: var(--ink);
+  text-transform: none;
+  letter-spacing: 0;
 }
 .sidebar__id {
   color: var(--mut);
@@ -42,6 +44,8 @@
   font-family: var(--disp);
   color: var(--mut);
   opacity: 1;
+  text-transform: none;
+  letter-spacing: 0;
 }
 .sidebar__item {
   color: var(--ink-soft);

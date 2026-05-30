@@ -88,14 +88,14 @@ export function QuickActionsFab() {
             // Forme : pastille 64×64
             'h-16 w-16 rounded-full',
             // Style charte Terrain Vivant : vert sahel + stamp shadow
-            'bg-[var(--sf-primary)] text-[var(--sf-warm)]',
-            'shadow-[0_8px_24px_-4px_rgba(45,74,31,0.45),0_4px_8px_-2px_rgba(0,0,0,0.2)]',
-            'ring-2 ring-[var(--sf-warm)]/40',
+            'bg-[var(--sf-primary)] text-white',
+            'shadow-[var(--sh-md)]',
+            'ring-2 ring-[var(--paper)]/60',
             // Interaction
             'flex items-center justify-center',
             'transition-transform duration-150 ease-out',
             'hover:scale-105 active:scale-95',
-            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--sf-accent-warm,#A16207)]/60',
+            'focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--focus)]/60',
           ].join(' ')}
         >
           <Plus className="h-7 w-7" strokeWidth={2.5} aria-hidden />
@@ -104,10 +104,10 @@ export function QuickActionsFab() {
 
       <SheetContent side="bottom" className="max-w-2xl mx-auto">
         <div className="mb-4">
-          <div className="font-[family-name:var(--sf-font-display)] uppercase text-[11px] tracking-[0.18em] text-[var(--sf-muted)] font-bold">
+          <div className="font-[family-name:var(--sf-font-display)] text-[11px] text-[var(--sf-muted)] font-bold">
             Actions rapides
           </div>
-          <h2 className="font-[family-name:var(--sf-font-display)] text-xl font-black tracking-tight text-[var(--sf-ink)] uppercase mt-1">
+          <h2 className="font-[family-name:var(--sf-font-display)] text-xl font-bold tracking-tight text-[var(--sf-ink)] mt-1">
             Que faites-vous ?
           </h2>
         </div>
@@ -133,17 +133,17 @@ export function QuickActionsFab() {
                   className={[
                     'flex h-12 w-12 shrink-0 items-center justify-center',
                     'rounded-lg bg-[var(--sf-primary)]/10',
-                    'group-hover:bg-[var(--sf-primary)] group-hover:text-[var(--sf-warm)]',
+                    'group-hover:bg-[var(--sf-primary)] group-hover:text-white',
                     'text-[var(--sf-primary)] transition-colors',
                   ].join(' ')}
                 >
                   <Icon className="h-6 w-6" strokeWidth={2} aria-hidden />
                 </div>
                 <div className="text-left min-w-0">
-                  <div className="font-[family-name:var(--sf-font-display)] uppercase text-sm font-bold tracking-[0.06em] text-[var(--sf-ink)] truncate">
+                  <div className="font-[family-name:var(--sf-font-display)] text-sm font-bold text-[var(--sf-ink)] truncate">
                     {a.label}
                   </div>
-                  <div className="text-[11px] uppercase tracking-[0.1em] text-[var(--sf-muted)] truncate">
+                  <div className="text-[11px] text-[var(--sf-muted)] truncate">
                     {a.sub}
                   </div>
                 </div>

@@ -4,8 +4,8 @@
   "description": "Gestion d'élevage porcin pour la Côte d'Ivoire",
   "start_url": "/dashboard",
   "display": "standalone",
-  "background_color": "#FFFBEB",
-  "theme_color": "#2D4A1F",
+  "background_color": "#FBFAF5",
+  "theme_color": "#6E9551",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "fr-FR",
@@ -29,19 +29,25 @@
       "src": "/apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/android-icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/android-icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/android-icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "categories": ["business", "productivity"],

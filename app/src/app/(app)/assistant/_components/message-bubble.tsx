@@ -49,7 +49,7 @@ export function MessageBubble({
       {/* Avatar IA — visible uniquement côté assistant, à gauche */}
       {!isUser && (
         <div
-          className="shrink-0 h-9 w-9 rounded-full flex items-center justify-center text-base bg-emerald-600 text-white shadow-sm"
+          className="shrink-0 h-9 w-9 rounded-full flex items-center justify-center text-base bg-[var(--sage)] text-white shadow-sm"
           aria-hidden
           title="Assistant"
         >
@@ -64,7 +64,7 @@ export function MessageBubble({
         className={cn(
           'min-w-0 max-w-[75%] px-3.5 py-2 shadow-sm text-sm leading-relaxed whitespace-pre-wrap break-words',
           isUser
-            ? 'bg-emerald-100 text-[var(--sf-ink,#1a1a1a)] rounded-2xl rounded-br-sm'
+            ? 'bg-[var(--sage-bg)] text-[var(--sf-ink,#1a1a1a)] rounded-2xl rounded-br-sm'
             : 'bg-[var(--sf-surface-1)] border border-[var(--sf-border,#E5E0D8)] text-[var(--sf-ink,#1a1a1a)] rounded-2xl rounded-bl-sm',
         )}
       >
@@ -78,7 +78,7 @@ export function MessageBubble({
       {/* Avatar user — visible uniquement côté user, à droite */}
       {isUser && (
         <div
-          className="shrink-0 h-9 w-9 rounded-full flex items-center justify-center bg-amber-500 text-white shadow-sm"
+          className="shrink-0 h-9 w-9 rounded-full flex items-center justify-center bg-[var(--apri)] text-white shadow-sm"
           aria-hidden
           title="Vous"
         >

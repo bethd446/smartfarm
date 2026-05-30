@@ -37,8 +37,8 @@ export function ContrastToggle() {
       className={cn(
         'w-full flex items-center gap-3 px-3 h-12 rounded-md text-base transition-colors',
         high
-          ? 'bg-amber-500 text-slate-900 font-semibold shadow-sm'
-          : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+          ? 'bg-[var(--apri)] text-[var(--ink)] font-semibold shadow-sm'
+          : 'bg-[var(--sage-bg)] text-[var(--ink)] hover:bg-[var(--sage-100)]'
       )}
     >
       <Contrast className="h-5 w-5 shrink-0" />
